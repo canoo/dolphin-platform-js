@@ -15,7 +15,6 @@ exports.connect = function(url, config) {
 
 
 var DOLPHIN_BEAN = '@@@ DOLPHIN_BEAN @@@';
-var DOLPHIN_ENUM = '@@@ DOLPHIN_ENUM @@@';
 var DOLPHIN_LIST_ADD_FROM_SERVER = '@@@ LIST_ADD_FROM_SERVER @@@';
 var DOLPHIN_LIST_DEL_FROM_SERVER = '@@@ LIST_DEL_FROM_SERVER @@@';
 var DOLPHIN_LIST_SET_FROM_SERVER = '@@@ LIST_SET_FROM_SERVER @@@';
@@ -43,9 +42,6 @@ function Dolphin(url, config) {
         switch (type) {
             case DOLPHIN_BEAN:
                 _this.classRepository.registerClass(model);
-                break;
-            case DOLPHIN_ENUM:
-                _this.classRepository.registerEnum(model);
                 break;
             case DOLPHIN_LIST_ADD_FROM_SERVER:
                 _this.classRepository.addListEntry(model);
@@ -84,9 +80,6 @@ function Dolphin(url, config) {
         switch (type) {
             case DOLPHIN_BEAN:
                 _this.classRepository.unregisterClass(model);
-                break;
-            case DOLPHIN_ENUM:
-                _this.classRepository.unregisterEnum(model);
                 break;
             case DOLPHIN_LIST_ADD_FROM_SERVER:
             case DOLPHIN_LIST_DEL_FROM_SERVER:
@@ -203,15 +196,9 @@ Dolphin.prototype.send = function(command, params) {
         var attributes = [];
         for (var prop in params) {
             if (params.hasOwnProperty(prop)) {
-                var value = params[prop];
-                // TODO: The mapping should not be at this place, but moved to ClassRepository
-                if (typeof value === 'object') {
-                    attributes.push(this.dolphin.attribute(prop, null, this.classRepository.beanToDolphin.get(value), 'VALUE'));
-                    attributes.push(this.dolphin.attribute(prop, null, 'DOLPHIN_BEAN', 'VALUE_TYPE'));
-                } else {
-                    attributes.push(this.dolphin.attribute(prop, null, value, 'VALUE'));
-                    attributes.push(this.dolphin.attribute(prop, null, 'BASIC_TYPE', 'VALUE_TYPE'));
-                }
+                var param = this.classRepository.mapParamToDolphin(params[prop]);
+                attributes.push(this.dolphin.attribute(prop, null, param.value, 'VALUE'));
+                attributes.push(this.dolphin.attribute(prop, null, param.type, 'VALUE_TYPE'));
             }
         }
         this.dolphin.presentationModel.apply(this.dolphin, [null, '@@@ DOLPHIN_PARAMETER @@@'].concat(attributes));

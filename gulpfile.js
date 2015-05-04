@@ -19,17 +19,22 @@ gulp.task('clean', function() {
 });
 
 gulp.task('lint', function() {
-    gutil.log('*********************************************');
     return gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
         .pipe(jshint())
         .pipe(jshint.reporter('default'));
 });
 
-gulp.task('test', ['lint'], function() {
-    gutil.log('*********************************************');
-    return gulp.src(['test/**/test-*.js'], { read: false })
+gulp.task('unit-test', function() {
+    return gulp.src(['test/**/test-*.js', '!test/integration/**/test-*.js'], { read: false })
         .pipe(mocha({reporter: 'spec'}));
 });
+
+gulp.task('integration-test', ['build'], function() {
+    return gulp.src(['test/integration/**/test-*.js'], { read: false })
+        .pipe(mocha({reporter: 'spec'}));
+});
+
+gulp.task('test', ['lint', 'unit-test', 'integration-test']);
 
 gulp.task('build', function() {
 

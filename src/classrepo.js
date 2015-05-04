@@ -2,9 +2,6 @@
 /* global opendolphin, console, ObjectObserver */
 "use strict";
 
-// TODO: Remove ENUM
-// TODO: Optimize property.fromDolphin and property.toDolphin
-
 require('./polyfills.js');
 require('../bower_components/observe-js/src/observe.js');
 var Map  = require('../bower_components/core.js/library/fn/map');
@@ -13,46 +10,15 @@ var exists = require('./utils.js').exists;
 
 var UNKNOWN = 0,
     BASIC_TYPE = 1,
-    ENUM = 2,
-    DOLPHIN_BEAN = 3;
+    DOLPHIN_BEAN = 2;
 
-function identity(value) {
-    return value;
+function fromDolphin(classRepository, type, value) {
+    return type === DOLPHIN_BEAN? classRepository.beanFromDolphin.get(value) : value;
 }
 
-function setValue(property, value) {
-    if (exists(value)) {
-        property.type = value;
-    }
+function toDolphin(classRepository, type, value) {
+    return type === DOLPHIN_BEAN? classRepository.beanToDolphin.get(value) : value;
 }
-
-function setValueType(repository, property, value) {
-    if (!exists(value)) {
-        return;
-    }
-
-    switch (value) {
-        case ENUM:
-            property.fromDolphin = function (ord) {
-                var enumInfo = repository.enums.get(property.type);
-                return exists(enumInfo) ? enumInfo.fromDolphin[ord] : null;
-            };
-            property.toDolphin = function (value) {
-                var enumInfo = repository.enums.get(property.type);
-                return exists(enumInfo) ? enumInfo.toDolphin.get(value) : null;
-            };
-            break;
-        case DOLPHIN_BEAN:
-            property.fromDolphin = function (id) {
-                return repository.beanFromDolphin.get(id);
-            };
-            property.toDolphin = function (bean) {
-                return repository.beanToDolphin.get(bean);
-            };
-            break;
-    }
-}
-
 
 function modifyList(bean, attribute, from, count, newElements) {
     var list = bean[attribute];
@@ -69,13 +35,11 @@ function ClassRepository() {
     this.classes = new Map();
     this.beanFromDolphin = new Map();
     this.beanToDolphin = new Map();
-    this.enums = new Map();
     this.classInfos = new Map();
 }
 
 
 ClassRepository.prototype.registerClass = function (model) {
-    var _this = this;
     if (this.classes.has(model.id)) {
         return;
     }
@@ -83,53 +47,13 @@ ClassRepository.prototype.registerClass = function (model) {
 
     var classInfo = {};
     model.attributes.forEach(function (attribute) {
-        var property = classInfo[attribute.propertyName];
-        if (!exists(property)) {
-            property = classInfo[attribute.propertyName] = {
-                fromDolphin: identity,
-                toDolphin: identity
-            };
-        }
+        classInfo[attribute.propertyName] = UNKNOWN;
 
-        switch (attribute.tag) {
-            case opendolphin.Tag.valueType():
-                attribute.onValueChange(function (event) {
-                    if (event.oldValue !== event.newValue) {
-                        setValueType(_this, property, event.newValue);
-                    }
-                });
-                break;
-            case opendolphin.Tag.value():
-                attribute.onValueChange(function (event) {
-                    if (event.oldValue !== event.newValue) {
-                        setValue(property, event.newValue);
-                    }
-                });
-                break;
-        }
+        attribute.onValueChange(function (event) {
+            classInfo[attribute.propertyName] = event.newValue;
+        });
     });
     this.classes.set(model.id, classInfo);
-};
-
-
-ClassRepository.prototype.registerEnum = function (model) {
-    if (this.enums.has(model.id)) {
-        return;
-    }
-    console.debug('ClassRepository.registerEnum', model);
-
-    var enumInfoFromDolphin = [];
-    var enumInfoToDolphin = new Map();
-    model.attributes.forEach(function (attribute) {
-        var index = parseInt(attribute.propertyName);
-        enumInfoFromDolphin[index] = attribute.value;
-        enumInfoToDolphin.set(attribute.value, index);
-    });
-    var enumInfo = {
-        fromDolphin: enumInfoFromDolphin,
-        toDolphin: enumInfoToDolphin
-    };
-    this.enums.set(model.id, enumInfo);
 };
 
 
@@ -139,14 +63,9 @@ ClassRepository.prototype.unregisterClass = function (model) {
 };
 
 
-ClassRepository.prototype.unregisterEnum = function (model) {
-    console.debug('ClassRepository.unregisterEnum', model);
-    this.enums['delete'](model.id);
-};
-
-
 ClassRepository.prototype.load = function (model) {
     console.debug('ClassRepository.load():', model);
+    var _this = this;
     var classInfo = this.classes.get(model.presentationModelType);
     var bean = {};
     model.attributes.filter(function (attribute) {
@@ -154,7 +73,7 @@ ClassRepository.prototype.load = function (model) {
     }).forEach(function (attribute) {
         attribute.onValueChange(function (event) {
             if (event.oldValue !== event.newValue) {
-                bean[attribute.propertyName] = classInfo[attribute.propertyName].fromDolphin(event.newValue);
+                bean[attribute.propertyName] = fromDolphin(_this, classInfo[attribute.propertyName], event.newValue);
             }
         });
     });
@@ -163,7 +82,7 @@ ClassRepository.prototype.load = function (model) {
         Object.keys(added).forEach(function (property) {
             var attribute = model.findAttributeByPropertyName(property);
             if (exists(attribute)) {
-                var value = classInfo[property].toDolphin(added[property]);
+                var value = toDolphin(_this, classInfo[property], added[property]);
                 attribute.setValue(value);
             }
         });
@@ -176,7 +95,7 @@ ClassRepository.prototype.load = function (model) {
         Object.keys(changed).forEach(function (property) {
             var attribute = model.findAttributeByPropertyName(property);
             if (exists(attribute)) {
-                var value = classInfo[property].toDolphin(changed[property]);
+                var value = toDolphin(_this, classInfo[property], changed[property]);
                 attribute.setValue(value);
             }
         });
@@ -209,7 +128,7 @@ ClassRepository.prototype.addListEntry = function(model) {
         var classInfo = this.classInfos.get(source.value);
         var bean = this.beanFromDolphin.get(source.value);
         if (exists(bean) && exists(classInfo)) {
-            var entry = classInfo[attribute.value].fromDolphin(element.value);
+            var entry = fromDolphin(this, classInfo[attribute.value], element.value);
             modifyList(bean, attribute.value, pos.value, 0, entry);
         } else {
             console.error("Invalid list modification update received. Source bean unknown.", model);
@@ -251,7 +170,7 @@ ClassRepository.prototype.setListEntry = function(model) {
         var classInfo = this.classInfos.get(source.value);
         var bean = this.beanFromDolphin.get(source.value);
         if (exists(bean) && exists(classInfo)) {
-            var entry = classInfo[attribute.value].fromDolphin(element.value);
+            var entry = fromDolphin(this, classInfo[attribute.value], element.value);
             modifyList(bean, attribute.value, pos.value, 1, entry);
         } else {
             console.error("Invalid list modification update received. Source bean unknown.", model);
@@ -259,6 +178,18 @@ ClassRepository.prototype.setListEntry = function(model) {
     }else {
         console.error("Invalid list modification update received", model);
     }
+};
+
+
+ClassRepository.prototype.mapParamToDolphin = function(param) {
+    if (typeof param === 'object') {
+        var value = this.beanToDolphin.get(param);
+        if (exists(param)) {
+            return {value: value, type: DOLPHIN_BEAN};
+        }
+        throw "Only managed Dolphin Beans can be used";
+    }
+    return { value: param, type: BASIC_TYPE };
 };
 
 
