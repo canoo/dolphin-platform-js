@@ -1,0 +1,18 @@
+{
+  "name": "dolphin-platform-client",
+  "version": "0.1.0",
+  "main": "./dist/dolphin.min.js",
+  "ignore": [
+    "**/.*",
+    "lib",
+    "src",
+    "test",
+    "gulpfile.js",
+    "package.json"
+  ],
+  "dependencies": {
+    "opendolphin": "./lib/opendolphin/opendolphin-0.11.js",
+    "observe-js": "~0.5.5",
+    "core.js": "~0.8.4"
+  }
+}

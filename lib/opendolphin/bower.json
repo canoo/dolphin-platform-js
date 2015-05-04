@@ -1,0 +1,12 @@
+{
+  "name": "opendolphin",
+  "version": "0.11",
+  "main": "opendolphin-0.11.js",
+  "license": "MIT",
+  "keywords": [
+    "opendolphin",
+    "javascript",
+    "library",
+    "remoting"
+  ]
+}
