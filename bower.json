@@ -11,7 +11,6 @@
     "package.json"
   ],
   "devDependencies": {
-    "opendolphin": "./lib/opendolphin/opendolphin-0.11.js",
     "observe-js": "~0.5.5",
     "core.js": "~0.8.4"
   }
