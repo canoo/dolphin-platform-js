@@ -25,10 +25,14 @@ var DOLPHIN_LIST_SET_FROM_CLIENT = '@@@ LIST_SET_FROM_CLIENT @@@';
 
 function Dolphin(url, config) {
     var _this = this;
+    var observeInterval = 50;
     this.dolphin = opendolphin.dolphin(url, true, 4);
     if (exists(config)) {
         if (config.serverPush) {
             this.dolphin.startPushListening('ServerPushController:longPoll', 'ServerPushController:release');
+        }
+        if (config.observeInterval) {
+            observeInterval = config.observeInterval;
         }
     }
     this.classRepository = new ClassRepository();
@@ -36,6 +40,7 @@ function Dolphin(url, config) {
     this.removedHandlers = new Map();
     this.allAddedHandlers = [];
     this.allRemovedHandlers = [];
+    setInterval(Platform.performMicrotaskCheckpoint, observeInterval);
 
     function onModelAdded(model) {
         var type = model.presentationModelType;
