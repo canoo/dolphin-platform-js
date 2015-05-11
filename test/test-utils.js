@@ -32,4 +32,8 @@ describe('utils.exists()', function() {
     it('array', function() {
         expect(exists([])).to.be.true;
     });
+
+    it('function', function() {
+        expect(exists(function() {})).to.be.true;
+    });
 });

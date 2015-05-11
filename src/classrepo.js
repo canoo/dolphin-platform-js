@@ -182,15 +182,25 @@ ClassRepository.prototype.setListEntry = function(model) {
 
 
 ClassRepository.prototype.mapParamToDolphin = function(param) {
-    if (typeof param === 'object') {
+    if (!exists(param)) {
+        return {value: param, type: UNKNOWN};
+    }
+    var type = typeof param;
+    if (type === 'object') {
         var value = this.beanToDolphin.get(param);
-        if (exists(param)) {
+        if (exists(value)) {
             return {value: value, type: DOLPHIN_BEAN};
         }
-        throw "Only managed Dolphin Beans can be used";
+        throw new TypeError("Only managed Dolphin Beans can be used");
     }
-    return { value: param, type: BASIC_TYPE };
+    if (type === 'string' || type === 'number' || type === 'boolean') {
+        return {value: param, type: BASIC_TYPE};
+    }
+    throw new TypeError("Only managed Dolphin Beans and primitive types can be used");
 };
 
 
 exports.ClassRepository = ClassRepository;
+exports.UNKNOWN = UNKNOWN;
+exports.BASIC_TYPE = BASIC_TYPE;
+exports.DOLPHIN_BEAN = DOLPHIN_BEAN;
