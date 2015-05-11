@@ -121,42 +121,49 @@ function Dolphin(url, config) {
 
 
 Dolphin.prototype.isManaged = function(bean) {
-    throw "Not implemented yet";
+    // TODO: Implement dolphin.isManaged() [DP-7]
+    throw new Error("Not implemented yet");
 };
 
 
 Dolphin.prototype.create = function(type) {
-    throw "Not implemented yet";
+    // TODO: Implement dolphin.create() [DP-7]
+    throw new Error("Not implemented yet");
 };
 
 
 Dolphin.prototype.add = function(type, bean) {
-    throw "Not implemented yet";
+    // TODO: Implement dolphin.add() [DP-7]
+    throw new Error("Not implemented yet");
 };
 
 
 Dolphin.prototype.addAll = function(type, collection) {
-    throw "Not implemented yet";
+    // TODO: Implement dolphin.addAll() [DP-7]
+    throw new Error("Not implemented yet");
 };
 
 
 Dolphin.prototype.remove = function(bean) {
-    throw "Not implemented yet";
+    // TODO: Implement dolphin.remove() [DP-7]
+    throw new Error("Not implemented yet");
 };
 
 
 Dolphin.prototype.removeAll = function(collection) {
-    throw "Not implemented yet";
+    // TODO: Implement dolphin.removeAll() [DP-7]
+    throw new Error("Not implemented yet");
 };
 
 
 Dolphin.prototype.removeIf = function(predicate) {
-    throw "Not implemented yet";
+    // TODO: Implement dolphin.removeIf() [DP-7]
+    throw new Error("Not implemented yet");
 };
 
 
 Dolphin.prototype.onAdded = function(type, eventHandler) {
-    // TODO: Probably safer to use copy-on-write here
+    // TODO: Probably safer to use copy-on-write here [DP-6]
     if (!exists(eventHandler)) {
         this.allAddedHandlers.push(type);
     } else {
@@ -168,13 +175,13 @@ Dolphin.prototype.onAdded = function(type, eventHandler) {
         handlerList.push(eventHandler);
     }
 
-    // TODO: Return subscription
+    // TODO: Return subscription [DP-6]
     return null;
 };
 
 
 Dolphin.prototype.onRemoved = function(type, eventHandler) {
-    // TODO: Probably safer to use copy-on-write here
+    // TODO: Probably safer to use copy-on-write here [DP-6]
     if (!exists(eventHandler)) {
         this.allRemovedHandlers.push(type);
     } else {
@@ -186,7 +193,7 @@ Dolphin.prototype.onRemoved = function(type, eventHandler) {
         handlerList.push(eventHandler);
     }
 
-    // TODO: Return subscription
+    // TODO: Return subscription [DP-6]
     return null;
 };
 
@@ -205,6 +212,6 @@ Dolphin.prototype.send = function(command, params) {
     }
     this.dolphin.send(command);
 
-    // TODO: Return promise
+    // TODO: Return promise [DP-8]
     return null;
 };
