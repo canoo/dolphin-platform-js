@@ -27,7 +27,11 @@ function modifyList(bean, attribute, from, count, newElements) {
     } else if (!Array.isArray(list)) {
         bean[attribute] = list = [list];
     }
-    list.splice(from, count, newElements);
+    if (typeof newElements === 'undefined') {
+        list.splice(from, count);
+    } else {
+        list.splice(from, count, newElements);
+    }
 }
 
 
@@ -68,6 +72,7 @@ ClassRepository.prototype.load = function (model) {
     model.attributes.filter(function (attribute) {
         return attribute.tag === opendolphin.Tag.value();
     }).forEach(function (attribute) {
+        bean[attribute.propertyName] = null;
         attribute.onValueChange(function (event) {
             if (event.oldValue !== event.newValue) {
                 bean[attribute.propertyName] = fromDolphin(_this, classInfo[attribute.propertyName], event.newValue);
@@ -135,10 +140,10 @@ ClassRepository.prototype.addListEntry = function(model) {
 
 
 ClassRepository.prototype.delListEntry = function(model) {
-    var source = model.findAttributeByPropertyName('source').value;
-    var attribute = model.findAttributeByPropertyName('attribute').value;
-    var from = model.findAttributeByPropertyName('from').value;
-    var to = model.findAttributeByPropertyName('to').value;
+    var source = model.findAttributeByPropertyName('source');
+    var attribute = model.findAttributeByPropertyName('attribute');
+    var from = model.findAttributeByPropertyName('from');
+    var to = model.findAttributeByPropertyName('to');
 
     if (exists(source) && exists(attribute) && exists(from) && exists(to)) {
         var bean = this.beanFromDolphin.get(source.value);

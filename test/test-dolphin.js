@@ -1,6 +1,5 @@
 "use strict";
 
-var expect = require('chai').expect;
 var sinon = require('sinon');
 
 var connect = require('../src/dolphin.js').connect;
