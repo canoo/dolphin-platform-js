@@ -1,5 +1,5 @@
 /*jslint browserify: true */
-/* global opendolphin, console, Map */
+/* global opendolphin, Map */
 "use strict";
 
 require('./polyfills.js');
@@ -9,7 +9,6 @@ var ClassRepository = require('./classrepo.js').ClassRepository;
 
 
 exports.connect = function(url, config) {
-    console.debug('Connecting to Dolphin... [' + url + ']');
     return new Dolphin(url, config);
 };
 
@@ -91,9 +90,7 @@ function Dolphin(url, config) {
                 break;
             default:
                 var bean = _this.classRepository.unload(model);
-                if (!exists(bean)) {
-                    console.warn('Attempt to remove unknown bean', model);
-                } else {
+                if (exists(bean)) {
                     var handlerList = _this.removedHandlers.get(type);
                     if (exists(handlerList)) {
                         handlerList.forEach(function(handler) {

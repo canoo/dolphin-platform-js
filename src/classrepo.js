@@ -1,5 +1,5 @@
 /*jslint browserify: true */
-/* global opendolphin, console, ObjectObserver */
+/* global opendolphin, ObjectObserver */
 "use strict";
 
 require('./polyfills.js');
@@ -43,7 +43,6 @@ ClassRepository.prototype.registerClass = function (model) {
     if (this.classes.has(model.id)) {
         return;
     }
-    console.debug('ClassRepository.registerClass', model);
 
     var classInfo = {};
     model.attributes.forEach(function (attribute) {
@@ -58,13 +57,11 @@ ClassRepository.prototype.registerClass = function (model) {
 
 
 ClassRepository.prototype.unregisterClass = function (model) {
-    console.debug('ClassRepository.unregisterClass', model);
     this.classes['delete'](model.id);
 };
 
 
 ClassRepository.prototype.load = function (model) {
-    console.debug('ClassRepository.load():', model);
     var _this = this;
     var classInfo = this.classes.get(model.presentationModelType);
     var bean = {};
@@ -108,7 +105,6 @@ ClassRepository.prototype.load = function (model) {
 
 
 ClassRepository.prototype.unload = function(model) {
-    console.debug('ClassRepository.unload():', model);
     var bean = this.beanFromDolphin.get(model.id);
     this.beanFromDolphin['delete'](model.id);
     this.beanToDolphin['delete'](bean);
@@ -118,7 +114,6 @@ ClassRepository.prototype.unload = function(model) {
 
 
 ClassRepository.prototype.addListEntry = function(model) {
-    console.debug('ClassRepository.addListEntry', model);
     var source = model.findAttributeByPropertyName('source');
     var attribute = model.findAttributeByPropertyName('attribute');
     var pos = model.findAttributeByPropertyName('pos');
@@ -131,16 +126,15 @@ ClassRepository.prototype.addListEntry = function(model) {
             var entry = fromDolphin(this, classInfo[attribute.value], element.value);
             modifyList(bean, attribute.value, pos.value, 0, entry);
         } else {
-            console.error("Invalid list modification update received. Source bean unknown.", model);
+            throw new Error("Invalid list modification update received. Source bean unknown.");
         }
     } else {
-        console.error("Invalid list modification update received", model);
+        throw new Error("Invalid list modification update received");
     }
 };
 
 
 ClassRepository.prototype.delListEntry = function(model) {
-    console.debug('ClassRepository.delListEntry', model);
     var source = model.findAttributeByPropertyName('source').value;
     var attribute = model.findAttributeByPropertyName('attribute').value;
     var from = model.findAttributeByPropertyName('from').value;
@@ -151,16 +145,15 @@ ClassRepository.prototype.delListEntry = function(model) {
         if (exists(bean)) {
             modifyList(bean, attribute.value, from.value, to.value - from.value);
         } else {
-            console.error("Invalid list modification update received. Source bean unknown.", model);
+            throw new Error("Invalid list modification update received. Source bean unknown.");
         }
     } else {
-        console.error("Invalid list modification update received", model);
+        throw new Error("Invalid list modification update received");
     }
 };
 
 
 ClassRepository.prototype.setListEntry = function(model) {
-    console.debug('ClassRepository.setListEntry', model);
     var source = model.findAttributeByPropertyName('source');
     var attribute = model.findAttributeByPropertyName('attribute');
     var pos = model.findAttributeByPropertyName('pos');
@@ -173,10 +166,10 @@ ClassRepository.prototype.setListEntry = function(model) {
             var entry = fromDolphin(this, classInfo[attribute.value], element.value);
             modifyList(bean, attribute.value, pos.value, 1, entry);
         } else {
-            console.error("Invalid list modification update received. Source bean unknown.", model);
+            throw new Error("Invalid list modification update received. Source bean unknown.");
         }
     }else {
-        console.error("Invalid list modification update received", model);
+        throw new Error("Invalid list modification update received");
     }
 };
 
