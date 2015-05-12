@@ -96,10 +96,14 @@ function onModelRemoved(dolphin, model) {
 
 function Dolphin(url, config) {
     var _this = this;
+    var observeInterval = 50;
     this.dolphin = opendolphin.dolphin(url, true, 4);
     if (exists(config)) {
         if (config.serverPush) {
             this.dolphin.startPushListening('ServerPushController:longPoll', 'ServerPushController:release');
+        }
+        if (config.observeInterval) {
+            observeInterval = config.observeInterval;
         }
     }
     this.classRepository = new ClassRepository();
@@ -107,6 +111,7 @@ function Dolphin(url, config) {
     this.removedHandlers = new Map();
     this.allAddedHandlers = [];
     this.allRemovedHandlers = [];
+    setInterval(Platform.performMicrotaskCheckpoint, observeInterval);
 
     this.dolphin.getClientModelStore().onModelStoreChange(function (event) {
         var model = event.clientPresentationModel;
