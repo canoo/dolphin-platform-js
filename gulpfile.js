@@ -1,6 +1,7 @@
 "use strict";
 
 var browserify = require('browserify');
+var shim = require('browserify-shim');
 var del = require('del');
 var gulp = require('gulp');
 var jshint = require('gulp-jshint');
@@ -54,7 +55,7 @@ gulp.task('build', function() {
             .pipe(buffer())
             .pipe(rename({extname: '.min.js'}))
             .pipe(sourcemaps.init({loadMaps: true}))
-            .pipe(uglify())
+            //.pipe(uglify())
             .pipe(sourcemaps.write('./'))
             .pipe(gulp.dest('./dist'));
     }

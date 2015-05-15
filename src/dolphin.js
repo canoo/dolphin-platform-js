@@ -1,8 +1,10 @@
 /*jslint browserify: true */
-/* global opendolphin, Map */
+/* global Platform */
 "use strict";
 
 require('./polyfills.js');
+var opendolphin = require('opendolphin');
+var Map  = require('../bower_components/core.js/library/fn/map');
 
 var exists = require('./utils.js').exists;
 var ClassRepository = require('./classrepo.js').ClassRepository;
@@ -111,7 +113,7 @@ function Dolphin(url, config) {
     this.removedHandlers = new Map();
     this.allAddedHandlers = [];
     this.allRemovedHandlers = [];
-    setInterval(Platform.performMicrotaskCheckpoint, observeInterval);
+    setInterval(function() {Platform.performMicrotaskCheckpoint()}, observeInterval);
 
     this.dolphin.getClientModelStore().onModelStoreChange(function (event) {
         var model = event.clientPresentationModel;

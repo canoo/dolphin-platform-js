@@ -10,6 +10,7 @@
   "license": "ALv2",
   "devDependencies": {
     "browserify": "^9.0.8",
+    "browserify-shim": "^3.8.6",
     "chai": "^2.2.0",
     "del": "^1.1.1",
     "gulp": "^3.8.11",
@@ -21,11 +22,20 @@
     "gulp-util": "^3.0.4",
     "lodash.assign": "^3.1.0",
     "mocha": "^2.2.4",
+    "proxyquire": "^1.4.0",
     "requirejs": "^2.1.17",
     "sinon": "^1.14.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "^3.1.2"
   },
-  "dependencies": {}
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "opendolphin": "global:opendolphin",
+    "ObjectObserver": "global:ObjectObserver"
+  }
 }

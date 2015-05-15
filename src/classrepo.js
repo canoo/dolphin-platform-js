@@ -1,9 +1,9 @@
 /*jslint browserify: true */
-/* global opendolphin, ObjectObserver */
 "use strict";
 
 require('./polyfills.js');
-require('../bower_components/observe-js/src/observe.js');
+var opendolphin = require('opendolphin');
+var ObjectObserver = require('ObjectObserver');
 var Map  = require('../bower_components/core.js/library/fn/map');
 
 var exists = require('./utils.js').exists;
