@@ -37,34 +37,35 @@ gulp.task('integration-test', ['build'], function() {
 
 gulp.task('test', ['lint', 'unit-test', 'integration-test']);
 
+var bundler = watchify(browserify(assign({}, watchify.args, {
+    entries: './src/dolphin.js',
+    standalone: 'dolphin',
+    debug: true
+})));
+
+function rebundle() {
+    return bundler
+        .bundle()
+        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+        .pipe(source('dolphin.js'))
+        .pipe(buffer())
+        .pipe(rename({extname: '.min.js'}))
+        .pipe(sourcemaps.init({loadMaps: true}))
+        //.pipe(uglify())
+        .pipe(sourcemaps.write('./'))
+        .pipe(gulp.dest('./dist'));
+}
+
 gulp.task('build', function() {
-
-    var bundler = watchify(browserify(assign({}, watchify.args, {
-        entries: './src/dolphin.js',
-        standalone: 'dolphin',
-        debug: true
-    })));
-
-    bundler.on('update', rebundle);
-
-    function rebundle() {
-        return bundler
-            .bundle()
-            .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-            .pipe(source('dolphin.js'))
-            .pipe(buffer())
-            .pipe(rename({extname: '.min.js'}))
-            .pipe(sourcemaps.init({loadMaps: true}))
-            //.pipe(uglify())
-            .pipe(sourcemaps.write('./'))
-            .pipe(gulp.dest('./dist'));
-    }
-
     return rebundle();
 });
 
 gulp.task('watch', function() {
     gulp.watch(['src/**', 'test/**'], ['test']);
+
+    bundler.on('update', rebundle);
 });
+
+gulp.task('ci', ['test', 'build']);
 
 gulp.task('default', ['test', 'build', 'watch']);
