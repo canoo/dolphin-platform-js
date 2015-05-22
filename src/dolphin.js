@@ -113,7 +113,9 @@ function Dolphin(url, config) {
     this.removedHandlers = new Map();
     this.allAddedHandlers = [];
     this.allRemovedHandlers = [];
-    setInterval(function() {Platform.performMicrotaskCheckpoint()}, observeInterval);
+    setInterval(function() {
+        Platform.performMicrotaskCheckpoint();
+    }, observeInterval);
 
     this.dolphin.getClientModelStore().onModelStoreChange(function (event) {
         var model = event.clientPresentationModel;

@@ -37,13 +37,13 @@ gulp.task('integration-test', ['build'], function() {
 
 gulp.task('test', ['lint', 'unit-test', 'integration-test']);
 
-var bundler = watchify(browserify(assign({}, watchify.args, {
+var bundler = browserify(assign({}, watchify.args, {
     entries: './src/dolphin.js',
     standalone: 'dolphin',
     debug: true
-})));
+}));
 
-function rebundle() {
+function rebundle(bundler) {
     return bundler
         .bundle()
         .on('error', gutil.log.bind(gutil, 'Browserify Error'))
@@ -57,13 +57,15 @@ function rebundle() {
 }
 
 gulp.task('build', function() {
-    return rebundle();
+    return rebundle(bundler);
 });
 
 gulp.task('watch', function() {
     gulp.watch(['src/**', 'test/**'], ['test']);
 
-    bundler.on('update', rebundle);
+    var watchedBundle = watchify(bundler);
+
+    bundler.on('update', function() {rebundle(watchedBundle)});
 });
 
 gulp.task('ci', ['test', 'build']);
