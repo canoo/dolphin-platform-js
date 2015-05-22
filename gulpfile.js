@@ -11,6 +11,7 @@ var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
 var assign = require('lodash.assign');
+var merge = require('merge-stream');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
@@ -27,12 +28,12 @@ gulp.task('lint', function() {
 
 gulp.task('unit-test', function() {
     return gulp.src(['test/**/test-*.js', '!test/integration/**/test-*.js'], { read: false })
-        .pipe(mocha({reporter: 'spec'}));
+        .pipe(mocha({reporter: 'Min'}));
 });
 
 gulp.task('integration-test', ['build'], function() {
     return gulp.src(['test/integration/**/test-*.js'], { read: false })
-        .pipe(mocha({reporter: 'spec'}));
+        .pipe(mocha({reporter: 'Min'}));
 });
 
 gulp.task('test', ['lint', 'unit-test', 'integration-test']);
@@ -68,6 +69,14 @@ gulp.task('watch', function() {
     bundler.on('update', function() {rebundle(watchedBundle)});
 });
 
-gulp.task('ci', ['test', 'build']);
+gulp.task('ci', ['build'], function() {
+    return merge(
+        gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
+            .pipe(jshint())
+            .pipe(jshint.reporter('jshint-teamcity')),
+        gulp.src(['test/**/test-*.js'], { read: false })
+            .pipe(mocha({reporter: 'mocha-teamcity-reporter'}))
+    );
+});
 
 gulp.task('default', ['test', 'build', 'watch']);
