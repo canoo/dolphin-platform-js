@@ -113,9 +113,19 @@ function Dolphin(url, config) {
     this.removedHandlers = new Map();
     this.allAddedHandlers = [];
     this.allRemovedHandlers = [];
-    setInterval(function() {
-        Platform.performMicrotaskCheckpoint();
-    }, observeInterval);
+
+    var shutdownRequested = false;
+    (function loop(){
+        setTimeout(function(){
+            Platform.performMicrotaskCheckpoint();
+            if (!shutdownRequested) {
+                loop();
+            }
+        }, observeInterval);
+    })();
+    this.shutdown = function() {
+        shutdownRequested = true;
+    };
 
     this.dolphin.getClientModelStore().onModelStoreChange(function (event) {
         var model = event.clientPresentationModel;

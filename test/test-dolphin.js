@@ -36,6 +36,10 @@ describe('Dolphin Message Distribution', function() {
         }
     });
 
+    afterEach(function() {
+        dolphin.shutdown();
+    });
+
 
 
     it('should call registerClass()', sinon.test(function() {
@@ -140,6 +144,10 @@ describe('Dolphin Event Handling', function() {
         if (typeof onModelStoreChange !== 'function') {
             throw new Error('Initialisation of opendolphin failed');
         }
+    });
+
+    afterEach(function() {
+        dolphin.shutdown();
     });
 
 
@@ -255,6 +263,10 @@ describe('Dolphin Command', function() {
 
         var connect = dolphinjs.connect;
         dolphin = connect("http://localhost");
+    });
+
+    afterEach(function() {
+        dolphin.shutdown();
     });
 
 
