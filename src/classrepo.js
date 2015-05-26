@@ -95,25 +95,10 @@ ClassRepository.prototype.load = function (model) {
             }
         });
         Object.keys(changed).forEach(function (property) {
-
-            console.log("I");
-
             var attribute = model.findAttributeByPropertyName(property);
-
-            console.log("II");
-
             if (exists(attribute)) {
-
-                console.log("III");
-
                 var value = toDolphin(_this, classInfo[property], changed[property]);
-
-                console.log("IV");
-
                 attribute.setValue(value);
-
-                console.log("V");
-
             }
         });
     });
