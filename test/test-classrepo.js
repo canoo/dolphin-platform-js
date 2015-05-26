@@ -17,7 +17,6 @@ describe('ClassRepository primitive properties', function() {
     var opendolphin = null;
     var classRepo = null;
     var classModel = null;
-    var shutdownRequested = false;
 
     beforeEach(function() {
         opendolphin = {
@@ -37,25 +36,8 @@ describe('ClassRepository primitive properties', function() {
             ]
         };
         classRepo.registerClass(classModel);
-
-        shutdownRequested = false;
-        (function loop(){
-            setTimeout(function(){
-                Platform.performMicrotaskCheckpoint();
-                if (!shutdownRequested) {
-                    loop();
-                }
-            }, 50);
-        })();
-
     });
 
-    afterEach(function() {
-
-        console.log("D");
-
-        shutdownRequested = true;
-    });
 
 
     it('should initialize', sinon.test(function() {
@@ -119,46 +101,23 @@ describe('ClassRepository primitive properties', function() {
     }));
 
     it('boolean can be set from user', sinon.test(function(done) {
-
-        console.log(1);
-
         var attribute =  {
             propertyName: 'booleanProperty',
             tag: opendolphin.Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
-
-                console.log("A");
-
                 expect(newValue).to.be.true;
-
-                console.log("B");
-
                 done();
-
-                console.log("C");
-
             }
         };
-
-        console.log(2);
-
         var beanModel = {
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('booleanProperty').returns(attribute)
         };
-
-        console.log(3);
-
         var bean = classRepo.load(beanModel);
-
-        console.log(4);
-
         bean.booleanProperty = true;
-
-        console.log(5);
-
+        Platform.performMicrotaskCheckpoint();
     }));
 
     it('float can be set from user', sinon.test(function(done) {
@@ -178,6 +137,7 @@ describe('ClassRepository primitive properties', function() {
         };
         var bean = classRepo.load(beanModel);
         bean.floatProperty = 2.7182;
+        Platform.performMicrotaskCheckpoint();
     }));
 
     it('integer can be set from user', sinon.test(function(done) {
@@ -197,6 +157,7 @@ describe('ClassRepository primitive properties', function() {
         };
         var bean = classRepo.load(beanModel);
         bean.integerProperty = 4711;
+        Platform.performMicrotaskCheckpoint();
     }));
 
     it('string can be set from user', sinon.test(function(done) {
@@ -216,6 +177,7 @@ describe('ClassRepository primitive properties', function() {
         };
         var bean = classRepo.load(beanModel);
         bean.stringProperty = "Good Bye!";
+        Platform.performMicrotaskCheckpoint();
     }));
 });
 
@@ -227,7 +189,6 @@ describe('ClassRepository Dolphin Bean properties', function() {
     var bean1 = null;
     var bean2 = null;
     var complexClassModel = null;
-    var shutdownRequested = false;
 
     beforeEach(function() {
         opendolphin = {
@@ -268,21 +229,6 @@ describe('ClassRepository Dolphin Bean properties', function() {
             ]
         };
         bean2 = classRepo.load(bean2Model);
-
-        shutdownRequested = false;
-        (function loop(){
-            setTimeout(function(){
-                Platform.performMicrotaskCheckpoint();
-                if (!shutdownRequested) {
-                    loop();
-                }
-            }, 50);
-        })();
-
-    });
-
-    afterEach(function() {
-        shutdownRequested = true;
     });
 
 
@@ -337,6 +283,7 @@ describe('ClassRepository Dolphin Bean properties', function() {
         };
         var bean = classRepo.load(beanModel);
         bean.reference = bean2;
+        Platform.performMicrotaskCheckpoint();
     }));
 
 });
