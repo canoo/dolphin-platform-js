@@ -15,7 +15,6 @@ describe('List Sync primitives from OpenDolphin', function() {
 
     var classRepo = null;
     var bean = null;
-    var shutdownRequested = false;
 
     beforeEach(function() {
         var opendolphin = {
@@ -43,22 +42,8 @@ describe('List Sync primitives from OpenDolphin', function() {
             findAttributeByPropertyName: function() {}
         };
         bean = classRepo.load(sourceModel);
-
-        shutdownRequested = false;
-        (function loop(){
-            setTimeout(function(){
-                Platform.performMicrotaskCheckpoint();
-                if (!shutdownRequested) {
-                    loop();
-                }
-            }, 50);
-        })();
-
     });
 
-    afterEach(function() {
-        shutdownRequested = true;
-    });
 
 
     it('should add entries', sinon.test(function() {
@@ -156,7 +141,6 @@ describe('List Sync reference lists from OpenDolphin', function() {
     var bean1 = null;
     var bean2 = null;
     var bean3 = null;
-    var shutdownRequested = false;
 
     beforeEach(function() {
         opendolphin = {
@@ -216,22 +200,8 @@ describe('List Sync reference lists from OpenDolphin', function() {
             ]
         };
         bean3 = classRepo.load(bean3Model);
-
-        shutdownRequested = false;
-        (function loop(){
-            setTimeout(function(){
-                Platform.performMicrotaskCheckpoint();
-                if (!shutdownRequested) {
-                    loop();
-                }
-            }, 50);
-        })();
-
     });
 
-    afterEach(function() {
-        shutdownRequested = true;
-    });
 
 
     it('should add entries', sinon.test(function() {
