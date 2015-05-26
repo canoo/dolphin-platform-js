@@ -51,9 +51,6 @@ describe('ClassRepository primitive properties', function() {
     });
 
     afterEach(function() {
-
-        console.log("D");
-
         shutdownRequested = true;
     });
 
@@ -119,46 +116,22 @@ describe('ClassRepository primitive properties', function() {
     }));
 
     it('boolean can be set from user', sinon.test(function(done) {
-
-        console.log(1);
-
         var attribute =  {
             propertyName: 'booleanProperty',
             tag: opendolphin.Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
-
-                console.log("A");
-
                 expect(newValue).to.be.true;
-
-                console.log("B");
-
                 done();
-
-                console.log("C");
-
             }
         };
-
-        console.log(2);
-
         var beanModel = {
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('booleanProperty').returns(attribute)
         };
-
-        console.log(3);
-
         var bean = classRepo.load(beanModel);
-
-        console.log(4);
-
         bean.booleanProperty = true;
-
-        console.log(5);
-
     }));
 
     it('float can be set from user', sinon.test(function(done) {
