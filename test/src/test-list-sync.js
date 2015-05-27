@@ -8,7 +8,7 @@ var UNKNOWN      = 0;
 var BASIC_TYPE   = 1;
 var DOLPHIN_BEAN = 2;
 
-global.ObjectObserver = require('../bower_components/observe-js/src/observe.js').ObjectObserver;
+global.ObjectObserver = require('../../bower_components/observe-js/src/observe.js').ObjectObserver;
 
 
 describe('List Sync primitives from OpenDolphin', function() {

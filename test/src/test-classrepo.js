@@ -8,7 +8,7 @@ var UNKNOWN      = 0;
 var BASIC_TYPE   = 1;
 var DOLPHIN_BEAN = 2;
 
-var ObjectObserver = require('../bower_components/observe-js/src/observe.js').ObjectObserver;
+var ObjectObserver = require('../../bower_components/observe-js/src/observe.js').ObjectObserver;
 ObjectObserver['@noCallThru'] = true;
 
 
