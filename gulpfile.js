@@ -29,28 +29,28 @@ gulp.task('lint', function() {
 
 
 //// TODO: Test other files
-//var testBundler = browserify(assign({}, watchify.args, {
-//    entries: glob.sync('./test/src/**/test-utils.js'),
-//    debug: true
-//}));
-//
-//function rebundleTest(bundler) {
-//    return bundler
-//        .bundle()
-//        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-//        .pipe(source('test-bundle.js'))
-//        .pipe(gulp.dest('./test/build'))
-//}
-//
-//gulp.task('build-test', function() {
-//    return rebundleTest(testBundler);
-//});
+var testBundler = browserify(assign({}, watchify.args, {
+    entries: glob.sync('./test/src/**/test-dolphin.js'),
+    debug: true
+}));
+
+function rebundleTest(bundler) {
+    return bundler
+        .bundle()
+        .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+        .pipe(source('test-bundle.js'))
+        .pipe(gulp.dest('./test/build'))
+}
+
+gulp.task('build-test', function() {
+    return rebundleTest(testBundler);
+});
 
 //gulp.task('test', ['build-test'], function () {
 //    return gulp.src('test/runner.html')
 //        .pipe(mochaPhantomJS({reporter: 'min'}));
 //});
-gulp.task('test', function() {
+gulp.task('test', ['build-test'], function() {
     // Be sure to return the stream
     return gulp.src([])
         .pipe(karma({

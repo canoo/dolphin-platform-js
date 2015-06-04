@@ -10,14 +10,14 @@ module.exports = function (config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['browserify', 'mocha'],
+        frameworks: ['mocha'],
 
 
         // list of files / patterns to load in the browser
         files: [
             './lib/opendolphin/opendolphin-0.11.js',
             './bower_components/observe-js/src/observe.js',
-            './test/src/**/test-dolphin.js'
+            './test/build/**/test-*.js'
         ],
 
 
@@ -28,7 +28,6 @@ module.exports = function (config) {
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
         preprocessors: {
-            './test/src/**/test-dolphin.js': ['browserify']
         },
 
 
@@ -57,15 +56,12 @@ module.exports = function (config) {
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-        browsers: ['PhantomJS'],
+        browsers: ['PhantomJS']
 
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         //singleRun: true,
 
-        browserify: {
-            debug: true
-        }
     });
 };
