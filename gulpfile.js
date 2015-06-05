@@ -45,10 +45,6 @@ gulp.task('build-test', function() {
     return rebundleTest(testBundler);
 });
 
-//gulp.task('test', ['build-test'], function () {
-//    return gulp.src('test/runner.html')
-//        .pipe(mochaPhantomJS({reporter: 'min'}));
-//});
 gulp.task('test', ['build-test'], function() {
     // Be sure to return the stream
     return gulp.src([])
@@ -106,13 +102,19 @@ gulp.task('default', ['test', 'build', 'watch']);
 
 
 
-// TODO: Do CI setup
 gulp.task('ci', ['build', 'build-test'], function() {
     return merge(
         gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
             .pipe(jshint())
             .pipe(jshint.reporter('jshint-teamcity')),
-        gulp.src('test/runner.html')
-            .pipe(mochaPhantomJS({reporter: 'mocha-teamcity-reporter'}))
+        gulp.src([])
+            .pipe(karma({
+                configFile: 'karma.conf.js',
+                reporters: 'teamcity',
+                action: 'run'
+            }))
+            .on('error', function(err) {
+                throw err;
+            })
     );
 });
