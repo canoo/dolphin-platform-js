@@ -1,8 +1,8 @@
 /*jslint browserify: true */
+/* global Platform, opendolphin, console */
 "use strict";
 
 require('./polyfills.js');
-var opendolphin = require('opendolphin');
 var ObjectObserver = require('ObjectObserver');
 var Map  = require('../bower_components/core.js/library/fn/map');
 

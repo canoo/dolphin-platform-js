@@ -3,7 +3,7 @@
 var sinon = require('sinon');
 var connect = require('../../src/dolphin.js').connect;
 
-describe('Dolphin Message Distribution', sinon.test(function() {
+describe('Dolphin Message Distribution', function() {
 
     var onModelStoreChange = null;
     var dolphin = null;
@@ -13,20 +13,20 @@ describe('Dolphin Message Distribution', sinon.test(function() {
         deletePresentationModel: function() {}
     };
 
-    this.stub(opendolphin, "dolphin").returns(
-        {
-            getClientModelStore: function() {
-                return clientModelStore;
-            }
-        }
-    );
 
-    beforeEach(function() {
+    beforeEach(sinon.test(function() {
+        this.stub(opendolphin, "dolphin").returns(
+            {
+                getClientModelStore: function() {
+                    return clientModelStore;
+                }
+            }
+        );
         dolphin = connect("http://localhost");
         if (typeof onModelStoreChange !== 'function') {
             throw new Error('Initialisation of opendolphin failed');
         }
-    });
+    }));
 
     afterEach(function() {
         dolphin.shutdown();
@@ -108,7 +108,7 @@ describe('Dolphin Message Distribution', sinon.test(function() {
         sinon.assert.calledWith(dolphin.classRepository.setListEntry, model);
         sinon.assert.calledWith(clientModelStore.deletePresentationModel, model);
     }));
-}));
+});
 
 
 
