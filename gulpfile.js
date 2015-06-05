@@ -28,9 +28,8 @@ gulp.task('lint', function() {
 });
 
 
-//// TODO: Test other files
 var testBundler = browserify(assign({}, watchify.args, {
-    entries: glob.sync('./test/src/**/test-classrepo.js'),
+    entries: glob.sync('./test/src/**/test-*.js'),
     debug: true
 }));
 

@@ -33,8 +33,6 @@
     "mocha": "^2.2.4",
     "mocha-teamcity-reporter": "0.0.4",
     "phantomjs": "^1.9.17",
-    "proxyquire": "^1.5.0",
-    "proxyquireify": "^2.1.0",
     "requirejs": "^2.1.17",
     "sinon": "^1.14.1",
     "vinyl-buffer": "^1.0.0",
