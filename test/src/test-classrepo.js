@@ -2,30 +2,21 @@
 
 var expect = require('chai').expect;
 var sinon = require('sinon');
-var proxyquire = require('proxyquire');
 
 var UNKNOWN      = 0;
 var BASIC_TYPE   = 1;
 var DOLPHIN_BEAN = 2;
 
-var ObjectObserver = require('../bower_components/observe-js/src/observe.js').ObjectObserver;
-ObjectObserver['@noCallThru'] = true;
+var ClassRepository = require('../../src/classrepo.js').ClassRepository;
 
 
 describe('ClassRepository primitive properties', function() {
 
-    var opendolphin = null;
     var classRepo = null;
     var classModel = null;
 
     beforeEach(function() {
-        opendolphin = {
-            Tag: { value: function() { return 'VALUE'} },
-            '@noCallThru': true
-        };
-
-        var classrepojs = proxyquire('../src/classrepo.js', { 'opendolphin': opendolphin, 'ObjectObserver': ObjectObserver });
-        classRepo = new classrepojs.ClassRepository();
+        classRepo = new ClassRepository();
         classModel = {
             id: 'ComplexClass',
             attributes: [
@@ -184,20 +175,13 @@ describe('ClassRepository primitive properties', function() {
 
 describe('ClassRepository Dolphin Bean properties', function() {
 
-    var opendolphin = null;
     var classRepo = null;
     var bean1 = null;
     var bean2 = null;
     var complexClassModel = null;
 
     beforeEach(function() {
-        opendolphin = {
-            Tag: { value: function() { return 'VALUE'} },
-            '@noCallThru': true
-        };
-
-        var classrepojs = proxyquire('../src/classrepo.js', { 'opendolphin': opendolphin, 'ObjectObserver': ObjectObserver });
-        classRepo = new classrepojs.ClassRepository();
+        classRepo = new ClassRepository();
 
         var simpleClassModel = {
             id: 'SimpleClass',
@@ -291,69 +275,64 @@ describe('ClassRepository Dolphin Bean properties', function() {
 
 describe('ClassRepository.mapParamToDolphin()', function() {
 
-    var classRepo = null;
-
-    beforeEach(function() {
-        var opendolphin = {
-            Tag: { value: function() { return 'VALUE'} },
-            '@noCallThru': true
-        };
-
-        var classrepojs = proxyquire('../src/classrepo.js', { 'opendolphin': opendolphin, 'ObjectObserver': ObjectObserver });
-        classRepo = new classrepojs.ClassRepository();
-    });
-
-
-
     it('undefined', function() {
+        var classRepo = new ClassRepository();
         var result = classRepo.mapParamToDolphin(undefined);
         expect(result).to.have.property('value', undefined);
         expect(result).to.have.property('type', UNKNOWN);
     });
 
     it('null', function() {
+        var classRepo = new ClassRepository();
         var result = classRepo.mapParamToDolphin(null);
         expect(result).to.have.property('value', null);
         expect(result).to.have.property('type', UNKNOWN);
     });
 
     it('boolean true', function() {
+        var classRepo = new ClassRepository();
         var result = classRepo.mapParamToDolphin(true);
         expect(result).to.have.property('value', true);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('boolean false', function() {
+        var classRepo = new ClassRepository();
         var result = classRepo.mapParamToDolphin(false);
         expect(result).to.have.property('value', false);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('number 0', function() {
+        var classRepo = new ClassRepository();
         var result = classRepo.mapParamToDolphin(0);
         expect(result).to.have.property('value', 0);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('number positive integer', function() {
+        var classRepo = new ClassRepository();
         var result = classRepo.mapParamToDolphin(42);
         expect(result).to.have.property('value', 42);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('number negative float', function() {
+        var classRepo = new ClassRepository();
         var result = classRepo.mapParamToDolphin(-0.1);
         expect(result).to.have.property('value', -0.1);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('string', function() {
+        var classRepo = new ClassRepository();
         var result = classRepo.mapParamToDolphin('42');
         expect(result).to.have.property('value', '42');
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('string (empty)', function() {
+        var classRepo = new ClassRepository();
         var result = classRepo.mapParamToDolphin('');
         expect(result).to.have.property('value', '');
         expect(result).to.have.property('type', BASIC_TYPE);
@@ -364,14 +343,17 @@ describe('ClassRepository.mapParamToDolphin()', function() {
     });
 
     it('arbitrary object', function() {
-        expect(classRepo.mapParamToDolphin.bind(classRepo, {})).to.throw(TypeError);
+        var classRepo = new ClassRepository();
+        expect(function() {classRepo.mapParamToDolphin({})}).to.throw(TypeError);
     });
 
     it('array', function() {
-        expect(classRepo.mapParamToDolphin.bind(classRepo, [])).to.throw(TypeError);
+        var classRepo = new ClassRepository();
+        expect(function() {classRepo.mapParamToDolphin([])}).to.throw(TypeError);
     });
 
     it('function', function() {
-        expect(classRepo.mapParamToDolphin.bind(classRepo, function() {})).to.throw(TypeError);
+        var classRepo = new ClassRepository();
+        expect(function() {classRepo.mapParamToDolphin(function() {})}).to.throw(TypeError);
     });
 });

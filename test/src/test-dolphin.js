@@ -1,40 +1,30 @@
 "use strict";
 
 var sinon = require('sinon');
-var proxyquire = require('proxyquire');
+var connect = require('../../src/dolphin.js').connect;
 
 describe('Dolphin Message Distribution', function() {
 
     var onModelStoreChange = null;
-    var clientModelStore = null;
     var dolphin = null;
 
+    var clientModelStore = {
+        onModelStoreChange: function(cb) { onModelStoreChange = cb; },
+        deletePresentationModel: function() {}
+    };
 
-    beforeEach(function() {
-        clientModelStore = {
-            onModelStoreChange: function(cb) { onModelStoreChange = cb; },
-            deletePresentationModel: function() {}
-        };
-        var opendolphin = { getClientModelStore: function() { return clientModelStore; } };
-        var opendolphinStub = {
-            dolphin: function() { return opendolphin },
-            Type: { ADDED: "ADDED", REMOVED: "REMOVED" },
-            '@noCallThru': true
-        };
 
-        var classrepoStub = {
-            ClassRepository: function () { },
-            '@noCallThru': true
-        };
-
-        var dolphinjs = proxyquire('../src/dolphin.js', { 'opendolphin': opendolphinStub, './classrepo.js': classrepoStub });
-
-        var connect = dolphinjs.connect;
+    beforeEach(sinon.test(function() {
+        this.stub(opendolphin, "dolphin").returns(
+            {
+                getClientModelStore: function() { return clientModelStore; }
+            }
+        );
         dolphin = connect("http://localhost");
         if (typeof onModelStoreChange !== 'function') {
             throw new Error('Initialisation of opendolphin failed');
         }
-    });
+    }));
 
     afterEach(function() {
         dolphin.shutdown();
@@ -125,26 +115,18 @@ describe('Dolphin Event Handling', function() {
     var onModelStoreChange = null;
     var dolphin = null;
 
-    beforeEach(function() {
+    beforeEach(sinon.test(function() {
         var clientModelStore = { onModelStoreChange: function(cb) { onModelStoreChange = cb; } };
-        var opendolphin = { getClientModelStore: function() { return clientModelStore; } };
-        var opendolphinStub = {
-            dolphin: function() { return opendolphin },
-            Type: { ADDED: "ADDED", REMOVED: "REMOVED" },
-            '@noCallThru': true
-        };
-        var classrepoStub = {
-            ClassRepository: function () { },
-            '@noCallThru': true
-        };
-
-        var dolphinjs = proxyquire('../src/dolphin.js', { 'opendolphin': opendolphinStub, './classrepo.js': classrepoStub });
-        var connect = dolphinjs.connect;
+        this.stub(opendolphin, "dolphin").returns(
+            {
+                getClientModelStore: function() { return clientModelStore; }
+            }
+        );
         dolphin = connect("http://localhost");
         if (typeof onModelStoreChange !== 'function') {
             throw new Error('Initialisation of opendolphin failed');
         }
-    });
+    }));
 
     afterEach(function() {
         dolphin.shutdown();
@@ -235,35 +217,19 @@ describe('Dolphin Event Handling', function() {
 describe('Dolphin Command', function() {
 
     var dolphin = null;
-    var opendolphin = null;
+    var clientDolphin = null;
 
-    beforeEach(function() {
-        opendolphin = {
-            getClientModelStore: function() {
-                return {
-                    onModelStoreChange: function() {}
-                };
-            },
+    beforeEach(sinon.test(function() {
+        var clientModelStore = { onModelStoreChange: function(cb) {} };
+        clientDolphin = {
+            getClientModelStore: function() { return clientModelStore; },
             attribute: function() {},
             presentationModel: function() {},
             send: function() {}
         };
-        var opendolphinStub = {
-            dolphin: function() { return opendolphin },
-            Type: { ADDED: "ADDED", REMOVED: "REMOVED" },
-            '@noCallThru': true
-        };
-
-        var classrepoStub = {
-            ClassRepository: function () { },
-            '@noCallThru': true
-        };
-
-        var dolphinjs = proxyquire('../src/dolphin.js', { 'opendolphin': opendolphinStub, './classrepo.js': classrepoStub });
-
-        var connect = dolphinjs.connect;
+        this.stub(opendolphin, "dolphin").returns(clientDolphin);
         dolphin = connect("http://localhost");
-    });
+    }));
 
     afterEach(function() {
         dolphin.shutdown();
@@ -272,27 +238,27 @@ describe('Dolphin Command', function() {
 
 
     it('should send command without parameters', sinon.test(function() {
-        this.spy(opendolphin, 'send');
+        this.spy(clientDolphin, 'send');
 
         dolphin.send("myCommand");
 
-        sinon.assert.calledWith(opendolphin.send, "myCommand");
+        sinon.assert.calledWith(clientDolphin.send, "myCommand");
     }));
 
 
     it('should send command with one named parameter', sinon.test(function() {
         dolphin.classRepository.mapParamToDolphin = this.stub().withArgs(42).returns({value: 42, type: 'number'});
-        var attrFactory = this.stub(opendolphin, 'attribute');
+        var attrFactory = this.stub(clientDolphin, 'attribute');
         var attr1 = {};
         var attr2 = {};
         attrFactory.withArgs('x', null, 42, 'VALUE').returns(attr1);
         attrFactory.withArgs('x', null, 'number', 'VALUE_TYPE').returns(attr2);
-        this.spy(opendolphin, 'presentationModel');
-        this.spy(opendolphin, 'send');
+        this.spy(clientDolphin, 'presentationModel');
+        this.spy(clientDolphin, 'send');
 
         dolphin.send("myCommand", {x: 42});
 
-        sinon.assert.calledWith(opendolphin.presentationModel, null, '@@@ DOLPHIN_PARAMETER @@@', attr1, attr2);
-        sinon.assert.calledWith(opendolphin.send, "myCommand");
+        sinon.assert.calledWith(clientDolphin.presentationModel, null, '@@@ DOLPHIN_PARAMETER @@@', attr1, attr2);
+        sinon.assert.calledWith(clientDolphin.send, "myCommand");
     }));
 });

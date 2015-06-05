@@ -2,13 +2,12 @@
 
 var expect = require('chai').expect;
 var sinon = require('sinon');
-var proxyquire =  require('proxyquire').noPreserveCache();
 
 var UNKNOWN      = 0;
 var BASIC_TYPE   = 1;
 var DOLPHIN_BEAN = 2;
 
-global.ObjectObserver = require('../bower_components/observe-js/src/observe.js').ObjectObserver;
+var ClassRepository = require('../../src/classrepo.js').ClassRepository;
 
 
 describe('List Sync primitives from OpenDolphin', function() {
@@ -17,13 +16,7 @@ describe('List Sync primitives from OpenDolphin', function() {
     var bean = null;
 
     beforeEach(function() {
-        var opendolphin = {
-            Tag: { value: function() { return 'VALUE'} },
-            '@noCallThru': true
-        };
-
-        var classrepojs = proxyquire('../src/classrepo.js', { 'opendolphin': opendolphin, 'ObjectObserver': ObjectObserver });
-        classRepo = new classrepojs.ClassRepository();
+        classRepo = new ClassRepository();
 
         var classModel = {
             id: 'SourceClass',
@@ -135,7 +128,6 @@ describe('List Sync primitives from OpenDolphin', function() {
 
 describe('List Sync reference lists from OpenDolphin', function() {
 
-    var opendolphin;
     var classRepo = null;
     var sourceBean = null;
     var bean1 = null;
@@ -143,13 +135,7 @@ describe('List Sync reference lists from OpenDolphin', function() {
     var bean3 = null;
 
     beforeEach(function() {
-        opendolphin = {
-            Tag: { value: function() { return 'VALUE'} },
-            '@noCallThru': true
-        };
-
-        var classrepojs = proxyquire('../src/classrepo.js', { 'opendolphin': opendolphin, 'ObjectObserver': ObjectObserver });
-        classRepo = new classrepojs.ClassRepository();
+        classRepo = new ClassRepository();
 
         var simpleClassModel = {
             id: 'SimpleClass',
