@@ -2,30 +2,21 @@
 
 var expect = require('chai').expect;
 var sinon = require('sinon');
-var proxyquire = require('proxyquire');
 
 var UNKNOWN      = 0;
 var BASIC_TYPE   = 1;
 var DOLPHIN_BEAN = 2;
 
-var ObjectObserver = require('../../bower_components/observe-js/src/observe.js').ObjectObserver;
-ObjectObserver['@noCallThru'] = true;
+var ClassRepository = require('../../src/classrepo.js').ClassRepository;
 
 
 describe('ClassRepository primitive properties', function() {
 
-    var opendolphin = null;
     var classRepo = null;
     var classModel = null;
 
     beforeEach(function() {
-        opendolphin = {
-            Tag: { value: function() { return 'VALUE'} },
-            '@noCallThru': true
-        };
-
-        var classrepojs = proxyquire('../src/classrepo.js', { 'opendolphin': opendolphin, 'ObjectObserver': ObjectObserver });
-        classRepo = new classrepojs.ClassRepository();
+        classRepo = new ClassRepository();
         classModel = {
             id: 'ComplexClass',
             attributes: [
@@ -184,20 +175,13 @@ describe('ClassRepository primitive properties', function() {
 
 describe('ClassRepository Dolphin Bean properties', function() {
 
-    var opendolphin = null;
     var classRepo = null;
     var bean1 = null;
     var bean2 = null;
     var complexClassModel = null;
 
     beforeEach(function() {
-        opendolphin = {
-            Tag: { value: function() { return 'VALUE'} },
-            '@noCallThru': true
-        };
-
-        var classrepojs = proxyquire('../src/classrepo.js', { 'opendolphin': opendolphin, 'ObjectObserver': ObjectObserver });
-        classRepo = new classrepojs.ClassRepository();
+        classRepo = new ClassRepository();
 
         var simpleClassModel = {
             id: 'SimpleClass',
@@ -294,13 +278,13 @@ describe('ClassRepository.mapParamToDolphin()', function() {
     var classRepo = null;
 
     beforeEach(function() {
-        var opendolphin = {
-            Tag: { value: function() { return 'VALUE'} },
-            '@noCallThru': true
-        };
+        //var opendolphin = {
+        //    Tag: { value: function() { return 'VALUE'} },
+        //    '@noCallThru': true
+        //};
 
-        var classrepojs = proxyquire('../src/classrepo.js', { 'opendolphin': opendolphin, 'ObjectObserver': ObjectObserver });
-        classRepo = new classrepojs.ClassRepository();
+        //var classrepojs = proxyquire('../src/classrepo.js', { 'opendolphin': opendolphin, 'ObjectObserver': ObjectObserver });
+        classRepo = new ClassRepository();
     });
 
 
@@ -364,14 +348,14 @@ describe('ClassRepository.mapParamToDolphin()', function() {
     });
 
     it('arbitrary object', function() {
-        expect(classRepo.mapParamToDolphin.bind(classRepo, {})).to.throw(TypeError);
+        expect(function() {classRepo.mapParamToDolphin({})}).to.throw(TypeError);
     });
 
     it('array', function() {
-        expect(classRepo.mapParamToDolphin.bind(classRepo, [])).to.throw(TypeError);
+        expect(function() {classRepo.mapParamToDolphin([])}).to.throw(TypeError);
     });
 
     it('function', function() {
-        expect(classRepo.mapParamToDolphin.bind(classRepo, function() {})).to.throw(TypeError);
+        expect(function() {classRepo.mapParamToDolphin(function() {})}).to.throw(TypeError);
     });
 });
