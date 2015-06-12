@@ -52,10 +52,7 @@ gulp.task('test', ['build-test'], function() {
             configFile: 'karma.conf.js',
             reporters: 'progress',
             action: 'run'
-        }))
-        .on('error', function(err) {
-            throw err;
-        });
+        }));
 });
 
 gulp.task('verify', ['lint', 'test']);
