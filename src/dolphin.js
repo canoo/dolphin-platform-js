@@ -15,12 +15,12 @@ exports.connect = function(url, config) {
 
 
 var DOLPHIN_BEAN = '@@@ DOLPHIN_BEAN @@@';
-var DOLPHIN_LIST_ADD_FROM_SERVER = '@@@ LIST_ADD_FROM_SERVER @@@';
-var DOLPHIN_LIST_DEL_FROM_SERVER = '@@@ LIST_DEL_FROM_SERVER @@@';
-var DOLPHIN_LIST_SET_FROM_SERVER = '@@@ LIST_SET_FROM_SERVER @@@';
-var DOLPHIN_LIST_ADD_FROM_CLIENT = '@@@ LIST_ADD_FROM_CLIENT @@@';
-var DOLPHIN_LIST_DEL_FROM_CLIENT = '@@@ LIST_DEL_FROM_CLIENT @@@';
-var DOLPHIN_LIST_SET_FROM_CLIENT = '@@@ LIST_SET_FROM_CLIENT @@@';
+var DOLPHIN_LIST_ADD = '@@@ LIST_ADD @@@';
+var DOLPHIN_LIST_DEL = '@@@ LIST_DEL @@@';
+var DOLPHIN_LIST_SET = '@@@ LIST_SET @@@';
+var SOURCE_SYSTEM = '@@@ SOURCE_SYSTEM @@@';
+var SOURCE_SYSTEM_CLIENT = 'client';
+var SOURCE_SYSTEM_SERVER = 'server';
 
 
 function onModelAdded(dolphin, model) {
@@ -29,32 +29,27 @@ function onModelAdded(dolphin, model) {
         case DOLPHIN_BEAN:
             dolphin.classRepository.registerClass(model);
             break;
-        case DOLPHIN_LIST_ADD_FROM_SERVER:
+        case DOLPHIN_LIST_ADD:
             dolphin.classRepository.addListEntry(model);
             dolphin.dolphin.getClientModelStore().deletePresentationModel(model);
             break;
-        case DOLPHIN_LIST_DEL_FROM_SERVER:
+        case DOLPHIN_LIST_DEL:
             dolphin.classRepository.delListEntry(model);
             dolphin.dolphin.getClientModelStore().deletePresentationModel(model);
             break;
-        case DOLPHIN_LIST_SET_FROM_SERVER:
+        case DOLPHIN_LIST_SET:
             dolphin.classRepository.setListEntry(model);
             dolphin.dolphin.getClientModelStore().deletePresentationModel(model);
-            break;
-        case DOLPHIN_LIST_ADD_FROM_CLIENT:
-        case DOLPHIN_LIST_DEL_FROM_CLIENT:
-        case DOLPHIN_LIST_SET_FROM_CLIENT:
-            // do nothing
             break;
         default:
             var bean = dolphin.classRepository.load(model);
             var handlerList = dolphin.addedHandlers.get(type);
             if (exists(handlerList)) {
-                handlerList.forEach(function(handler) {
+                handlerList.forEach(function (handler) {
                     handler(bean);
                 });
             }
-            dolphin.allAddedHandlers.forEach(function(handler) {
+            dolphin.allAddedHandlers.forEach(function (handler) {
                 handler(bean);
             });
             break;
@@ -67,12 +62,9 @@ function onModelRemoved(dolphin, model) {
         case DOLPHIN_BEAN:
             dolphin.classRepository.unregisterClass(model);
             break;
-        case DOLPHIN_LIST_ADD_FROM_SERVER:
-        case DOLPHIN_LIST_DEL_FROM_SERVER:
-        case DOLPHIN_LIST_SET_FROM_SERVER:
-        case DOLPHIN_LIST_ADD_FROM_CLIENT:
-        case DOLPHIN_LIST_DEL_FROM_CLIENT:
-        case DOLPHIN_LIST_SET_FROM_CLIENT:
+        case DOLPHIN_LIST_ADD:
+        case DOLPHIN_LIST_DEL:
+        case DOLPHIN_LIST_SET:
             // do nothing
             break;
         default:
@@ -128,10 +120,13 @@ function Dolphin(url, config) {
 
     this.dolphin.getClientModelStore().onModelStoreChange(function (event) {
         var model = event.clientPresentationModel;
-        if (event.eventType === opendolphin.Type.ADDED) {
-            onModelAdded(_this, model);
-        } else if (event.eventType === opendolphin.Type.REMOVED) {
-            onModelRemoved(_this, model);
+        var sourceSystem = model.findAttributeByPropertyName(SOURCE_SYSTEM);
+        if (exists(sourceSystem) && sourceSystem.value === SOURCE_SYSTEM_SERVER) {
+            if (event.eventType === opendolphin.Type.ADDED) {
+                onModelAdded(_this, model);
+            } else if (event.eventType === opendolphin.Type.REMOVED) {
+                onModelRemoved(_this, model);
+            }
         }
     });
 }
@@ -217,7 +212,10 @@ Dolphin.prototype.onRemoved = function(type, eventHandler) {
 
 Dolphin.prototype.send = function(command, params) {
     if (exists(params)) {
-        var attributes = [];
+
+        var attributes = [
+            this.dolphin.attribute(SOURCE_SYSTEM, null, SOURCE_SYSTEM_CLIENT)
+        ];
         for (var prop in params) {
             if (params.hasOwnProperty(prop)) {
                 var param = this.classRepository.mapParamToDolphin(params[prop]);

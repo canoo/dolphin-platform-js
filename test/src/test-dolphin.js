@@ -34,7 +34,10 @@ describe('Dolphin Message Distribution', function() {
 
     it('should call registerClass()', sinon.test(function() {
         dolphin.classRepository.registerClass = this.spy();
-        var model = { presentationModelType: '@@@ DOLPHIN_BEAN @@@' };
+        var model = {
+            presentationModelType: '@@@ DOLPHIN_BEAN @@@',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
 
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
@@ -44,7 +47,10 @@ describe('Dolphin Message Distribution', function() {
 
     it('should call unregisterClass()', sinon.test(function() {
         dolphin.classRepository.unregisterClass = this.spy();
-        var model = { presentationModelType: '@@@ DOLPHIN_BEAN @@@' };
+        var model = {
+            presentationModelType: '@@@ DOLPHIN_BEAN @@@',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
 
         onModelStoreChange({ clientPresentationModel: model, eventType: "REMOVED" });
 
@@ -54,7 +60,10 @@ describe('Dolphin Message Distribution', function() {
 
     it('should call load()', sinon.test(function() {
         dolphin.classRepository.load = this.stub().returns({});
-        var model = { presentationModelType: 'SomeClass' };
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
 
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
@@ -64,7 +73,10 @@ describe('Dolphin Message Distribution', function() {
 
     it('should call unload()', sinon.test(function() {
         dolphin.classRepository.unload = this.stub().returns({});
-        var model = { presentationModelType: 'SomeClass' };
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
 
         onModelStoreChange({ clientPresentationModel: model, eventType: "REMOVED" });
 
@@ -75,7 +87,10 @@ describe('Dolphin Message Distribution', function() {
     it('should call addListEntry()', sinon.test(function() {
         dolphin.classRepository.addListEntry = this.spy();
         this.spy(clientModelStore, "deletePresentationModel");
-        var model = { presentationModelType: '@@@ LIST_ADD_FROM_SERVER @@@' };
+        var model = {
+            presentationModelType: '@@@ LIST_ADD @@@',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
 
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
@@ -87,7 +102,10 @@ describe('Dolphin Message Distribution', function() {
     it('should call delListEntry()', sinon.test(function() {
         dolphin.classRepository.delListEntry = this.spy();
         this.spy(clientModelStore, "deletePresentationModel");
-        var model = { presentationModelType: '@@@ LIST_DEL_FROM_SERVER @@@' };
+        var model = {
+            presentationModelType: '@@@ LIST_DEL @@@',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
 
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
@@ -99,7 +117,10 @@ describe('Dolphin Message Distribution', function() {
     it('should call setListEntry()', sinon.test(function() {
         dolphin.classRepository.setListEntry = this.spy();
         this.spy(clientModelStore, "deletePresentationModel");
-        var model = { presentationModelType: '@@@ LIST_SET_FROM_SERVER @@@' };
+        var model = {
+            presentationModelType: '@@@ LIST_SET @@@',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
 
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
@@ -137,7 +158,10 @@ describe('Dolphin Event Handling', function() {
     it('should call onAdded-handler for class', sinon.test(function() {
         var bean = {};
         dolphin.classRepository.load = this.stub().returns(bean);
-        var model = { presentationModelType: 'SomeClass' };
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
         var onAddedHandler = this.spy();
 
         dolphin.onAdded('SomeClass', onAddedHandler);
@@ -150,7 +174,10 @@ describe('Dolphin Event Handling', function() {
     it('should not call onAdded-handler for other class', sinon.test(function() {
         var bean = {};
         dolphin.classRepository.load = this.stub().returns(bean);
-        var model = { presentationModelType: 'SomeClass' };
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
         var onAddedHandler = this.spy();
 
         dolphin.onAdded('SomeOtherClass', onAddedHandler);
@@ -163,7 +190,10 @@ describe('Dolphin Event Handling', function() {
     it('should call generic onAdded-handler', sinon.test(function() {
         var bean = {};
         dolphin.classRepository.load = this.stub().returns(bean);
-        var model = { presentationModelType: 'SomeClass' };
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
         var onAddedHandler = this.spy();
 
         dolphin.onAdded(onAddedHandler);
@@ -176,7 +206,10 @@ describe('Dolphin Event Handling', function() {
     it('should call onRemoved-handler for class', sinon.test(function() {
         var bean = {};
         dolphin.classRepository.unload = this.stub().returns(bean);
-        var model = { presentationModelType: 'SomeClass' };
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
         var onRemovedHandler = this.spy();
 
         dolphin.onRemoved('SomeClass', onRemovedHandler);
@@ -189,7 +222,10 @@ describe('Dolphin Event Handling', function() {
     it('should not call onRemoved-handler for other class', sinon.test(function() {
         var bean = {};
         dolphin.classRepository.unload = this.stub().returns(bean);
-        var model = { presentationModelType: 'SomeClass' };
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
         var onRemovedHandler = this.spy();
 
         dolphin.onRemoved('SomeOtherClass', onRemovedHandler);
@@ -202,7 +238,10 @@ describe('Dolphin Event Handling', function() {
     it('should call generic onRemoved-handler', sinon.test(function() {
         var bean = {};
         dolphin.classRepository.unload = this.stub().returns(bean);
-        var model = { presentationModelType: 'SomeClass' };
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
         var onRemovedHandler = this.spy();
 
         dolphin.onRemoved(onRemovedHandler);
@@ -249,8 +288,10 @@ describe('Dolphin Command', function() {
     it('should send command with one named parameter', sinon.test(function() {
         dolphin.classRepository.mapParamToDolphin = this.stub().withArgs(42).returns({value: 42, type: 'number'});
         var attrFactory = this.stub(clientDolphin, 'attribute');
+        var sourceAttr = {};
         var attr1 = {};
         var attr2 = {};
+        attrFactory.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sourceAttr);
         attrFactory.withArgs('x', null, 42, 'VALUE').returns(attr1);
         attrFactory.withArgs('x', null, 'number', 'VALUE_TYPE').returns(attr2);
         this.spy(clientDolphin, 'presentationModel');
@@ -258,7 +299,7 @@ describe('Dolphin Command', function() {
 
         dolphin.send("myCommand", {x: 42});
 
-        sinon.assert.calledWith(clientDolphin.presentationModel, null, '@@@ DOLPHIN_PARAMETER @@@', attr1, attr2);
+        sinon.assert.calledWith(clientDolphin.presentationModel, null, '@@@ DOLPHIN_PARAMETER @@@', sourceAttr, attr1, attr2);
         sinon.assert.calledWith(clientDolphin.send, "myCommand");
     }));
 });
