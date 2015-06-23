@@ -50,9 +50,12 @@ gulp.task('test', ['build-test'], function() {
     return gulp.src([])
         .pipe(karma({
             configFile: 'karma.conf.js',
-            reporters: 'progress',
+            reporters: ['progress'],
             action: 'run'
-        }));
+        }))
+        .on('error', function(err) {
+            throw err;
+        });
 });
 
 gulp.task('verify', ['lint', 'test']);
@@ -98,20 +101,33 @@ gulp.task('watch', function() {
 gulp.task('default', ['test', 'build', 'watch']);
 
 
+gulp.task('test:ci', ['build-test'], function() {
+    // Be sure to return the stream
+    return gulp.src([])
+        .pipe(karma({
+            configFile: 'karma.conf.js',
+            reporters: ['teamcity'],
+            action: 'run'
+        }))
+        .on('error', function(err) {
+            gutil.log.bind(gutil, 'Karma Error', err);
+        })
+});
 
-gulp.task('ci', ['build', 'build-test'], function() {
+gulp.task('ci', ['lint', 'test:ci']);
+
+gulp.task('ci:nightly', ['build', 'build-test'], function() {
     return merge(
         gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
             .pipe(jshint())
             .pipe(jshint.reporter('jshint-teamcity')),
         gulp.src([])
             .pipe(karma({
-                configFile: 'karma.conf.js',
-                reporters: 'teamcity',
+                configFile: 'karma.conf-ci.js',
                 action: 'run'
             }))
             .on('error', function(err) {
-                throw err;
+                gutil.log.bind(gutil, 'Karma Error', err);
             })
     );
 });
