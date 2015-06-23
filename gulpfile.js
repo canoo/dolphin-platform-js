@@ -50,9 +50,11 @@ gulp.task('test', ['build-test'], function() {
     return gulp.src([])
         .pipe(karma({
             configFile: 'karma.conf.js',
-            reporters: 'progress',
             action: 'run'
-        }));
+        }))
+        .on('error', function(err) {
+            throw err;
+        });
 });
 
 gulp.task('verify', ['lint', 'test']);
@@ -106,12 +108,11 @@ gulp.task('ci', ['build', 'build-test'], function() {
             .pipe(jshint.reporter('jshint-teamcity')),
         gulp.src([])
             .pipe(karma({
-                configFile: 'karma.conf.js',
-                reporters: 'teamcity',
+                configFile: 'karma.conf-ci.js',
                 action: 'run'
             }))
             .on('error', function(err) {
-                throw err;
+                gutil.log.bind(gutil, 'Karma Error', err);
             })
     );
 });
