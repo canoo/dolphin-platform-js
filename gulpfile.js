@@ -50,6 +50,7 @@ gulp.task('test', ['build-test'], function() {
     return gulp.src([])
         .pipe(karma({
             configFile: 'karma.conf.js',
+            reporters: ['progress'],
             action: 'run'
         }))
         .on('error', function(err) {
@@ -100,8 +101,22 @@ gulp.task('watch', function() {
 gulp.task('default', ['test', 'build', 'watch']);
 
 
+gulp.task('test:ci', ['build-test'], function() {
+    // Be sure to return the stream
+    return gulp.src([])
+        .pipe(karma({
+            configFile: 'karma.conf.js',
+            reporters: ['teamcity'],
+            action: 'run'
+        }))
+        .on('error', function(err) {
+            gutil.log.bind(gutil, 'Karma Error', err);
+        })
+});
 
-gulp.task('ci', ['build', 'build-test'], function() {
+gulp.task('ci', ['lint', 'test:ci']);
+
+gulp.task('ci:nightly', ['build', 'build-test'], function() {
     return merge(
         gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
             .pipe(jshint())
