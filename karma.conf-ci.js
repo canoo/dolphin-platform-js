@@ -22,18 +22,18 @@ module.exports = function (config) {
             platform: 'Windows 7',
             version: '9.0'
         },
-        sl_win7_ie10: {
-            base: 'SauceLabs',
-            browserName: 'internet explorer',
-            platform: 'Windows 7',
-            version: '10.0'
-        },
-        sl_win7_ie11: {
-            base: 'SauceLabs',
-            browserName: 'internet explorer',
-            platform: 'Windows 7',
-            version: '11.0'
-        },
+        //sl_win7_ie10: {
+        //    base: 'SauceLabs',
+        //    browserName: 'internet explorer',
+        //    platform: 'Windows 7',
+        //    version: '10.0'
+        //},
+        //sl_win7_ie11: {
+        //    base: 'SauceLabs',
+        //    browserName: 'internet explorer',
+        //    platform: 'Windows 7',
+        //    version: '11.0'
+        //},
         sl_win8_ie10: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
@@ -70,24 +70,24 @@ module.exports = function (config) {
         //    platform: 'Windows 7',
         //    version: '38.0'
         //},
-        sl_win8_chrome: {
-            base: 'SauceLabs',
-            browserName: 'chrome',
-            platform: 'Windows 8',
-            version: '43.0'
-        },
+        //sl_win8_chrome: {
+        //    base: 'SauceLabs',
+        //    browserName: 'chrome',
+        //    platform: 'Windows 8',
+        //    version: '43.0'
+        //},
         //sl_win8_firefox: {
         //    base: 'SauceLabs',
         //    browserName: 'firefox',
         //    platform: 'Windows 8',
         //    version: '38.0'
         //},
-        sl_win81_chrome: {
-            base: 'SauceLabs',
-            browserName: 'chrome',
-            platform: 'Windows 8.1',
-            version: '43.0'
-        },
+        //sl_win81_chrome: {
+        //    base: 'SauceLabs',
+        //    browserName: 'chrome',
+        //    platform: 'Windows 8.1',
+        //    version: '43.0'
+        //},
         //sl_win81_firefox: {
         //    base: 'SauceLabs',
         //    browserName: 'firefox',
