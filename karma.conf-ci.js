@@ -112,12 +112,12 @@ module.exports = function (config) {
         //    platform: 'OS X 10.10',
         //    version: '8.0'
         //},
-        //sl_mac9_chrome: {
-        //    base: 'SauceLabs',
-        //    browserName: 'chrome',
-        //    platform: 'OSX 10.9',
-        //    version: '43.0'
-        //},
+        sl_mac9_chrome: {
+            base: 'SauceLabs',
+            browserName: 'chrome',
+            platform: 'OSX 10.9',
+            version: '43.0'
+        },
         //sl_mac9_firefox: {
         //    base: 'SauceLabs',
         //    browserName: 'firefox',
