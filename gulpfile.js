@@ -49,9 +49,7 @@ gulp.task('test', ['build-test'], function() {
     // Be sure to return the stream
     return gulp.src([])
         .pipe(karma({
-            configFile: 'karma.conf.js',
-            reporters: ['progress'],
-            action: 'run'
+            configFile: 'karma.conf.js'
         }))
         .on('error', function(err) {
             throw err;
@@ -101,33 +99,63 @@ gulp.task('watch', function() {
 gulp.task('default', ['test', 'build', 'watch']);
 
 
-gulp.task('test:ci', ['build-test'], function() {
-    // Be sure to return the stream
-    return gulp.src([])
-        .pipe(karma({
-            configFile: 'karma.conf.js',
-            reporters: ['teamcity'],
-            action: 'run'
-        }))
-        .on('error', function(err) {
-            gutil.log.bind(gutil, 'Karma Error', err);
-        })
-});
-
-gulp.task('ci', ['lint', 'test:ci']);
-
-gulp.task('ci:nightly', ['build', 'build-test'], function() {
+gulp.task('ci', ['build', 'build-test'], function() {
     return merge(
         gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
             .pipe(jshint())
             .pipe(jshint.reporter('jshint-teamcity')),
         gulp.src([])
             .pipe(karma({
-                configFile: 'karma.conf-ci.js',
-                action: 'run'
+                configFile: 'karma.conf.js',
+                reporters: ['teamcity']
             }))
             .on('error', function(err) {
                 gutil.log.bind(gutil, 'Karma Error', err);
             })
     );
+});
+
+function createSauceLabsTestPipe(customLaunchers) {
+    // We cannot run too many instances at Sauce Labs in parallel, thus we need to run it several times
+    // with only a few environments set
+    var numSauceLabsVMs = 3;
+    var allBrowsers = Object.keys(customLaunchers);
+    var testPipe = gulp.src([]);
+    while (allBrowsers.length > 0) {
+        var browsers = [];
+        for (var i=0; i<numSauceLabsVMs && allBrowsers.length > 0; i++) {
+            browsers.push(allBrowsers.shift());
+        }
+        testPipe = testPipe
+            .pipe(karma({
+                configFile: 'karma.conf.js',
+                customLaunchers: customLaunchers,
+                browsers: browsers,
+                reporters: ['saucelabs', 'teamcity']
+            }))
+    }
+
+    return merge(
+        gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
+            .pipe(jshint())
+            .pipe(jshint.reporter('jshint-teamcity')),
+        testPipe.on('error', function(err) {
+            gutil.log.bind(gutil, 'Karma Error', err);
+        })
+    );
+}
+
+gulp.task('ci:nightly', ['build', 'build-test'], function() {
+    var customLaunchers = require('./sauce.launchers.js').daily;
+    return createSauceLabsTestPipe(customLaunchers);
+});
+
+gulp.task('ci:weekly', ['build', 'build-test'], function() {
+    var customLaunchers = require('./sauce.launchers.js').weekly;
+    return createSauceLabsTestPipe(customLaunchers);
+});
+
+gulp.task('ci:manual', ['build', 'build-test'], function() {
+    var customLaunchers = require('./sauce.launchers.js').manual;
+    return createSauceLabsTestPipe(customLaunchers);
 });
