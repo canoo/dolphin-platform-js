@@ -1,5 +1,3 @@
-var _ = require('underscore');
-
 // Browsers to run on Sauce Labs
 
 var daily = {
@@ -44,7 +42,7 @@ var daily = {
     }
 };
 
-var weekly = _.extend({
+var weekly = {
     sl_winXP_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -162,11 +160,11 @@ var weekly = _.extend({
         deviceName: 'Android Emulator',
         deviceOrientation: 'portrait'
     }
-}, daily);
+};
 
 
 
-var manual = _.extend({
+var manual = {
     sl_mac9_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -221,7 +219,7 @@ var manual = _.extend({
         deviceName: 'Android Emulator',
         deviceOrientation: 'portrait'
     }
-}, weekly);
+};
 
 
 
