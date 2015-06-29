@@ -115,18 +115,15 @@ gulp.task('ci', ['build', 'build-test'], function() {
     );
 });
 
-gulp.task('ci:nightly', ['build', 'build-test'], function() {
-    var customLaunchers = require('./sauce.launchers.js').customLaunchers;
-    var allBrowsers = Object.keys(customLaunchers);
-
-
+function createSauceLabsTestPipe(customLaunchers) {
     // We cannot run too many instances at Sauce Labs in parallel, thus we need to run it several times
     // with only a few environments set
-    var numSauceLabsVMS = 3;
+    var numSauceLabsVMs = 3;
+    var allBrowsers = Object.keys(customLaunchers);
     var testPipe = gulp.src([]);
     while (allBrowsers.length > 0) {
         var browsers = [];
-        for (var i=0; i<numSauceLabsVMS && i<allBrowsers.length; i++) {
+        for (var i=0; i<numSauceLabsVMs && allBrowsers.length > 0; i++) {
             browsers.push(allBrowsers.shift());
         }
         testPipe = testPipe
@@ -142,59 +139,18 @@ gulp.task('ci:nightly', ['build', 'build-test'], function() {
         gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
             .pipe(jshint())
             .pipe(jshint.reporter('jshint-teamcity')),
-        testPipe
-            .on('error', function(err) {
-                gutil.log.bind(gutil, 'Karma Error', err);
-            })
-
-        //gulp.src([])
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_win7_ie9', 'sl_win7_ie10', 'sl_win7_ie11', 'sl_win8_0_ie10', 'sl_win8_1_ie11'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_winXP_chrome', 'sl_winXP_firefox', 'sl_win7_chrome', 'sl_win7_firefox'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_win8_0_chrome', 'sl_win8_0_firefox', 'sl_win8_1_chrome', 'sl_win8_1_firefox'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_mac10_chrome', 'sl_mac10_firefox', 'sl_mac10_safari'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_mac9_chrome', 'sl_mac9_firefox', 'sl_mac9_safari'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_linux_chrome', 'sl_linux_firefox', 'sl_linux_opera'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_ipad_8_2', 'sl_ipad_8_1', 'sl_ipad_8_0', 'sl_ipad_7_1', 'sl_ipad_7_0'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_android_5_1'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_android_4_4', 'sl_android_4_3', 'sl_android_4_2', 'sl_android_4_1', 'sl_android_4_0'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.on('error', function(err) {
-            //    gutil.log.bind(gutil, 'Karma Error', err);
-            //})
+        testPipe.on('error', function(err) {
+            gutil.log.bind(gutil, 'Karma Error', err);
+        })
     );
+}
+
+gulp.task('ci:nightly', ['build', 'build-test'], function() {
+    var customLaunchers = require('./sauce.nightly.js').customLaunchers;
+    return createSauceLabsTestPipe(customLaunchers);
+});
+
+gulp.task('ci:weekly', ['build', 'build-test'], function() {
+    var customLaunchers = require('./sauce.weekly.js').customLaunchers;
+    return createSauceLabsTestPipe(customLaunchers);
 });
