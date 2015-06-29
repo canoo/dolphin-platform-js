@@ -133,26 +133,26 @@ gulp.task('ci:nightly', ['build', 'build-test'], function() {
                 browsers: ['sl_winXP_chrome', 'sl_winXP_firefox', 'sl_win7_chrome', 'sl_win7_firefox'],
                 reporters: ['saucelabs', 'teamcity']
             }))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_win8_chrome', 'sl_win8_firefox', 'sl_win81_chrome', 'sl_win81_firefox'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_mac10_chrome', 'sl_mac10_firefox', 'sl_mac10_safari'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_mac9_chrome', 'sl_mac9_firefox', 'sl_mac9_safari'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
-            //.pipe(karma({
-            //    configFile: 'karma.conf.js',
-            //    browsers: ['sl_linux_chrome', 'sl_linux_firefox', 'sl_linux_opera'],
-            //    reporters: ['saucelabs', 'teamcity']
-            //}))
+            .pipe(karma({
+                configFile: 'karma.conf.js',
+                browsers: ['sl_win8_chrome', 'sl_win8_firefox', 'sl_win81_chrome', 'sl_win81_firefox'],
+                reporters: ['saucelabs', 'teamcity']
+            }))
+            .pipe(karma({
+                configFile: 'karma.conf.js',
+                browsers: ['sl_mac10_chrome', 'sl_mac10_firefox', 'sl_mac10_safari'],
+                reporters: ['saucelabs', 'teamcity']
+            }))
+            .pipe(karma({
+                configFile: 'karma.conf.js',
+                browsers: ['sl_mac9_chrome', 'sl_mac9_firefox', 'sl_mac9_safari'],
+                reporters: ['saucelabs', 'teamcity']
+            }))
+            .pipe(karma({
+                configFile: 'karma.conf.js',
+                browsers: ['sl_linux_chrome', 'sl_linux_firefox', 'sl_linux_opera'],
+                reporters: ['saucelabs', 'teamcity']
+            }))
             .on('error', function(err) {
                 gutil.log.bind(gutil, 'Karma Error', err);
             })
