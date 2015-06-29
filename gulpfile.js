@@ -146,11 +146,16 @@ function createSauceLabsTestPipe(customLaunchers) {
 }
 
 gulp.task('ci:nightly', ['build', 'build-test'], function() {
-    var customLaunchers = require('./sauce.nightly.js').customLaunchers;
+    var customLaunchers = require('./sauce.launchers.js').daily;
     return createSauceLabsTestPipe(customLaunchers);
 });
 
 gulp.task('ci:weekly', ['build', 'build-test'], function() {
-    var customLaunchers = require('./sauce.weekly.js').customLaunchers;
+    var customLaunchers = require('./sauce.launchers.js').weekly;
+    return createSauceLabsTestPipe(customLaunchers);
+});
+
+gulp.task('ci:manual', ['build', 'build-test'], function() {
+    var customLaunchers = require('./sauce.launchers.js').manual;
     return createSauceLabsTestPipe(customLaunchers);
 });

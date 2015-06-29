@@ -1,5 +1,8 @@
-// Browsers to run on Sauce Labs daily
-exports.customLaunchers = {
+var _ = require('underscore');
+
+// Browsers to run on Sauce Labs
+
+var daily = {
     sl_win7_ie9: {
         base: 'SauceLabs',
         browserName: 'internet explorer',
@@ -30,6 +33,18 @@ exports.customLaunchers = {
         platform: 'Windows 8.1',
         version: '11.0'
     },
+    sl_ipad_8_2: {
+        base: 'SauceLabs',
+        browserName: 'Safari',
+        appiumVersion: '1.4.3',
+        deviceName: 'iPad Simulator',
+        deviceOrientation: 'portrait',
+        platformName: 'iOS',
+        platformVersion: '8.2'
+    }
+};
+
+var weekly = _.extend({
     sl_winXP_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -42,6 +57,7 @@ exports.customLaunchers = {
         platform: 'Windows XP',
         version: '38.0'
     },
+
     sl_win7_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -54,6 +70,7 @@ exports.customLaunchers = {
         platform: 'Windows 7',
         version: '38.0'
     },
+
     sl_win8_0_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -66,6 +83,7 @@ exports.customLaunchers = {
         platform: 'Windows 8',
         version: '38.0'
     },
+
     sl_win8_1_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -78,6 +96,7 @@ exports.customLaunchers = {
         platform: 'Windows 8.1',
         version: '38.0'
     },
+
     sl_mac10_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -96,24 +115,7 @@ exports.customLaunchers = {
         platform: 'OS X 10.10',
         version: '8.0'
     },
-    sl_mac9_chrome: {
-        base: 'SauceLabs',
-        browserName: 'chrome',
-        platform: 'OSX 10.9',
-        version: '43.0'
-    },
-    sl_mac9_firefox: {
-        base: 'SauceLabs',
-        browserName: 'firefox',
-        platform: 'OSX 10.9',
-        version: '38.0'
-    },
-    sl_mac9_safari: {
-        base: 'SauceLabs',
-        browserName: 'safari',
-        platform: 'OS X 10.9',
-        version: '7.0'
-    },
+
     sl_linux_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -132,15 +134,26 @@ exports.customLaunchers = {
         platform: 'Linux',
         version: '12.15'
     },
-    sl_ipad_8_2: {
+
+    sl_ipad_8_1: {
         base: 'SauceLabs',
         browserName: 'Safari',
         appiumVersion: '1.4.3',
         deviceName: 'iPad Simulator',
         deviceOrientation: 'portrait',
         platformName: 'iOS',
-        platformVersion: '8.2'
+        platformVersion: '8.1'
     },
+    sl_ipad_8_0: {
+        base: 'SauceLabs',
+        browserName: 'Safari',
+        appiumVersion: '1.4.3',
+        deviceName: 'iPad Simulator',
+        deviceOrientation: 'portrait',
+        platformName: 'iOS',
+        platformVersion: '8.0'
+    },
+
     sl_android_5_1: {
         base: 'SauceLabs',
         browserName: 'Android',
@@ -149,4 +162,69 @@ exports.customLaunchers = {
         deviceName: 'Android Emulator',
         deviceOrientation: 'portrait'
     }
-};
+}, daily);
+
+
+
+var manual = _.extend({
+    sl_mac9_chrome: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'OSX 10.9',
+        version: '43.0'
+    },
+    sl_mac9_firefox: {
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        platform: 'OSX 10.9',
+        version: '38.0'
+    },
+    sl_mac9_safari: {
+        base: 'SauceLabs',
+        browserName: 'safari',
+        platform: 'OS X 10.9',
+        version: '7.0'
+    },
+
+    sl_ipad_7_1: {
+        base: 'SauceLabs',
+        browserName: 'Safari',
+        appiumVersion: '1.4.3',
+        deviceName: 'iPad Simulator',
+        deviceOrientation: 'portrait',
+        platformName: 'iOS',
+        platformVersion: '7.1'
+    },
+    sl_ipad_7_0: {
+        base: 'SauceLabs',
+        browserName: 'Safari',
+        appiumVersion: '1.4.3',
+        deviceName: 'iPad Simulator',
+        deviceOrientation: 'portrait',
+        platformName: 'iOS',
+        platformVersion: '7.0'
+    },
+
+    sl_android_5_0: {
+        base: 'SauceLabs',
+        browserName: 'Android',
+        platform: 'Linux',
+        version: '5.0',
+        deviceName: 'Android Emulator',
+        deviceOrientation: 'portrait'
+    },
+    sl_android_4_4: {
+        base: 'SauceLabs',
+        browserName: 'Android',
+        platform: 'Linux',
+        version: '4.4',
+        deviceName: 'Android Emulator',
+        deviceOrientation: 'portrait'
+    }
+}, weekly);
+
+
+
+exports.daily = daily;
+exports.weekly = weekly;
+exports.manual = manual;
