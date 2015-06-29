@@ -72,8 +72,8 @@ module.exports = function (config) {
         // Sauce Labs configuration
         sauceLabs: {
             testName: 'dolphin-js Unit Tests',
-            recordScreenshots: true,
-            recordVideo: true
+            recordScreenshots: false,
+            recordVideo: false
         },
         captureTimeout: 120000,
         browserDisconnectTimeout: 10 * 1000,
