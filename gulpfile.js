@@ -125,32 +125,37 @@ gulp.task('ci:nightly', ['build', 'build-test'], function() {
         gulp.src([])
             .pipe(karma({
                 configFile: 'karma.conf.js',
-                browsers: ['sl_win7_ie9', 'sl_win7_ie10', 'sl_win7_ie11', 'sl_win8_ie10', 'sl_win81_ie11'],
+                browsers: ['sl_win7_ie9', 'sl_win7_ie10', 'sl_win7_ie11', 'sl_win8_0_ie10', 'sl_win8_1_ie11'],
                 reporters: ['saucelabs', 'teamcity']
             }))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_winXP_chrome', 'sl_winXP_firefox', 'sl_win7_chrome', 'sl_win7_firefox'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
             .pipe(karma({
                 configFile: 'karma.conf.js',
-                browsers: ['sl_winXP_chrome', 'sl_winXP_firefox', 'sl_win7_chrome', 'sl_win7_firefox'],
+                browsers: ['sl_win8_0_chrome', 'sl_win8_0_firefox', 'sl_win8_1_chrome', 'sl_win8_1_firefox'],
                 reporters: ['saucelabs', 'teamcity']
             }))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_mac10_chrome', 'sl_mac10_firefox', 'sl_mac10_safari'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_mac9_chrome', 'sl_mac9_firefox', 'sl_mac9_safari'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_linux_chrome', 'sl_linux_firefox', 'sl_linux_opera'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
             .pipe(karma({
                 configFile: 'karma.conf.js',
-                browsers: ['sl_win8_chrome', 'sl_win8_firefox', 'sl_win81_chrome', 'sl_win81_firefox'],
-                reporters: ['saucelabs', 'teamcity']
-            }))
-            .pipe(karma({
-                configFile: 'karma.conf.js',
-                browsers: ['sl_mac10_chrome', 'sl_mac10_firefox', 'sl_mac10_safari'],
-                reporters: ['saucelabs', 'teamcity']
-            }))
-            .pipe(karma({
-                configFile: 'karma.conf.js',
-                browsers: ['sl_mac9_chrome', 'sl_mac9_firefox', 'sl_mac9_safari'],
-                reporters: ['saucelabs', 'teamcity']
-            }))
-            .pipe(karma({
-                configFile: 'karma.conf.js',
-                browsers: ['sl_linux_chrome', 'sl_linux_firefox', 'sl_linux_opera'],
+                browsers: ['sl_ipad_8_2', 'sl_ipad_8_1', 'sl_ipad_8_0', 'sl_ipad_7_1', 'sl_ipad_7_0'],
                 reporters: ['saucelabs', 'teamcity']
             }))
             .on('error', function(err) {

@@ -34,13 +34,13 @@ module.exports = function (config) {
             platform: 'Windows 7',
             version: '11.0'
         },
-        sl_win8_ie10: {
+        sl_win8_0_ie10: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
             platform: 'Windows 8',
             version: '10.0'
         },
-        sl_win81_ie11: {
+        sl_win8_1_ie11: {
             base: 'SauceLabs',
             browserName: 'internet explorer',
             platform: 'Windows 8.1',
@@ -70,25 +70,25 @@ module.exports = function (config) {
             platform: 'Windows 7',
             version: '38.0'
         },
-        sl_win8_chrome: {
+        sl_win8_0_chrome: {
             base: 'SauceLabs',
             browserName: 'chrome',
             platform: 'Windows 8',
             version: '43.0'
         },
-        sl_win8_firefox: {
+        sl_win8_0_firefox: {
             base: 'SauceLabs',
             browserName: 'firefox',
             platform: 'Windows 8',
             version: '38.0'
         },
-        sl_win81_chrome: {
+        sl_win8_1_chrome: {
             base: 'SauceLabs',
             browserName: 'chrome',
             platform: 'Windows 8.1',
             version: '43.0'
         },
-        sl_win81_firefox: {
+        sl_win8_1_firefox: {
             base: 'SauceLabs',
             browserName: 'firefox',
             platform: 'Windows 8.1',
@@ -147,7 +147,37 @@ module.exports = function (config) {
             browserName: 'opera',
             platform: 'Linux',
             version: '12.15'
-        }
+        },
+        sl_ipad_82: {
+            base: 'SauceLabs',
+            platform: 'OS X 10.10',
+            version: '8.2',
+            deviceName: 'iPad Simulator'
+        },
+        sl_ipad_81: {
+            base: 'SauceLabs',
+            platform: 'OS X 10.10',
+            version: '8.1',
+            deviceName: 'iPad Simulator'
+        },
+        sl_ipad_80: {
+            base: 'SauceLabs',
+            platform: 'OS X 10.10',
+            version: '8.0',
+            deviceName: 'iPad Simulator'
+        },
+        sl_ipad_71: {
+            base: 'SauceLabs',
+            platform: 'OS X 10.10',
+            version: '7.1',
+            deviceName: 'iPad Simulator'
+        },
+        sl_ipad_70: {
+            base: 'SauceLabs',
+            platform: 'OS X 10.10',
+            version: '7.0',
+            deviceName: 'iPad Simulator'
+        },
     };
 
 
