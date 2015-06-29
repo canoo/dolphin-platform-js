@@ -116,13 +116,38 @@ gulp.task('ci', ['build', 'build-test'], function() {
 });
 
 gulp.task('ci:nightly', ['build', 'build-test'], function() {
+    var customLaunchers = require('sauce.launchers.js').customLaunchers;
+    var allBrowsers = Object.keys(customLaunchers);
+
+
     // We cannot run too many instances at Sauce Labs in parallel, thus we need to run it several times
     // with only a few environments set
+    var numSauceLabsVMS = 3;
+    var testPipe = gulp.src([]);
+    while (allBrowsers.length > 0) {
+        var browsers = [];
+        for (var i=0; i<numSauceLabsVMS && i<allBrowsers.length; i++) {
+            browsers.push(allBrowsers.shift());
+        }
+        testPipe = testPipe
+            .pipe(karma({
+                configFile: 'karma.conf.js',
+                customLaunchers: customLaunchers,
+                browsers: browsers,
+                reporters: ['saucelabs', 'teamcity']
+            }))
+    }
+
     return merge(
         gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
             .pipe(jshint())
             .pipe(jshint.reporter('jshint-teamcity')),
-        gulp.src([])
+        testPipe
+            .on('error', function(err) {
+                gutil.log.bind(gutil, 'Karma Error', err);
+            })
+
+        //gulp.src([])
             //.pipe(karma({
             //    configFile: 'karma.conf.js',
             //    browsers: ['sl_win7_ie9', 'sl_win7_ie10', 'sl_win7_ie11', 'sl_win8_0_ie10', 'sl_win8_1_ie11'],
@@ -153,11 +178,11 @@ gulp.task('ci:nightly', ['build', 'build-test'], function() {
             //    browsers: ['sl_linux_chrome', 'sl_linux_firefox', 'sl_linux_opera'],
             //    reporters: ['saucelabs', 'teamcity']
             //}))
-            .pipe(karma({
-                configFile: 'karma.conf.js',
-                browsers: ['sl_ipad_8_2', 'sl_ipad_8_1', 'sl_ipad_8_0', 'sl_ipad_7_1', 'sl_ipad_7_0'],
-                reporters: ['saucelabs', 'teamcity']
-            }))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_ipad_8_2', 'sl_ipad_8_1', 'sl_ipad_8_0', 'sl_ipad_7_1', 'sl_ipad_7_0'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
             //.pipe(karma({
             //    configFile: 'karma.conf.js',
             //    browsers: ['sl_android_5_1'],
@@ -168,8 +193,8 @@ gulp.task('ci:nightly', ['build', 'build-test'], function() {
             //    browsers: ['sl_android_4_4', 'sl_android_4_3', 'sl_android_4_2', 'sl_android_4_1', 'sl_android_4_0'],
             //    reporters: ['saucelabs', 'teamcity']
             //}))
-            .on('error', function(err) {
-                gutil.log.bind(gutil, 'Karma Error', err);
-            })
+            //.on('error', function(err) {
+            //    gutil.log.bind(gutil, 'Karma Error', err);
+            //})
     );
 });
