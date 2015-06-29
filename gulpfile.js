@@ -49,9 +49,7 @@ gulp.task('test', ['build-test'], function() {
     // Be sure to return the stream
     return gulp.src([])
         .pipe(karma({
-            configFile: 'karma.conf.js',
-            reporters: ['progress'],
-            action: 'run'
+            configFile: 'karma.conf.js'
         }))
         .on('error', function(err) {
             throw err;
@@ -101,31 +99,60 @@ gulp.task('watch', function() {
 gulp.task('default', ['test', 'build', 'watch']);
 
 
-gulp.task('test:ci', ['build-test'], function() {
-    // Be sure to return the stream
-    return gulp.src([])
-        .pipe(karma({
-            configFile: 'karma.conf.js',
-            reporters: ['teamcity'],
-            action: 'run'
-        }))
-        .on('error', function(err) {
-            gutil.log.bind(gutil, 'Karma Error', err);
-        })
-});
-
-gulp.task('ci', ['lint', 'test:ci']);
-
-gulp.task('ci:nightly', ['build', 'build-test'], function() {
+gulp.task('ci', ['build', 'build-test'], function() {
     return merge(
         gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
             .pipe(jshint())
             .pipe(jshint.reporter('jshint-teamcity')),
         gulp.src([])
             .pipe(karma({
-                configFile: 'karma.conf-ci.js',
-                action: 'run'
+                configFile: 'karma.conf.js',
+                reporters: ['teamcity']
             }))
+            .on('error', function(err) {
+                gutil.log.bind(gutil, 'Karma Error', err);
+            })
+    );
+});
+
+gulp.task('ci:nightly', ['build', 'build-test'], function() {
+    // We cannot run too many instances at Sauce Labs in parallel, thus we need to run it several times
+    // with only a few environments set
+    return merge(
+        gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
+            .pipe(jshint())
+            .pipe(jshint.reporter('jshint-teamcity')),
+        gulp.src([])
+            .pipe(karma({
+                configFile: 'karma.conf.js',
+                browsers: ['sl_win7_ie9', 'sl_win7_ie10', 'sl_win7_ie11', 'sl_win8_ie10', 'sl_win81_ie11'],
+                reporters: ['saucelabs', 'teamcity']
+            }))
+            .pipe(karma({
+                configFile: 'karma.conf.js',
+                browsers: ['sl_winXP_chrome', 'sl_winXP_firefox', 'sl_win7_chrome', 'sl_win7_firefox'],
+                reporters: ['saucelabs', 'teamcity']
+            }))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_win8_chrome', 'sl_win8_firefox', 'sl_win81_chrome', 'sl_win81_firefox'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_mac10_chrome', 'sl_mac10_firefox', 'sl_mac10_safari'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_mac9_chrome', 'sl_mac9_firefox', 'sl_mac9_safari'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_linux_chrome', 'sl_linux_firefox', 'sl_linux_opera'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
             .on('error', function(err) {
                 gutil.log.bind(gutil, 'Karma Error', err);
             })
