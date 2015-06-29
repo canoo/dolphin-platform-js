@@ -153,11 +153,11 @@ gulp.task('ci:nightly', ['build', 'build-test'], function() {
             //    browsers: ['sl_linux_chrome', 'sl_linux_firefox', 'sl_linux_opera'],
             //    reporters: ['saucelabs', 'teamcity']
             //}))
-            .pipe(karma({
-                configFile: 'karma.conf.js',
-                browsers: ['sl_ipad_8_2', 'sl_ipad_8_1', 'sl_ipad_8_0', 'sl_ipad_7_1', 'sl_ipad_7_0'],
-                reporters: ['saucelabs', 'teamcity']
-            }))
+            //.pipe(karma({
+            //    configFile: 'karma.conf.js',
+            //    browsers: ['sl_ipad_8_2', 'sl_ipad_8_1', 'sl_ipad_8_0', 'sl_ipad_7_1', 'sl_ipad_7_0'],
+            //    reporters: ['saucelabs', 'teamcity']
+            //}))
             .pipe(karma({
                 configFile: 'karma.conf.js',
                 browsers: ['sl_android_5_1'],
