@@ -31,15 +31,15 @@ function onModelAdded(dolphin, model) {
             break;
         case DOLPHIN_LIST_ADD:
             dolphin.classRepository.addListEntry(model);
-            dolphin.dolphin.getClientModelStore().deletePresentationModel(model);
+            dolphin.dolphin.deletePresentationModel(model);
             break;
         case DOLPHIN_LIST_DEL:
             dolphin.classRepository.delListEntry(model);
-            dolphin.dolphin.getClientModelStore().deletePresentationModel(model);
+            dolphin.dolphin.deletePresentationModel(model);
             break;
         case DOLPHIN_LIST_SET:
             dolphin.classRepository.setListEntry(model);
-            dolphin.dolphin.getClientModelStore().deletePresentationModel(model);
+            dolphin.dolphin.deletePresentationModel(model);
             break;
         default:
             var bean = dolphin.classRepository.load(model);

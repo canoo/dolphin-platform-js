@@ -8,18 +8,16 @@ describe('Dolphin Message Distribution', function() {
     var onModelStoreChange = null;
     var dolphin = null;
 
-    var clientModelStore = {
-        onModelStoreChange: function(cb) { onModelStoreChange = cb; },
+    var clientModelStore = { onModelStoreChange: function(cb) { onModelStoreChange = cb; } };
+
+    var opendolphinFacade = {
+        getClientModelStore: function() { return clientModelStore; },
         deletePresentationModel: function() {}
-    };
+    }
 
 
     beforeEach(sinon.test(function() {
-        this.stub(opendolphin, "dolphin").returns(
-            {
-                getClientModelStore: function() { return clientModelStore; }
-            }
-        );
+        this.stub(opendolphin, "dolphin").returns(opendolphinFacade);
         dolphin = connect("http://localhost");
         if (typeof onModelStoreChange !== 'function') {
             throw new Error('Initialisation of opendolphin failed');
@@ -86,7 +84,7 @@ describe('Dolphin Message Distribution', function() {
 
     it('should call addListEntry()', sinon.test(function() {
         dolphin.classRepository.addListEntry = this.spy();
-        this.spy(clientModelStore, "deletePresentationModel");
+        this.spy(opendolphinFacade, "deletePresentationModel");
         var model = {
             presentationModelType: '@@@ LIST_ADD @@@',
             findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
@@ -95,13 +93,13 @@ describe('Dolphin Message Distribution', function() {
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
         sinon.assert.calledWith(dolphin.classRepository.addListEntry, model);
-        sinon.assert.calledWith(clientModelStore.deletePresentationModel, model);
+        sinon.assert.calledWith(opendolphinFacade.deletePresentationModel, model);
     }));
 
 
     it('should call delListEntry()', sinon.test(function() {
         dolphin.classRepository.delListEntry = this.spy();
-        this.spy(clientModelStore, "deletePresentationModel");
+        this.spy(opendolphinFacade, "deletePresentationModel");
         var model = {
             presentationModelType: '@@@ LIST_DEL @@@',
             findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
@@ -110,13 +108,13 @@ describe('Dolphin Message Distribution', function() {
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
         sinon.assert.calledWith(dolphin.classRepository.delListEntry, model);
-        sinon.assert.calledWith(clientModelStore.deletePresentationModel, model);
+        sinon.assert.calledWith(opendolphinFacade.deletePresentationModel, model);
     }));
 
 
     it('should call setListEntry()', sinon.test(function() {
         dolphin.classRepository.setListEntry = this.spy();
-        this.spy(clientModelStore, "deletePresentationModel");
+        this.spy(opendolphinFacade, "deletePresentationModel");
         var model = {
             presentationModelType: '@@@ LIST_SET @@@',
             findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
@@ -125,7 +123,7 @@ describe('Dolphin Message Distribution', function() {
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
         sinon.assert.calledWith(dolphin.classRepository.setListEntry, model);
-        sinon.assert.calledWith(clientModelStore.deletePresentationModel, model);
+        sinon.assert.calledWith(opendolphinFacade.deletePresentationModel, model);
     }));
 });
 
