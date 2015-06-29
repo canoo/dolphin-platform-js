@@ -150,66 +150,77 @@ module.exports = function (config) {
         },
         sl_ipad_8_2: {
             base: 'SauceLabs',
+            browserName: 'iPhone',
             platform: 'OS X 10.10',
             version: '8.2',
             deviceName: 'iPad Simulator'
         },
         sl_ipad_8_1: {
             base: 'SauceLabs',
+            browserName: 'iPhone',
             platform: 'OS X 10.10',
             version: '8.1',
             deviceName: 'iPad Simulator'
         },
         sl_ipad_8_0: {
             base: 'SauceLabs',
+            browserName: 'iPhone',
             platform: 'OS X 10.10',
             version: '8.0',
             deviceName: 'iPad Simulator'
         },
         sl_ipad_7_1: {
             base: 'SauceLabs',
+            browserName: 'iPhone',
             platform: 'OS X 10.10',
             version: '7.1',
             deviceName: 'iPad Simulator'
         },
         sl_ipad_7_0: {
             base: 'SauceLabs',
+            browserName: 'iPhone',
             platform: 'OS X 10.10',
             version: '7.0',
             deviceName: 'iPad Simulator'
         },
         sl_android_5_1: {
             base: 'SauceLabs',
+            browserName: 'android',
             platform: 'Linux',
             version: '5.1',
             deviceName: 'Android Emulator'
         },
         sl_android_4_4: {
             base: 'SauceLabs',
+            browserName: 'android',
             platform: 'Linux',
             version: '4.4',
             deviceName: 'Android Emulator'
         },
         sl_android_4_3: {
             base: 'SauceLabs',
+            browserName: 'android',
             platform: 'Linux',
             version: '4.3',
             deviceName: 'Android Emulator'
         },
         sl_android_4_2: {
             base: 'SauceLabs',
+            browserName: 'android',
             platform: 'Linux',
             version: '4.2',
             deviceName: 'Android Emulator'
         },
         sl_android_4_1: {
             base: 'SauceLabs',
+            browserName: 'android',
             platform: 'Linux',
             version: '4.1',
             deviceName: 'Android Emulator'
         },
         sl_android_4_0: {
             base: 'SauceLabs',
+            browserName: 'android',
             platform: 'Linux',
             version: '4.0',
             deviceName: 'Android Emulator'
