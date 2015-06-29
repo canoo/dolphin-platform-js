@@ -150,38 +150,43 @@ module.exports = function (config) {
         },
         sl_ipad_8_2: {
             base: 'SauceLabs',
-            browserName: 'iPhone',
-            platform: 'OS X 10.10',
-            version: '8.2',
-            deviceName: 'iPad Simulator'
+            browserName: 'Safari',
+            deviceName: 'iPad Simulator',
+            deviceOrientation: 'portrait',
+            platformName: 'iOS',
+            platformVersion: '8.2'
         },
         sl_ipad_8_1: {
             base: 'SauceLabs',
-            browserName: 'iPhone',
-            platform: 'OS X 10.10',
-            version: '8.1',
-            deviceName: 'iPad Simulator'
+            browserName: 'Safari',
+            deviceName: 'iPad Simulator',
+            deviceOrientation: 'portrait',
+            platformName: 'iOS',
+            platformVersion: '8.1'
         },
         sl_ipad_8_0: {
             base: 'SauceLabs',
-            browserName: 'iPhone',
-            platform: 'OS X 10.10',
-            version: '8.0',
-            deviceName: 'iPad Simulator'
+            browserName: 'Safari',
+            deviceName: 'iPad Simulator',
+            deviceOrientation: 'portrait',
+            platformName: 'iOS',
+            platformVersion: '8.0'
         },
         sl_ipad_7_1: {
             base: 'SauceLabs',
-            browserName: 'iPhone',
-            platform: 'OS X 10.10',
-            version: '7.1',
-            deviceName: 'iPad Simulator'
+            browserName: 'Safari',
+            deviceName: 'iPad Simulator',
+            deviceOrientation: 'portrait',
+            platformName: 'iOS',
+            platformVersion: '7.1'
         },
         sl_ipad_7_0: {
             base: 'SauceLabs',
-            browserName: 'iPhone',
-            platform: 'OS X 10.10',
-            version: '7.0',
-            deviceName: 'iPad Simulator'
+            browserName: 'Safari',
+            deviceName: 'iPad Simulator',
+            deviceOrientation: 'portrait',
+            platformName: 'iOS',
+            platformVersion: '7.0'
         },
         sl_android_5_1: {
             base: 'SauceLabs',
@@ -284,8 +289,8 @@ module.exports = function (config) {
         // Sauce Labs configuration
         sauceLabs: {
             testName: 'dolphin-js Unit Tests',
-            recordScreenshots: false,
-            recordVideo: false
+            recordScreenshots: true,
+            recordVideo: true
         },
         captureTimeout: 120000,
         browserDisconnectTimeout: 10 * 1000,
