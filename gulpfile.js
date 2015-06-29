@@ -116,7 +116,7 @@ gulp.task('ci', ['build', 'build-test'], function() {
 });
 
 gulp.task('ci:nightly', ['build', 'build-test'], function() {
-    var customLaunchers = require('sauce.launchers.js').customLaunchers;
+    var customLaunchers = require('./sauce.launchers.js').customLaunchers;
     var allBrowsers = Object.keys(customLaunchers);
 
 
