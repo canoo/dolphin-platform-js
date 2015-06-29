@@ -151,6 +151,7 @@ module.exports = function (config) {
         sl_ipad_8_2: {
             base: 'SauceLabs',
             browserName: 'Safari',
+            appiumVersion: '1.4.3',
             deviceName: 'iPad Simulator',
             deviceOrientation: 'portrait',
             platformName: 'iOS',
@@ -159,6 +160,7 @@ module.exports = function (config) {
         sl_ipad_8_1: {
             base: 'SauceLabs',
             browserName: 'Safari',
+            appiumVersion: '1.4.3',
             deviceName: 'iPad Simulator',
             deviceOrientation: 'portrait',
             platformName: 'iOS',
@@ -167,6 +169,7 @@ module.exports = function (config) {
         sl_ipad_8_0: {
             base: 'SauceLabs',
             browserName: 'Safari',
+            appiumVersion: '1.4.3',
             deviceName: 'iPad Simulator',
             deviceOrientation: 'portrait',
             platformName: 'iOS',
@@ -175,6 +178,7 @@ module.exports = function (config) {
         sl_ipad_7_1: {
             base: 'SauceLabs',
             browserName: 'Safari',
+            appiumVersion: '1.4.3',
             deviceName: 'iPad Simulator',
             deviceOrientation: 'portrait',
             platformName: 'iOS',
@@ -183,6 +187,7 @@ module.exports = function (config) {
         sl_ipad_7_0: {
             base: 'SauceLabs',
             browserName: 'Safari',
+            appiumVersion: '1.4.3',
             deviceName: 'iPad Simulator',
             deviceOrientation: 'portrait',
             platformName: 'iOS',
