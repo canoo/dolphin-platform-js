@@ -91,7 +91,7 @@ module.exports = function (config) {
         sl_win81_firefox: {
             base: 'SauceLabs',
             browserName: 'firefox',
-            platform: 'Windows 81',
+            platform: 'Windows 8.1',
             version: '38.0'
         },
         sl_mac10_chrome: {
