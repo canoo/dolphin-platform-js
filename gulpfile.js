@@ -29,8 +29,7 @@ gulp.task('lint', function() {
 
 
 var testBundler = browserify(assign({}, watchify.args, {
-    entries: glob.sync('./test/src/**/test-*.js'),
-    debug: true
+    entries: glob.sync('./test/src/**/test-*.js')
 }));
 
 function rebundleTest(bundler) {

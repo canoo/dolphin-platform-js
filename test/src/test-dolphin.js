@@ -185,6 +185,68 @@ describe('Dolphin Event Handling', function() {
     }));
 
 
+    it('should not call removed onAdded-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.load = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var onAddedHandler = this.spy();
+
+        dolphin.onAdded('SomeClass', onAddedHandler).unsubscribe();
+        onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
+
+        sinon.assert.notCalled(onAddedHandler);
+    }));
+
+
+    it('should be able to add onAdded-handler within onAdded-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.load = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var innerOnAddedHandler = this.spy();
+        var outerOnAddedHandler = function() {
+            dolphin.onAdded('SomeClass', innerOnAddedHandler);
+        };
+
+        var subscription = dolphin.onAdded('SomeClass', outerOnAddedHandler);
+        onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
+        subscription.unsubscribe();
+        sinon.assert.notCalled(innerOnAddedHandler);
+
+        onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
+        sinon.assert.calledWith(innerOnAddedHandler, bean);
+    }));
+
+
+    it('should be able to remove onAdded-handler within onAdded-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.load = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var innerOnAddedHandler = this.spy();
+        var innerSubscription = dolphin.onAdded('SomeClass', innerOnAddedHandler);
+        var outerOnAddedHandler = function () {
+            innerSubscription.unsubscribe();
+        };
+        var outerSubscription = dolphin.onAdded('SomeClass', outerOnAddedHandler);
+
+        onModelStoreChange({clientPresentationModel: model, eventType: "ADDED"});
+        outerSubscription.unsubscribe();
+        sinon.assert.calledWith(innerOnAddedHandler, bean);
+        innerOnAddedHandler.reset();
+
+        onModelStoreChange({clientPresentationModel: model, eventType: "ADDED"});
+        sinon.assert.notCalled(innerOnAddedHandler);
+    }));
+
+
     it('should call generic onAdded-handler', sinon.test(function() {
         var bean = {};
         dolphin.classRepository.load = this.stub().returns(bean);
@@ -198,6 +260,68 @@ describe('Dolphin Event Handling', function() {
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
         sinon.assert.calledWith(onAddedHandler, bean);
+    }));
+
+
+    it('should not call removed generic onAdded-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.load = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var onAddedHandler = this.spy();
+
+        dolphin.onAdded(onAddedHandler).unsubscribe();
+        onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
+
+        sinon.assert.notCalled(onAddedHandler);
+    }));
+
+
+    it('should be able to add generic onAdded-handler within generic onAdded-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.load = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var innerOnAddedHandler = this.spy();
+        var outerOnAddedHandler = function() {
+            dolphin.onAdded('SomeClass', innerOnAddedHandler);
+        };
+
+        var subscription = dolphin.onAdded('SomeClass', outerOnAddedHandler);
+        onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
+        subscription.unsubscribe();
+        sinon.assert.notCalled(innerOnAddedHandler);
+
+        onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
+        sinon.assert.calledWith(innerOnAddedHandler, bean);
+    }));
+
+
+    it('should be able to remove generic onAdded-handler within generic onAdded-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.load = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var innerOnAddedHandler = this.spy();
+        var innerSubscription = dolphin.onAdded(innerOnAddedHandler);
+        var outerOnAddedHandler = function () {
+            innerSubscription.unsubscribe();
+        };
+        var outerSubscription = dolphin.onAdded(outerOnAddedHandler);
+
+        onModelStoreChange({clientPresentationModel: model, eventType: "ADDED"});
+        outerSubscription.unsubscribe();
+        sinon.assert.calledWith(innerOnAddedHandler, bean);
+        innerOnAddedHandler.reset();
+
+        onModelStoreChange({clientPresentationModel: model, eventType: "ADDED"});
+        sinon.assert.notCalled(innerOnAddedHandler);
     }));
 
 
@@ -233,6 +357,68 @@ describe('Dolphin Event Handling', function() {
     }));
 
 
+    it('should not call removed onRemoved-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.unload = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var onRemovedHandler = this.spy();
+
+        dolphin.onRemoved('SomeClass', onRemovedHandler).unsubscribe();
+        onModelStoreChange({ clientPresentationModel: model, eventType: "REMOVED" });
+
+        sinon.assert.notCalled(onRemovedHandler);
+    }));
+
+
+    it('should be able to add onRemoved-handler within onRemoved-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.unload = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var innerOnRemovedHandler = this.spy();
+        var outerOnRemovedHandler = function() {
+            dolphin.onRemoved('SomeClass', innerOnRemovedHandler);
+        };
+
+        var subscription = dolphin.onRemoved('SomeClass', outerOnRemovedHandler);
+        onModelStoreChange({ clientPresentationModel: model, eventType: "REMOVED" });
+        subscription.unsubscribe();
+        sinon.assert.notCalled(innerOnRemovedHandler);
+
+        onModelStoreChange({ clientPresentationModel: model, eventType: "REMOVED" });
+        sinon.assert.calledWith(innerOnRemovedHandler, bean);
+    }));
+
+
+    it('should be able to remove onRemoved-handler within onRemoved-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.unload = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var innerOnRemovedHandler = this.spy();
+        var innerSubscription = dolphin.onRemoved('SomeClass', innerOnRemovedHandler);
+        var outerOnRemovedHandler = function () {
+            innerSubscription.unsubscribe();
+        };
+        var outerSubscription = dolphin.onRemoved('SomeClass', outerOnRemovedHandler);
+
+        onModelStoreChange({clientPresentationModel: model, eventType: "REMOVED"});
+        outerSubscription.unsubscribe();
+        sinon.assert.calledWith(innerOnRemovedHandler, bean);
+        innerOnRemovedHandler.reset();
+
+        onModelStoreChange({clientPresentationModel: model, eventType: "REMOVED"});
+        sinon.assert.notCalled(innerOnRemovedHandler);
+    }));
+
+
     it('should call generic onRemoved-handler', sinon.test(function() {
         var bean = {};
         dolphin.classRepository.unload = this.stub().returns(bean);
@@ -246,6 +432,68 @@ describe('Dolphin Event Handling', function() {
         onModelStoreChange({ clientPresentationModel: model, eventType: "REMOVED" });
 
         sinon.assert.calledWith(onRemovedHandler, bean);
+    }));
+
+
+    it('should not call removed generic onRemoved-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.unload = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var onRemovedHandler = this.spy();
+
+        dolphin.onRemoved(onRemovedHandler).unsubscribe();
+        onModelStoreChange({ clientPresentationModel: model, eventType: "REMOVED" });
+
+        sinon.assert.notCalled(onRemovedHandler);
+    }));
+
+
+    it('should be able to add generic onRemoved-handler within generic onAdded-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.unload = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var innerOnRemovedHandler = this.spy();
+        var outerOnRemovedHandler = function() {
+            dolphin.onRemoved(innerOnRemovedHandler);
+        };
+
+        var subscription = dolphin.onRemoved(outerOnRemovedHandler);
+        onModelStoreChange({ clientPresentationModel: model, eventType: "REMOVED" });
+        subscription.unsubscribe();
+        sinon.assert.notCalled(innerOnRemovedHandler);
+
+        onModelStoreChange({ clientPresentationModel: model, eventType: "REMOVED" });
+        sinon.assert.calledWith(innerOnRemovedHandler, bean);
+    }));
+
+
+    it('should be able to remove generic onRemoved-handler within generic onAdded-handler', sinon.test(function() {
+        var bean = {};
+        dolphin.classRepository.unload = this.stub().returns(bean);
+        var model = {
+            presentationModelType: 'SomeClass',
+            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
+        };
+        var innerOnRemovedHandler = this.spy();
+        var innerSubscription = dolphin.onRemoved(innerOnRemovedHandler);
+        var outerOnRemovedHandler = function () {
+            innerSubscription.unsubscribe();
+        };
+        var outerSubscription = dolphin.onRemoved(outerOnRemovedHandler);
+
+        onModelStoreChange({clientPresentationModel: model, eventType: "REMOVED"});
+        outerSubscription.unsubscribe();
+        sinon.assert.calledWith(innerOnRemovedHandler, bean);
+        innerOnRemovedHandler.reset();
+
+        onModelStoreChange({clientPresentationModel: model, eventType: "REMOVED"});
+        sinon.assert.notCalled(innerOnRemovedHandler);
     }));
 });
 

@@ -175,38 +175,66 @@ Dolphin.prototype.removeIf = function(predicate) {
 
 
 Dolphin.prototype.onAdded = function(type, eventHandler) {
-    // TODO: Probably safer to use copy-on-write here [DP-6]
+    var self = this;
     if (!exists(eventHandler)) {
-        this.allAddedHandlers.push(type);
+        eventHandler = type;
+        self.allAddedHandlers = self.allAddedHandlers.concat(eventHandler);
+        return {
+            unsubscribe: function() {
+                self.allAddedHandlers = self.allAddedHandlers.filter(function(value) {
+                    return value !== eventHandler;
+                })
+            }
+        };
     } else {
-        var handlerList = this.addedHandlers.get(type);
+        var handlerList = self.addedHandlers.get(type);
         if (!exists(handlerList)) {
             handlerList = [];
-            this.addedHandlers.set(type, handlerList);
         }
-        handlerList.push(eventHandler);
+        self.addedHandlers.set(type, handlerList.concat(eventHandler))
+        return {
+            unsubscribe: function() {
+                var handlerList = self.addedHandlers.get(type);
+                if (exists(handlerList)) {
+                    self.addedHandlers.set(type, handlerList.filter(function(value) {
+                        return value !== eventHandler;
+                    }))
+                }
+            }
+        }
     }
-
-    // TODO: Return subscription [DP-6]
-    return null;
 };
 
 
 Dolphin.prototype.onRemoved = function(type, eventHandler) {
-    // TODO: Probably safer to use copy-on-write here [DP-6]
+    var self = this;
     if (!exists(eventHandler)) {
-        this.allRemovedHandlers.push(type);
+        eventHandler = type;
+        self.allRemovedHandlers = self.allRemovedHandlers.concat(eventHandler);
+        return {
+            unsubscribe: function() {
+                self.allRemovedHandlers = self.allRemovedHandlers.filter(function(value) {
+                    return value !== eventHandler;
+                })
+            }
+        };
     } else {
-        var handlerList = this.removedHandlers.get(type);
+        var handlerList = self.removedHandlers.get(type);
         if (!exists(handlerList)) {
             handlerList = [];
-            this.removedHandlers.set(type, handlerList);
         }
-        handlerList.push(eventHandler);
+        self.removedHandlers.set(type, handlerList.concat(eventHandler))
+        return {
+            unsubscribe: function() {
+                var handlerList = self.removedHandlers.get(type);
+                if (exists(handlerList)) {
+                    self.removedHandlers.set(type, handlerList.filter(function(value) {
+                        return value !== eventHandler;
+                    }))
+                }
+            }
+        }
     }
-
-    // TODO: Return subscription [DP-6]
-    return null;
 };
 
 
