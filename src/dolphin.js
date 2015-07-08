@@ -4,6 +4,7 @@
 
 require('./polyfills.js');
 var Map  = require('../bower_components/core.js/library/fn/map');
+var Promise = require('../bower_components/core.js/library/fn/promise');
 
 var exists = require('./utils.js').exists;
 var ClassRepository = require('./classrepo.js').ClassRepository;
@@ -253,8 +254,9 @@ Dolphin.prototype.send = function(command, params) {
         }
         this.dolphin.presentationModel.apply(this.dolphin, [null, '@@@ DOLPHIN_PARAMETER @@@'].concat(attributes));
     }
-    this.dolphin.send(command);
 
-    // TODO: Return promise [DP-8]
-    return null;
+    var localDolphin = this.dolphin;
+    return new Promise(function(resolve) {
+        localDolphin.send(command, { onFinished: function() {resolve();} });
+    });
 };

@@ -522,16 +522,17 @@ describe('Dolphin Command', function() {
 
 
 
-    it('should send command without parameters', sinon.test(function() {
-        this.spy(clientDolphin, 'send');
+    it('should send command without parameters', sinon.test(function(done) {
+        this.stub(clientDolphin, 'send').yieldsTo('onFinished', []);
 
-        dolphin.send("myCommand");
-
-        sinon.assert.calledWith(clientDolphin.send, "myCommand");
+        dolphin.send("myCommand").then(function() {
+            sinon.assert.calledWith(clientDolphin.send, "myCommand");
+            done();
+        });
     }));
 
 
-    it('should send command with one named parameter', sinon.test(function() {
+    it('should send command with one named parameter', sinon.test(function(done) {
         dolphin.classRepository.mapParamToDolphin = this.stub().withArgs(42).returns({value: 42, type: 'number'});
         var attrFactory = this.stub(clientDolphin, 'attribute');
         var sourceAttr = {};
@@ -541,11 +542,12 @@ describe('Dolphin Command', function() {
         attrFactory.withArgs('x', null, 42, 'VALUE').returns(attr1);
         attrFactory.withArgs('x', null, 'number', 'VALUE_TYPE').returns(attr2);
         this.spy(clientDolphin, 'presentationModel');
-        this.spy(clientDolphin, 'send');
+        this.stub(clientDolphin, 'send').yieldsTo('onFinished', []);
 
-        dolphin.send("myCommand", {x: 42});
-
-        sinon.assert.calledWith(clientDolphin.presentationModel, null, '@@@ DOLPHIN_PARAMETER @@@', sourceAttr, attr1, attr2);
-        sinon.assert.calledWith(clientDolphin.send, "myCommand");
+        dolphin.send("myCommand", {x: 42}).then(function() {
+            sinon.assert.calledWith(clientDolphin.presentationModel, null, '@@@ DOLPHIN_PARAMETER @@@', sourceAttr, attr1, attr2);
+            sinon.assert.calledWith(clientDolphin.send, "myCommand");
+            done();
+        });
     }));
 });
