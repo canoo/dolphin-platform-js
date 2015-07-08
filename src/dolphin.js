@@ -184,7 +184,7 @@ Dolphin.prototype.onAdded = function(type, eventHandler) {
             unsubscribe: function() {
                 self.allAddedHandlers = self.allAddedHandlers.filter(function(value) {
                     return value !== eventHandler;
-                })
+                });
             }
         };
     } else {
@@ -192,17 +192,17 @@ Dolphin.prototype.onAdded = function(type, eventHandler) {
         if (!exists(handlerList)) {
             handlerList = [];
         }
-        self.addedHandlers.set(type, handlerList.concat(eventHandler))
+        self.addedHandlers.set(type, handlerList.concat(eventHandler));
         return {
             unsubscribe: function() {
                 var handlerList = self.addedHandlers.get(type);
                 if (exists(handlerList)) {
                     self.addedHandlers.set(type, handlerList.filter(function(value) {
                         return value !== eventHandler;
-                    }))
+                    }));
                 }
             }
-        }
+        };
     }
 };
 
@@ -216,7 +216,7 @@ Dolphin.prototype.onRemoved = function(type, eventHandler) {
             unsubscribe: function() {
                 self.allRemovedHandlers = self.allRemovedHandlers.filter(function(value) {
                     return value !== eventHandler;
-                })
+                });
             }
         };
     } else {
@@ -224,17 +224,17 @@ Dolphin.prototype.onRemoved = function(type, eventHandler) {
         if (!exists(handlerList)) {
             handlerList = [];
         }
-        self.removedHandlers.set(type, handlerList.concat(eventHandler))
+        self.removedHandlers.set(type, handlerList.concat(eventHandler));
         return {
             unsubscribe: function() {
                 var handlerList = self.removedHandlers.get(type);
                 if (exists(handlerList)) {
                     self.removedHandlers.set(type, handlerList.filter(function(value) {
                         return value !== eventHandler;
-                    }))
+                    }));
                 }
             }
-        }
+        };
     }
 };
 
