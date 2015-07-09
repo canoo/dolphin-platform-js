@@ -15,6 +15,7 @@
     "del": "^1.1.1",
     "glob": "^5.0.10",
     "gulp": "^3.8.11",
+    "gulp-derequire": "^2.1.0",
     "gulp-jshint": "^1.10.0",
     "gulp-karma": "0.0.4",
     "gulp-mocha": "^2.0.1",

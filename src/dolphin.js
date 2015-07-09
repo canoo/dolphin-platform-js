@@ -8,10 +8,15 @@ var Promise = require('../bower_components/core.js/library/fn/promise');
 
 var exists = require('./utils.js').exists;
 var ClassRepository = require('./classrepo.js').ClassRepository;
+var NewClassRepository = require('./newclassrepo.js').ClassRepository;
 
 
 exports.connect = function(url, config) {
     return new Dolphin(url, config);
+};
+
+exports.connect2 = function(url, config) {
+    return new Dolphin(url, config, true);
 };
 
 
@@ -88,7 +93,7 @@ function onModelRemoved(dolphin, model) {
 
 
 
-function Dolphin(url, config) {
+function Dolphin(url, config, useNewClassRepository) {
     var _this = this;
     var observeInterval = 50;
     this.dolphin = opendolphin.dolphin(url, true, 4);
@@ -100,24 +105,53 @@ function Dolphin(url, config) {
             observeInterval = config.observeInterval;
         }
     }
-    this.classRepository = new ClassRepository();
+    this.classRepository = useNewClassRepository? new NewClassRepository(this.dolphin) : new ClassRepository();
     this.addedHandlers = new Map();
     this.removedHandlers = new Map();
+    this.updatedHandlers = new Map();
+    this.arrayUpdatedHandlers = new Map();
     this.allAddedHandlers = [];
     this.allRemovedHandlers = [];
+    this.allUpdatedHandlers = [];
+    this.allArrayUpdatedHandlers = [];
 
-    var shutdownRequested = false;
-    (function loop(){
-        setTimeout(function(){
-            Platform.performMicrotaskCheckpoint();
-            if (!shutdownRequested) {
-                loop();
+    if (useNewClassRepository) {
+        this.classRepository.onBeanUpdate(function(type, bean, propertyName, newValue, oldValue) {
+            var handlerList = _this.updatedHandlers.get(type);
+            if (exists(handlerList)) {
+                handlerList.forEach(function (handler) {
+                    handler(bean, propertyName, newValue, oldValue);
+                });
             }
-        }, observeInterval);
-    })();
-    this.shutdown = function() {
-        shutdownRequested = true;
-    };
+            _this.allUpdatedHandlers.forEach(function (handler) {
+                handler(bean, propertyName, newValue, oldValue);
+            });
+        });
+        this.classRepository.onArrayUpdate(function(type, bean, propertyName, index, count, newElement) {
+            var handlerList = _this.arrayUpdatedHandlers.get(type);
+            if (exists(handlerList)) {
+                handlerList.forEach(function (handler) {
+                    handler(bean, propertyName, index, count, newElement);
+                });
+            }
+            _this.allArrayUpdatedHandlers.forEach(function (handler) {
+                handler(bean, propertyName, index, count, newElement);
+            });
+        });
+    } else {
+        var shutdownRequested = false;
+        (function loop() {
+            setTimeout(function () {
+                Platform.performMicrotaskCheckpoint();
+                if (!shutdownRequested) {
+                    loop();
+                }
+            }, observeInterval);
+        })();
+        this.shutdown = function () {
+            shutdownRequested = true;
+        };
+    }
 
     this.dolphin.getClientModelStore().onModelStoreChange(function (event) {
         var model = event.clientPresentationModel;
@@ -131,6 +165,16 @@ function Dolphin(url, config) {
         }
     });
 }
+
+
+Dolphin.prototype.notifyBeanChange = function(bean, propertyName, newValue) {
+    return this.classRepository.notifyBeanChange(bean, propertyName, newValue);
+};
+
+
+Dolphin.prototype.notifyArrayChange = function(bean, propertyName, index, count, removedElements) {
+    this.classRepository.notifyArrayChange(bean, propertyName, index, count, removedElements);
+};
 
 
 Dolphin.prototype.isManaged = function(bean) {
@@ -230,6 +274,70 @@ Dolphin.prototype.onRemoved = function(type, eventHandler) {
                 var handlerList = self.removedHandlers.get(type);
                 if (exists(handlerList)) {
                     self.removedHandlers.set(type, handlerList.filter(function(value) {
+                        return value !== eventHandler;
+                    }));
+                }
+            }
+        };
+    }
+};
+
+
+Dolphin.prototype.onBeanUpdate = function(type, eventHandler) {
+    var self = this;
+    if (!exists(eventHandler)) {
+        eventHandler = type;
+        self.allUpdatedHandlers = self.allUpdatedHandlers.concat(eventHandler);
+        return {
+            unsubscribe: function() {
+                self.allUpdatedHandlers = self.allUpdatedHandlers.filter(function(value) {
+                    return value !== eventHandler;
+                });
+            }
+        };
+    } else {
+        var handlerList = self.updatedHandlers.get(type);
+        if (!exists(handlerList)) {
+            handlerList = [];
+        }
+        self.updatedHandlers.set(type, handlerList.concat(eventHandler));
+        return {
+            unsubscribe: function() {
+                var handlerList = self.updatedHandlers.get(type);
+                if (exists(handlerList)) {
+                    self.updatedHandlers.set(type, handlerList.filter(function(value) {
+                        return value !== eventHandler;
+                    }));
+                }
+            }
+        };
+    }
+};
+
+
+Dolphin.prototype.onArrayUpdate = function(type, eventHandler) {
+    var self = this;
+    if (!exists(eventHandler)) {
+        eventHandler = type;
+        self.allArrayUpdatedHandlers = self.allArrayUpdatedHandlers.concat(eventHandler);
+        return {
+            unsubscribe: function() {
+                self.allArrayUpdatedHandlers = self.allArrayUpdatedHandlers.filter(function(value) {
+                    return value !== eventHandler;
+                });
+            }
+        };
+    } else {
+        var handlerList = self.arrayUpdatedHandlers.get(type);
+        if (!exists(handlerList)) {
+            handlerList = [];
+        }
+        self.arrayUpdatedHandlers.set(type, handlerList.concat(eventHandler));
+        return {
+            unsubscribe: function() {
+                var handlerList = self.arrayUpdatedHandlers.get(type);
+                if (exists(handlerList)) {
+                    self.arrayUpdatedHandlers.set(type, handlerList.filter(function(value) {
                         return value !== eventHandler;
                     }));
                 }

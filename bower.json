@@ -8,7 +8,10 @@
     "src",
     "test",
     "gulpfile.js",
-    "package.json"
+    "karma.conf.js",
+    "package.json",
+    "sauce.launchers.js",
+    "sauce-template.json"
   ],
   "devDependencies": {
     "observe-js": "~0.5.5",
