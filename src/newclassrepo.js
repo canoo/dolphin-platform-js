@@ -67,15 +67,9 @@ function ClassRepository(dolphin) {
 ClassRepository.prototype.notifyBeanChange = function(bean, propertyName, newValue) {
     var modelId = this.beanToDolphin.get(bean);
     var model = this.dolphin.findPresentationModelById(modelId);
-    if (!exists(model)) {
-        console.log('notifyBeanChange (model==null)', bean, modelId);
-    }
     var classInfo = this.classes.get(model.presentationModelType);
     var type = classInfo[propertyName];
     var attribute = model.findAttributeByPropertyName(propertyName);
-    if (!exists(attribute)) {
-        console.log('notifyBeanChange (attribute==null)', bean, propertyName, model);
-    }
     var oldValue = attribute.getValue();
     attribute.setValue(toDolphin(this, newValue));
     return fromDolphin(this, type, oldValue);
