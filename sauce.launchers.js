@@ -1,6 +1,19 @@
 // Browsers to run on Sauce Labs
 
 var daily = {
+    sl_winXP_chrome: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'Windows XP',
+        version: '43.0'
+    },
+    sl_winXP_firefox: {
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        platform: 'Windows XP',
+        version: '39.0'
+    },
+
     sl_win7_ie9: {
         base: 'SauceLabs',
         browserName: 'internet explorer',
@@ -19,18 +32,57 @@ var daily = {
         platform: 'Windows 7',
         version: '11.0'
     },
+    sl_win7_chrome: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'Windows 7',
+        version: '43.0'
+    },
+    sl_win7_firefox: {
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        platform: 'Windows 7',
+        version: '39.0'
+    },
+
     sl_win8_0_ie10: {
         base: 'SauceLabs',
         browserName: 'internet explorer',
         platform: 'Windows 8',
         version: '10.0'
     },
+    sl_win8_0_chrome: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'Windows 8',
+        version: '43.0'
+    },
+    sl_win8_0_firefox: {
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        platform: 'Windows 8',
+        version: '39.0'
+    },
+
     sl_win8_1_ie11: {
         base: 'SauceLabs',
         browserName: 'internet explorer',
         platform: 'Windows 8.1',
         version: '11.0'
     },
+    sl_win8_1_chrome: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'Windows 8.1',
+        version: '43.0'
+    },
+    sl_win8_1_firefox: {
+        base: 'SauceLabs',
+        browserName: 'firefox',
+        platform: 'Windows 8.1',
+        version: '39.0'
+    },
+
     sl_ipad_8_2: {
         base: 'SauceLabs',
         browserName: 'Safari',
@@ -43,58 +95,6 @@ var daily = {
 };
 
 var weekly = {
-    sl_winXP_chrome: {
-        base: 'SauceLabs',
-        browserName: 'chrome',
-        platform: 'Windows XP',
-        version: '43.0'
-    },
-    sl_winXP_firefox: {
-        base: 'SauceLabs',
-        browserName: 'firefox',
-        platform: 'Windows XP',
-        version: '38.0'
-    },
-
-    sl_win7_chrome: {
-        base: 'SauceLabs',
-        browserName: 'chrome',
-        platform: 'Windows 7',
-        version: '43.0'
-    },
-    sl_win7_firefox: {
-        base: 'SauceLabs',
-        browserName: 'firefox',
-        platform: 'Windows 7',
-        version: '38.0'
-    },
-
-    sl_win8_0_chrome: {
-        base: 'SauceLabs',
-        browserName: 'chrome',
-        platform: 'Windows 8',
-        version: '43.0'
-    },
-    sl_win8_0_firefox: {
-        base: 'SauceLabs',
-        browserName: 'firefox',
-        platform: 'Windows 8',
-        version: '38.0'
-    },
-
-    sl_win8_1_chrome: {
-        base: 'SauceLabs',
-        browserName: 'chrome',
-        platform: 'Windows 8.1',
-        version: '43.0'
-    },
-    sl_win8_1_firefox: {
-        base: 'SauceLabs',
-        browserName: 'firefox',
-        platform: 'Windows 8.1',
-        version: '38.0'
-    },
-
     sl_mac10_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -105,7 +105,7 @@ var weekly = {
         base: 'SauceLabs',
         browserName: 'firefox',
         platform: 'OSX 10.10',
-        version: '38.0'
+        version: '39.0'
     },
     sl_mac10_safari: {
         base: 'SauceLabs',
@@ -124,7 +124,7 @@ var weekly = {
         base: 'SauceLabs',
         browserName: 'firefox',
         platform: 'Linux',
-        version: '38.0'
+        version: '39.0'
     },
     sl_linux_opera: {
         base: 'SauceLabs',
@@ -175,7 +175,7 @@ var manual = {
         base: 'SauceLabs',
         browserName: 'firefox',
         platform: 'OSX 10.9',
-        version: '38.0'
+        version: '39.0'
     },
     sl_mac9_safari: {
         base: 'SauceLabs',
