@@ -12,11 +12,35 @@ var NewClassRepository = require('./newclassrepo.js').ClassRepository;
 
 
 exports.connect = function(url, config) {
-    return new Dolphin(url, config);
+    var dolphin = new Dolphin(url, true);
+    finalizeOpenDolphin(dolphin, config, false);
+    return dolphin;
 };
 
 exports.connect2 = function(url, config) {
-    return new Dolphin(url, config, true);
+    var dolphin = new Dolphin(url, false);
+
+    return new Promise(function(resolve, reject) {
+        var req = new XMLHttpRequest();
+        req.withCredentials = true;
+
+        req.onload = function() {
+            if (req.status == 200) {
+                finalizeOpenDolphin(dolphin, config, true);
+                resolve(dolphin);
+            }
+            else {
+                reject(Error(req.statusText));
+            }
+        };
+
+        req.onerror = function() {
+            reject(Error("Network Error"));
+        };
+
+        req.open('POST', url + 'invalidate?');
+        req.send();
+    });
 };
 
 
@@ -37,15 +61,15 @@ function onModelAdded(dolphin, model) {
             break;
         case DOLPHIN_LIST_ADD:
             dolphin.classRepository.addListEntry(model);
-            dolphin.dolphin.deletePresentationModel(model);
+            dolphin.opendolphin.deletePresentationModel(model);
             break;
         case DOLPHIN_LIST_DEL:
             dolphin.classRepository.delListEntry(model);
-            dolphin.dolphin.deletePresentationModel(model);
+            dolphin.opendolphin.deletePresentationModel(model);
             break;
         case DOLPHIN_LIST_SET:
             dolphin.classRepository.setListEntry(model);
-            dolphin.dolphin.deletePresentationModel(model);
+            dolphin.opendolphin.deletePresentationModel(model);
             break;
         default:
             var bean = dolphin.classRepository.load(model);
@@ -93,48 +117,38 @@ function onModelRemoved(dolphin, model) {
 
 
 
-function Dolphin(url, config, useNewClassRepository) {
-    var _this = this;
+function finalizeOpenDolphin(dolphin, config, useNewClassRepository) {
     var observeInterval = 50;
-    this.dolphin = opendolphin.dolphin(url, true, 4);
     if (exists(config)) {
         if (config.serverPush) {
-            this.dolphin.startPushListening('ServerPushController:longPoll', 'ServerPushController:release');
+            dolphin.opendolphin.startPushListening('ServerPushController:longPoll', 'ServerPushController:release');
         }
         if (config.observeInterval) {
             observeInterval = config.observeInterval;
         }
     }
-    this.classRepository = useNewClassRepository? new NewClassRepository(this.dolphin) : new ClassRepository();
-    this.addedHandlers = new Map();
-    this.removedHandlers = new Map();
-    this.updatedHandlers = new Map();
-    this.arrayUpdatedHandlers = new Map();
-    this.allAddedHandlers = [];
-    this.allRemovedHandlers = [];
-    this.allUpdatedHandlers = [];
-    this.allArrayUpdatedHandlers = [];
+    dolphin.classRepository = useNewClassRepository? new NewClassRepository(dolphin.opendolphin) : new ClassRepository();
 
     if (useNewClassRepository) {
-        this.classRepository.onBeanUpdate(function(type, bean, propertyName, newValue, oldValue) {
-            var handlerList = _this.updatedHandlers.get(type);
+        dolphin.classRepository.onBeanUpdate(function(type, bean, propertyName, newValue, oldValue) {
+            var handlerList = dolphin.updatedHandlers.get(type);
             if (exists(handlerList)) {
                 handlerList.forEach(function (handler) {
                     handler(bean, propertyName, newValue, oldValue);
                 });
             }
-            _this.allUpdatedHandlers.forEach(function (handler) {
+            dolphin.allUpdatedHandlers.forEach(function (handler) {
                 handler(bean, propertyName, newValue, oldValue);
             });
         });
-        this.classRepository.onArrayUpdate(function(type, bean, propertyName, index, count, newElement) {
-            var handlerList = _this.arrayUpdatedHandlers.get(type);
+        dolphin.classRepository.onArrayUpdate(function(type, bean, propertyName, index, count, newElement) {
+            var handlerList = dolphin.arrayUpdatedHandlers.get(type);
             if (exists(handlerList)) {
                 handlerList.forEach(function (handler) {
                     handler(bean, propertyName, index, count, newElement);
                 });
             }
-            _this.allArrayUpdatedHandlers.forEach(function (handler) {
+            dolphin.allArrayUpdatedHandlers.forEach(function (handler) {
                 handler(bean, propertyName, index, count, newElement);
             });
         });
@@ -148,22 +162,36 @@ function Dolphin(url, config, useNewClassRepository) {
                 }
             }, observeInterval);
         })();
-        this.shutdown = function () {
+        dolphin.shutdown = function () {
             shutdownRequested = true;
         };
     }
 
-    this.dolphin.getClientModelStore().onModelStoreChange(function (event) {
+    dolphin.opendolphin.getClientModelStore().onModelStoreChange(function (event) {
         var model = event.clientPresentationModel;
         var sourceSystem = model.findAttributeByPropertyName(SOURCE_SYSTEM);
         if (exists(sourceSystem) && sourceSystem.value === SOURCE_SYSTEM_SERVER) {
             if (event.eventType === opendolphin.Type.ADDED) {
-                onModelAdded(_this, model);
+                onModelAdded(dolphin, model);
             } else if (event.eventType === opendolphin.Type.REMOVED) {
-                onModelRemoved(_this, model);
+                onModelRemoved(dolphin, model);
             }
         }
     });
+}
+
+
+function Dolphin(url, reset) {
+    this.addedHandlers = new Map();
+    this.removedHandlers = new Map();
+    this.updatedHandlers = new Map();
+    this.arrayUpdatedHandlers = new Map();
+    this.allAddedHandlers = [];
+    this.allRemovedHandlers = [];
+    this.allUpdatedHandlers = [];
+    this.allArrayUpdatedHandlers = [];
+
+    this.opendolphin = opendolphin.makeDolphin().url(url).reset(reset).slackMS(4).build();
 }
 
 
@@ -351,19 +379,19 @@ Dolphin.prototype.send = function(command, params) {
     if (exists(params)) {
 
         var attributes = [
-            this.dolphin.attribute(SOURCE_SYSTEM, null, SOURCE_SYSTEM_CLIENT)
+            this.opendolphin.attribute(SOURCE_SYSTEM, null, SOURCE_SYSTEM_CLIENT)
         ];
         for (var prop in params) {
             if (params.hasOwnProperty(prop)) {
                 var param = this.classRepository.mapParamToDolphin(params[prop]);
-                attributes.push(this.dolphin.attribute(prop, null, param.value, 'VALUE'));
-                attributes.push(this.dolphin.attribute(prop, null, param.type, 'VALUE_TYPE'));
+                attributes.push(this.opendolphin.attribute(prop, null, param.value, 'VALUE'));
+                attributes.push(this.opendolphin.attribute(prop, null, param.type, 'VALUE_TYPE'));
             }
         }
-        this.dolphin.presentationModel.apply(this.dolphin, [null, '@@@ DOLPHIN_PARAMETER @@@'].concat(attributes));
+        this.opendolphin.presentationModel.apply(this.opendolphin, [null, '@@@ DOLPHIN_PARAMETER @@@'].concat(attributes));
     }
 
-    var localDolphin = this.dolphin;
+    var localDolphin = this.opendolphin;
     return new Promise(function(resolve) {
         localDolphin.send(command, { onFinished: function() {resolve();} });
     });
