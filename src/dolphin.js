@@ -10,6 +10,7 @@ var exists = require('./utils.js').exists;
 var ClassRepository = require('./classrepo.js').ClassRepository;
 var NewClassRepository = require('./newclassrepo.js').ClassRepository;
 
+var initializer;
 
 exports.connect = function(url, config) {
     var dolphin = new Dolphin(url, true);
@@ -20,14 +21,14 @@ exports.connect = function(url, config) {
 exports.connect2 = function(url, config) {
     var dolphin = new Dolphin(url, false);
 
-    return new Promise(function(resolve, reject) {
+    initializer = new Promise(function(resolve, reject) {
         var req = new XMLHttpRequest();
         req.withCredentials = true;
 
         req.onload = function() {
             if (req.status == 200) {
                 finalizeOpenDolphin(dolphin, config, true);
-                resolve(dolphin);
+                resolve();
             }
             else {
                 reject(Error(req.statusText));
@@ -41,6 +42,7 @@ exports.connect2 = function(url, config) {
         req.open('POST', url + 'invalidate?');
         req.send();
     });
+    return dolphin;
 };
 
 
@@ -178,6 +180,7 @@ function finalizeOpenDolphin(dolphin, config, useNewClassRepository) {
             }
         }
     });
+    dolphin.ready = true;
 }
 
 
@@ -190,6 +193,7 @@ function Dolphin(url, reset) {
     this.allRemovedHandlers = [];
     this.allUpdatedHandlers = [];
     this.allArrayUpdatedHandlers = [];
+    this.ready = false;
 
     this.opendolphin = opendolphin.makeDolphin().url(url).reset(reset).slackMS(4).build();
 }
@@ -392,7 +396,8 @@ Dolphin.prototype.send = function(command, params) {
     }
 
     var localDolphin = this.opendolphin;
-    return new Promise(function(resolve) {
+    var sendCommand = function(resolve) {
         localDolphin.send(command, { onFinished: function() {resolve();} });
-    });
+    };
+    return this.ready? new Promise(sendCommand) : initializer.then(sendCommand);
 };

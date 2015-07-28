@@ -86,13 +86,19 @@ function ClassRepository(dolphin) {
 
 ClassRepository.prototype.notifyBeanChange = function(bean, propertyName, newValue) {
     var modelId = this.beanToDolphin.get(bean);
-    var model = this.dolphin.findPresentationModelById(modelId);
-    var classInfo = this.classes.get(model.presentationModelType);
-    var type = classInfo[propertyName];
-    var attribute = model.findAttributeByPropertyName(propertyName);
-    var oldValue = attribute.getValue();
-    attribute.setValue(toDolphin(this, newValue));
-    return fromDolphin(this, type, oldValue);
+    if (exists(modelId)) {
+        var model = this.dolphin.findPresentationModelById(modelId);
+        if (exists(model)) {
+            var classInfo = this.classes.get(model.presentationModelType);
+            var type = classInfo[propertyName];
+            var attribute = model.findAttributeByPropertyName(propertyName);
+            if (exists(type) && exists(attribute)) {
+                var oldValue = attribute.getValue();
+                attribute.setValue(toDolphin(this, newValue));
+                return fromDolphin(this, type, oldValue);
+            }
+        }
+    }
 };
 
 
@@ -102,11 +108,13 @@ ClassRepository.prototype.notifyArrayChange = function(bean, propertyName, index
     }
     var modelId = this.beanToDolphin.get(bean);
     var array = bean[propertyName];
-    if (Array.isArray(removedElements) && removedElements.length > 0) {
-        sendListRemove(this.dolphin, modelId, propertyName, index, index + removedElements.length);
-    }
-    for (var i = index; i < index + count; i++) {
-        sendListAdd(this.dolphin, modelId, propertyName, i, toDolphin(this, array[i]));
+    if (exists(modelId) && exists(array)) {
+        if (Array.isArray(removedElements) && removedElements.length > 0) {
+            sendListRemove(this.dolphin, modelId, propertyName, index, index + removedElements.length);
+        }
+        for (var i = index; i < index + count; i++) {
+            sendListAdd(this.dolphin, modelId, propertyName, i, toDolphin(this, array[i]));
+        }
     }
 };
 

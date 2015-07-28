@@ -111,6 +111,7 @@ describe('NewClassRepository primitive properties', function() {
             getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('booleanProperty').returns(attribute)
@@ -134,6 +135,7 @@ describe('NewClassRepository primitive properties', function() {
             getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('floatProperty').returns(attribute)
@@ -157,6 +159,7 @@ describe('NewClassRepository primitive properties', function() {
             getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('integerProperty').returns(attribute)
@@ -180,6 +183,7 @@ describe('NewClassRepository primitive properties', function() {
             getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('stringProperty').returns(attribute)
@@ -288,6 +292,7 @@ describe('NewClassRepository Dolphin Bean properties', function() {
             getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('reference').returns(attribute)
