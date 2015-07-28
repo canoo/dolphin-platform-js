@@ -12,6 +12,8 @@ var UNKNOWN = 0,
     BASIC_TYPE = 1,
     DOLPHIN_BEAN = 2;
 
+var blocked = null;
+
 function fromDolphin(classRepository, type, value) {
     return value === null? null
         : type === DOLPHIN_BEAN? classRepository.beanFromDolphin.get(value) : value;
@@ -52,6 +54,24 @@ function validateList(classRepository, type, bean, propertyName) {
     }
 }
 
+function block(bean, propertyName) {
+    if (exists(blocked)) {
+        throw new Error('Trying to create a block while another block exists');
+    }
+    blocked = {
+        bean: bean,
+        propertyName: propertyName
+    };
+}
+
+function isBlocked(bean, propertyName) {
+    return exists(blocked) && blocked.bean === bean && blocked.propertyName === propertyName;
+}
+
+function unblock() {
+    blocked = null;
+}
+
 
 function ClassRepository(dolphin) {
     this.dolphin = dolphin;
@@ -77,6 +97,9 @@ ClassRepository.prototype.notifyBeanChange = function(bean, propertyName, newVal
 
 
 ClassRepository.prototype.notifyArrayChange = function(bean, propertyName, index, count, removedElements) {
+    if (isBlocked(bean, propertyName)) {
+        return;
+    }
     var modelId = this.beanToDolphin.get(bean);
     var array = bean[propertyName];
     if (Array.isArray(removedElements) && removedElements.length > 0) {
@@ -169,9 +192,14 @@ ClassRepository.prototype.addListEntry = function(model) {
             var type = model.presentationModelType;
             var entry = fromDolphin(this, classInfo[attribute.value], element.value);
             validateList(this, type, bean, attribute.value);
-            this.arrayUpdateHandlers.forEach(function(handler) {
-                handler(type, bean, attribute.value, pos.value, 0, entry);
-            });
+            try {
+                block(bean, attribute.value);
+                this.arrayUpdateHandlers.forEach(function (handler) {
+                    handler(type, bean, attribute.value, pos.value, 0, entry);
+                });
+            } finally {
+                unblock();
+            }
         } else {
             throw new Error("Invalid list modification update received. Source bean unknown.");
         }
@@ -192,9 +220,14 @@ ClassRepository.prototype.delListEntry = function(model) {
         if (exists(bean)) {
             var type = model.presentationModelType;
             validateList(this, type, bean, attribute.value);
-            this.arrayUpdateHandlers.forEach(function(handler) {
-                handler(type, bean, attribute.value, from.value, to.value - from.value);
-            });
+            try {
+                block(bean, attribute.value);
+                this.arrayUpdateHandlers.forEach(function (handler) {
+                    handler(type, bean, attribute.value, from.value, to.value - from.value);
+                });
+            } finally {
+                unblock();
+            }
         } else {
             throw new Error("Invalid list modification update received. Source bean unknown.");
         }
@@ -217,9 +250,14 @@ ClassRepository.prototype.setListEntry = function(model) {
             var type = model.presentationModelType;
             var entry = fromDolphin(this, classInfo[attribute.value], element.value);
             validateList(this, type, bean, attribute.value);
-            this.arrayUpdateHandlers.forEach(function(handler) {
-                handler(type, bean, attribute.value, pos.value, 1, entry);
-            });
+            try {
+                block(bean, attribute.value);
+                this.arrayUpdateHandlers.forEach(function (handler) {
+                    handler(type, bean, attribute.value, pos.value, 1, entry);
+                });
+            } finally {
+                unblock();
+            }
         } else {
             throw new Error("Invalid list modification update received. Source bean unknown.");
         }
