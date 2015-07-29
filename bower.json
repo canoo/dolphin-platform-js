@@ -1,6 +1,6 @@
 {
-  "name": "dolphin-platform-client",
-  "version": "0.4.2",
+  "name": "dolphin-js",
+  "version": "0.4.3",
   "main": "./dist/dolphin.min.js",
   "ignore": [
     "**/.*",
