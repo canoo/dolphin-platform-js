@@ -399,5 +399,10 @@ Dolphin.prototype.send = function(command, params) {
     var sendCommand = function(resolve) {
         localDolphin.send(command, { onFinished: function() {resolve();} });
     };
-    return this.ready? new Promise(sendCommand) : initializer.then(sendCommand);
+    var resolver = this.ready? sendCommand : function(resolve) {
+        initializer.then(function() {
+            sendCommand(resolve);
+        });
+    };
+    return new Promise(resolver);
 };
