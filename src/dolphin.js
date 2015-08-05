@@ -19,7 +19,7 @@ exports.connect = function(url, config) {
 };
 
 exports.connect2 = function(url, config) {
-    var dolphin = new Dolphin(url, false);
+    var dolphin = new Dolphin(url, false, config);
 
     initializer = new Promise(function(resolve, reject) {
         var req = new XMLHttpRequest();
@@ -184,7 +184,7 @@ function finalizeOpenDolphin(dolphin, config, useNewClassRepository) {
 }
 
 
-function Dolphin(url, reset) {
+function Dolphin(url, reset, config) {
     this.addedHandlers = new Map();
     this.removedHandlers = new Map();
     this.updatedHandlers = new Map();
@@ -195,7 +195,11 @@ function Dolphin(url, reset) {
     this.allArrayUpdatedHandlers = [];
     this.ready = false;
 
-    this.opendolphin = opendolphin.makeDolphin().url(url).reset(reset).slackMS(4).build();
+    var builder = opendolphin.makeDolphin().url(url).reset(reset).slackMS(4);
+    if (exists(config) && exists(config.errorHandler)) {
+        builder.errorHandler(config.errorHandler);
+    }
+    this.opendolphin = builder.build();
 }
 
 
