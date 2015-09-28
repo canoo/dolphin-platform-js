@@ -12,11 +12,14 @@ var ClassRepository = require('../../src/classrepo.js').ClassRepository;
 
 describe('ClassRepository primitive properties', function() {
 
+    var dolphin = {
+        findPresentationModelById: function() {}
+    };
     var classRepo = null;
     var classModel = null;
 
     beforeEach(function() {
-        classRepo = new ClassRepository();
+        classRepo = new ClassRepository(dolphin);
         classModel = {
             id: 'ComplexClass',
             attributes: [
@@ -49,6 +52,9 @@ describe('ClassRepository primitive properties', function() {
     }));
 
     it('can be set from opendolphin', sinon.test(function() {
+        var onBeanUpdateHandler = this.spy();
+        classRepo.onBeanUpdate(onBeanUpdateHandler);
+
         classModel = {
             id: 'TypedComplexClass',
             attributes: [
@@ -85,13 +91,15 @@ describe('ClassRepository primitive properties', function() {
             ]
         };
         var bean = classRepo.load(beanModel);
-        expect(bean.booleanProperty).to.be.true;
-        expect(bean.floatProperty).to.equal(3.1415);
-        expect(bean.integerProperty).to.equal(42);
-        expect(bean.stringProperty).to.equal("Hello World");
+        sinon.assert.callCount(onBeanUpdateHandler, 4);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'booleanProperty', true, null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'floatProperty', 3.1415, null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'integerProperty', 42, null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'stringProperty', "Hello World", null);
     }));
 
     it('boolean can be set from user', sinon.test(function(done) {
+        this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'booleanProperty',
             tag: opendolphin.Tag.value(),
@@ -99,19 +107,23 @@ describe('ClassRepository primitive properties', function() {
             setValue: function(newValue) {
                 expect(newValue).to.be.true;
                 done();
-            }
+            },
+            getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('booleanProperty').returns(attribute)
         };
+        dolphin.findPresentationModelById.returns(beanModel);
+        attribute.getValue.returns(null);
         var bean = classRepo.load(beanModel);
-        bean.booleanProperty = true;
-        Platform.performMicrotaskCheckpoint();
+        classRepo.notifyBeanChange(bean, 'booleanProperty', true);
     }));
 
     it('float can be set from user', sinon.test(function(done) {
+        this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'floatProperty',
             tag: opendolphin.Tag.value(),
@@ -119,19 +131,23 @@ describe('ClassRepository primitive properties', function() {
             setValue: function(newValue) {
                 expect(newValue).to.be.closeTo(2.7182, 1e-6);
                 done();
-            }
+            },
+            getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('floatProperty').returns(attribute)
         };
+        dolphin.findPresentationModelById.returns(beanModel);
+        attribute.getValue.returns(null);
         var bean = classRepo.load(beanModel);
-        bean.floatProperty = 2.7182;
-        Platform.performMicrotaskCheckpoint();
+        classRepo.notifyBeanChange(bean, 'floatProperty', 2.7182);
     }));
 
     it('integer can be set from user', sinon.test(function(done) {
+        this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'integerProperty',
             tag: opendolphin.Tag.value(),
@@ -139,19 +155,23 @@ describe('ClassRepository primitive properties', function() {
             setValue: function(newValue) {
                 expect(newValue).to.equal(4711);
                 done();
-            }
+            },
+            getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('integerProperty').returns(attribute)
         };
+        dolphin.findPresentationModelById.returns(beanModel);
+        attribute.getValue.returns(null);
         var bean = classRepo.load(beanModel);
-        bean.integerProperty = 4711;
-        Platform.performMicrotaskCheckpoint();
+        classRepo.notifyBeanChange(bean, 'integerProperty', 4711);
     }));
 
     it('string can be set from user', sinon.test(function(done) {
+        this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'stringProperty',
             tag: opendolphin.Tag.value(),
@@ -159,29 +179,35 @@ describe('ClassRepository primitive properties', function() {
             setValue: function(newValue) {
                 expect(newValue).to.equal("Good Bye!");
                 done();
-            }
+            },
+            getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('stringProperty').returns(attribute)
         };
+        dolphin.findPresentationModelById.returns(beanModel);
+        attribute.getValue.returns(null);
         var bean = classRepo.load(beanModel);
-        bean.stringProperty = "Good Bye!";
-        Platform.performMicrotaskCheckpoint();
+        classRepo.notifyBeanChange(bean, 'stringProperty', "Good Bye!");
     }));
 });
 
 
 describe('ClassRepository Dolphin Bean properties', function() {
 
+    var dolphin = {
+        findPresentationModelById: function() {}
+    };
     var classRepo = null;
     var bean1 = null;
     var bean2 = null;
     var complexClassModel = null;
 
     beforeEach(function() {
-        classRepo = new ClassRepository();
+        classRepo = new ClassRepository(dolphin);
 
         var simpleClassModel = {
             id: 'SimpleClass',
@@ -229,6 +255,9 @@ describe('ClassRepository Dolphin Bean properties', function() {
     }));
 
     it('can be set from opendolphin', sinon.test(function() {
+        var onBeanUpdateHandler = this.spy();
+        classRepo.onBeanUpdate(onBeanUpdateHandler);
+
         complexClassModel = {
             id: 'TypedComplexClass',
             attributes: [
@@ -247,27 +276,31 @@ describe('ClassRepository Dolphin Bean properties', function() {
             ]
         };
         var bean = classRepo.load(beanModel);
-        expect(bean.reference).to.equal(bean1);
+        sinon.assert.calledWithExactly(onBeanUpdateHandler, 'TypedComplexClass', bean, 'reference', bean1, null);
     }));
 
     it('reference can be set from user', sinon.test(function(done) {
+        this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'reference',
             tag: opendolphin.Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
-                expect(newValue).to.equal(bean2);
+                expect(newValue).to.equal('id2');
                 done();
-            }
+            },
+            getValue: this.stub()
         };
         var beanModel = {
+            id: 'myId',
             presentationModelType: 'ComplexClass',
             attributes: [ attribute ],
             findAttributeByPropertyName: this.stub().withArgs('reference').returns(attribute)
         };
+        dolphin.findPresentationModelById.returns(beanModel);
+        attribute.getValue.returns(null);
         var bean = classRepo.load(beanModel);
-        bean.reference = bean2;
-        Platform.performMicrotaskCheckpoint();
+        classRepo.notifyBeanChange(bean, 'reference', bean2);
     }));
 
 });

@@ -4,7 +4,7 @@
 
 require('./polyfills.js');
 var ObjectObserver = require('ObjectObserver');
-var Map  = require('../bower_components/core.js/library/fn/map');
+var Map = require('../bower_components/core.js/library/fn/map');
 
 var exists = require('./utils.js').exists;
 
@@ -12,35 +12,133 @@ var UNKNOWN = 0,
     BASIC_TYPE = 1,
     DOLPHIN_BEAN = 2;
 
+var blocked = null;
+
 function fromDolphin(classRepository, type, value) {
-    return type === DOLPHIN_BEAN? classRepository.beanFromDolphin.get(value) : value;
+    return value === null? null
+        : type === DOLPHIN_BEAN? classRepository.beanFromDolphin.get(value) : value;
 }
 
-function toDolphin(classRepository, type, value) {
-    return type === DOLPHIN_BEAN? classRepository.beanToDolphin.get(value) : value;
+function toDolphin(classRepository, value) {
+    return typeof value === 'object'? classRepository.beanToDolphin.get(value) : value;
 }
 
-function modifyList(bean, attribute, from, count, newElements) {
-    var list = bean[attribute];
+function sendListAdd(dolphin, modelId, propertyName, pos, element) {
+    var attributes = [
+        dolphin.attribute('@@@ SOURCE_SYSTEM @@@', null, 'client'),
+        dolphin.attribute('source', null, modelId),
+        dolphin.attribute('attribute', null, propertyName),
+        dolphin.attribute('pos', null, pos),
+        dolphin.attribute('element', null, element)
+    ];
+    dolphin.presentationModel.apply(dolphin, [null, '@@@ LIST_ADD @@@'].concat(attributes));
+}
+
+function sendListRemove(dolphin, modelId, propertyName, from, to) {
+    var attributes = [
+        dolphin.attribute('@@@ SOURCE_SYSTEM @@@', null, 'client'),
+        dolphin.attribute('source', null, modelId),
+        dolphin.attribute('attribute', null, propertyName),
+        dolphin.attribute('from', null, from),
+        dolphin.attribute('to', null, to)
+    ];
+    dolphin.presentationModel.apply(dolphin, [null, '@@@ LIST_DEL @@@'].concat(attributes));
+}
+
+function validateList(classRepository, type, bean, propertyName) {
+    var list = bean[propertyName];
     if (!exists(list)) {
-        bean[attribute] = list = [];
-    } else if (!Array.isArray(list)) {
-        bean[attribute] = list = [list];
-    }
-    if (typeof newElements === 'undefined') {
-        list.splice(from, count);
-    } else {
-        list.splice(from, count, newElements);
+        classRepository.propertyUpdateHandlers.forEach(function(handler) {
+            handler(type, bean, propertyName, [], undefined);
+        });
     }
 }
 
+function block(bean, propertyName) {
+    if (exists(blocked)) {
+        throw new Error('Trying to create a block while another block exists');
+    }
+    blocked = {
+        bean: bean,
+        propertyName: propertyName
+    };
+}
 
-function ClassRepository() {
+function isBlocked(bean, propertyName) {
+    return exists(blocked) && blocked.bean === bean && blocked.propertyName === propertyName;
+}
+
+function unblock() {
+    blocked = null;
+}
+
+
+function ClassRepository(dolphin) {
+    this.dolphin = dolphin;
     this.classes = new Map();
     this.beanFromDolphin = new Map();
     this.beanToDolphin = new Map();
     this.classInfos = new Map();
+    this.beanAddedHandlers = [];
+    this.beanRemovedHandlers = [];
+    this.propertyUpdateHandlers = [];
+    this.arrayUpdateHandlers = [];
 }
+
+
+ClassRepository.prototype.notifyBeanChange = function(bean, propertyName, newValue) {
+    var modelId = this.beanToDolphin.get(bean);
+    if (exists(modelId)) {
+        var model = this.dolphin.findPresentationModelById(modelId);
+        if (exists(model)) {
+            var classInfo = this.classes.get(model.presentationModelType);
+            var type = classInfo[propertyName];
+            var attribute = model.findAttributeByPropertyName(propertyName);
+            if (exists(type) && exists(attribute)) {
+                var oldValue = attribute.getValue();
+                attribute.setValue(toDolphin(this, newValue));
+                return fromDolphin(this, type, oldValue);
+            }
+        }
+    }
+};
+
+
+ClassRepository.prototype.notifyArrayChange = function(bean, propertyName, index, count, removedElements) {
+    if (isBlocked(bean, propertyName)) {
+        return;
+    }
+    var modelId = this.beanToDolphin.get(bean);
+    var array = bean[propertyName];
+    if (exists(modelId) && exists(array)) {
+        if (Array.isArray(removedElements) && removedElements.length > 0) {
+            sendListRemove(this.dolphin, modelId, propertyName, index, index + removedElements.length);
+        }
+        for (var i = index; i < index + count; i++) {
+            sendListAdd(this.dolphin, modelId, propertyName, i, toDolphin(this, array[i]));
+        }
+    }
+};
+
+
+ClassRepository.prototype.onBeanAdded = function(handler) {
+    this.beanAddedHandlers.push(handler);
+};
+
+
+ClassRepository.prototype.onBeanRemoved = function(handler) {
+    this.beanRemovedHandlers.push(handler);
+};
+
+
+ClassRepository.prototype.onBeanUpdate = function(handler) {
+    this.propertyUpdateHandlers.push(handler);
+};
+
+
+ClassRepository.prototype.onArrayUpdate = function(handler) {
+    this.arrayUpdateHandlers.push(handler);
+};
 
 
 ClassRepository.prototype.registerClass = function (model) {
@@ -49,7 +147,9 @@ ClassRepository.prototype.registerClass = function (model) {
     }
 
     var classInfo = {};
-    model.attributes.forEach(function (attribute) {
+    model.attributes.filter(function(attribute) {
+        return attribute.propertyName.search(/^@@@ /) < 0;
+    }).forEach(function (attribute) {
         classInfo[attribute.propertyName] = UNKNOWN;
 
         attribute.onValueChange(function (event) {
@@ -66,45 +166,29 @@ ClassRepository.prototype.unregisterClass = function (model) {
 
 
 ClassRepository.prototype.load = function (model) {
-    var _this = this;
+    var self = this;
     var classInfo = this.classes.get(model.presentationModelType);
     var bean = {};
     model.attributes.filter(function (attribute) {
-        return attribute.tag === opendolphin.Tag.value();
+        return (attribute.tag === opendolphin.Tag.value()) && (attribute.propertyName.search(/^@@@ /) < 0);
     }).forEach(function (attribute) {
         bean[attribute.propertyName] = null;
         attribute.onValueChange(function (event) {
             if (event.oldValue !== event.newValue) {
-                bean[attribute.propertyName] = fromDolphin(_this, classInfo[attribute.propertyName], event.newValue);
-            }
-        });
-    });
-    var observer = new ObjectObserver(bean);
-    observer.open(function (added, removed, changed) {
-        Object.keys(added).forEach(function (property) {
-            var attribute = model.findAttributeByPropertyName(property);
-            if (exists(attribute)) {
-                var value = toDolphin(_this, classInfo[property], added[property]);
-                attribute.setValue(value);
-            }
-        });
-        Object.keys(removed).forEach(function (property) {
-            var attribute = model.findAttributeByPropertyName(property);
-            if (exists(attribute)) {
-                attribute.setValue(null);
-            }
-        });
-        Object.keys(changed).forEach(function (property) {
-            var attribute = model.findAttributeByPropertyName(property);
-            if (exists(attribute)) {
-                var value = toDolphin(_this, classInfo[property], changed[property]);
-                attribute.setValue(value);
+                var oldValue = fromDolphin(self, classInfo[attribute.propertyName], event.oldValue);
+                var newValue = fromDolphin(self, classInfo[attribute.propertyName], event.newValue);
+                self.propertyUpdateHandlers.forEach(function(handler) {
+                    handler(model.presentationModelType, bean, attribute.propertyName, newValue, oldValue);
+                });
             }
         });
     });
     this.beanFromDolphin.set(model.id, bean);
     this.beanToDolphin.set(bean, model.id);
     this.classInfos.set(model.id, classInfo);
+    this.beanAddedHandlers.forEach(function(handler) {
+        handler(model.presentationModelType, bean);
+    });
     return bean;
 };
 
@@ -114,6 +198,11 @@ ClassRepository.prototype.unload = function(model) {
     this.beanFromDolphin['delete'](model.id);
     this.beanToDolphin['delete'](bean);
     this.classInfos['delete'](model.id);
+    if (exists(bean)) {
+        this.beanRemovedHandlers.forEach(function(handler) {
+            handler(model.presentationModelType, bean);
+        });
+    }
     return bean;
 };
 
@@ -128,8 +217,17 @@ ClassRepository.prototype.addListEntry = function(model) {
         var classInfo = this.classInfos.get(source.value);
         var bean = this.beanFromDolphin.get(source.value);
         if (exists(bean) && exists(classInfo)) {
+            var type = model.presentationModelType;
             var entry = fromDolphin(this, classInfo[attribute.value], element.value);
-            modifyList(bean, attribute.value, pos.value, 0, entry);
+            validateList(this, type, bean, attribute.value);
+            try {
+                block(bean, attribute.value);
+                this.arrayUpdateHandlers.forEach(function (handler) {
+                    handler(type, bean, attribute.value, pos.value, 0, entry);
+                });
+            } finally {
+                unblock();
+            }
         } else {
             throw new Error("Invalid list modification update received. Source bean unknown.");
         }
@@ -148,7 +246,16 @@ ClassRepository.prototype.delListEntry = function(model) {
     if (exists(source) && exists(attribute) && exists(from) && exists(to)) {
         var bean = this.beanFromDolphin.get(source.value);
         if (exists(bean)) {
-            modifyList(bean, attribute.value, from.value, to.value - from.value);
+            var type = model.presentationModelType;
+            validateList(this, type, bean, attribute.value);
+            try {
+                block(bean, attribute.value);
+                this.arrayUpdateHandlers.forEach(function (handler) {
+                    handler(type, bean, attribute.value, from.value, to.value - from.value);
+                });
+            } finally {
+                unblock();
+            }
         } else {
             throw new Error("Invalid list modification update received. Source bean unknown.");
         }
@@ -168,8 +275,17 @@ ClassRepository.prototype.setListEntry = function(model) {
         var classInfo = this.classInfos.get(source.value);
         var bean = this.beanFromDolphin.get(source.value);
         if (exists(bean) && exists(classInfo)) {
+            var type = model.presentationModelType;
             var entry = fromDolphin(this, classInfo[attribute.value], element.value);
-            modifyList(bean, attribute.value, pos.value, 1, entry);
+            validateList(this, type, bean, attribute.value);
+            try {
+                block(bean, attribute.value);
+                this.arrayUpdateHandlers.forEach(function (handler) {
+                    handler(type, bean, attribute.value, pos.value, 1, entry);
+                });
+            } finally {
+                unblock();
+            }
         } else {
             throw new Error("Invalid list modification update received. Source bean unknown.");
         }
@@ -196,6 +312,7 @@ ClassRepository.prototype.mapParamToDolphin = function(param) {
     }
     throw new TypeError("Only managed Dolphin Beans and primitive types can be used");
 };
+
 
 
 exports.ClassRepository = ClassRepository;
