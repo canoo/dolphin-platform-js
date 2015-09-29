@@ -47,10 +47,10 @@ ControllerManager.prototype.createController = function(name) {
         self.controllerRegistryBeanPromise.then(function(controllerRegistryBean) {
                 self.beanManager.notifyBeanChange(controllerRegistryBean, 'controllerName', name);
                 self.connector.invoke(REGISTER_CONTROLLER_COMMAND_NAME).then(function() {
-                    resolve(new ControllerProxy(controllerRegistryBean.controllerId, controllerRegistryBean.model))
-                })
+                    resolve(new ControllerProxy(controllerRegistryBean.controllerId, controllerRegistryBean.model));
+                });
             }
-        )
+        );
     });
 };
 
@@ -61,9 +61,9 @@ ControllerManager.prototype.invokeAction = function(controllerId, actionName) {
         self.controllerActionCallBeanPromise.then(function(controllerActionCallBean) {
                 self.beanManager.notifyBeanChange(controllerActionCallBean, 'controllerId', controllerId);
                 self.beanManager.notifyBeanChange(controllerActionCallBean, 'actionName', actionName);
-                self.connector.invoke(CALL_CONTROLLER_ACTION_COMMAND_NAME).then(resolve)
+                self.connector.invoke(CALL_CONTROLLER_ACTION_COMMAND_NAME).then(resolve);
             }
-        )
+        );
     });
 };
 
@@ -74,7 +74,7 @@ ControllerManager.prototype.destroyController = function(controllerId) {
                 self.beanManager.notifyBeanChange(controllerDestroyBean, 'controllerId', controllerId);
                 self.connector.invoke(DESTROY_CONTROLLER_COMMAND_NAME).then(resolve);
             }
-        )
+        );
     });
 };
 
