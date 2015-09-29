@@ -10,6 +10,7 @@ var exists = require('./utils.js').exists;
 var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 var POLL_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'longPoll';
 var RELEASE_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'release';
+
 var DOLPHIN_BEAN = '@@@ DOLPHIN_BEAN @@@';
 var DOLPHIN_LIST_ADD = '@@@ LIST_ADD @@@';
 var DOLPHIN_LIST_DEL = '@@@ LIST_DEL @@@';
@@ -17,6 +18,7 @@ var DOLPHIN_LIST_SET = '@@@ LIST_SET @@@';
 var SOURCE_SYSTEM = '@@@ SOURCE_SYSTEM @@@';
 var SOURCE_SYSTEM_CLIENT = 'client';
 var SOURCE_SYSTEM_SERVER = 'server';
+
 
 
 var initializer;

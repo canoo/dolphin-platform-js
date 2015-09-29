@@ -8,30 +8,21 @@ var exists = require('./utils.js').exists;
 
 
 
-function ClientContext(dolphin, beanManager) {
+function ClientContext(dolphin, beanManager, controllerFactory) {
     this.dolphin = dolphin;
     this.beanManager = beanManager;
+    this._controllerFactory = controllerFactory;
 }
 
 
 ClientContext.prototype.createController = function(name) {
-    // TODO: Implement ClientContext.createController
-};
-
-
-ClientContext.prototype.getBeanManager = function() {
-    return this.beanManager;
+    return this._controllerFactory.createController(name);
 };
 
 
 ClientContext.prototype.disconnect = function() {
     // TODO: Implement ClientContext.disconnect [DP-46]
     throw new Error("Not implemented yet");
-};
-
-
-ClientContext.prototype.getDolphin = function() {
-    return this.dolphin;
 };
 
 
