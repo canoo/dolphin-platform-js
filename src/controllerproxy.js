@@ -8,10 +8,10 @@ var exists = require('./utils.js').exists;
 
 
 
-function ControllerProxy(controllerId, model, factory) {
+function ControllerProxy(controllerId, model, manager) {
     this.controllerId = controllerId;
     this.model = model;
-    this.factory = factory;
+    this.manager = manager;
     this.destroyed = false;
 }
 
@@ -20,7 +20,7 @@ ControllerProxy.prototype.invoke = function(name) {
     if (this.destroyed) {
         throw new Error('The controller was already destroyed');
     }
-    return this.factory.invokeAction(this.controllerId, name);
+    return this.manager.invokeAction(this.controllerId, name);
 };
 
 
@@ -29,7 +29,7 @@ ControllerProxy.prototype.destroy = function() {
         throw new Error('The controller was already destroyed');
     }
     this.destroyed = true;
-    return this.factory.destroyController(this);
+    return this.manager.destroyController(this);
 };
 
 

@@ -47,7 +47,7 @@ ControllerManager.prototype.createController = function(name) {
         self.controllerRegistryBeanPromise.then(function(controllerRegistryBean) {
                 self.beanManager.notifyBeanChange(controllerRegistryBean, 'controllerName', name);
                 self.connector.invoke(REGISTER_CONTROLLER_COMMAND_NAME).then(function() {
-                    resolve(new ControllerProxy(controllerRegistryBean.controllerId, controllerRegistryBean.model));
+                    resolve(new ControllerProxy(controllerRegistryBean.controllerId, controllerRegistryBean.model, self));
                 });
             }
         );
