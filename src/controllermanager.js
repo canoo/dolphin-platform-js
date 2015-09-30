@@ -24,17 +24,17 @@ function ControllerManager(beanManager, connector) {
 
     var self = this;
     this.controllerRegistryBeanPromise = new Promise(function(resolve) {
-        self.beanManager.onBeanAdded(CONTROLLER_REGISTRY_BEAN_NAME, function(controllerRegistryBean) {
+        self.beanManager.onAdded(CONTROLLER_REGISTRY_BEAN_NAME, function(controllerRegistryBean) {
             resolve(controllerRegistryBean);
         });
     });
     this.controllerActionCallBeanPromise = new Promise(function(resolve) {
-        self.beanManager.onBeanAdded(CONTROLLER_ACTION_CALL_BEAN_NAME, function(controllerActionCallBean) {
+        self.beanManager.onAdded(CONTROLLER_ACTION_CALL_BEAN_NAME, function(controllerActionCallBean) {
             resolve(controllerActionCallBean);
         });
     });
     this.controllerDestroyBeanPromise = new Promise(function(resolve) {
-        self.beanManager.onBeanAdded(CONTROLLER_DESTROY_BEAN_NAME, function(controllerDestroyBean) {
+        self.beanManager.onAdded(CONTROLLER_DESTROY_BEAN_NAME, function(controllerDestroyBean) {
             resolve(controllerDestroyBean);
         });
     });

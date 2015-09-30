@@ -8,15 +8,15 @@ var exists = require('./utils.js').exists;
 
 
 
-function ClientContext(dolphin, beanManager, controllerFactory) {
+function ClientContext(dolphin, beanManager, controllerManager) {
     this.dolphin = dolphin;
     this.beanManager = beanManager;
-    this._controllerFactory = controllerFactory;
+    this._controllerManager = controllerManager;
 }
 
 
 ClientContext.prototype.createController = function(name) {
-    return this._controllerFactory.createController(name);
+    return this._controllerManager.createController(name);
 };
 
 

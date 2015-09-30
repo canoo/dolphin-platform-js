@@ -97,7 +97,7 @@ gulp.task('watch', function() {
     watchedTestBundler.on('update', function() {rebundle(watchedTestBundler)});
 });
 
-gulp.task('default', ['test', 'build', 'watch']);
+gulp.task('default', ['verify', 'build', 'watch']);
 
 
 gulp.task('ci', ['build', 'build-test'], function() {

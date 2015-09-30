@@ -8,7 +8,7 @@ var exists = require('./utils.js').exists;
 var Connector = require('./connector.js').Connector;
 var BeanManager = require('./beanmanager.js').BeanManager;
 var ClassRepository = require('./classrepo.js').ClassRepository;
-var ControllerFactory = require('./controllerfactory.js').ControllerManager;
+var ControllerManager = require('./controllermanager.js').ControllerManager;
 var ClientContext = require('./clientcontext.js').ClientContext;
 
 
@@ -23,7 +23,7 @@ exports.connect = function(url, config) {
     var classRepository = new ClassRepository(dolphin);
     var beanManager = new BeanManager(classRepository);
     var connector = new Connector(url, dolphin, classRepository);
-    var controllerFactory = new ControllerFactory(beanManager, connector);
+    var controllerManager = new ControllerManager(beanManager, connector);
 
-    return new ClientContext(dolphin, beanManager, controllerFactory);
+    return new ClientContext(dolphin, beanManager, controllerManager);
 };
