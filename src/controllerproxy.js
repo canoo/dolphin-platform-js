@@ -16,11 +16,11 @@ function ControllerProxy(controllerId, model, manager) {
 }
 
 
-ControllerProxy.prototype.invoke = function(name) {
+ControllerProxy.prototype.invoke = function(name, params) {
     if (this.destroyed) {
         throw new Error('The controller was already destroyed');
     }
-    return this.manager.invokeAction(this.controllerId, name);
+    return this.manager.invokeAction(this.controllerId, name, params);
 };
 
 

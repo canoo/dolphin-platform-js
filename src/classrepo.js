@@ -3,7 +3,6 @@
 "use strict";
 
 require('./polyfills.js');
-var ObjectObserver = require('ObjectObserver');
 var Map = require('../bower_components/core.js/library/fn/map');
 
 var exists = require('./utils.js').exists;

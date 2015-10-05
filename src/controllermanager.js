@@ -55,13 +55,13 @@ ControllerManager.prototype.createController = function(name) {
 };
 
 
-ControllerManager.prototype.invokeAction = function(controllerId, actionName) {
+ControllerManager.prototype.invokeAction = function(controllerId, actionName, params) {
     var self = this;
     return new Promise(function(resolve) {
         self.controllerActionCallBeanPromise.then(function(controllerActionCallBean) {
                 self.beanManager.notifyBeanChange(controllerActionCallBean, 'controllerId', controllerId);
                 self.beanManager.notifyBeanChange(controllerActionCallBean, 'actionName', actionName);
-                self.connector.invoke(CALL_CONTROLLER_ACTION_COMMAND_NAME).then(resolve);
+                self.connector.invoke(CALL_CONTROLLER_ACTION_COMMAND_NAME, params).then(resolve);
             }
         );
     });

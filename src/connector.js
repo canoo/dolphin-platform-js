@@ -89,9 +89,7 @@ function Connector(url, dolphin, classRepository) {
 
         req.onload = function() {
             if (req.status == 200) {
-                dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
-
-                initializer = null;
+                //dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
                 resolve();
             }
             else {
@@ -126,15 +124,16 @@ Connector.prototype.invoke = function(command, params) {
     }
 
     var dolphin = this.dolphin;
-    var invokeCommand = function(resolve) {
-        dolphin.send(command, { onFinished: function() {resolve();} });
-    };
-    var resolver = !exists(initializer)? invokeCommand : function(resolve) {
-        initializer.then(function() {
-            invokeCommand(resolve);
-        });
-    };
-    return new Promise(resolver);
+    return new Promise(function(resolve) {
+        // TODO: This needs to be synchronized with changes pushed via BeanManager
+        //initializer.then(function () {
+            dolphin.send(command, {
+                onFinished: function() {
+                    resolve();
+                }
+            });
+        //});
+    });
 };
 
 
