@@ -1,6 +1,6 @@
 {
   "name": "dolphin-js",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "main": "./dist/dolphin.min.js",
   "ignore": [
     "**/.*",
@@ -14,6 +14,6 @@
     "sauce-template.json"
   ],
   "devDependencies": {
-    "core.js": "~0.8.4"
+    "core.js": "~1.2.1"
   }
 }

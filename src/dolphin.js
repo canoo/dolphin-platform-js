@@ -15,6 +15,7 @@ var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 var INIT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'initClientContext';
 
 exports.connect = function(url, config) {
+    //var builder = opendolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true);
     var builder = opendolphin.makeDolphin().url(url).reset(false).slackMS(4);
     if (exists(config) && exists(config.errorHandler)) {
         builder.errorHandler(config.errorHandler);
@@ -23,7 +24,7 @@ exports.connect = function(url, config) {
 
     var classRepository = new ClassRepository(dolphin);
     var beanManager = new BeanManager(classRepository);
-    var connector = new Connector(url, dolphin, classRepository);
+    var connector = new Connector(url, dolphin, classRepository, config);
     var controllerManager = new ControllerManager(beanManager, connector);
 
     var clientContext = new ClientContext(dolphin, beanManager, controllerManager);

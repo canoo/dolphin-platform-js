@@ -67,7 +67,7 @@ function onModelRemoved(classRepository, model) {
 }
 
 
-function Connector(url, dolphin, classRepository) {
+function Connector(url, dolphin, classRepository, config) {
     this.dolphin = dolphin;
     this.classRepository = classRepository;
 
@@ -83,13 +83,16 @@ function Connector(url, dolphin, classRepository) {
         }
     });
 
+    if (exists(config) && exists(config.serverPush) && config.serverPush === true) {
+        dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
+    }
+
     initializer = new Promise(function(resolve, reject) {
         var req = new XMLHttpRequest();
         req.withCredentials = true;
 
         req.onload = function() {
             if (req.status == 200) {
-                //dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
                 resolve();
             }
             else {
