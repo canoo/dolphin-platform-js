@@ -29,7 +29,7 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            './lib/opendolphin/opendolphin-RC2B1.js',
+            './bower_components/open-dolphin-js/dist/opendolphin.js',
             './test/build/**/test-*.js'
         ],
 

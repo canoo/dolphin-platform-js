@@ -15,8 +15,7 @@ var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 var INIT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'initClientContext';
 
 exports.connect = function(url, config) {
-    //var builder = opendolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true);
-    var builder = opendolphin.makeDolphin().url(url).reset(false).slackMS(4);
+    var builder = opendolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true);
     if (exists(config) && exists(config.errorHandler)) {
         builder.errorHandler(config.errorHandler);
     }

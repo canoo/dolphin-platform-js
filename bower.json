@@ -1,6 +1,6 @@
 {
   "name": "dolphin-js",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "main": "./dist/dolphin.min.js",
   "ignore": [
     "**/.*",
@@ -15,5 +15,8 @@
   ],
   "devDependencies": {
     "core.js": "~1.2.1"
+  },
+  "dependencies": {
+    "open-dolphin-js": "~0.0.2"
   }
 }

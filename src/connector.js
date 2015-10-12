@@ -83,7 +83,7 @@ function Connector(url, dolphin, classRepository, config) {
         }
     });
 
-    if (exists(config) && exists(config.serverPush) && config.serverPush === true) {
+    if (!exists(config) || !exists(config.serverPush) || config.serverPush === true) {
         dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
     }
 

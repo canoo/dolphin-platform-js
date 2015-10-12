@@ -15,7 +15,8 @@ describe('Dolphin Message Distribution', function() {
 
     var dolphin = {
         getClientModelStore: function() { return clientModelStore; },
-        deletePresentationModel: function() {}
+        deletePresentationModel: function() {},
+        startPushListening: function() {}
     };
 
 
@@ -138,7 +139,8 @@ describe('Dolphin Event Handling', function() {
 
     var dolphin = {
         getClientModelStore: function() { return clientModelStore; },
-        deletePresentationModel: function() {}
+        deletePresentationModel: function() {},
+        startPushListening: function() {}
     };
 
 
