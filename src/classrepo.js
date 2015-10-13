@@ -14,7 +14,7 @@ var UNKNOWN = 0,
 var blocked = null;
 
 function fromDolphin(classRepository, type, value) {
-    return value === null? null
+    return ! exists(value)? null
         : type === DOLPHIN_BEAN? classRepository.beanFromDolphin.get(value) : value;
 }
 
