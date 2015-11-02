@@ -84,7 +84,9 @@ function Connector(url, dolphin, classRepository, config) {
     });
 
     if (!exists(config) || !exists(config.serverPush) || config.serverPush === true) {
-        dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
+        setTimeout(function() {
+            dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
+        }, 500);
     }
 
     initializer = new Promise(function(resolve, reject) {
