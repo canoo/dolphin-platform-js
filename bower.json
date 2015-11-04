@@ -4,7 +4,7 @@
   "main": "./dist/dolphin.min.js",
   "homepage": "https://github.com/Polymer/observe-js",
   "authors": [
-    "The Polymer Authors"
+    "The Dolphin Platform Authors"
   ],
   "description": "The Dolphin Platform is a framework that implements the presentation model pattern and provides a modern way to create enterprise applications. The Platform provides several client implementations that all can be used in combination with a general sever API.",
   "keywords": [
