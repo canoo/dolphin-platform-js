@@ -1,6 +1,6 @@
 # Dolphin Platform
 
-This repository contains all JavaScript related sources of the Dolphin Platform JS client library. Clients for specific JS frameworks like Polymer can be found in seperate repositories.
+This repository contains all JavaScript related sources of the Dolphin Platform JS client library. Clients for specific JS frameworks like [Polymer](https://github.com/canoo/dolphin-platform-polymer) can be found in seperate repositories. The Java server and client sourceas can be found [here](https://github.com/canoo/dolphin-platform).
 
 ![Dolphin Platform Logo](http://www.guigarage.com/wordpress/wp-content/uploads/2015/10/logo.png)
 
