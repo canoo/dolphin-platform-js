@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-/*jslint browserify: true /*
+/*jslint browserify: true */
 /* global console */
 "use strict";
 
