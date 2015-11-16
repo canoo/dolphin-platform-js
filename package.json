@@ -2,11 +2,11 @@
   "name": "dolphin-js",
   "version": "0.5.3",
   "description": "JavaScript client of the Dolphin Platform",
-  "main": "dolphin.js",
+  "main": "./dist/dolphin.min.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Michael Heinrichs <michael.heinrichs@canoo.com>",
   "license": "ALv2",
   "devDependencies": {
     "browserify": "^9.0.8",

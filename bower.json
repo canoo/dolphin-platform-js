@@ -1,5 +1,5 @@
 {
-  "name": "dolphin-platform-js",
+  "name": "dolphin-js",
   "version": "0.5.3",
   "main": "./dist/dolphin.min.js",
   "homepage": "http://www.dolphin-platform.io",
