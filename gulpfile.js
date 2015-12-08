@@ -7,8 +7,8 @@ var browserify = require('browserify');
 var shim = require('browserify-shim');
 var del = require('del');
 var glob = require('glob');
+var istanbul = require('browserify-istanbul');
 var assign = require('lodash.assign');
-var merge = require('merge-stream');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
@@ -18,7 +18,7 @@ var Server = require('karma').Server;
 
 
 gulp.task('clean', function() {
-    del(['dist']);
+    del(['dist', 'test/build', 'coverage']);
 });
 
 
@@ -43,6 +43,9 @@ var testBundler = browserify(assign({}, watchify.args, {
 
 function rebundleTest(bundler) {
     return bundler
+        .transform(istanbul({
+            ignore: ['**/src/polyfills.js']
+        }))
         .bundle()
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
         .pipe(source('test-bundle.js'))
@@ -110,7 +113,13 @@ gulp.task('ci-common', ['build', 'build-test', 'lint-tc']);
 gulp.task('ci', ['ci-common'], function(done) {
     new Server({
         configFile: __dirname + '/karma.conf.js',
-        reporters: ['teamcity'],
+        reporters: ['teamcity', 'coverage'],
+        coverageReporter: {
+            reporters: [
+                {type: 'lcovonly'},
+                {type: 'teamcity'}
+            ]
+        },
         singleRun: true
     }, done).start();
 });
