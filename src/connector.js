@@ -27,6 +27,8 @@ var POLL_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'longPoll';
 var RELEASE_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'release';
 
 var DOLPHIN_BEAN = '@@@ DOLPHIN_BEAN @@@';
+var ACTION_CALL_BEAN = '@@@ CONTROLLER_ACTION_CALL_BEAN @@@';
+var HIGHLANDER_BEAN = '@@@ HIGHLANDER_BEAN @@@';
 var DOLPHIN_LIST_ADD = '@@@ LIST_ADD @@@';
 var DOLPHIN_LIST_DEL = '@@@ LIST_DEL @@@';
 var DOLPHIN_LIST_SET = '@@@ LIST_SET @@@';
@@ -38,62 +40,23 @@ var SOURCE_SYSTEM_SERVER = 'server';
 
 var initializer;
 
-
-function onModelAdded(dolphin, classRepository, model) {
-    var type = model.presentationModelType;
-    switch (type) {
-        case DOLPHIN_BEAN:
-            classRepository.registerClass(model);
-            break;
-        case DOLPHIN_LIST_ADD:
-            classRepository.addListEntry(model);
-            dolphin.deletePresentationModel(model);
-            break;
-        case DOLPHIN_LIST_DEL:
-            classRepository.delListEntry(model);
-            dolphin.deletePresentationModel(model);
-            break;
-        case DOLPHIN_LIST_SET:
-            classRepository.setListEntry(model);
-            dolphin.deletePresentationModel(model);
-            break;
-        default:
-            classRepository.load(model);
-            break;
-    }
-}
-
-
-function onModelRemoved(classRepository, model) {
-    var type = model.presentationModelType;
-    switch (type) {
-        case DOLPHIN_BEAN:
-            classRepository.unregisterClass(model);
-            break;
-        case DOLPHIN_LIST_ADD:
-        case DOLPHIN_LIST_DEL:
-        case DOLPHIN_LIST_SET:
-            // do nothing
-            break;
-        default:
-            classRepository.unload(model);
-            break;
-    }
-}
-
-
 function Connector(url, dolphin, classRepository, config) {
+    var self = this;
     this.dolphin = dolphin;
     this.classRepository = classRepository;
+    this.highlanderPMResolver = function() {};
+    this.highlanderPMPromise = new Promise(function(resolve) {
+        self.highlanderPMResolver = resolve;
+    });
 
     dolphin.getClientModelStore().onModelStoreChange(function (event) {
         var model = event.clientPresentationModel;
         var sourceSystem = model.findAttributeByPropertyName(SOURCE_SYSTEM);
         if (exists(sourceSystem) && sourceSystem.value === SOURCE_SYSTEM_SERVER) {
             if (event.eventType === opendolphin.Type.ADDED) {
-                onModelAdded(dolphin, classRepository, model);
+                self.onModelAdded(model);
             } else if (event.eventType === opendolphin.Type.REMOVED) {
-                onModelRemoved(classRepository, model);
+                self.onModelRemoved(model);
             }
         }
     });
@@ -127,22 +90,56 @@ function Connector(url, dolphin, classRepository, config) {
 }
 
 
-Connector.prototype.invoke = function(command, params) {
-    if (exists(params)) {
-
-        var attributes = [
-            this.dolphin.attribute(SOURCE_SYSTEM, null, SOURCE_SYSTEM_CLIENT)
-        ];
-        for (var prop in params) {
-            if (params.hasOwnProperty(prop)) {
-                var param = this.classRepository.mapParamToDolphin(params[prop]);
-                attributes.push(this.dolphin.attribute(prop, null, param.value, 'VALUE'));
-                attributes.push(this.dolphin.attribute(prop, null, param.type, 'VALUE_TYPE'));
-            }
-        }
-        this.dolphin.presentationModel.apply(this.dolphin, [null, '@@@ DOLPHIN_PARAMETER @@@'].concat(attributes));
+Connector.prototype.onModelAdded = function(model) {
+    var type = model.presentationModelType;
+    switch (type) {
+        case ACTION_CALL_BEAN:
+            // ignore
+            break;
+        case DOLPHIN_BEAN:
+            this.classRepository.registerClass(model);
+            break;
+        case HIGHLANDER_BEAN:
+            this.highlanderPMResolver(model);
+            break;
+        case DOLPHIN_LIST_ADD:
+            this.classRepository.addListEntry(model);
+            this.dolphin.deletePresentationModel(model);
+            break;
+        case DOLPHIN_LIST_DEL:
+            this.classRepository.delListEntry(model);
+            this.dolphin.deletePresentationModel(model);
+            break;
+        case DOLPHIN_LIST_SET:
+            this.classRepository.setListEntry(model);
+            this.dolphin.deletePresentationModel(model);
+            break;
+        default:
+            this.classRepository.load(model);
+            break;
     }
+};
 
+
+Connector.prototype.onModelRemoved = function(model) {
+    var type = model.presentationModelType;
+    switch (type) {
+        case DOLPHIN_BEAN:
+            this.classRepository.unregisterClass(model);
+            break;
+        case DOLPHIN_LIST_ADD:
+        case DOLPHIN_LIST_DEL:
+        case DOLPHIN_LIST_SET:
+            // do nothing
+            break;
+        default:
+            this.classRepository.unload(model);
+            break;
+    }
+};
+
+
+Connector.prototype.invoke = function(command) {
     var dolphin = this.dolphin;
     return new Promise(function(resolve) {
         // TODO: This needs to be synchronized with changes pushed via BeanManager
@@ -157,5 +154,14 @@ Connector.prototype.invoke = function(command, params) {
 };
 
 
+Connector.prototype.getHighlanderPM = function() {
+    return this.highlanderPMPromise;
+};
+
+
 
 exports.Connector = Connector;
+exports.SOURCE_SYSTEM = SOURCE_SYSTEM;
+exports.SOURCE_SYSTEM_CLIENT = SOURCE_SYSTEM_CLIENT;
+exports.SOURCE_SYSTEM_SERVER = SOURCE_SYSTEM_SERVER;
+exports.ACTION_CALL_BEAN = ACTION_CALL_BEAN;

@@ -39,7 +39,7 @@ exports.connect = function(url, config) {
     var classRepository = new ClassRepository(dolphin);
     var beanManager = new BeanManager(classRepository);
     var connector = new Connector(url, dolphin, classRepository, config);
-    var controllerManager = new ControllerManager(beanManager, connector);
+    var controllerManager = new ControllerManager(dolphin, classRepository, connector);
 
     var clientContext = new ClientContext(dolphin, beanManager, controllerManager);
 

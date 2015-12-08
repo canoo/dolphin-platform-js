@@ -22,74 +22,92 @@ var Promise = require('../bower_components/core.js/library/fn/promise');
 var exists = require('./utils.js').exists;
 var ControllerProxy = require('./controllerproxy.js').ControllerProxy;
 
+var DOLPHIN_BEAN_TYPE = require('./classrepo.js').DOLPHIN_BEAN;
+
+var SOURCE_SYSTEM = require('./connector.js').SOURCE_SYSTEM;
+var SOURCE_SYSTEM_CLIENT = require('./connector.js').SOURCE_SYSTEM_CLIENT;
+var ACTION_CALL_BEAN = require('./connector.js').ACTION_CALL_BEAN;
 
 var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 var REGISTER_CONTROLLER_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'registerController';
 var CALL_CONTROLLER_ACTION_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'callControllerAction';
 var DESTROY_CONTROLLER_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'destroyController';
 
-var CONTROLLER_REGISTRY_BEAN_NAME = 'com.canoo.dolphin.impl.ControllerRegistryBean';
-var CONTROLLER_ACTION_CALL_BEAN_NAME = 'com.canoo.dolphin.impl.ControllerActionCallBean';
-var CONTROLLER_DESTROY_BEAN_NAME = 'com.canoo.dolphin.impl.ControllerDestroyBean';
+var CONTROLLER_NAME = 'controllerName';
+var CONTROLLER_ID = 'controllerId';
+var MODEL = 'model';
+var ACTION_NAME = 'actionName';
+var ERROR_CODE = 'errorCode';
+var PARAM_PREFIX = '_';
 
 
-function ControllerManager(beanManager, connector) {
-    this.beanManager = beanManager;
+function ControllerManager(dolphin, classRepository, connector) {
+    this.dolphin = dolphin;
+    this.classRepository = classRepository;
     this.connector = connector;
-
-    var self = this;
-    this.controllerRegistryBeanPromise = new Promise(function(resolve) {
-        self.beanManager.onAdded(CONTROLLER_REGISTRY_BEAN_NAME, function(controllerRegistryBean) {
-            resolve(controllerRegistryBean);
-        });
-    });
-    this.controllerActionCallBeanPromise = new Promise(function(resolve) {
-        self.beanManager.onAdded(CONTROLLER_ACTION_CALL_BEAN_NAME, function(controllerActionCallBean) {
-            resolve(controllerActionCallBean);
-        });
-    });
-    this.controllerDestroyBeanPromise = new Promise(function(resolve) {
-        self.beanManager.onAdded(CONTROLLER_DESTROY_BEAN_NAME, function(controllerDestroyBean) {
-            resolve(controllerDestroyBean);
-        });
-    });
 }
 
 
 ControllerManager.prototype.createController = function(name) {
     var self = this;
+    var controllerId, modelId, model;
     return new Promise(function(resolve) {
-        self.controllerRegistryBeanPromise.then(function(controllerRegistryBean) {
-                self.beanManager.notifyBeanChange(controllerRegistryBean, 'controllerName', name);
-                self.connector.invoke(REGISTER_CONTROLLER_COMMAND_NAME).then(function() {
-                    resolve(new ControllerProxy(controllerRegistryBean.controllerId, controllerRegistryBean.model, self));
-                });
-            }
-        );
+        self.connector.getHighlanderPM().then(function (highlanderPM) {
+            highlanderPM.findAttributeByPropertyName(CONTROLLER_NAME).setValue(name);
+            self.connector.invoke(REGISTER_CONTROLLER_COMMAND_NAME).then(function() {
+                controllerId = highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).getValue();
+                modelId = highlanderPM.findAttributeByPropertyName(MODEL).getValue();
+                model = self.classRepository.mapDolphinToBean(modelId, DOLPHIN_BEAN_TYPE);
+                resolve(new ControllerProxy(controllerId, model, self));
+            });
+        });
     });
 };
 
 
 ControllerManager.prototype.invokeAction = function(controllerId, actionName, params) {
     var self = this;
-    return new Promise(function(resolve) {
-        self.controllerActionCallBeanPromise.then(function(controllerActionCallBean) {
-                self.beanManager.notifyBeanChange(controllerActionCallBean, 'controllerId', controllerId);
-                self.beanManager.notifyBeanChange(controllerActionCallBean, 'actionName', actionName);
-                self.connector.invoke(CALL_CONTROLLER_ACTION_COMMAND_NAME, params).then(resolve);
+    return new Promise(function(resolve, reject) {
+
+        var attributes = [
+            self.dolphin.attribute(SOURCE_SYSTEM, null, SOURCE_SYSTEM_CLIENT),
+            self.dolphin.attribute(CONTROLLER_ID, null, controllerId),
+            self.dolphin.attribute(ACTION_NAME, null, actionName),
+            self.dolphin.attribute(ERROR_CODE)
+        ];
+
+        if (exists(params)) {
+            for (var prop in params) {
+                if (params.hasOwnProperty(prop)) {
+                    var param = self.classRepository.mapParamToDolphin(params[prop]);
+                    attributes.push(self.dolphin.attribute(PARAM_PREFIX + prop, null, param.value, 'VALUE'));
+                    attributes.push(self.dolphin.attribute(PARAM_PREFIX + prop, null, param.type, 'VALUE_TYPE'));
+                }
             }
-        );
+        }
+
+        var pm = self.dolphin.presentationModel.apply(self.dolphin, [null, ACTION_CALL_BEAN].concat(attributes));
+
+        self.connector.invoke(CALL_CONTROLLER_ACTION_COMMAND_NAME, params).then(function() {
+            var isError = pm.findAttributeByPropertyName(ERROR_CODE).getValue();
+            if (isError) {
+                reject(new Error("ControllerAction caused an error"));
+            } else {
+                resolve();
+            }
+            self.dolphin.deletePresentationModel(pm);
+        });
     });
 };
+
 
 ControllerManager.prototype.destroyController = function(controllerId) {
     var self = this;
     return new Promise(function(resolve) {
-        self.controllerDestroyBeanPromise.then(function(controllerDestroyBean) {
-                self.beanManager.notifyBeanChange(controllerDestroyBean, 'controllerId', controllerId);
-                self.connector.invoke(DESTROY_CONTROLLER_COMMAND_NAME).then(resolve);
-            }
-        );
+        self.connector.getHighlanderPM().then(function (highlanderPM) {
+            highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).setValue(controllerId);
+            self.connector.invoke(DESTROY_CONTROLLER_COMMAND_NAME).then(resolve);
+        });
     });
 };
 

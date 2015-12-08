@@ -530,24 +530,4 @@ describe('Dolphin Command', function() {
             done();
         });
     }));
-
-
-    it('should send command with one named parameter', sinon.test(function(done) {
-        classRepository.mapParamToDolphin = this.stub().withArgs(42).returns({value: 42, type: 'number'});
-        var attrFactory = this.stub(dolphin, 'attribute');
-        var sourceAttr = {};
-        var attr1 = {};
-        var attr2 = {};
-        attrFactory.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sourceAttr);
-        attrFactory.withArgs('x', null, 42, 'VALUE').returns(attr1);
-        attrFactory.withArgs('x', null, 'number', 'VALUE_TYPE').returns(attr2);
-        this.spy(dolphin, 'presentationModel');
-        this.stub(dolphin, 'send').yieldsTo('onFinished', []);
-
-        connector.invoke("myCommand", {x: 42}).then(function() {
-            sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ DOLPHIN_PARAMETER @@@', sourceAttr, attr1, attr2);
-            sinon.assert.calledWith(dolphin.send, "myCommand");
-            done();
-        });
-    }));
 });

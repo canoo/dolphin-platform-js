@@ -328,6 +328,11 @@ ClassRepository.prototype.mapParamToDolphin = function(param) {
 };
 
 
+ClassRepository.prototype.mapDolphinToBean = function(value, type) {
+    return fromDolphin(this, type, value);
+};
+
+
 
 exports.ClassRepository = ClassRepository;
 exports.UNKNOWN = UNKNOWN;
