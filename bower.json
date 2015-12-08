@@ -28,7 +28,7 @@
     "sauce-template.json"
   ],
   "devDependencies": {
-    "core.js": "~1.2.1"
+    "core.js": "~1.2.6"
   },
   "dependencies": {
     "open-dolphin-js": "~0.0.2"
