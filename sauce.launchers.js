@@ -149,15 +149,6 @@ var daily = {
         platformName: 'iOS',
         platformVersion: '8.4'
     },
-    sl_ipad_9_1: {
-        base: 'SauceLabs',
-        browserName: 'Safari',
-        appiumVersion: '1.4.16',
-        deviceName: 'iPad Simulator',
-        deviceOrientation: 'portrait',
-        platformName: 'iOS',
-        platformVersion: '9.1'
-    },
 
     sl_android_5_1: {
         base: 'SauceLabs',
@@ -213,6 +204,16 @@ var manual = {
         deviceOrientation: 'portrait',
         platformName: 'iOS',
         platformVersion: '9.2'
+    },
+
+    sl_ipad_9_1: {
+        base: 'SauceLabs',
+        browserName: 'Safari',
+        appiumVersion: '1.4.16',
+        deviceName: 'iPad Simulator',
+        deviceOrientation: 'portrait',
+        platformName: 'iOS',
+        platformVersion: '9.1'
     },
 
     sl_android_5_0: {

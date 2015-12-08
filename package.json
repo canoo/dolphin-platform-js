@@ -30,7 +30,7 @@
     "gulp-util": "3.0.x",
     "jshint": "2.8.x",
     "jshint-teamcity": "1.0.x",
-    "karma": "0.12.x",
+    "karma": "0.13.x",
     "karma-browserify": "4.4.x",
     "karma-mocha": "0.2.x",
     "karma-phantomjs-launcher": "0.2.x",
