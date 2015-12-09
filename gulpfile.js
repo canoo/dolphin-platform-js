@@ -4,16 +4,18 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 
 var browserify = require('browserify');
+var istanbul = require('browserify-istanbul');
 var shim = require('browserify-shim');
 var del = require('del');
 var glob = require('glob');
-var istanbul = require('browserify-istanbul');
 var assign = require('lodash.assign');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
 var watchify = require('watchify');
 
 var Server = require('karma').Server;
+
+var config = typeof $.util.env['configFile'] === 'string'? require($.util.env['configFile']) : {};
 
 
 
@@ -108,6 +110,44 @@ gulp.task('default', ['verify', 'build', 'watch']);
 
 
 
+gulp.task('sonar', ['ci'], function () {
+
+    var options = {
+        sonar: {
+            host: {
+                url: config.sonar.host.url
+            },
+            jdbc: {
+                url: config.sonar.jdbc.url,
+                username: config.sonar.jdbc.username,
+                password: config.sonar.jdbc.password
+            },
+            projectKey: 'dolphin-js',
+            projectName: 'dolphin-platform-js',
+            projectVersion: '0.7.0',
+            sources: 'src',
+            language: 'js',
+            sourceEncoding: 'UTF-8',
+            javascript: {
+                lcov: {
+                    reportPath: 'coverage/lcov.info'
+                }
+            },
+            exec: {
+                // All these properties will be send to the child_process.exec method (see: https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback )
+                // Increase the amount of data allowed on stdout or stderr (if this value is exceeded then the child process is killed, and the gulp-sonar will fail).
+                maxBuffer : 1024*1024
+            }
+        }
+    };
+
+    return gulp.src([])
+        .pipe($.sonar(options))
+        .on('error', $.util.log);
+});
+
+
+
 gulp.task('ci-common', ['build', 'build-test', 'lint-tc']);
 
 gulp.task('ci', ['ci-common'], function(done) {
@@ -116,13 +156,15 @@ gulp.task('ci', ['ci-common'], function(done) {
         reporters: ['teamcity', 'coverage'],
         coverageReporter: {
             reporters: [
-                {type: 'lcovonly'},
-                {type: 'teamcity'}
+                {type: 'lcovonly', subdir: '.'},
+                {type: 'teamcity', subdir: '.'}
             ]
         },
         singleRun: true
     }, done).start();
 });
+
+
 
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
     return function() {
