@@ -72,7 +72,7 @@ function Connector(url, dolphin, classRepository, config) {
         req.withCredentials = true;
 
         req.onload = function() {
-            if (req.status == 200) {
+            if (req.status === 200) {
                 resolve();
             }
             else {
