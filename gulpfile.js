@@ -123,7 +123,7 @@ gulp.task('sonar', ['ci'], function () {
                 password: config.sonar.jdbc.password
             },
             projectKey: 'dolphin-js',
-            projectName: 'dolphin-platform-js',
+            projectName: 'Dolphin Platform JS',
             projectVersion: '0.7.0',
             sources: 'src',
             language: 'js',
