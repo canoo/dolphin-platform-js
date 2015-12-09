@@ -22,7 +22,6 @@
     "gulp": "3.9.x",
     "gulp-derequire": "2.1.x",
     "gulp-jshint": "2.0.x",
-    "gulp-karma": "0.0.x",
     "gulp-load-plugins": "1.1.x",
     "gulp-mocha": "2.2.x",
     "gulp-rename": "1.2.x",
