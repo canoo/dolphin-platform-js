@@ -46,7 +46,7 @@ var testBundler = browserify(assign({}, watchify.args, {
 function rebundleTest(bundler) {
     return bundler
         .transform(istanbul({
-            ignore: ['**/src/polyfills.js']
+            ignore: ['**/src/polyfills.js', '**/libsrc/**/*.js']
         }))
         .bundle()
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
@@ -124,7 +124,7 @@ gulp.task('sonar', ['ci'], function () {
             },
             projectKey: 'dolphin-js',
             projectName: 'Dolphin Platform JS',
-            projectVersion: '0.7.0',
+            projectVersion: '0.7.1',
             sources: 'src',
             language: 'js',
             sourceEncoding: 'UTF-8',
