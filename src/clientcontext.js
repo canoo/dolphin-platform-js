@@ -37,7 +37,7 @@ ClientContext.prototype.createController = function(name) {
 
 ClientContext.prototype.disconnect = function() {
     // TODO: Implement ClientContext.disconnect [DP-46]
-    throw new Error("Not implemented yet");
+    this.dolphin.stopPushListening();
 };
 
 
