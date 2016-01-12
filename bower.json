@@ -29,8 +29,5 @@
   ],
   "devDependencies": {
     "core.js": "~1.2.6"
-  },
-  "dependencies": {
-    "open-dolphin-js": "~0.0.2"
   }
 }

@@ -14,11 +14,12 @@
  */
 
 /*jslint browserify: true */
-/* global Platform, opendolphin, console */
+/* global Platform, console */
 "use strict";
 
 require('./polyfills.js');
 var Map = require('../bower_components/core.js/library/fn/map');
+var opendolphin = require('../libsrc/opendolphin.js');
 
 var exists = require('./utils.js').exists;
 

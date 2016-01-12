@@ -3,6 +3,8 @@
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
+var opendolphin = require('../../libsrc/opendolphin.js');
+
 var UNKNOWN      = 0;
 var BASIC_TYPE   = 1;
 var DOLPHIN_BEAN = 2;

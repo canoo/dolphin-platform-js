@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect;
 var sinon = require('sinon');
+var opendolphin = require('../../libsrc/opendolphin.js');
 var ClassRepository = require('../../src/classrepo.js').ClassRepository;
 var BeanManager = require('../../src/beanmanager.js').BeanManager;
 

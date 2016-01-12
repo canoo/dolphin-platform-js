@@ -14,11 +14,12 @@
  */
 
 /*jslint browserify: true */
-/* global opendolphin, console */
+/* global console */
 "use strict";
 
 require('./polyfills.js');
 var Promise = require('../bower_components/core.js/library/fn/promise');
+var opendolphin = require('../libsrc/opendolphin.js');
 var exists = require('./utils.js').exists;
 
 
