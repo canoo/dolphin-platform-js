@@ -35,7 +35,7 @@ function fromDolphin(classRepository, type, value) {
 }
 
 function toDolphin(classRepository, value) {
-    return typeof value === 'object'? classRepository.beanToDolphin.get(value) : value;
+    return typeof value === 'object' && value !== null? classRepository.beanToDolphin.get(value) : value;
 }
 
 function sendListAdd(dolphin, modelId, propertyName, pos, element) {
