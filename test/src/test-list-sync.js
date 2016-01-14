@@ -77,6 +77,36 @@ describe('List Sync primitives from OpenDolphin', function() {
     }));
 
 
+    it('should add null entries', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var pos       = { value: 0 };
+        var element   = { value: null };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
+        model.findAttributeByPropertyName.withArgs('element').returns(element);
+
+        classRepository.addListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 0, null);
+        bean.primitiveList = [null];
+
+        pos.value = 1;
+        classRepository.addListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 0, null);
+        bean.primitiveList = [null, null];
+
+        classRepository.addListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 0, null);
+    }));
+
+
     it('should remove entries', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
@@ -142,6 +172,38 @@ describe('List Sync primitives from OpenDolphin', function() {
         element.value = 41;
         classRepository.setListEntry(model);
         sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 1, 41);
+    }));
+
+    it('should update null entries', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        bean.primitiveList = [1, 2, 3];
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var pos       = { value: 1 };
+        var element   = { value: null };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
+        model.findAttributeByPropertyName.withArgs('element').returns(element);
+
+        classRepository.setListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 1, null);
+        bean.primitiveList = [1, null, 3];
+
+        pos.value = 2;
+        classRepository.setListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 2, 1, null);
+        bean.primitiveList = [1, null, null];
+
+        pos.value = 0;
+        classRepository.setListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 1, null);
     }));
 
 });
@@ -247,6 +309,36 @@ describe('List Sync reference lists from OpenDolphin', function() {
     }));
 
 
+    it('should add nulls', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var pos       = { value: 0 };
+        var element   = { value: null };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
+        model.findAttributeByPropertyName.withArgs('element').returns(element);
+
+        classRepository.addListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 0, null);
+        sourceBean.referenceList = [null];
+
+        pos.value = 1;
+        classRepository.addListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 0, null);
+        sourceBean.referenceList = [null, null];
+
+        classRepository.addListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 0, null);
+    }));
+
+
     it('should remove entries', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
@@ -272,6 +364,39 @@ describe('List Sync reference lists from OpenDolphin', function() {
         classRepository.delListEntry(model);
         sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1);
         sourceBean.referenceList = [bean1];
+
+        from.value = 0;
+        to.value = 1;
+        classRepository.delListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1);
+    }));
+
+
+    it('should remove nulls', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        sourceBean.referenceList = [null, null, null];
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var from      = { value: 1 };
+        var to        = { value: 2 };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+
+        classRepository.delListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1);
+        sourceBean.referenceList = [null, null];
+
+        classRepository.delListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1);
+        sourceBean.referenceList = [null];
 
         from.value = 0;
         to.value = 1;
@@ -333,6 +458,77 @@ describe('List Sync reference lists from OpenDolphin', function() {
         sourceBean.referenceList = [bean1, bean12, bean13];
 
         pos.value = 0;
+        element.value = 'id11';
+        classRepository.setListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1, bean11);
+    }));
+
+
+    it('should update nulls', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        sourceBean.referenceList = [bean1, bean2, bean3];
+        var bean11Model = {
+            id: 'id11',
+            presentationModelType: 'SimpleClass',
+            attributes: [
+                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ]
+        };
+        var bean11 = classRepository.load(bean11Model);
+        var bean12Model = {
+            id: 'id12',
+            presentationModelType: 'SimpleClass',
+            attributes: [
+                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ]
+        };
+        var bean12 = classRepository.load(bean12Model);
+        var bean13Model = {
+            id: 'id13',
+            presentationModelType: 'SimpleClass',
+            attributes: [
+                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ]
+        };
+        var bean13 = classRepository.load(bean13Model);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var pos       = { value: 1 };
+        var element   = { value: null };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
+        model.findAttributeByPropertyName.withArgs('element').returns(element);
+
+        classRepository.setListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1, null);
+        sourceBean.referenceList = [bean1, null, bean3];
+        element.value = 'id12';
+        classRepository.setListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1, bean12);
+        sourceBean.referenceList = [bean1, bean12, bean3];
+
+        pos.value = 2;
+        element.value = null;
+        classRepository.setListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 2, 1, null);
+        sourceBean.referenceList = [bean1, bean12, null];
+        element.value = 'id13';
+        classRepository.setListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 2, 1, bean13);
+        sourceBean.referenceList = [bean1, bean12, bean13];
+
+        pos.value = 0;
+        element.value = null;
+        classRepository.setListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1, null);
+        sourceBean.referenceList = [null, bean12, bean13];
         element.value = 'id11';
         classRepository.setListEntry(model);
         sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1, bean11);
