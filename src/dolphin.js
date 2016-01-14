@@ -27,9 +27,6 @@ var ClassRepository = require('./classrepo.js').ClassRepository;
 var ControllerManager = require('./controllermanager.js').ControllerManager;
 var ClientContext = require('./clientcontext.js').ClientContext;
 
-var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
-var INIT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'initClientContext';
-
 exports.connect = function(url, config) {
     var builder = opendolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true);
     if (exists(config) && exists(config.errorHandler)) {
@@ -42,9 +39,5 @@ exports.connect = function(url, config) {
     var connector = new Connector(url, dolphin, classRepository, config);
     var controllerManager = new ControllerManager(dolphin, classRepository, connector);
 
-    var clientContext = new ClientContext(dolphin, beanManager, controllerManager);
-
-    connector.invoke(INIT_COMMAND_NAME);
-
-    return clientContext;
+    return new ClientContext(dolphin, beanManager, controllerManager, connector);
 };

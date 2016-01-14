@@ -18,15 +18,18 @@
 "use strict";
 
 require('./polyfills.js');
-var Promise = require('../bower_components/core.js/library/fn/promise');
-var exists = require('./utils.js').exists;
 
+var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
+var INIT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'initClientContext';
+var DISCONNECT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'disconnectClientContext';
 
-
-function ClientContext(dolphin, beanManager, controllerManager) {
+function ClientContext(dolphin, beanManager, controllerManager, connector) {
     this.dolphin = dolphin;
     this.beanManager = beanManager;
     this._controllerManager = controllerManager;
+    this._connector = connector;
+
+    this._connector.invoke(INIT_COMMAND_NAME);
 }
 
 
@@ -37,9 +40,9 @@ ClientContext.prototype.createController = function(name) {
 
 ClientContext.prototype.disconnect = function() {
     // TODO: Implement ClientContext.disconnect [DP-46]
+    this._connector.invoke(DISCONNECT_COMMAND_NAME);
     this.dolphin.stopPushListening();
 };
-
 
 
 exports.ClientContext = ClientContext;
