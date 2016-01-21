@@ -18,6 +18,8 @@
 "use strict";
 
 require('./polyfills.js');
+var Promise = require('../bower_components/core.js/library/fn/promise');
+var Set = require('../bower_components/core.js/library/fn/set');
 var checkParam = require('./utils.js').checkParam;
 
 
@@ -61,7 +63,7 @@ ControllerProxy.prototype.destroy = function() {
                 }
             });
             resolve();
-        })
+        });
     });
 };
 
