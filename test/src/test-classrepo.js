@@ -547,63 +547,63 @@ describe('ClassRepository Dolphin Bean properties', function() {
 describe('ClassRepository.mapParamToDolphin()', function() {
 
     it('undefined', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(undefined);
         expect(result).to.have.property('value', undefined);
         expect(result).to.have.property('type', UNKNOWN);
     });
 
     it('null', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(null);
         expect(result).to.have.property('value', null);
         expect(result).to.have.property('type', UNKNOWN);
     });
 
     it('boolean true', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(true);
         expect(result).to.have.property('value', true);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('boolean false', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(false);
         expect(result).to.have.property('value', false);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('number 0', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(0);
         expect(result).to.have.property('value', 0);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('number positive integer', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(42);
         expect(result).to.have.property('value', 42);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('number negative float', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(-0.1);
         expect(result).to.have.property('value', -0.1);
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('string', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin('42');
         expect(result).to.have.property('value', '42');
         expect(result).to.have.property('type', BASIC_TYPE);
     });
 
     it('string (empty)', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin('');
         expect(result).to.have.property('value', '');
         expect(result).to.have.property('type', BASIC_TYPE);
@@ -614,17 +614,17 @@ describe('ClassRepository.mapParamToDolphin()', function() {
     });
 
     it('arbitrary object', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         expect(function() {classRepo.mapParamToDolphin({})}).to.throw(TypeError);
     });
 
     it('array', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         expect(function() {classRepo.mapParamToDolphin([])}).to.throw(TypeError);
     });
 
     it('function', function() {
-        var classRepo = new ClassRepository();
+        var classRepo = new ClassRepository({});
         expect(function() {classRepo.mapParamToDolphin(function() {})}).to.throw(TypeError);
     });
 });

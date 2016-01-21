@@ -18,12 +18,18 @@
 "use strict";
 
 require('./polyfills.js');
+var checkParam = require('./utils.js').checkParam;
 
 var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 var INIT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'initClientContext';
 var DISCONNECT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'disconnectClientContext';
 
 function ClientContext(dolphin, beanManager, controllerManager, connector) {
+    checkParam(dolphin, 'dolphin');
+    checkParam(beanManager, 'beanManager');
+    checkParam(controllerManager, 'controllerManager');
+    checkParam(connector, 'connector');
+
     this.dolphin = dolphin;
     this.beanManager = beanManager;
     this._controllerManager = controllerManager;
@@ -34,6 +40,8 @@ function ClientContext(dolphin, beanManager, controllerManager, connector) {
 
 
 ClientContext.prototype.createController = function(name) {
+    checkParam(name, 'name');
+
     return this._controllerManager.createController(name);
 };
 

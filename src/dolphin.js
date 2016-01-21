@@ -14,13 +14,15 @@
  */
 
 /*jslint browserify: true */
-/* global Platform, console */
+/* global console */
 "use strict";
 
 require('./polyfills.js');
 var opendolphin = require('../libsrc/opendolphin.js');
 
-var exists = require('./utils.js').exists;
+var utils = require('./utils.js');
+var exists = utils.exists;
+var checkParam = utils.checkParam;
 var Connector = require('./connector.js').Connector;
 var BeanManager = require('./beanmanager.js').BeanManager;
 var ClassRepository = require('./classrepo.js').ClassRepository;
@@ -28,6 +30,8 @@ var ControllerManager = require('./controllermanager.js').ControllerManager;
 var ClientContext = require('./clientcontext.js').ClientContext;
 
 exports.connect = function(url, config) {
+    checkParam(url, 'url');
+
     var builder = opendolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true);
     if (exists(config) && exists(config.errorHandler)) {
         builder.errorHandler(config.errorHandler);

@@ -20,7 +20,9 @@
 require('./polyfills.js');
 var Promise = require('../bower_components/core.js/library/fn/promise');
 var opendolphin = require('../libsrc/opendolphin.js');
-var exists = require('./utils.js').exists;
+var utils = require('./utils.js');
+var exists = utils.exists;
+var checkParam = utils.checkParam;
 
 
 var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
@@ -42,6 +44,10 @@ var SOURCE_SYSTEM_SERVER = 'server';
 var initializer;
 
 function Connector(url, dolphin, classRepository, config) {
+    checkParam(url, 'url');
+    checkParam(dolphin, 'dolphin');
+    checkParam(classRepository, 'classRepository');
+
     var self = this;
     this.dolphin = dolphin;
     this.classRepository = classRepository;
@@ -92,6 +98,8 @@ function Connector(url, dolphin, classRepository, config) {
 
 
 Connector.prototype.onModelAdded = function(model) {
+    checkParam(model, 'model');
+
     var type = model.presentationModelType;
     switch (type) {
         case ACTION_CALL_BEAN:
@@ -123,6 +131,8 @@ Connector.prototype.onModelAdded = function(model) {
 
 
 Connector.prototype.onModelRemoved = function(model) {
+    checkParam(model, 'model');
+
     var type = model.presentationModelType;
     switch (type) {
         case DOLPHIN_BEAN:
@@ -141,6 +151,8 @@ Connector.prototype.onModelRemoved = function(model) {
 
 
 Connector.prototype.invoke = function(command) {
+    checkParam(command, 'command');
+
     var dolphin = this.dolphin;
     return new Promise(function(resolve) {
         initializer.then(function () {

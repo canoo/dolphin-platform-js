@@ -18,12 +18,15 @@
 "use strict";
 
 require('./polyfills.js');
-var Promise = require('../bower_components/core.js/library/fn/promise');
-var exists = require('./utils.js').exists;
+var checkParam = require('./utils.js').checkParam;
 
 
 
 function ControllerProxy(controllerId, model, manager) {
+    checkParam(controllerId, 'controllerId');
+    checkParam(model, 'model');
+    checkParam(manager, 'manager');
+
     this.controllerId = controllerId;
     this.model = model;
     this.manager = manager;
@@ -32,6 +35,8 @@ function ControllerProxy(controllerId, model, manager) {
 
 
 ControllerProxy.prototype.invoke = function(name, params) {
+    checkParam(name, 'name');
+
     if (this.destroyed) {
         throw new Error('The controller was already destroyed');
     }

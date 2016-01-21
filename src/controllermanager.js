@@ -19,7 +19,10 @@
 
 require('./polyfills.js');
 var Promise = require('../bower_components/core.js/library/fn/promise');
-var exists = require('./utils.js').exists;
+var utils = require('./utils.js');
+var exists = utils.exists;
+var checkParam = utils.checkParam;
+
 var ControllerProxy = require('./controllerproxy.js').ControllerProxy;
 
 var DOLPHIN_BEAN_TYPE = require('./classrepo.js').DOLPHIN_BEAN;
@@ -42,6 +45,10 @@ var PARAM_PREFIX = '_';
 
 
 function ControllerManager(dolphin, classRepository, connector) {
+    checkParam(dolphin, 'dolphin');
+    checkParam(classRepository, 'classRepository');
+    checkParam(connector, 'connector');
+
     this.dolphin = dolphin;
     this.classRepository = classRepository;
     this.connector = connector;
@@ -49,6 +56,8 @@ function ControllerManager(dolphin, classRepository, connector) {
 
 
 ControllerManager.prototype.createController = function(name) {
+    checkParam(name, 'name');
+
     var self = this;
     var controllerId, modelId, model;
     return new Promise(function(resolve) {
@@ -66,6 +75,9 @@ ControllerManager.prototype.createController = function(name) {
 
 
 ControllerManager.prototype.invokeAction = function(controllerId, actionName, params) {
+    checkParam(controllerId, 'controllerId');
+    checkParam(actionName, 'actionName');
+
     var self = this;
     return new Promise(function(resolve, reject) {
 
@@ -102,6 +114,8 @@ ControllerManager.prototype.invokeAction = function(controllerId, actionName, pa
 
 
 ControllerManager.prototype.destroyController = function(controllerId) {
+    checkParam(controllerId, 'controllerId');
+
     var self = this;
     return new Promise(function(resolve) {
         self.connector.getHighlanderPM().then(function (highlanderPM) {

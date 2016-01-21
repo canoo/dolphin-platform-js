@@ -21,7 +21,9 @@ require('./polyfills.js');
 var Map = require('../bower_components/core.js/library/fn/map');
 var opendolphin = require('../libsrc/opendolphin.js');
 
-var exists = require('./utils.js').exists;
+var utils = require('./utils.js');
+var exists = utils.exists;
+var checkParam = utils.checkParam;
 
 var UNKNOWN = 0,
     BASIC_TYPE = 1,
@@ -64,7 +66,11 @@ function validateList(classRepository, type, bean, propertyName) {
     var list = bean[propertyName];
     if (!exists(list)) {
         classRepository.propertyUpdateHandlers.forEach(function(handler) {
-            handler(type, bean, propertyName, [], undefined);
+            try {
+                handler(type, bean, propertyName, [], undefined);
+            } catch(e) {
+                console.warn('An exception occurred while calling an onBeanUpdate-handler', e);
+            }
         });
     }
 }
@@ -89,6 +95,8 @@ function unblock() {
 
 
 function ClassRepository(dolphin) {
+    checkParam(dolphin, 'dolphin');
+
     this.dolphin = dolphin;
     this.classes = new Map();
     this.beanFromDolphin = new Map();
@@ -102,6 +110,9 @@ function ClassRepository(dolphin) {
 
 
 ClassRepository.prototype.notifyBeanChange = function(bean, propertyName, newValue) {
+    checkParam(bean, 'bean');
+    checkParam(propertyName, 'propertyName');
+
     var modelId = this.beanToDolphin.get(bean);
     if (exists(modelId)) {
         var model = this.dolphin.findPresentationModelById(modelId);
@@ -120,6 +131,12 @@ ClassRepository.prototype.notifyBeanChange = function(bean, propertyName, newVal
 
 
 ClassRepository.prototype.notifyArrayChange = function(bean, propertyName, index, count, removedElements) {
+    checkParam(bean, 'bean');
+    checkParam(propertyName, 'propertyName');
+    checkParam(index, 'index');
+    checkParam(count, 'count');
+    checkParam(removedElements, 'removedElements');
+
     if (isBlocked(bean, propertyName)) {
         return;
     }
@@ -137,26 +154,32 @@ ClassRepository.prototype.notifyArrayChange = function(bean, propertyName, index
 
 
 ClassRepository.prototype.onBeanAdded = function(handler) {
+    checkParam(handler, 'handler');
     this.beanAddedHandlers.push(handler);
 };
 
 
 ClassRepository.prototype.onBeanRemoved = function(handler) {
+    checkParam(handler, 'handler');
     this.beanRemovedHandlers.push(handler);
 };
 
 
 ClassRepository.prototype.onBeanUpdate = function(handler) {
+    checkParam(handler, 'handler');
     this.propertyUpdateHandlers.push(handler);
 };
 
 
 ClassRepository.prototype.onArrayUpdate = function(handler) {
+    checkParam(handler, 'handler');
     this.arrayUpdateHandlers.push(handler);
 };
 
 
 ClassRepository.prototype.registerClass = function (model) {
+    checkParam(model, 'model');
+
     if (this.classes.has(model.id)) {
         return;
     }
@@ -176,11 +199,15 @@ ClassRepository.prototype.registerClass = function (model) {
 
 
 ClassRepository.prototype.unregisterClass = function (model) {
+    checkParam(model, 'model');
+
     this.classes['delete'](model.id);
 };
 
 
 ClassRepository.prototype.load = function (model) {
+    checkParam(model, 'model');
+
     var self = this;
     var classInfo = this.classes.get(model.presentationModelType);
     var bean = {};
@@ -193,7 +220,11 @@ ClassRepository.prototype.load = function (model) {
                 var oldValue = fromDolphin(self, classInfo[attribute.propertyName], event.oldValue);
                 var newValue = fromDolphin(self, classInfo[attribute.propertyName], event.newValue);
                 self.propertyUpdateHandlers.forEach(function(handler) {
-                    handler(model.presentationModelType, bean, attribute.propertyName, newValue, oldValue);
+                    try {
+                        handler(model.presentationModelType, bean, attribute.propertyName, newValue, oldValue);
+                    } catch(e) {
+                        console.warn('An exception occurred while calling an onBeanUpdate-handler', e);
+                    }
                 });
             }
         });
@@ -202,20 +233,30 @@ ClassRepository.prototype.load = function (model) {
     this.beanToDolphin.set(bean, model.id);
     this.classInfos.set(model.id, classInfo);
     this.beanAddedHandlers.forEach(function(handler) {
-        handler(model.presentationModelType, bean);
+        try {
+            handler(model.presentationModelType, bean);
+        } catch(e) {
+            console.warn('An exception occurred while calling an onBeanAdded-handler', e);
+        }
     });
     return bean;
 };
 
 
 ClassRepository.prototype.unload = function(model) {
+    checkParam(model, 'model');
+
     var bean = this.beanFromDolphin.get(model.id);
     this.beanFromDolphin['delete'](model.id);
     this.beanToDolphin['delete'](bean);
     this.classInfos['delete'](model.id);
     if (exists(bean)) {
         this.beanRemovedHandlers.forEach(function(handler) {
-            handler(model.presentationModelType, bean);
+            try {
+                handler(model.presentationModelType, bean);
+            } catch(e) {
+                console.warn('An exception occurred while calling an onBeanRemoved-handler', e);
+            }
         });
     }
     return bean;
@@ -223,6 +264,8 @@ ClassRepository.prototype.unload = function(model) {
 
 
 ClassRepository.prototype.addListEntry = function(model) {
+    checkParam(model, 'model');
+
     var source = model.findAttributeByPropertyName('source');
     var attribute = model.findAttributeByPropertyName('attribute');
     var pos = model.findAttributeByPropertyName('pos');
@@ -238,7 +281,11 @@ ClassRepository.prototype.addListEntry = function(model) {
             try {
                 block(bean, attribute.value);
                 this.arrayUpdateHandlers.forEach(function (handler) {
-                    handler(type, bean, attribute.value, pos.value, 0, entry);
+                    try {
+                        handler(type, bean, attribute.value, pos.value, 0, entry);
+                    } catch(e) {
+                        console.warn('An exception occurred while calling an onArrayUpdate-handler', e);
+                    }
                 });
             } finally {
                 unblock();
@@ -253,6 +300,8 @@ ClassRepository.prototype.addListEntry = function(model) {
 
 
 ClassRepository.prototype.delListEntry = function(model) {
+    checkParam(model, 'model');
+
     var source = model.findAttributeByPropertyName('source');
     var attribute = model.findAttributeByPropertyName('attribute');
     var from = model.findAttributeByPropertyName('from');
@@ -266,7 +315,11 @@ ClassRepository.prototype.delListEntry = function(model) {
             try {
                 block(bean, attribute.value);
                 this.arrayUpdateHandlers.forEach(function (handler) {
-                    handler(type, bean, attribute.value, from.value, to.value - from.value);
+                    try {
+                        handler(type, bean, attribute.value, from.value, to.value - from.value);
+                    } catch(e) {
+                        console.warn('An exception occurred while calling an onArrayUpdate-handler', e);
+                    }
                 });
             } finally {
                 unblock();
@@ -281,6 +334,8 @@ ClassRepository.prototype.delListEntry = function(model) {
 
 
 ClassRepository.prototype.setListEntry = function(model) {
+    checkParam(model, 'model');
+
     var source = model.findAttributeByPropertyName('source');
     var attribute = model.findAttributeByPropertyName('attribute');
     var pos = model.findAttributeByPropertyName('pos');
@@ -296,7 +351,11 @@ ClassRepository.prototype.setListEntry = function(model) {
             try {
                 block(bean, attribute.value);
                 this.arrayUpdateHandlers.forEach(function (handler) {
-                    handler(type, bean, attribute.value, pos.value, 1, entry);
+                    try {
+                        handler(type, bean, attribute.value, pos.value, 1, entry);
+                    } catch(e) {
+                        console.warn('An exception occurred while calling an onArrayUpdate-handler', e);
+                    }
                 });
             } finally {
                 unblock();

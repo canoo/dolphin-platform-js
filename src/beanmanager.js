@@ -19,10 +19,14 @@
 
 require('./polyfills.js');
 var Map = require('../bower_components/core.js/library/fn/map');
-var exists = require('./utils.js').exists;
+var utils = require('./utils.js');
+var exists = utils.exists;
+var checkParam = utils.checkParam;
 
 
 function BeanManager(classRepository) {
+    checkParam(classRepository, 'classRepository');
+
     this.classRepository = classRepository;
     this.addedHandlers = new Map();
     this.removedHandlers = new Map();
@@ -38,44 +42,76 @@ function BeanManager(classRepository) {
         var handlerList = self.addedHandlers.get(type);
         if (exists(handlerList)) {
             handlerList.forEach(function (handler) {
-                handler(bean);
+                try {
+                    handler(bean);
+                } catch(e) {
+                    console.warn('An exception occurred while calling an onBeanAdded-handler for type', type, e);
+                }
             });
         }
         self.allAddedHandlers.forEach(function (handler) {
-            handler(bean);
+            try {
+                handler(bean);
+            } catch(e) {
+                console.warn('An exception occurred while calling a general onBeanAdded-handler', e);
+            }
         });
     });
     this.classRepository.onBeanRemoved(function(type, bean) {
         var handlerList = self.removedHandlers.get(type);
         if (exists(handlerList)) {
             handlerList.forEach(function(handler) {
-                handler(bean);
+                try {
+                    handler(bean);
+                } catch(e) {
+                    console.warn('An exception occurred while calling an onBeanRemoved-handler for type', type, e);
+                }
             });
         }
         self.allRemovedHandlers.forEach(function(handler) {
-            handler(bean);
+            try {
+                handler(bean);
+            } catch(e) {
+                console.warn('An exception occurred while calling a general onBeanRemoved-handler', e);
+            }
         });
     });
     this.classRepository.onBeanUpdate(function(type, bean, propertyName, newValue, oldValue) {
         var handlerList = self.updatedHandlers.get(type);
         if (exists(handlerList)) {
             handlerList.forEach(function (handler) {
-                handler(bean, propertyName, newValue, oldValue);
+                try {
+                    handler(bean, propertyName, newValue, oldValue);
+                } catch(e) {
+                    console.warn('An exception occurred while calling an onBeanUpdate-handler for type', type, e);
+                }
             });
         }
         self.allUpdatedHandlers.forEach(function (handler) {
-            handler(bean, propertyName, newValue, oldValue);
+            try {
+                handler(bean, propertyName, newValue, oldValue);
+            } catch(e) {
+                console.warn('An exception occurred while calling a general onBeanUpdate-handler', e);
+            }
         });
     });
     this.classRepository.onArrayUpdate(function(type, bean, propertyName, index, count, newElement) {
         var handlerList = self.arrayUpdatedHandlers.get(type);
         if (exists(handlerList)) {
             handlerList.forEach(function (handler) {
-                handler(bean, propertyName, index, count, newElement);
+                try {
+                    handler(bean, propertyName, index, count, newElement);
+                } catch(e) {
+                    console.warn('An exception occurred while calling an onArrayUpdate-handler for type', type, e);
+                }
             });
         }
         self.allArrayUpdatedHandlers.forEach(function (handler) {
-            handler(bean, propertyName, index, count, newElement);
+            try {
+                handler(bean, propertyName, index, count, newElement);
+            } catch(e) {
+                console.warn('An exception occurred while calling a general onArrayUpdate-handler', e);
+            }
         });
     });
 
@@ -83,52 +119,77 @@ function BeanManager(classRepository) {
 
 
 BeanManager.prototype.notifyBeanChange = function(bean, propertyName, newValue) {
+    checkParam(bean, 'bean');
+    checkParam(propertyName, 'propertyName');
+
     return this.classRepository.notifyBeanChange(bean, propertyName, newValue);
 };
 
 
 BeanManager.prototype.notifyArrayChange = function(bean, propertyName, index, count, removedElements) {
+    checkParam(bean, 'bean');
+    checkParam(propertyName, 'propertyName');
+    checkParam(index, 'index');
+    checkParam(count, 'count');
+    checkParam(removedElements, 'removedElements');
+
     this.classRepository.notifyArrayChange(bean, propertyName, index, count, removedElements);
 };
 
 
 BeanManager.prototype.isManaged = function(bean) {
+    checkParam(bean, 'bean');
+
     // TODO: Implement dolphin.isManaged() [DP-7]
     throw new Error("Not implemented yet");
 };
 
 
 BeanManager.prototype.create = function(type) {
+    checkParam(type, 'type');
+
     // TODO: Implement dolphin.create() [DP-7]
     throw new Error("Not implemented yet");
 };
 
 
 BeanManager.prototype.add = function(type, bean) {
+    checkParam(type, 'type');
+    checkParam(bean, 'bean');
+
     // TODO: Implement dolphin.add() [DP-7]
     throw new Error("Not implemented yet");
 };
 
 
 BeanManager.prototype.addAll = function(type, collection) {
+    checkParam(type, 'type');
+    checkParam(collection, 'collection');
+
     // TODO: Implement dolphin.addAll() [DP-7]
     throw new Error("Not implemented yet");
 };
 
 
 BeanManager.prototype.remove = function(bean) {
+    checkParam(bean, 'bean');
+
     // TODO: Implement dolphin.remove() [DP-7]
     throw new Error("Not implemented yet");
 };
 
 
 BeanManager.prototype.removeAll = function(collection) {
+    checkParam(collection, 'collection');
+
     // TODO: Implement dolphin.removeAll() [DP-7]
     throw new Error("Not implemented yet");
 };
 
 
 BeanManager.prototype.removeIf = function(predicate) {
+    checkParam(predicate, 'predicate');
+
     // TODO: Implement dolphin.removeIf() [DP-7]
     throw new Error("Not implemented yet");
 };
@@ -138,6 +199,8 @@ BeanManager.prototype.onAdded = function(type, eventHandler) {
     var self = this;
     if (!exists(eventHandler)) {
         eventHandler = type;
+        checkParam(eventHandler, 'eventHandler');
+
         self.allAddedHandlers = self.allAddedHandlers.concat(eventHandler);
         return {
             unsubscribe: function() {
@@ -147,6 +210,9 @@ BeanManager.prototype.onAdded = function(type, eventHandler) {
             }
         };
     } else {
+        checkParam(type, 'type');
+        checkParam(eventHandler, 'eventHandler');
+
         var handlerList = self.addedHandlers.get(type);
         if (!exists(handlerList)) {
             handlerList = [];
@@ -170,6 +236,8 @@ BeanManager.prototype.onRemoved = function(type, eventHandler) {
     var self = this;
     if (!exists(eventHandler)) {
         eventHandler = type;
+        checkParam(eventHandler, 'eventHandler');
+
         self.allRemovedHandlers = self.allRemovedHandlers.concat(eventHandler);
         return {
             unsubscribe: function() {
@@ -179,6 +247,9 @@ BeanManager.prototype.onRemoved = function(type, eventHandler) {
             }
         };
     } else {
+        checkParam(type, 'type');
+        checkParam(eventHandler, 'eventHandler');
+
         var handlerList = self.removedHandlers.get(type);
         if (!exists(handlerList)) {
             handlerList = [];
@@ -202,6 +273,8 @@ BeanManager.prototype.onBeanUpdate = function(type, eventHandler) {
     var self = this;
     if (!exists(eventHandler)) {
         eventHandler = type;
+        checkParam(eventHandler, 'eventHandler');
+
         self.allUpdatedHandlers = self.allUpdatedHandlers.concat(eventHandler);
         return {
             unsubscribe: function() {
@@ -211,6 +284,9 @@ BeanManager.prototype.onBeanUpdate = function(type, eventHandler) {
             }
         };
     } else {
+        checkParam(type, 'type');
+        checkParam(eventHandler, 'eventHandler');
+
         var handlerList = self.updatedHandlers.get(type);
         if (!exists(handlerList)) {
             handlerList = [];
@@ -234,6 +310,8 @@ BeanManager.prototype.onArrayUpdate = function(type, eventHandler) {
     var self = this;
     if (!exists(eventHandler)) {
         eventHandler = type;
+        checkParam(eventHandler, 'eventHandler');
+
         self.allArrayUpdatedHandlers = self.allArrayUpdatedHandlers.concat(eventHandler);
         return {
             unsubscribe: function() {
@@ -243,6 +321,9 @@ BeanManager.prototype.onArrayUpdate = function(type, eventHandler) {
             }
         };
     } else {
+        checkParam(type, 'type');
+        checkParam(eventHandler, 'eventHandler');
+
         var handlerList = self.arrayUpdatedHandlers.get(type);
         if (!exists(handlerList)) {
             handlerList = [];
