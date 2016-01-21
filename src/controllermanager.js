@@ -19,6 +19,7 @@
 
 require('./polyfills.js');
 var Promise = require('../bower_components/core.js/library/fn/promise');
+var Set = require('../bower_components/core.js/library/fn/set');
 var utils = require('./utils.js');
 var exists = utils.exists;
 var checkParam = utils.checkParam;
@@ -52,6 +53,7 @@ function ControllerManager(dolphin, classRepository, connector) {
     this.dolphin = dolphin;
     this.classRepository = classRepository;
     this.connector = connector;
+    this.controllers = new Set();
 }
 
 
@@ -59,7 +61,7 @@ ControllerManager.prototype.createController = function(name) {
     checkParam(name, 'name');
 
     var self = this;
-    var controllerId, modelId, model;
+    var controllerId, modelId, model, controller;
     return new Promise(function(resolve) {
         self.connector.getHighlanderPM().then(function (highlanderPM) {
             highlanderPM.findAttributeByPropertyName(CONTROLLER_NAME).setValue(name);
@@ -67,7 +69,9 @@ ControllerManager.prototype.createController = function(name) {
                 controllerId = highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).getValue();
                 modelId = highlanderPM.findAttributeByPropertyName(MODEL).getValue();
                 model = self.classRepository.mapDolphinToBean(modelId, DOLPHIN_BEAN_TYPE);
-                resolve(new ControllerProxy(controllerId, model, self));
+                controller = new ControllerProxy(controllerId, model, self);
+                self.controllers.add(controller);
+                resolve(controller);
             });
         });
     });
@@ -113,15 +117,28 @@ ControllerManager.prototype.invokeAction = function(controllerId, actionName, pa
 };
 
 
-ControllerManager.prototype.destroyController = function(controllerId) {
-    checkParam(controllerId, 'controllerId');
+ControllerManager.prototype.destroyController = function(controller) {
+    checkParam(controller, 'controller');
 
     var self = this;
     return new Promise(function(resolve) {
         self.connector.getHighlanderPM().then(function (highlanderPM) {
-            highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).setValue(controllerId);
+            self.controllers.delete(controller);
+            highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).setValue(controller.controllerId);
             self.connector.invoke(DESTROY_CONTROLLER_COMMAND_NAME).then(resolve);
         });
+    });
+};
+
+
+ControllerManager.prototype.destroy = function() {
+    var self = this;
+    this.connector.getHighlanderPM().then(function (highlanderPM) {
+        self.controllers.forEach(function (controller) {
+            highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).setValue(controller.controllerId);
+            self.connector.invoke(DESTROY_CONTROLLER_COMMAND_NAME);
+        });
+        self.controllers.clear();
     });
 };
 
