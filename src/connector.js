@@ -143,14 +143,13 @@ Connector.prototype.onModelRemoved = function(model) {
 Connector.prototype.invoke = function(command) {
     var dolphin = this.dolphin;
     return new Promise(function(resolve) {
-        // TODO: This needs to be synchronized with changes pushed via BeanManager
-        //initializer.then(function () {
+        initializer.then(function () {
             dolphin.send(command, {
                 onFinished: function() {
                     resolve();
                 }
             });
-        //});
+        });
     });
 };
 
