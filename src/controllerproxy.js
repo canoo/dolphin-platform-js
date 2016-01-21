@@ -31,6 +31,7 @@ function ControllerProxy(controllerId, model, manager) {
     this.model = model;
     this.manager = manager;
     this.destroyed = false;
+    this.destroyedHandlers = new Set();
 }
 
 
@@ -48,8 +49,33 @@ ControllerProxy.prototype.destroy = function() {
     if (this.destroyed) {
         throw new Error('The controller was already destroyed');
     }
+    var self = this;
     this.destroyed = true;
-    return this.manager.destroyController(this);
+    return new Promise(function(resolve) {
+        self.manager.destroyController(this).then(function() {
+            self.destroyedHandlers.forEach(function(handler) {
+                try {
+                    handler(self);
+                } catch(e) {
+                    console.warn('An exception occurred while calling an onDestroyed-handler', e);
+                }
+            });
+            resolve();
+        })
+    });
+};
+
+
+ControllerProxy.prototype.onDestroyed = function(handler) {
+    checkParam(handler, 'handler');
+
+    var self = this;
+    this.destroyedHandlers.add(handler);
+    return {
+        unsubscribe: function() {
+            self.destroyedHandlers.delete(handler);
+        }
+    };
 };
 
 

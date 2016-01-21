@@ -132,13 +132,14 @@ ControllerManager.prototype.destroyController = function(controller) {
 
 
 ControllerManager.prototype.destroy = function() {
-    var self = this;
-    this.connector.getHighlanderPM().then(function (highlanderPM) {
-        self.controllers.forEach(function (controller) {
-            highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).setValue(controller.controllerId);
-            self.connector.invoke(DESTROY_CONTROLLER_COMMAND_NAME);
-        });
-        self.controllers.clear();
+    var controllersCopy = this.controllers;
+    this.controllers = new Set();
+    controllersCopy.forEach(function (controller) {
+        try {
+            controller.destroy();
+        } catch (e) {
+            // ignore
+        }
     });
 };
 
