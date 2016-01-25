@@ -51,20 +51,15 @@ ControllerProxy.prototype.destroy = function() {
     if (this.destroyed) {
         throw new Error('The controller was already destroyed');
     }
-    var self = this;
     this.destroyed = true;
-    return new Promise(function(resolve) {
-        self.manager.destroyController(self).then(function() {
-            self.onDestroyedHandlers.forEach(function(handler) {
-                try {
-                    handler(self);
-                } catch(e) {
-                    console.warn('An exception occurred while calling an onDestroyed-handler', e);
-                }
-            });
-            resolve();
-        });
-    });
+    this.onDestroyedHandlers.forEach(function(handler) {
+        try {
+            handler(this);
+        } catch(e) {
+            console.warn('An exception occurred while calling an onDestroyed-handler', e);
+        }
+    }, this);
+    return this.manager.destroyController(this);
 };
 
 

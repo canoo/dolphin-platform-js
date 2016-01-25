@@ -133,14 +133,16 @@ ControllerManager.prototype.destroyController = function(controller) {
 
 ControllerManager.prototype.destroy = function() {
     var controllersCopy = this.controllers;
+    var promises = [];
     this.controllers = new Set();
     controllersCopy.forEach(function (controller) {
         try {
-            controller.destroy();
+            promises.push(controller.destroy());
         } catch (e) {
             // ignore
         }
     });
+    return Promise.all(promises);
 };
 
 

@@ -48,13 +48,15 @@ ClientContext.prototype.createController = function(name) {
 
 ClientContext.prototype.disconnect = function() {
     // TODO: Implement ClientContext.disconnect [DP-46]
+    var self = this;
     this.dolphin.stopPushListening();
-    this._controllerManager.destroy();
-    this._connector.invoke(DISCONNECT_COMMAND_NAME);
-    this.dolphin = null;
-    this.beanManager = null;
-    this._controllerManager = null;
-    this._connector = null;
+    this._controllerManager.destroy().then(function() {
+        self._connector.invoke(DISCONNECT_COMMAND_NAME);
+        self.dolphin = null;
+        self.beanManager = null;
+        self._controllerManager = null;
+        self._connector = null;
+    });
 };
 
 
