@@ -33,7 +33,7 @@ function ControllerProxy(controllerId, model, manager) {
     this.model = model;
     this.manager = manager;
     this.destroyed = false;
-    this.destroyedHandlers = new Set();
+    this.onDestroyedHandlers = new Set();
 }
 
 
@@ -55,7 +55,7 @@ ControllerProxy.prototype.destroy = function() {
     this.destroyed = true;
     return new Promise(function(resolve) {
         self.manager.destroyController(self).then(function() {
-            self.destroyedHandlers.forEach(function(handler) {
+            self.onDestroyedHandlers.forEach(function(handler) {
                 try {
                     handler(self);
                 } catch(e) {
@@ -72,10 +72,10 @@ ControllerProxy.prototype.onDestroyed = function(handler) {
     checkParam(handler, 'handler');
 
     var self = this;
-    this.destroyedHandlers.add(handler);
+    this.onDestroyedHandlers.add(handler);
     return {
         unsubscribe: function() {
-            self.destroyedHandlers.delete(handler);
+            self.onDestroyedHandlers.delete(handler);
         }
     };
 };
