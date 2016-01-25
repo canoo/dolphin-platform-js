@@ -155,13 +155,13 @@ Connector.prototype.invoke = function(command) {
 
     var dolphin = this.dolphin;
     return new Promise(function(resolve) {
-        initializer.then(function () {
+        //initializer.then(function () {
             dolphin.send(command, {
                 onFinished: function() {
                     resolve();
                 }
             });
-        });
+        //});
     });
 };
 

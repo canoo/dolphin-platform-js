@@ -54,7 +54,7 @@ ControllerProxy.prototype.destroy = function() {
     var self = this;
     this.destroyed = true;
     return new Promise(function(resolve) {
-        self.manager.destroyController(this).then(function() {
+        self.manager.destroyController(self).then(function() {
             self.destroyedHandlers.forEach(function(handler) {
                 try {
                     handler(self);
