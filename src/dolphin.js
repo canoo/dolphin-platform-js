@@ -22,6 +22,7 @@ var opendolphin = require('../libsrc/opendolphin.js');
 
 var utils = require('./utils.js');
 var exists = utils.exists;
+var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
 var Connector = require('./connector.js').Connector;
 var BeanManager = require('./beanmanager.js').BeanManager;
@@ -30,6 +31,7 @@ var ControllerManager = require('./controllermanager.js').ControllerManager;
 var ClientContext = require('./clientcontext.js').ClientContext;
 
 exports.connect = function(url, config) {
+    checkMethod('connect(url, config)');
     checkParam(url, 'url');
 
     var builder = opendolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true);

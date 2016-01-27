@@ -21,10 +21,12 @@ require('./polyfills.js');
 var Map = require('../bower_components/core.js/library/fn/map');
 var utils = require('./utils.js');
 var exists = utils.exists;
+var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
 
 
 function BeanManager(classRepository) {
+    checkMethod('BeanManager(classRepository)');
     checkParam(classRepository, 'classRepository');
 
     this.classRepository = classRepository;
@@ -119,6 +121,7 @@ function BeanManager(classRepository) {
 
 
 BeanManager.prototype.notifyBeanChange = function(bean, propertyName, newValue) {
+    checkMethod('BeanManager.notifyBeanChange(bean, propertyName, newValue)');
     checkParam(bean, 'bean');
     checkParam(propertyName, 'propertyName');
 
@@ -127,6 +130,7 @@ BeanManager.prototype.notifyBeanChange = function(bean, propertyName, newValue) 
 
 
 BeanManager.prototype.notifyArrayChange = function(bean, propertyName, index, count, removedElements) {
+    checkMethod('BeanManager.notifyArrayChange(bean, propertyName, index, count, removedElements)');
     checkParam(bean, 'bean');
     checkParam(propertyName, 'propertyName');
     checkParam(index, 'index');
@@ -138,6 +142,7 @@ BeanManager.prototype.notifyArrayChange = function(bean, propertyName, index, co
 
 
 BeanManager.prototype.isManaged = function(bean) {
+    checkMethod('BeanManager.isManaged(bean)');
     checkParam(bean, 'bean');
 
     // TODO: Implement dolphin.isManaged() [DP-7]
@@ -146,6 +151,7 @@ BeanManager.prototype.isManaged = function(bean) {
 
 
 BeanManager.prototype.create = function(type) {
+    checkMethod('BeanManager.create(type)');
     checkParam(type, 'type');
 
     // TODO: Implement dolphin.create() [DP-7]
@@ -154,6 +160,7 @@ BeanManager.prototype.create = function(type) {
 
 
 BeanManager.prototype.add = function(type, bean) {
+    checkMethod('BeanManager.add(type, bean)');
     checkParam(type, 'type');
     checkParam(bean, 'bean');
 
@@ -163,6 +170,7 @@ BeanManager.prototype.add = function(type, bean) {
 
 
 BeanManager.prototype.addAll = function(type, collection) {
+    checkMethod('BeanManager.addAll(type, collection)');
     checkParam(type, 'type');
     checkParam(collection, 'collection');
 
@@ -172,6 +180,7 @@ BeanManager.prototype.addAll = function(type, collection) {
 
 
 BeanManager.prototype.remove = function(bean) {
+    checkMethod('BeanManager.remove(bean)');
     checkParam(bean, 'bean');
 
     // TODO: Implement dolphin.remove() [DP-7]
@@ -180,6 +189,7 @@ BeanManager.prototype.remove = function(bean) {
 
 
 BeanManager.prototype.removeAll = function(collection) {
+    checkMethod('BeanManager.removeAll(collection)');
     checkParam(collection, 'collection');
 
     // TODO: Implement dolphin.removeAll() [DP-7]
@@ -188,6 +198,7 @@ BeanManager.prototype.removeAll = function(collection) {
 
 
 BeanManager.prototype.removeIf = function(predicate) {
+    checkMethod('BeanManager.removeIf(predicate)');
     checkParam(predicate, 'predicate');
 
     // TODO: Implement dolphin.removeIf() [DP-7]
@@ -199,6 +210,7 @@ BeanManager.prototype.onAdded = function(type, eventHandler) {
     var self = this;
     if (!exists(eventHandler)) {
         eventHandler = type;
+        checkMethod('BeanManager.onAdded(eventHandler)');
         checkParam(eventHandler, 'eventHandler');
 
         self.allAddedHandlers = self.allAddedHandlers.concat(eventHandler);
@@ -210,6 +222,7 @@ BeanManager.prototype.onAdded = function(type, eventHandler) {
             }
         };
     } else {
+        checkMethod('BeanManager.onAdded(type, eventHandler)');
         checkParam(type, 'type');
         checkParam(eventHandler, 'eventHandler');
 
@@ -236,6 +249,7 @@ BeanManager.prototype.onRemoved = function(type, eventHandler) {
     var self = this;
     if (!exists(eventHandler)) {
         eventHandler = type;
+        checkMethod('BeanManager.onRemoved(eventHandler)');
         checkParam(eventHandler, 'eventHandler');
 
         self.allRemovedHandlers = self.allRemovedHandlers.concat(eventHandler);
@@ -247,6 +261,7 @@ BeanManager.prototype.onRemoved = function(type, eventHandler) {
             }
         };
     } else {
+        checkMethod('BeanManager.onRemoved(type, eventHandler)');
         checkParam(type, 'type');
         checkParam(eventHandler, 'eventHandler');
 
@@ -273,6 +288,7 @@ BeanManager.prototype.onBeanUpdate = function(type, eventHandler) {
     var self = this;
     if (!exists(eventHandler)) {
         eventHandler = type;
+        checkMethod('BeanManager.onBeanUpdate(eventHandler)');
         checkParam(eventHandler, 'eventHandler');
 
         self.allUpdatedHandlers = self.allUpdatedHandlers.concat(eventHandler);
@@ -284,6 +300,7 @@ BeanManager.prototype.onBeanUpdate = function(type, eventHandler) {
             }
         };
     } else {
+        checkMethod('BeanManager.onBeanUpdate(type, eventHandler)');
         checkParam(type, 'type');
         checkParam(eventHandler, 'eventHandler');
 
@@ -310,6 +327,7 @@ BeanManager.prototype.onArrayUpdate = function(type, eventHandler) {
     var self = this;
     if (!exists(eventHandler)) {
         eventHandler = type;
+        checkMethod('BeanManager.onArrayUpdate(eventHandler)');
         checkParam(eventHandler, 'eventHandler');
 
         self.allArrayUpdatedHandlers = self.allArrayUpdatedHandlers.concat(eventHandler);
@@ -321,6 +339,7 @@ BeanManager.prototype.onArrayUpdate = function(type, eventHandler) {
             }
         };
     } else {
+        checkMethod('BeanManager.onArrayUpdate(type, eventHandler)');
         checkParam(type, 'type');
         checkParam(eventHandler, 'eventHandler');
 

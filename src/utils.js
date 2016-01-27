@@ -16,14 +16,20 @@
 /*jslint browserify: true */
 "use strict";
 
+var checkMethodName;
+
 var exists = function(object) {
     return typeof object !== 'undefined' && object !== null;
 };
 
 module.exports.exists = exists;
 
-module.exports.checkParam = function(param, name) {
+module.exports.checkMethod = function(name) {
+    checkMethodName = name;
+};
+
+module.exports.checkParam = function(param, parameterName) {
     if (!exists(param)) {
-        throw new Error('The parameter ' + name + ' is mandatory');
+        throw new Error('The parameter ' + parameterName + ' is mandatory in ' + checkMethodName);
     }
 };

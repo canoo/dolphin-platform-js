@@ -22,6 +22,7 @@ var Promise = require('../bower_components/core.js/library/fn/promise');
 var Set = require('../bower_components/core.js/library/fn/set');
 var utils = require('./utils.js');
 var exists = utils.exists;
+var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
 
 var ControllerProxy = require('./controllerproxy.js').ControllerProxy;
@@ -46,6 +47,7 @@ var PARAM_PREFIX = '_';
 
 
 function ControllerManager(dolphin, classRepository, connector) {
+    checkMethod('ControllerManager(dolphin, classRepository, connector)');
     checkParam(dolphin, 'dolphin');
     checkParam(classRepository, 'classRepository');
     checkParam(connector, 'connector');
@@ -58,6 +60,7 @@ function ControllerManager(dolphin, classRepository, connector) {
 
 
 ControllerManager.prototype.createController = function(name) {
+    checkMethod('ControllerManager.createController(name)');
     checkParam(name, 'name');
 
     var self = this;
@@ -79,6 +82,7 @@ ControllerManager.prototype.createController = function(name) {
 
 
 ControllerManager.prototype.invokeAction = function(controllerId, actionName, params) {
+    checkMethod('ControllerManager.invokeAction(controllerId, actionName, params)');
     checkParam(controllerId, 'controllerId');
     checkParam(actionName, 'actionName');
 
@@ -118,6 +122,7 @@ ControllerManager.prototype.invokeAction = function(controllerId, actionName, pa
 
 
 ControllerManager.prototype.destroyController = function(controller) {
+    checkMethod('ControllerManager.destroyController(controller)');
     checkParam(controller, 'controller');
 
     var self = this;

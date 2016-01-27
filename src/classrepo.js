@@ -23,6 +23,7 @@ var opendolphin = require('../libsrc/opendolphin.js');
 
 var utils = require('./utils.js');
 var exists = utils.exists;
+var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
 
 var UNKNOWN = 0,
@@ -95,6 +96,7 @@ function unblock() {
 
 
 function ClassRepository(dolphin) {
+    checkMethod('ClassRepository(dolphin)');
     checkParam(dolphin, 'dolphin');
 
     this.dolphin = dolphin;
@@ -110,6 +112,7 @@ function ClassRepository(dolphin) {
 
 
 ClassRepository.prototype.notifyBeanChange = function(bean, propertyName, newValue) {
+    checkMethod('ClassRepository.notifyBeanChange(bean, propertyName, newValue)');
     checkParam(bean, 'bean');
     checkParam(propertyName, 'propertyName');
 
@@ -131,6 +134,7 @@ ClassRepository.prototype.notifyBeanChange = function(bean, propertyName, newVal
 
 
 ClassRepository.prototype.notifyArrayChange = function(bean, propertyName, index, count, removedElements) {
+    checkMethod('ClassRepository.notifyArrayChange(bean, propertyName, index, count, removedElements)');
     checkParam(bean, 'bean');
     checkParam(propertyName, 'propertyName');
     checkParam(index, 'index');
@@ -154,30 +158,35 @@ ClassRepository.prototype.notifyArrayChange = function(bean, propertyName, index
 
 
 ClassRepository.prototype.onBeanAdded = function(handler) {
+    checkMethod('ClassRepository.onBeanAdded(handler)');
     checkParam(handler, 'handler');
     this.beanAddedHandlers.push(handler);
 };
 
 
 ClassRepository.prototype.onBeanRemoved = function(handler) {
+    checkMethod('ClassRepository.onBeanRemoved(handler)');
     checkParam(handler, 'handler');
     this.beanRemovedHandlers.push(handler);
 };
 
 
 ClassRepository.prototype.onBeanUpdate = function(handler) {
+    checkMethod('ClassRepository.onBeanUpdate(handler)');
     checkParam(handler, 'handler');
     this.propertyUpdateHandlers.push(handler);
 };
 
 
 ClassRepository.prototype.onArrayUpdate = function(handler) {
+    checkMethod('ClassRepository.onArrayUpdate(handler)');
     checkParam(handler, 'handler');
     this.arrayUpdateHandlers.push(handler);
 };
 
 
 ClassRepository.prototype.registerClass = function (model) {
+    checkMethod('ClassRepository.registerClass(model)');
     checkParam(model, 'model');
 
     if (this.classes.has(model.id)) {
@@ -199,6 +208,7 @@ ClassRepository.prototype.registerClass = function (model) {
 
 
 ClassRepository.prototype.unregisterClass = function (model) {
+    checkMethod('ClassRepository.unregisterClass(model)');
     checkParam(model, 'model');
 
     this.classes['delete'](model.id);
@@ -206,6 +216,7 @@ ClassRepository.prototype.unregisterClass = function (model) {
 
 
 ClassRepository.prototype.load = function (model) {
+    checkMethod('ClassRepository.load(model)');
     checkParam(model, 'model');
 
     var self = this;
@@ -244,6 +255,7 @@ ClassRepository.prototype.load = function (model) {
 
 
 ClassRepository.prototype.unload = function(model) {
+    checkMethod('ClassRepository.unload(model)');
     checkParam(model, 'model');
 
     var bean = this.beanFromDolphin.get(model.id);
@@ -264,6 +276,7 @@ ClassRepository.prototype.unload = function(model) {
 
 
 ClassRepository.prototype.addListEntry = function(model) {
+    checkMethod('ClassRepository.addListEntry(model)');
     checkParam(model, 'model');
 
     var source = model.findAttributeByPropertyName('source');
@@ -300,6 +313,7 @@ ClassRepository.prototype.addListEntry = function(model) {
 
 
 ClassRepository.prototype.delListEntry = function(model) {
+    checkMethod('ClassRepository.delListEntry(model)');
     checkParam(model, 'model');
 
     var source = model.findAttributeByPropertyName('source');
@@ -334,6 +348,7 @@ ClassRepository.prototype.delListEntry = function(model) {
 
 
 ClassRepository.prototype.setListEntry = function(model) {
+    checkMethod('ClassRepository.setListEntry(model)');
     checkParam(model, 'model');
 
     var source = model.findAttributeByPropertyName('source');

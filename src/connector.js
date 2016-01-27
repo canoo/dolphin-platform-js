@@ -22,6 +22,7 @@ var Promise = require('../bower_components/core.js/library/fn/promise');
 var opendolphin = require('../libsrc/opendolphin.js');
 var utils = require('./utils.js');
 var exists = utils.exists;
+var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
 
 
@@ -44,6 +45,7 @@ var SOURCE_SYSTEM_SERVER = 'server';
 var initializer;
 
 function Connector(url, dolphin, classRepository, config) {
+    checkMethod('Connector(url, dolphin, classRepository, config)');
     checkParam(url, 'url');
     checkParam(dolphin, 'dolphin');
     checkParam(classRepository, 'classRepository');
@@ -98,6 +100,7 @@ function Connector(url, dolphin, classRepository, config) {
 
 
 Connector.prototype.onModelAdded = function(model) {
+    checkMethod('Connector.onModelAdded(model)');
     checkParam(model, 'model');
 
     var type = model.presentationModelType;
@@ -131,6 +134,7 @@ Connector.prototype.onModelAdded = function(model) {
 
 
 Connector.prototype.onModelRemoved = function(model) {
+    checkMethod('Connector.onModelRemoved(model)');
     checkParam(model, 'model');
 
     var type = model.presentationModelType;
@@ -151,6 +155,7 @@ Connector.prototype.onModelRemoved = function(model) {
 
 
 Connector.prototype.invoke = function(command) {
+    checkMethod('Connector.invoke(command)');
     checkParam(command, 'command');
 
     var dolphin = this.dolphin;

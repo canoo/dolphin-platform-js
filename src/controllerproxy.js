@@ -18,13 +18,15 @@
 "use strict";
 
 require('./polyfills.js');
-var Promise = require('../bower_components/core.js/library/fn/promise');
 var Set = require('../bower_components/core.js/library/fn/set');
-var checkParam = require('./utils.js').checkParam;
+var utils = require('./utils.js');
+var checkMethod = utils.checkMethod;
+var checkParam = utils.checkParam;
 
 
 
 function ControllerProxy(controllerId, model, manager) {
+    checkMethod('ControllerProxy(controllerId, model, manager)');
     checkParam(controllerId, 'controllerId');
     checkParam(model, 'model');
     checkParam(manager, 'manager');
@@ -38,6 +40,7 @@ function ControllerProxy(controllerId, model, manager) {
 
 
 ControllerProxy.prototype.invoke = function(name, params) {
+    checkMethod('ControllerProxy.invoke(name, params)');
     checkParam(name, 'name');
 
     if (this.destroyed) {
@@ -64,6 +67,7 @@ ControllerProxy.prototype.destroy = function() {
 
 
 ControllerProxy.prototype.onDestroyed = function(handler) {
+    checkMethod('ControllerProxy.onDestroyed(handler)');
     checkParam(handler, 'handler');
 
     var self = this;
