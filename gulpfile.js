@@ -124,7 +124,7 @@ gulp.task('sonar', ['ci'], function () {
             },
             projectKey: 'dolphin-js',
             projectName: 'Dolphin Platform JS',
-            projectVersion: '0.7.3-SNAPSHOT',
+            projectVersion: '0.8.0',
             sources: 'src',
             language: 'js',
             sourceEncoding: 'UTF-8',
