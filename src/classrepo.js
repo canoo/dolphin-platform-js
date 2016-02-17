@@ -265,62 +265,37 @@ ClassRepository.prototype.unload = function(model) {
 };
 
 
-ClassRepository.prototype.addListEntry = function(model) {
-    checkMethod('ClassRepository.addListEntry(model)');
-    checkParam(model, 'model');
-
-    var source = model.findAttributeByPropertyName('source');
-    var attribute = model.findAttributeByPropertyName('attribute');
-    var pos = model.findAttributeByPropertyName('pos');
-    var element = model.findAttributeByPropertyName('element');
-
-    if (exists(source) && exists(attribute) && exists(pos) && exists(element)) {
-        var classInfo = this.classInfos.get(source.value);
-        var bean = this.beanFromDolphin.get(source.value);
-        if (exists(bean) && exists(classInfo)) {
-            var type = model.presentationModelType;
-            var entry = fromDolphin(this, classInfo[attribute.value], element.value);
-            validateList(this, type, bean, attribute.value);
-            try {
-                block(bean, attribute.value);
-                this.arrayUpdateHandlers.forEach(function (handler) {
-                    try {
-                        handler(type, bean, attribute.value, pos.value, 0, entry);
-                    } catch(e) {
-                        console.warn('An exception occurred while calling an onArrayUpdate-handler', e);
-                    }
-                });
-            } finally {
-                unblock();
-            }
-        } else {
-            throw new Error("Invalid list modification update received. Source bean unknown.");
-        }
-    } else {
-        throw new Error("Invalid list modification update received");
-    }
-};
-
-
-ClassRepository.prototype.delListEntry = function(model) {
-    checkMethod('ClassRepository.delListEntry(model)');
+ClassRepository.prototype.spliceListEntry = function(model) {
+    checkMethod('ClassRepository.spliceListEntry(model)');
     checkParam(model, 'model');
 
     var source = model.findAttributeByPropertyName('source');
     var attribute = model.findAttributeByPropertyName('attribute');
     var from = model.findAttributeByPropertyName('from');
     var to = model.findAttributeByPropertyName('to');
+    var count = model.findAttributeByPropertyName('count');
 
-    if (exists(source) && exists(attribute) && exists(from) && exists(to)) {
+    if (exists(source) && exists(attribute) && exists(from) && exists(to) && exists(count)) {
+        var classInfo = this.classInfos.get(source.value);
         var bean = this.beanFromDolphin.get(source.value);
-        if (exists(bean)) {
+        if (exists(bean) && exists(classInfo)) {
             var type = model.presentationModelType;
+            //var entry = fromDolphin(this, classInfo[attribute.value], element.value);
             validateList(this, type, bean, attribute.value);
+            var newElements = [],
+                element = null;
+            for (var i = 0; i < count.value; i++) {
+                element = model.findAttributeByPropertyName(i.toString());
+                if (! exists(element)) {
+                    throw new Error("Invalid list modification update received");
+                }
+                newElements.push(fromDolphin(this, classInfo[attribute.value], element.value));
+            }
             try {
                 block(bean, attribute.value);
                 this.arrayUpdateHandlers.forEach(function (handler) {
                     try {
-                        handler(type, bean, attribute.value, from.value, to.value - from.value);
+                        handler(type, bean, attribute.value, from.value, to.value - from.value, newElements);
                     } catch(e) {
                         console.warn('An exception occurred while calling an onArrayUpdate-handler', e);
                     }
@@ -332,43 +307,6 @@ ClassRepository.prototype.delListEntry = function(model) {
             throw new Error("Invalid list modification update received. Source bean unknown.");
         }
     } else {
-        throw new Error("Invalid list modification update received");
-    }
-};
-
-
-ClassRepository.prototype.setListEntry = function(model) {
-    checkMethod('ClassRepository.setListEntry(model)');
-    checkParam(model, 'model');
-
-    var source = model.findAttributeByPropertyName('source');
-    var attribute = model.findAttributeByPropertyName('attribute');
-    var pos = model.findAttributeByPropertyName('pos');
-    var element = model.findAttributeByPropertyName('element');
-
-    if (exists(source) && exists(attribute) && exists(pos) && exists(element)) {
-        var classInfo = this.classInfos.get(source.value);
-        var bean = this.beanFromDolphin.get(source.value);
-        if (exists(bean) && exists(classInfo)) {
-            var type = model.presentationModelType;
-            var entry = fromDolphin(this, classInfo[attribute.value], element.value);
-            validateList(this, type, bean, attribute.value);
-            try {
-                block(bean, attribute.value);
-                this.arrayUpdateHandlers.forEach(function (handler) {
-                    try {
-                        handler(type, bean, attribute.value, pos.value, 1, entry);
-                    } catch(e) {
-                        console.warn('An exception occurred while calling an onArrayUpdate-handler', e);
-                    }
-                });
-            } finally {
-                unblock();
-            }
-        } else {
-            throw new Error("Invalid list modification update received. Source bean unknown.");
-        }
-    }else {
         throw new Error("Invalid list modification update received");
     }
 };

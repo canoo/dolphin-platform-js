@@ -97,12 +97,12 @@ function BeanManager(classRepository) {
             }
         });
     });
-    this.classRepository.onArrayUpdate(function(type, bean, propertyName, index, count, newElement) {
+    this.classRepository.onArrayUpdate(function(type, bean, propertyName, index, count, newElements) {
         var handlerList = self.arrayUpdatedHandlers.get(type);
         if (exists(handlerList)) {
             handlerList.forEach(function (handler) {
                 try {
-                    handler(bean, propertyName, index, count, newElement);
+                    handler(bean, propertyName, index, count, newElements);
                 } catch(e) {
                     console.warn('An exception occurred while calling an onArrayUpdate-handler for type', type, e);
                 }
@@ -110,7 +110,7 @@ function BeanManager(classRepository) {
         }
         self.allArrayUpdatedHandlers.forEach(function (handler) {
             try {
-                handler(bean, propertyName, index, count, newElement);
+                handler(bean, propertyName, index, count, newElements);
             } catch(e) {
                 console.warn('An exception occurred while calling a general onArrayUpdate-handler', e);
             }

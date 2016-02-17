@@ -82,47 +82,17 @@ describe('Dolphin Message Distribution', function() {
     }));
 
 
-    it('should call addListEntry()', sinon.test(function() {
-        classRepository.addListEntry = this.spy();
+    it('should call spliceListEntry()', sinon.test(function() {
+        classRepository.spliceListEntry = this.spy();
         this.spy(dolphin, "deletePresentationModel");
         var model = {
-            presentationModelType: '@@@ LIST_ADD @@@',
+            presentationModelType: '@@@ LIST_SPLICE @@@',
             findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
         };
 
         onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
 
-        sinon.assert.calledWith(classRepository.addListEntry, model);
-        sinon.assert.calledWith(dolphin.deletePresentationModel, model);
-    }));
-
-
-    it('should call delListEntry()', sinon.test(function() {
-        classRepository.delListEntry = this.spy();
-        this.spy(dolphin, "deletePresentationModel");
-        var model = {
-            presentationModelType: '@@@ LIST_DEL @@@',
-            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
-        };
-
-        onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
-
-        sinon.assert.calledWith(classRepository.delListEntry, model);
-        sinon.assert.calledWith(dolphin.deletePresentationModel, model);
-    }));
-
-
-    it('should call setListEntry()', sinon.test(function() {
-        classRepository.setListEntry = this.spy();
-        this.spy(dolphin, "deletePresentationModel");
-        var model = {
-            presentationModelType: '@@@ LIST_SET @@@',
-            findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
-        };
-
-        onModelStoreChange({ clientPresentationModel: model, eventType: "ADDED" });
-
-        sinon.assert.calledWith(classRepository.setListEntry, model);
+        sinon.assert.calledWith(classRepository.spliceListEntry, model);
         sinon.assert.calledWith(dolphin.deletePresentationModel, model);
     }));
 });

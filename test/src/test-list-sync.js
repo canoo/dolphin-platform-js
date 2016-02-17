@@ -11,7 +11,7 @@ var BASIC_TYPE   = 1;
 var DOLPHIN_BEAN = 2;
 
 
-describe('List Sync - add primitive elements as User', function() {
+describe('List Sync (adding primitive elements as User)', function() {
 
     var dolphin = null;
     var beanManager = null;
@@ -295,7 +295,7 @@ describe('List Sync - add primitive elements as User', function() {
 
 
 
-describe('List Sync - delete primitive elements as User', function() {
+describe('List Sync (deleting primitive elements as User)', function() {
 
     var dolphin = null;
     var beanManager = null;
@@ -535,7 +535,7 @@ describe('List Sync - delete primitive elements as User', function() {
 
 
 
-describe('List Sync - replace primitive elements as User', function() {
+describe('List Sync (replacing primitive elements as User)', function() {
 
     var dolphin = null;
     var beanManager = null;
@@ -946,7 +946,10 @@ describe('List Sync - replace primitive elements as User', function() {
 });
 
 
-describe('List Sync primitives from OpenDolphin', function() {
+
+
+
+describe('List Sync (adding primitive elements from OpenDolphin)', function() {
 
     var classRepository = null;
     var beanManager = null;
@@ -978,8 +981,7 @@ describe('List Sync primitives from OpenDolphin', function() {
     });
 
 
-
-    it('should add entries', sinon.test(function() {
+    it('should add single entry in beginning / empty list', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
@@ -988,30 +990,22 @@ describe('List Sync primitives from OpenDolphin', function() {
         };
         var source    = { value: 'source_id' };
         var attribute = { value: 'primitiveList' };
-        var pos       = { value: 0 };
-        var element   = { value: 1 };
+        var from      = { value: 0 };
+        var to        = { value: 0 };
+        var count     = { value: 1 };
+        var element   = { value: '1' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
-        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
-        model.findAttributeByPropertyName.withArgs('element').returns(element);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
 
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 0, 1);
-        bean.primitiveList = [1];
-
-        pos.value = 1;
-        element.value = 2;
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 0, 2);
-        bean.primitiveList = [1, 2];
-
-        element.value = 3;
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 0, 3);
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 0, ['1']);
     }));
 
-
-    it('should add null entries', sinon.test(function() {
+    it('should add null in beginning / empty list', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
@@ -1020,32 +1014,187 @@ describe('List Sync primitives from OpenDolphin', function() {
         };
         var source    = { value: 'source_id' };
         var attribute = { value: 'primitiveList' };
-        var pos       = { value: 0 };
+        var from      = { value: 0 };
+        var to        = { value: 0 };
+        var count     = { value: 1 };
         var element   = { value: null };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
-        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
-        model.findAttributeByPropertyName.withArgs('element').returns(element);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
 
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 0, null);
-        bean.primitiveList = [null];
-
-        pos.value = 1;
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 0, null);
-        bean.primitiveList = [null, null];
-
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 0, null);
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 0, [null]);
     }));
 
-
-    it('should remove entries', sinon.test(function() {
+    it('should add multiple entries in beginning / empty list', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        bean.primitiveList = [1, 2, 3];
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 0 };
+        var to        = { value: 0 };
+        var count     = { value: 3 };
+        var element1  = { value: '1' };
+        var element2  = { value: '2' };
+        var element3  = { value: '3' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+        model.findAttributeByPropertyName.withArgs('2').returns(element3);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 0, ['1', '2', '3']);
+    }));
+
+
+    it('should add single entry in middle / at end', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 1 };
+        var to        = { value: 1 };
+        var count     = { value: 1 };
+        var element   = { value: '1' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 0, ['1']);
+    }));
+
+    it('should add multiple entries in middle / at end', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 1 };
+        var to        = { value: 1 };
+        var count     = { value: 3 };
+        var element1  = { value: '1' };
+        var element2  = { value: '2' };
+        var element3  = { value: '3' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+        model.findAttributeByPropertyName.withArgs('2').returns(element3);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 0, ['1', '2', '3']);
+    }));
+});
+
+
+
+
+
+describe('List Sync (deleting primitive elements from OpenDolphin)', function() {
+
+    var classRepository = null;
+    var beanManager = null;
+    var bean = null;
+
+    beforeEach(function() {
+        var dolphin = {};
+
+        classRepository = new ClassRepository(dolphin);
+        beanManager = new BeanManager(classRepository);
+
+        var classModel = {
+            id: 'SourceClass',
+            attributes: [
+                { propertyName: 'primitiveList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
+            ]
+        };
+        classRepository.registerClass(classModel);
+
+        var sourceModel = {
+            id: 'source_id',
+            presentationModelType: 'SourceClass',
+            attributes: [
+                { propertyName: 'primitiveList', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ],
+            findAttributeByPropertyName: function() {}
+        };
+        bean = classRepository.load(sourceModel);
+    });
+
+
+    it('should delete single entry from beginning', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 0 };
+        var to        = { value: 1 };
+        var count     = { value: 0 };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 1);
+    }));
+
+    it('should delete multiple entries from beginning', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 0 };
+        var to        = { value: 3 };
+        var count     = { value: 0 };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 3);
+    }));
+
+
+    it('should delete single entry from middle / end', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
 
         var model = {
             findAttributeByPropertyName: this.stub()
@@ -1054,96 +1203,287 @@ describe('List Sync primitives from OpenDolphin', function() {
         var attribute = { value: 'primitiveList' };
         var from      = { value: 1 };
         var to        = { value: 2 };
+        var count     = { value: 0 };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
         model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
 
-        classRepository.delListEntry(model);
+        classRepository.spliceListEntry(model);
         sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 1);
-        bean.primitiveList = [1, 3];
-
-        classRepository.delListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 1);
-        bean.primitiveList = [1];
-
-        from.value = 0;
-        to.value = 1;
-        classRepository.delListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 1);
     }));
 
-
-    it('should update entries', sinon.test(function() {
+    it('should delete multiple entries from middle / end', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
-
-        bean.primitiveList = [1, 2, 3];
 
         var model = {
             findAttributeByPropertyName: this.stub()
         };
         var source    = { value: 'source_id' };
         var attribute = { value: 'primitiveList' };
-        var pos       = { value: 1 };
-        var element   = { value: 42 };
+        var from      = { value: 1 };
+        var to        = { value: 4 };
+        var count     = { value: 0 };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
-        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
-        model.findAttributeByPropertyName.withArgs('element').returns(element);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
 
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 1, 42);
-        bean.primitiveList = [1, 42, 3];
-
-        pos.value = 2;
-        element.value = 43;
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 2, 1, 43);
-        bean.primitiveList = [1, 42, 43];
-
-        pos.value = 0;
-        element.value = 41;
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 1, 41);
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 3);
     }));
-
-    it('should update null entries', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
-        beanManager.onArrayUpdate(onArrayUpdateHandler);
-
-        bean.primitiveList = [1, 2, 3];
-
-        var model = {
-            findAttributeByPropertyName: this.stub()
-        };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var pos       = { value: 1 };
-        var element   = { value: null };
-        model.findAttributeByPropertyName.withArgs('source').returns(source);
-        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
-        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
-        model.findAttributeByPropertyName.withArgs('element').returns(element);
-
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 1, null);
-        bean.primitiveList = [1, null, 3];
-
-        pos.value = 2;
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 2, 1, null);
-        bean.primitiveList = [1, null, null];
-
-        pos.value = 0;
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 1, null);
-    }));
-
 });
 
 
-describe('List Sync reference lists from OpenDolphin', function() {
+
+
+
+describe('List Sync (replacing primitive elements from OpenDolphin)', function() {
+
+    var classRepository = null;
+    var beanManager = null;
+    var bean = null;
+
+    beforeEach(function() {
+        var dolphin = {};
+
+        classRepository = new ClassRepository(dolphin);
+        beanManager = new BeanManager(classRepository);
+
+        var classModel = {
+            id: 'SourceClass',
+            attributes: [
+                { propertyName: 'primitiveList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
+            ]
+        };
+        classRepository.registerClass(classModel);
+
+        var sourceModel = {
+            id: 'source_id',
+            presentationModelType: 'SourceClass',
+            attributes: [
+                { propertyName: 'primitiveList', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ],
+            findAttributeByPropertyName: function() {}
+        };
+        bean = classRepository.load(sourceModel);
+    });
+
+
+    it('should replace single entry in beginning', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 0 };
+        var to        = { value: 1 };
+        var count     = { value: 1 };
+        var element   = { value: '42' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 1, ['42']);
+    }));
+
+    it('should replace element with null in beginning', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 0 };
+        var to        = { value: 1 };
+        var count     = { value: 1 };
+        var element   = { value: null };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 1, [null]);
+    }));
+
+    it('should replace multiple entries in beginning with more elements', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 0 };
+        var to        = { value: 2 };
+        var count     = { value: 3 };
+        var element1  = { value: '42' };
+        var element2  = { value: '4711' };
+        var element3  = { value: 'Hello World' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+        model.findAttributeByPropertyName.withArgs('2').returns(element3);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 2, ['42', '4711', 'Hello World']);
+    }));
+
+    it('should replace multiple entries in beginning with less elements', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 0 };
+        var to        = { value: 3 };
+        var count     = { value: 2 };
+        var element1  = { value: '42' };
+        var element2  = { value: '4711' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 0, 3, ['42', '4711']);
+    }));
+
+
+    it('should replace single entry in middle / at end', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 1 };
+        var to        = { value: 2 };
+        var count     = { value: 1 };
+        var element   = { value: '42' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 1, ['42']);
+    }));
+
+    it('should replace element with null in middle / at end', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 1 };
+        var to        = { value: 2 };
+        var count     = { value: 1 };
+        var element   = { value: null };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 1, [null]);
+    }));
+
+    it('should replace multiple entries in middle / at end with more elements', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 1 };
+        var to        = { value: 3 };
+        var count     = { value: 3 };
+        var element1  = { value: '42' };
+        var element2  = { value: '4711' };
+        var element3  = { value: 'Hello World' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+        model.findAttributeByPropertyName.withArgs('2').returns(element3);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 2, ['42', '4711', 'Hello World']);
+    }));
+
+    it('should replace multiple entries in middle / at end with less elements', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'primitiveList' };
+        var from      = { value: 1 };
+        var to        = { value: 4 };
+        var count     = { value: 2 };
+        var element1  = { value: '42' };
+        var element2  = { value: '4711' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, bean, 'primitiveList', 1, 3, ['42', '4711']);
+    }));
+});
+
+
+
+
+
+describe('List Sync (adding objects from OpenDolphin)', function() {
 
     var beanManager = null;
     var classRepository = null;
@@ -1210,8 +1550,7 @@ describe('List Sync reference lists from OpenDolphin', function() {
     });
 
 
-
-    it('should add entries', sinon.test(function() {
+    it('should add single entry in beginning / empty list', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
@@ -1220,30 +1559,22 @@ describe('List Sync reference lists from OpenDolphin', function() {
         };
         var source    = { value: 'source_id' };
         var attribute = { value: 'referenceList' };
-        var pos       = { value: 0 };
+        var from      = { value: 0 };
+        var to        = { value: 0 };
+        var count     = { value: 1 };
         var element   = { value: 'id1' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
-        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
-        model.findAttributeByPropertyName.withArgs('element').returns(element);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
 
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 0, bean1);
-        sourceBean.referenceList = [bean1];
-
-        pos.value = 1;
-        element.value = 'id2';
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 0, bean2);
-        sourceBean.referenceList = [bean1, bean2];
-
-        element.value = 'id3';
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 0, bean3);
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 0, [bean1]);
     }));
 
-
-    it('should add nulls', sinon.test(function() {
+    it('should add null in beginning / empty list', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
@@ -1252,32 +1583,280 @@ describe('List Sync reference lists from OpenDolphin', function() {
         };
         var source    = { value: 'source_id' };
         var attribute = { value: 'referenceList' };
-        var pos       = { value: 0 };
+        var from      = { value: 0 };
+        var to        = { value: 0 };
+        var count     = { value: 1 };
         var element   = { value: null };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
-        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
-        model.findAttributeByPropertyName.withArgs('element').returns(element);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
 
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 0, null);
-        sourceBean.referenceList = [null];
-
-        pos.value = 1;
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 0, null);
-        sourceBean.referenceList = [null, null];
-
-        classRepository.addListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 0, null);
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 0, [null]);
     }));
 
-
-    it('should remove entries', sinon.test(function() {
+    it('should add multiple entries in beginning / empty list', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        sourceBean.referenceList = [bean1, bean2, bean3];
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var from      = { value: 0 };
+        var to        = { value: 0 };
+        var count     = { value: 3 };
+        var element1  = { value: 'id1' };
+        var element2  = { value: 'id2' };
+        var element3  = { value: 'id3' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+        model.findAttributeByPropertyName.withArgs('2').returns(element3);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 0, [bean1, bean2, bean3]);
+    }));
+
+
+    it('should add single entry in middle / at end', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var from      = { value: 1 };
+        var to        = { value: 1 };
+        var count     = { value: 1 };
+        var element   = { value: 'id1' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 0, [bean1]);
+    }));
+
+    it('should add multiple entries in middle / at end', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var from      = { value: 1 };
+        var to        = { value: 1 };
+        var count     = { value: 3 };
+        var element1  = { value: 'id1' };
+        var element2  = { value: 'id2' };
+        var element3  = { value: 'id3' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+        model.findAttributeByPropertyName.withArgs('2').returns(element3);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 0, [bean1, bean2, bean3]);
+    }));
+});
+
+
+
+
+
+describe('List Sync (replacing objects from OpenDolphin)', function() {
+
+    var beanManager = null;
+    var classRepository = null;
+    var sourceBean = null;
+    var bean1 = null;
+    var bean2 = null;
+    var bean3 = null;
+
+    beforeEach(function() {
+        var dolphin = {};
+
+        classRepository = new ClassRepository(dolphin);
+        beanManager = new BeanManager(classRepository);
+
+        var simpleClassModel = {
+            id: 'SimpleClass',
+            attributes: [
+                { propertyName: 'text', onValueChange: function() {} }
+            ]
+        };
+        classRepository.registerClass(simpleClassModel);
+        var complexClassModel = {
+            id: 'ComplexClass',
+            attributes: [
+                { propertyName: 'referenceList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: DOLPHIN_BEAN}) }
+            ]
+        };
+        classRepository.registerClass(complexClassModel);
+
+        var sourceModel = {
+            id: 'source_id',
+            presentationModelType: 'ComplexClass',
+            attributes: [
+                { propertyName: 'referenceList', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ],
+            findAttributeByPropertyName: function() {}
+        };
+        sourceBean = classRepository.load(sourceModel);
+
+        var bean1Model = {
+            id: 'id1',
+            presentationModelType: 'SimpleClass',
+            attributes: [
+                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ]
+        };
+        bean1 = classRepository.load(bean1Model);
+        var bean2Model = {
+            id: 'id2',
+            presentationModelType: 'SimpleClass',
+            attributes: [
+                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ]
+        };
+        bean2 = classRepository.load(bean2Model);
+        var bean3Model = {
+            id: 'id3',
+            presentationModelType: 'SimpleClass',
+            attributes: [
+                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ]
+        };
+        bean3 = classRepository.load(bean3Model);
+    });
+
+
+    it('should replace single entry in beginning', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var from      = { value: 0 };
+        var to        = { value: 1 };
+        var count     = { value: 1 };
+        var element   = { value: 'id1' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1, [bean1]);
+    }));
+
+    it('should replace element with null in beginning', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var from      = { value: 0 };
+        var to        = { value: 1 };
+        var count     = { value: 1 };
+        var element   = { value: null };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1, [null]);
+    }));
+
+    it('should replace multiple entries in beginning with more elements', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var from      = { value: 0 };
+        var to        = { value: 2 };
+        var count     = { value: 3 };
+        var element1  = { value: 'id1' };
+        var element2  = { value: 'id2' };
+        var element3  = { value: 'id3' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+        model.findAttributeByPropertyName.withArgs('2').returns(element3);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 2, [bean1, bean2, bean3]);
+    }));
+
+    it('should replace multiple entries in beginning with less elements', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
+
+        var model = {
+            findAttributeByPropertyName: this.stub()
+        };
+        var source    = { value: 'source_id' };
+        var attribute = { value: 'referenceList' };
+        var from      = { value: 0 };
+        var to        = { value: 3 };
+        var count     = { value: 2 };
+        var element1  = { value: 'id1' };
+        var element2  = { value: 'id2' };
+        model.findAttributeByPropertyName.withArgs('source').returns(source);
+        model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 3, [bean1, bean2]);
+    }));
+
+
+    it('should replace single entry in middle / at end', sinon.test(function() {
+        var onArrayUpdateHandler = this.spy();
+        beanManager.onArrayUpdate(onArrayUpdateHandler);
 
         var model = {
             findAttributeByPropertyName: this.stub()
@@ -1286,31 +1865,22 @@ describe('List Sync reference lists from OpenDolphin', function() {
         var attribute = { value: 'referenceList' };
         var from      = { value: 1 };
         var to        = { value: 2 };
+        var count     = { value: 1 };
+        var element   = { value: 'id1' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
         model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
 
-        classRepository.delListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1);
-        sourceBean.referenceList = [bean1, bean3];
-
-        classRepository.delListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1);
-        sourceBean.referenceList = [bean1];
-
-        from.value = 0;
-        to.value = 1;
-        classRepository.delListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1);
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1, [bean1]);
     }));
 
-
-    it('should remove nulls', sinon.test(function() {
+    it('should replace element with null in middle / at end', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
-
-        sourceBean.referenceList = [null, null, null];
 
         var model = {
             findAttributeByPropertyName: this.stub()
@@ -1319,153 +1889,70 @@ describe('List Sync reference lists from OpenDolphin', function() {
         var attribute = { value: 'referenceList' };
         var from      = { value: 1 };
         var to        = { value: 2 };
+        var count     = { value: 1 };
+        var element   = { value: null };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
         model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element);
 
-        classRepository.delListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1);
-        sourceBean.referenceList = [null, null];
-
-        classRepository.delListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1);
-        sourceBean.referenceList = [null];
-
-        from.value = 0;
-        to.value = 1;
-        classRepository.delListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1);
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1, [null]);
     }));
 
-
-    it('should update entries', sinon.test(function() {
+    it('should replace multiple entries in middle / at end with more elements', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
-
-        sourceBean.referenceList = [bean1, bean2, bean3];
-        var bean11Model = {
-            id: 'id11',
-            presentationModelType: 'SimpleClass',
-            attributes: [
-                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
-            ]
-        };
-        var bean11 = classRepository.load(bean11Model);
-        var bean12Model = {
-            id: 'id12',
-            presentationModelType: 'SimpleClass',
-            attributes: [
-                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
-            ]
-        };
-        var bean12 = classRepository.load(bean12Model);
-        var bean13Model = {
-            id: 'id13',
-            presentationModelType: 'SimpleClass',
-            attributes: [
-                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
-            ]
-        };
-        var bean13 = classRepository.load(bean13Model);
 
         var model = {
             findAttributeByPropertyName: this.stub()
         };
         var source    = { value: 'source_id' };
         var attribute = { value: 'referenceList' };
-        var pos       = { value: 1 };
-        var element   = { value: 'id12' };
+        var from      = { value: 1 };
+        var to        = { value: 3 };
+        var count     = { value: 3 };
+        var element1  = { value: 'id1' };
+        var element2  = { value: 'id2' };
+        var element3  = { value: 'id3' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
-        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
-        model.findAttributeByPropertyName.withArgs('element').returns(element);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
+        model.findAttributeByPropertyName.withArgs('2').returns(element3);
 
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1, bean12);
-        sourceBean.referenceList = [bean1, bean12, bean3];
-
-        pos.value = 2;
-        element.value = 'id13';
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 2, 1, bean13);
-        sourceBean.referenceList = [bean1, bean12, bean13];
-
-        pos.value = 0;
-        element.value = 'id11';
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1, bean11);
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 2, [bean1, bean2, bean3]);
     }));
 
-
-    it('should update nulls', sinon.test(function() {
+    it('should replace multiple entries in middle / at end with less elements', sinon.test(function() {
         var onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
-
-        sourceBean.referenceList = [bean1, bean2, bean3];
-        var bean11Model = {
-            id: 'id11',
-            presentationModelType: 'SimpleClass',
-            attributes: [
-                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
-            ]
-        };
-        var bean11 = classRepository.load(bean11Model);
-        var bean12Model = {
-            id: 'id12',
-            presentationModelType: 'SimpleClass',
-            attributes: [
-                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
-            ]
-        };
-        var bean12 = classRepository.load(bean12Model);
-        var bean13Model = {
-            id: 'id13',
-            presentationModelType: 'SimpleClass',
-            attributes: [
-                { propertyName: 'textProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
-            ]
-        };
-        var bean13 = classRepository.load(bean13Model);
 
         var model = {
             findAttributeByPropertyName: this.stub()
         };
         var source    = { value: 'source_id' };
         var attribute = { value: 'referenceList' };
-        var pos       = { value: 1 };
-        var element   = { value: null };
+        var from      = { value: 1 };
+        var to        = { value: 4 };
+        var count     = { value: 2 };
+        var element1  = { value: 'id1' };
+        var element2  = { value: 'id2' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
-        model.findAttributeByPropertyName.withArgs('pos').returns(pos);
-        model.findAttributeByPropertyName.withArgs('element').returns(element);
+        model.findAttributeByPropertyName.withArgs('from').returns(from);
+        model.findAttributeByPropertyName.withArgs('to').returns(to);
+        model.findAttributeByPropertyName.withArgs('count').returns(count);
+        model.findAttributeByPropertyName.withArgs('0').returns(element1);
+        model.findAttributeByPropertyName.withArgs('1').returns(element2);
 
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1, null);
-        sourceBean.referenceList = [bean1, null, bean3];
-        element.value = 'id12';
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 1, bean12);
-        sourceBean.referenceList = [bean1, bean12, bean3];
-
-        pos.value = 2;
-        element.value = null;
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 2, 1, null);
-        sourceBean.referenceList = [bean1, bean12, null];
-        element.value = 'id13';
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 2, 1, bean13);
-        sourceBean.referenceList = [bean1, bean12, bean13];
-
-        pos.value = 0;
-        element.value = null;
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1, null);
-        sourceBean.referenceList = [null, bean12, bean13];
-        element.value = 'id11';
-        classRepository.setListEntry(model);
-        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 0, 1, bean11);
+        classRepository.spliceListEntry(model);
+        sinon.assert.calledWith(onArrayUpdateHandler, sourceBean, 'referenceList', 1, 3, [bean1, bean2]);
     }));
-
 });
