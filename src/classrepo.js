@@ -41,26 +41,20 @@ function toDolphin(classRepository, value) {
     return typeof value === 'object' && value !== null? classRepository.beanToDolphin.get(value) : value;
 }
 
-function sendListAdd(dolphin, modelId, propertyName, pos, element) {
-    var attributes = [
-        dolphin.attribute('@@@ SOURCE_SYSTEM @@@', null, 'client'),
-        dolphin.attribute('source', null, modelId),
-        dolphin.attribute('attribute', null, propertyName),
-        dolphin.attribute('pos', null, pos),
-        dolphin.attribute('element', null, element)
-    ];
-    dolphin.presentationModel.apply(dolphin, [null, '@@@ LIST_ADD @@@'].concat(attributes));
-}
-
-function sendListRemove(dolphin, modelId, propertyName, from, to) {
+function sendListSplice(classRepository, modelId, propertyName, from, to, newElements) {
+    var dolphin = classRepository.dolphin;
     var attributes = [
         dolphin.attribute('@@@ SOURCE_SYSTEM @@@', null, 'client'),
         dolphin.attribute('source', null, modelId),
         dolphin.attribute('attribute', null, propertyName),
         dolphin.attribute('from', null, from),
-        dolphin.attribute('to', null, to)
+        dolphin.attribute('to', null, to),
+        dolphin.attribute('count', null, newElements.length)
     ];
-    dolphin.presentationModel.apply(dolphin, [null, '@@@ LIST_DEL @@@'].concat(attributes));
+    newElements.forEach(function(element, index) {
+        attributes.push(dolphin.attribute(index.toString(), null, toDolphin(classRepository, element)));
+    });
+    dolphin.presentationModel.apply(dolphin, [null, '@@@ LIST_SPLICE @@@'].concat(attributes));
 }
 
 function validateList(classRepository, type, bean, propertyName) {
@@ -147,12 +141,8 @@ ClassRepository.prototype.notifyArrayChange = function(bean, propertyName, index
     var modelId = this.beanToDolphin.get(bean);
     var array = bean[propertyName];
     if (exists(modelId) && exists(array)) {
-        if (Array.isArray(removedElements) && removedElements.length > 0) {
-            sendListRemove(this.dolphin, modelId, propertyName, index, index + removedElements.length);
-        }
-        for (var i = index; i < index + count; i++) {
-            sendListAdd(this.dolphin, modelId, propertyName, i, toDolphin(this, array[i]));
-        }
+        var removedElementsCount = Array.isArray(removedElements)? removedElements.length : 0;
+        sendListSplice(this, modelId, propertyName, index, index + removedElementsCount, array.slice(index, index + count));
     }
 };
 

@@ -1,6 +1,5 @@
 "use strict";
 
-var expect = require('chai').expect;
 var sinon = require('sinon');
 var opendolphin = require('../../libsrc/opendolphin.js');
 var ClassRepository = require('../../src/classrepo.js').ClassRepository;
@@ -10,6 +9,941 @@ var BeanManager = require('../../src/beanmanager.js').BeanManager;
 var UNKNOWN      = 0;
 var BASIC_TYPE   = 1;
 var DOLPHIN_BEAN = 2;
+
+
+describe('List Sync - add primitive elements as User', function() {
+
+    var dolphin = null;
+    var beanManager = null;
+    var bean = null;
+
+    beforeEach(function () {
+        dolphin = {
+            attribute: function () {
+            },
+            presentationModel: function () {
+            }
+        };
+        var classRepository = new ClassRepository(dolphin);
+        beanManager = new BeanManager(classRepository);
+
+        var classModel = {
+            id: 'SourceClass',
+            attributes: [
+                {
+                    propertyName: 'primitiveList',
+                    onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE})
+                }
+            ]
+        };
+        classRepository.registerClass(classModel);
+
+        var sourceModel = {
+            id: 'source_id',
+            presentationModelType: 'SourceClass',
+            attributes: [
+                {
+                    propertyName: 'primitiveList', tag: opendolphin.Tag.value(), onValueChange: function () {
+                }
+                }
+            ],
+            findAttributeByPropertyName: function () {
+            }
+        };
+        bean = classRepository.load(sourceModel);
+    });
+
+
+
+    it('should add single entry in empty list', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 0).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, '1').returns(element);
+
+        bean.primitiveList = ['1'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, []);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should add null in empty list', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 0).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, null).returns(element);
+
+        bean.primitiveList = [null];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, []);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should add multiple entries in empty list', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'},
+            element3 = {id: 'element3'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 0).returns(to);
+        dolphin.attribute.withArgs('count', null, 3).returns(count);
+        dolphin.attribute.withArgs('0', null, '1').returns(element1);
+        dolphin.attribute.withArgs('1', null, '2').returns(element2);
+        dolphin.attribute.withArgs('2', null, '3').returns(element3);
+
+        bean.primitiveList = ['1', '2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 3, []);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+    }));
+
+
+    it('should add single entry in beginning', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 0).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element);
+
+        bean.primitiveList = ['42', '1', '2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, []);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should add multiple entries in beginning', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'},
+            element3 = {id: 'element3'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 0).returns(to);
+        dolphin.attribute.withArgs('count', null, 3).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+        dolphin.attribute.withArgs('2', null, 'Hello World').returns(element3);
+
+        bean.primitiveList = ['42', '4711', 'Hello World', '1', '2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 3, []);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+    }));
+
+
+    it('should add single entry in middle', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 1).returns(from);
+        dolphin.attribute.withArgs('to', null, 1).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element);
+
+        bean.primitiveList = ['1', '42', '2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 1, 1, []);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should add multiple entries in middle', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'},
+            element3 = {id: 'element3'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 1).returns(from);
+        dolphin.attribute.withArgs('to', null, 1).returns(to);
+        dolphin.attribute.withArgs('count', null, 3).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+        dolphin.attribute.withArgs('2', null, 'Hello World').returns(element3);
+
+        bean.primitiveList = ['1', '42', '4711', 'Hello World', '2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 1, 3, []);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+    }));
+
+
+    it('should add single entry at end', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 3).returns(from);
+        dolphin.attribute.withArgs('to', null, 3).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element);
+
+        bean.primitiveList = ['1', '2', '3', '42'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 3, 1, []);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should add multiple entries at end', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'},
+            element3 = {id: 'element3'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 3).returns(from);
+        dolphin.attribute.withArgs('to', null, 3).returns(to);
+        dolphin.attribute.withArgs('count', null, 3).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+        dolphin.attribute.withArgs('2', null, 'Hello World').returns(element3);
+
+        bean.primitiveList = ['1', '2', '3', '42', '4711', 'Hello World'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 3, 3, []);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+    }));
+});
+
+
+
+
+
+describe('List Sync - delete primitive elements as User', function() {
+
+    var dolphin = null;
+    var beanManager = null;
+    var bean = null;
+
+    beforeEach(function() {
+        dolphin = {
+            attribute: function() {},
+            presentationModel: function() {}
+        };
+        var classRepository = new ClassRepository(dolphin);
+        beanManager = new BeanManager(classRepository);
+
+        var classModel = {
+            id: 'SourceClass',
+            attributes: [
+                { propertyName: 'primitiveList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
+            ]
+        };
+        classRepository.registerClass(classModel);
+
+        var sourceModel = {
+            id: 'source_id',
+            presentationModelType: 'SourceClass',
+            attributes: [
+                { propertyName: 'primitiveList', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+            ],
+            findAttributeByPropertyName: function() {}
+        };
+        bean = classRepository.load(sourceModel);
+    });
+
+
+
+    it('should delete single entry from single element list', sinon.test(function() {
+        var sender = { id: 'sender' },
+            source = { id: 'source' },
+            attribute = { id: 'attribute'},
+            from = { id: 'from' },
+            to = { id: 'to' },
+            count = { id: 'count' };
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 1).returns(to);
+        dolphin.attribute.withArgs('count', null, 0).returns(count);
+
+        bean.primitiveList = [];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, ['1']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+    }));
+
+    it('should delete null from single element list', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 1).returns(to);
+        dolphin.attribute.withArgs('count', null, 0).returns(count);
+
+        bean.primitiveList = [];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, [null]);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+    }));
+
+    it('should delete all entries from multiple entry list', sinon.test(function() {
+        var sender = { id: 'sender' },
+            source = { id: 'source' },
+            attribute = { id: 'attribute'},
+            from = { id: 'from' },
+            to = { id: 'to' },
+            count = { id: 'count' };
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 3).returns(to);
+        dolphin.attribute.withArgs('count', null, 0).returns(count);
+
+        bean.primitiveList = [];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, ['1', '2', '3']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count);
+    }));
+
+
+
+    it('should delete single entry in beginning', sinon.test(function() {
+        var sender = { id: 'sender' },
+            source = { id: 'source' },
+            attribute = { id: 'attribute'},
+            from = { id: 'from' },
+            to = { id: 'to' },
+            count = { id: 'count' };
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 1).returns(to);
+        dolphin.attribute.withArgs('count', null, 0).returns(count);
+
+        bean.primitiveList = ['2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, ['1']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+    }));
+
+    it('should delete multiple entries in beginning', sinon.test(function() {
+        var sender = { id: 'sender' },
+            source = { id: 'source' },
+            attribute = { id: 'attribute'},
+            from = { id: 'from' },
+            to = { id: 'to' },
+            count = { id: 'count' };
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 3).returns(to);
+        dolphin.attribute.withArgs('count', null, 0).returns(count);
+
+        bean.primitiveList = ['1', '2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, ['42', '4711', 'Hello World']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+    }));
+
+    it('should delete single entry in middle', sinon.test(function() {
+        var sender = { id: 'sender' },
+            source = { id: 'source' },
+            attribute = { id: 'attribute'},
+            from = { id: 'from' },
+            to = { id: 'to' },
+            count = { id: 'count' };
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 1).returns(from);
+        dolphin.attribute.withArgs('to', null, 2).returns(to);
+        dolphin.attribute.withArgs('count', null, 0).returns(count);
+
+        bean.primitiveList = ['1', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 1, 0, ['2']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+    }));
+
+    it('should delete multiple entries in middle', sinon.test(function() {
+        var sender = { id: 'sender' },
+            source = { id: 'source' },
+            attribute = { id: 'attribute'},
+            from = { id: 'from' },
+            to = { id: 'to' },
+            count = { id: 'count' };
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 1).returns(from);
+        dolphin.attribute.withArgs('to', null, 4).returns(to);
+        dolphin.attribute.withArgs('count', null, 0).returns(count);
+
+        bean.primitiveList = ['1', '2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 1, 0, ['42', '4711', 'Hello World']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+    }));
+
+    it('should delete single entry at end', sinon.test(function() {
+        var sender = { id: 'sender' },
+            source = { id: 'source' },
+            attribute = { id: 'attribute'},
+            from = { id: 'from' },
+            to = { id: 'to' },
+            count = { id: 'count' };
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 3).returns(from);
+        dolphin.attribute.withArgs('to', null, 4).returns(to);
+        dolphin.attribute.withArgs('count', null, 0).returns(count);
+
+        bean.primitiveList = ['1', '2'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 3, 0, ['3']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+    }));
+
+    it('should delete multiple entries at end', sinon.test(function() {
+        var sender = { id: 'sender' },
+            source = { id: 'source' },
+            attribute = { id: 'attribute'},
+            from = { id: 'from' },
+            to = { id: 'to' },
+            count = { id: 'count' };
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 3).returns(from);
+        dolphin.attribute.withArgs('to', null, 6).returns(to);
+        dolphin.attribute.withArgs('count', null, 0).returns(count);
+
+        bean.primitiveList = ['1', '2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 3, 0, ['42', '4711', 'Hello World']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+    }));
+});
+
+
+
+
+
+describe('List Sync - replace primitive elements as User', function() {
+
+    var dolphin = null;
+    var beanManager = null;
+    var bean = null;
+
+    beforeEach(function () {
+        dolphin = {
+            attribute: function () {
+            },
+            presentationModel: function () {
+            }
+        };
+        var classRepository = new ClassRepository(dolphin);
+        beanManager = new BeanManager(classRepository);
+
+        var classModel = {
+            id: 'SourceClass',
+            attributes: [
+                {
+                    propertyName: 'primitiveList',
+                    onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE})
+                }
+            ]
+        };
+        classRepository.registerClass(classModel);
+
+        var sourceModel = {
+            id: 'source_id',
+            presentationModelType: 'SourceClass',
+            attributes: [
+                {
+                    propertyName: 'primitiveList', tag: opendolphin.Tag.value(), onValueChange: function () {
+                }
+                }
+            ],
+            findAttributeByPropertyName: function () {
+            }
+        };
+        bean = classRepository.load(sourceModel);
+    });
+
+
+
+    it('should replace single entry in single entry list', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 1).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element);
+
+        bean.primitiveList = ['42'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, ['1']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should replace element with null', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 1).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, null).returns(element);
+
+        bean.primitiveList = [null];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, ['1']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should replace null with element', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 1).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, '1').returns(element);
+
+        bean.primitiveList = ['1'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, [null]);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should replace all entries in multiple element list with more elements', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'},
+            element3 = {id: 'element3'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 2).returns(to);
+        dolphin.attribute.withArgs('count', null, 3).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+        dolphin.attribute.withArgs('2', null, 'Hello World').returns(element3);
+
+        bean.primitiveList = ['42', '4711', 'Hello World'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 3, ['1', '2']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+    }));
+
+    it('should replace all entries in multiple element list with less elements', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 3).returns(to);
+        dolphin.attribute.withArgs('count', null, 2).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+
+        bean.primitiveList = ['42', '4711'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 2, ['1', '2', '3']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+    }));
+
+
+    it('should replace single entry in beginning', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 1).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element);
+
+        bean.primitiveList = ['42', '2', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, ['1']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should replace multiple entries in beginning with more elements', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'},
+            element3 = {id: 'element3'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 2).returns(to);
+        dolphin.attribute.withArgs('count', null, 3).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+        dolphin.attribute.withArgs('2', null, 'Hello World').returns(element3);
+
+        bean.primitiveList = ['42', '4711', 'Hello World', '3', '4', '5', '6'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 3, ['1', '2']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+    }));
+
+    it('should replace multiple entries in beginning with less elements', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 0).returns(from);
+        dolphin.attribute.withArgs('to', null, 3).returns(to);
+        dolphin.attribute.withArgs('count', null, 2).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+
+        bean.primitiveList = ['42', '4711', '4', '5', '6'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 0, 2, ['1', '2', '3']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+    }));
+
+
+    it('should replace single entry in middle', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 1).returns(from);
+        dolphin.attribute.withArgs('to', null, 2).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element);
+
+        bean.primitiveList = ['1', '42', '3'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 1, 1, ['2']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should replace multiple entries in middle with more elements', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'},
+            element3 = {id: 'element3'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 2).returns(from);
+        dolphin.attribute.withArgs('to', null, 4).returns(to);
+        dolphin.attribute.withArgs('count', null, 3).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+        dolphin.attribute.withArgs('2', null, 'Hello World').returns(element3);
+
+        bean.primitiveList = ['1', '2', '42', '4711', 'Hello World', '5', '6'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 2, 3, ['3', '4']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+    }));
+
+    it('should replace multiple entries in middle with less elements', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 1).returns(from);
+        dolphin.attribute.withArgs('to', null, 5).returns(to);
+        dolphin.attribute.withArgs('count', null, 2).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+
+        bean.primitiveList = ['1', '42', '4711', '6'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 1, 2, ['2', '3', '4', '5']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+    }));
+
+
+
+    it('should replace single entry at end', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element = {id: 'element'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 2).returns(from);
+        dolphin.attribute.withArgs('to', null, 3).returns(to);
+        dolphin.attribute.withArgs('count', null, 1).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element);
+
+        bean.primitiveList = ['1', '2', '42'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 2, 1, ['3']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+    }));
+
+    it('should replace multiple entries at end with more elements', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'},
+            element3 = {id: 'element3'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 4).returns(from);
+        dolphin.attribute.withArgs('to', null, 6).returns(to);
+        dolphin.attribute.withArgs('count', null, 3).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+        dolphin.attribute.withArgs('2', null, 'Hello World').returns(element3);
+
+        bean.primitiveList = ['1', '2', '3', '4', '42', '4711', 'Hello World'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 4, 3, ['5', '6']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+    }));
+
+    it('should replace multiple entries at end with less elements', sinon.test(function () {
+        var sender = {id: 'sender'},
+            source = {id: 'source'},
+            attribute = {id: 'attribute'},
+            from = {id: 'from'},
+            to = {id: 'to'},
+            count = {id: 'count'},
+            element1 = {id: 'element1'},
+            element2 = {id: 'element2'};
+        this.stub(dolphin, 'attribute');
+        this.spy(dolphin, 'presentationModel');
+        dolphin.attribute.withArgs('@@@ SOURCE_SYSTEM @@@', null, 'client').returns(sender);
+        dolphin.attribute.withArgs('source', null, 'source_id').returns(source);
+        dolphin.attribute.withArgs('attribute', null, 'primitiveList').returns(attribute);
+        dolphin.attribute.withArgs('from', null, 3).returns(from);
+        dolphin.attribute.withArgs('to', null, 6).returns(to);
+        dolphin.attribute.withArgs('count', null, 2).returns(count);
+        dolphin.attribute.withArgs('0', null, '42').returns(element1);
+        dolphin.attribute.withArgs('1', null, '4711').returns(element2);
+
+        bean.primitiveList = ['1', '2', '3', '42', '4711'];
+        beanManager.notifyArrayChange(bean, 'primitiveList', 3, 2, ['4', '5', '6']);
+
+        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+    }));
+
+});
 
 
 describe('List Sync primitives from OpenDolphin', function() {
