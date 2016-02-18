@@ -54,7 +54,7 @@ function sendListSplice(classRepository, modelId, propertyName, from, to, newEle
     newElements.forEach(function(element, index) {
         attributes.push(dolphin.attribute(index.toString(), null, toDolphin(classRepository, element)));
     });
-    dolphin.presentationModel.apply(dolphin, [null, '@@@ LIST_SPLICE @@@'].concat(attributes));
+    dolphin.presentationModel.apply(dolphin, [null, '@DP:LS@'].concat(attributes));
 }
 
 function validateList(classRepository, type, bean, propertyName) {
@@ -185,7 +185,7 @@ ClassRepository.prototype.registerClass = function (model) {
 
     var classInfo = {};
     model.attributes.filter(function(attribute) {
-        return attribute.propertyName.search(/^@@@ /) < 0;
+        return attribute.propertyName.search(/^@/) < 0;
     }).forEach(function (attribute) {
         classInfo[attribute.propertyName] = UNKNOWN;
 
@@ -213,7 +213,7 @@ ClassRepository.prototype.load = function (model) {
     var classInfo = this.classes.get(model.presentationModelType);
     var bean = {};
     model.attributes.filter(function (attribute) {
-        return (attribute.tag === opendolphin.Tag.value()) && (attribute.propertyName.search(/^@@@ /) < 0);
+        return (attribute.tag === opendolphin.Tag.value()) && (attribute.propertyName.search(/^@/) < 0);
     }).forEach(function (attribute) {
         bean[attribute.propertyName] = null;
         attribute.onValueChange(function (event) {

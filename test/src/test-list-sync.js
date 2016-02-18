@@ -10,6 +10,7 @@ var UNKNOWN      = 0;
 var BASIC_TYPE   = 1;
 var DOLPHIN_BEAN = 2;
 
+var DP_LS = '@DP:LS@';
 
 describe('List Sync (adding primitive elements as User)', function() {
 
@@ -76,7 +77,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         bean.primitiveList = ['1'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add null in empty list', sinon.test(function () {
@@ -100,7 +101,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         bean.primitiveList = [null];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add multiple entries in empty list', sinon.test(function () {
@@ -128,7 +129,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 3, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
 
@@ -153,7 +154,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         bean.primitiveList = ['42', '1', '2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add multiple entries in beginning', sinon.test(function () {
@@ -181,7 +182,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         bean.primitiveList = ['42', '4711', 'Hello World', '1', '2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 3, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
 
@@ -206,7 +207,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         bean.primitiveList = ['1', '42', '2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 1, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add multiple entries in middle', sinon.test(function () {
@@ -234,7 +235,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         bean.primitiveList = ['1', '42', '4711', 'Hello World', '2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 1, 3, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
 
@@ -259,7 +260,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '3', '42'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 3, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add multiple entries at end', sinon.test(function () {
@@ -287,7 +288,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '3', '42', '4711', 'Hello World'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 3, 3, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 });
 
@@ -349,7 +350,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         bean.primitiveList = [];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, ['1']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete null from single element list', sinon.test(function () {
@@ -371,7 +372,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         bean.primitiveList = [];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, [null]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete all entries from multiple entry list', sinon.test(function() {
@@ -393,7 +394,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         bean.primitiveList = [];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, ['1', '2', '3']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count);
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count);
     }));
 
 
@@ -417,7 +418,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         bean.primitiveList = ['2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, ['1']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete multiple entries in beginning', sinon.test(function() {
@@ -439,7 +440,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 0, ['42', '4711', 'Hello World']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete single entry in middle', sinon.test(function() {
@@ -461,7 +462,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         bean.primitiveList = ['1', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 1, 0, ['2']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete multiple entries in middle', sinon.test(function() {
@@ -483,7 +484,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 1, 0, ['42', '4711', 'Hello World']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete single entry at end', sinon.test(function() {
@@ -505,7 +506,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         bean.primitiveList = ['1', '2'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 3, 0, ['3']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete multiple entries at end', sinon.test(function() {
@@ -527,7 +528,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 3, 0, ['42', '4711', 'Hello World']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 });
 
@@ -600,7 +601,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['42'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, ['1']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace element with null', sinon.test(function () {
@@ -624,7 +625,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = [null];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, ['1']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace null with element', sinon.test(function () {
@@ -648,7 +649,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['1'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, [null]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace all entries in multiple element list with more elements', sinon.test(function () {
@@ -676,7 +677,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['42', '4711', 'Hello World'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 3, ['1', '2']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
     it('should replace all entries in multiple element list with less elements', sinon.test(function () {
@@ -702,7 +703,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['42', '4711'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 2, ['1', '2', '3']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2)
     }));
 
 
@@ -727,7 +728,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['42', '2', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 1, ['1']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace multiple entries in beginning with more elements', sinon.test(function () {
@@ -755,7 +756,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['42', '4711', 'Hello World', '3', '4', '5', '6'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 3, ['1', '2']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
     it('should replace multiple entries in beginning with less elements', sinon.test(function () {
@@ -781,7 +782,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['42', '4711', '4', '5', '6'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 0, 2, ['1', '2', '3']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2)
     }));
 
 
@@ -806,7 +807,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['1', '42', '3'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 1, 1, ['2']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace multiple entries in middle with more elements', sinon.test(function () {
@@ -834,7 +835,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '42', '4711', 'Hello World', '5', '6'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 2, 3, ['3', '4']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
     it('should replace multiple entries in middle with less elements', sinon.test(function () {
@@ -860,7 +861,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['1', '42', '4711', '6'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 1, 2, ['2', '3', '4', '5']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2)
     }));
 
 
@@ -886,7 +887,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '42'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 2, 1, ['3']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace multiple entries at end with more elements', sinon.test(function () {
@@ -914,7 +915,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '3', '4', '42', '4711', 'Hello World'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 4, 3, ['5', '6']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
     it('should replace multiple entries at end with less elements', sinon.test(function () {
@@ -940,7 +941,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         bean.primitiveList = ['1', '2', '3', '42', '4711'];
         beanManager.notifyArrayChange(bean, 'primitiveList', 3, 2, ['4', '5', '6']);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2)
     }));
 
 });
@@ -1042,7 +1043,7 @@ describe('List Sync (adding objects as User)', function() {
         sourceBean.referenceList = [bean1];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add null in empty list', sinon.test(function () {
@@ -1066,7 +1067,7 @@ describe('List Sync (adding objects as User)', function() {
         sourceBean.referenceList = [null];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add multiple entries in empty list', sinon.test(function () {
@@ -1094,7 +1095,7 @@ describe('List Sync (adding objects as User)', function() {
         sourceBean.referenceList = [bean1, bean2, bean3];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 3, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
 
@@ -1119,7 +1120,7 @@ describe('List Sync (adding objects as User)', function() {
         sourceBean.referenceList = [bean1, {id: 'old1'}, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add multiple entries in beginning', sinon.test(function () {
@@ -1147,7 +1148,7 @@ describe('List Sync (adding objects as User)', function() {
         sourceBean.referenceList = [bean1, bean2, bean3, {id: 'old1'}, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 3, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
 
@@ -1172,7 +1173,7 @@ describe('List Sync (adding objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, bean1, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 1, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add multiple entries in middle', sinon.test(function () {
@@ -1200,7 +1201,7 @@ describe('List Sync (adding objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, bean1, bean2, bean3, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 1, 3, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
 
@@ -1225,7 +1226,7 @@ describe('List Sync (adding objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}, bean1];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 3, 1, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should add multiple entries at end', sinon.test(function () {
@@ -1253,7 +1254,7 @@ describe('List Sync (adding objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}, bean1, bean2, bean3];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 3, 3, []);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 });
 
@@ -1352,7 +1353,7 @@ describe('List Sync (deleting objects as User)', function() {
         sourceBean.referenceList = [];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 0, [bean1]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete null from single element list', sinon.test(function () {
@@ -1374,7 +1375,7 @@ describe('List Sync (deleting objects as User)', function() {
         sourceBean.referenceList = [];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 0, [null]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete all entries from multiple entry list', sinon.test(function() {
@@ -1396,7 +1397,7 @@ describe('List Sync (deleting objects as User)', function() {
         sourceBean.referenceList = [];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 0, [bean1, bean2, bean3]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count);
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count);
     }));
 
 
@@ -1420,7 +1421,7 @@ describe('List Sync (deleting objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 0, [bean1]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete multiple entries in beginning', sinon.test(function() {
@@ -1442,7 +1443,7 @@ describe('List Sync (deleting objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 0, [bean1, bean2, bean3]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete single entry in middle', sinon.test(function() {
@@ -1464,7 +1465,7 @@ describe('List Sync (deleting objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 1, 0, [bean1]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete multiple entries in middle', sinon.test(function() {
@@ -1486,7 +1487,7 @@ describe('List Sync (deleting objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 1, 0, [bean1, bean2, bean3]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete single entry at end', sinon.test(function() {
@@ -1508,7 +1509,7 @@ describe('List Sync (deleting objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 3, 0, [bean1]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 
     it('should delete multiple entries at end', sinon.test(function() {
@@ -1530,7 +1531,7 @@ describe('List Sync (deleting objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 3, 0, [bean1, bean2, bean3]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count)
     }));
 });
 
@@ -1631,7 +1632,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [bean1];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 1, [{id: 'old1'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace element with null', sinon.test(function () {
@@ -1655,7 +1656,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [null];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 1, [{id: 'old1'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace null with element', sinon.test(function () {
@@ -1679,7 +1680,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [bean1];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 1, [null]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace all entries in multiple element list with more elements', sinon.test(function () {
@@ -1707,7 +1708,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [bean1, bean2, bean3];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 3, [{id: 'old1'}, {id: 'old2'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
     it('should replace all entries in multiple element list with less elements', sinon.test(function () {
@@ -1733,7 +1734,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [bean1, bean2];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 2, [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2)
     }));
 
 
@@ -1758,7 +1759,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [bean1, {id: 'old2'}, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 1, [{id: 'old1'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace multiple entries in beginning with more elements', sinon.test(function () {
@@ -1786,7 +1787,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [bean1, bean2, bean3, {id: 'old3'}, {id: 'old4'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 3, [{id: 'old1'}, {id: 'old2'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
     it('should replace multiple entries in beginning with less elements', sinon.test(function () {
@@ -1812,7 +1813,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [bean1, bean2, {id: 'old4'}, {id: 'old5'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 0, 2, [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2)
     }));
 
 
@@ -1837,7 +1838,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, bean1, {id: 'old3'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 1, 1, [{id: 'old2'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace multiple entries in middle with more elements', sinon.test(function () {
@@ -1865,7 +1866,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, bean1, bean2, bean3, {id: 'old5'}, {id: 'old6'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 2, 3, [{id: 'old3'}, {id: 'old4'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
     it('should replace multiple entries in middle with less elements', sinon.test(function () {
@@ -1891,7 +1892,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, bean1, bean2, {id: 'old6'}];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 1, 2, [{id: 'old2'}, {id: 'old3'}, {id: 'old4'}, {id: 'old5'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2)
     }));
 
 
@@ -1917,7 +1918,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, bean1];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 2, 1, [{id: 'old3'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element)
     }));
 
     it('should replace multiple entries at end with more elements', sinon.test(function () {
@@ -1945,7 +1946,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}, {id: 'old4'}, bean1, bean2, bean3];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 4, 3, [{id: 'old5'}, {id: 'old6'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2, element3)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2, element3)
     }));
 
     it('should replace multiple entries at end with less elements', sinon.test(function () {
@@ -1971,7 +1972,7 @@ describe('List Sync (replacing objects as User)', function() {
         sourceBean.referenceList = [{id: 'old1'}, {id: 'old2'}, {id: 'old3'}, bean1, bean2];
         beanManager.notifyArrayChange(sourceBean, 'referenceList', 3, 2, [{id: 'old4'}, {id: 'old5'}, {id: 'old6'}]);
 
-        sinon.assert.calledWith(dolphin.presentationModel, null, '@@@ LIST_SPLICE @@@', sender, source, attribute, from, to, count, element1, element2)
+        sinon.assert.calledWith(dolphin.presentationModel, null, DP_LS, sender, source, attribute, from, to, count, element1, element2)
     }));
 
 });

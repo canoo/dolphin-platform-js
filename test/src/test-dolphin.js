@@ -86,7 +86,7 @@ describe('Dolphin Message Distribution', function() {
         classRepository.spliceListEntry = this.spy();
         this.spy(dolphin, "deletePresentationModel");
         var model = {
-            presentationModelType: '@@@ LIST_SPLICE @@@',
+            presentationModelType: '@DP:LS@',
             findAttributeByPropertyName: this.stub().withArgs('@@@ SOURCE_SYSTEM @@@').returns({value: 'server'})
         };
 
