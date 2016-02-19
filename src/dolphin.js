@@ -29,6 +29,7 @@ var BeanManager = require('./beanmanager.js').BeanManager;
 var ClassRepository = require('./classrepo.js').ClassRepository;
 var ControllerManager = require('./controllermanager.js').ControllerManager;
 var ClientContext = require('./clientcontext.js').ClientContext;
+var Codec = require('./codec.js').Codec;
 
 exports.connect = function(url, config) {
     checkMethod('connect(url, config)');
@@ -39,6 +40,7 @@ exports.connect = function(url, config) {
         builder.errorHandler(config.errorHandler);
     }
     var dolphin = builder.build();
+    dolphin.clientConnector.transmitter.codec = Codec;
 
     var classRepository = new ClassRepository(dolphin);
     var beanManager = new BeanManager(classRepository);
