@@ -1,3 +1,8 @@
+var __extends = (this && this.__extends) || function (d, b) {
+        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
 var opendolphin;
 (function (opendolphin) {
     var Attribute = (function () {
@@ -9,7 +14,7 @@ var opendolphin;
         Attribute.VALUE = "value";
         Attribute.TAG = "tag";
         return Attribute;
-    })();
+    }());
     opendolphin.Attribute = Attribute;
 })(opendolphin || (opendolphin = {}));
 var opendolphin;
@@ -19,7 +24,7 @@ var opendolphin;
             this.id = "dolphin-core-command";
         }
         return Command;
-    })();
+    }());
     opendolphin.Command = Command;
 })(opendolphin || (opendolphin = {}));
 var opendolphin;
@@ -65,16 +70,11 @@ var opendolphin;
             return "VALUE_TYPE";
         };
         return Tag;
-    })();
+    }());
     opendolphin.Tag = Tag;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
 /// <reference path="Tag.ts" />
-var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
 var opendolphin;
 (function (opendolphin) {
     var AttributeCreatedNotification = (function (_super) {
@@ -92,7 +92,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.AttributeCreatedNotification";
         }
         return AttributeCreatedNotification;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.AttributeCreatedNotification = AttributeCreatedNotification;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -109,7 +109,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.AttributeMetadataChangedCommand";
         }
         return AttributeMetadataChangedCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.AttributeMetadataChangedCommand = AttributeMetadataChangedCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -124,7 +124,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.CallNamedActionCommand";
         }
         return CallNamedActionCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.CallNamedActionCommand = CallNamedActionCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -141,7 +141,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.ChangeAttributeMetadataCommand";
         }
         return ChangeAttributeMetadataCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.ChangeAttributeMetadataCommand = ChangeAttributeMetadataCommand;
 })(opendolphin || (opendolphin = {}));
 var opendolphin;
@@ -157,7 +157,7 @@ var opendolphin;
             this.eventHandlers.forEach(function (handle) { return handle(event); });
         };
         return EventBus;
-    })();
+    }());
     opendolphin.EventBus = EventBus;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="ClientAttribute.ts" />
@@ -326,7 +326,7 @@ var opendolphin;
             });
         };
         return ClientPresentationModel;
-    })();
+    }());
     opendolphin.ClientPresentationModel = ClientPresentationModel;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="ClientPresentationModel.ts" />
@@ -470,7 +470,7 @@ var opendolphin;
         ClientAttribute.SUPPORTED_VALUE_TYPES = ["string", "number", "boolean"];
         ClientAttribute.clientAttributeInstanceCount = 0;
         return ClientAttribute;
-    })();
+    }());
     opendolphin.ClientAttribute = ClientAttribute;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts"/>
@@ -487,7 +487,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.ValueChangedCommand";
         }
         return ValueChangedCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.ValueChangedCommand = ValueChangedCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts"/>
@@ -501,7 +501,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.NamedCommand";
         }
         return NamedCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.NamedCommand = NamedCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts"/>
@@ -515,7 +515,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.EmptyNotification";
         }
         return EmptyNotification;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.EmptyNotification = EmptyNotification;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts"/>
@@ -533,7 +533,7 @@ var opendolphin;
             return [queue.shift()];
         };
         return NoCommandBatcher;
-    })();
+    }());
     opendolphin.NoCommandBatcher = NoCommandBatcher;
     /** A batcher that batches the blinds (commands with no callback) and optionally also folds value changes */
     var BlindCommandBatcher = (function () {
@@ -583,7 +583,7 @@ var opendolphin;
             }
         };
         return BlindCommandBatcher;
-    })();
+    }());
     opendolphin.BlindCommandBatcher = BlindCommandBatcher;
 })(opendolphin || (opendolphin = {}));
 var opendolphin;
@@ -603,7 +603,7 @@ var opendolphin;
             }
         };
         return Codec;
-    })();
+    }());
     opendolphin.Codec = Codec;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts"/>
@@ -617,7 +617,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.SignalCommand";
         }
         return SignalCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.SignalCommand = SignalCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="ClientPresentationModel.ts" />
@@ -647,7 +647,7 @@ var opendolphin;
             });
         }
         return CreatePresentationModelCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.CreatePresentationModelCommand = CreatePresentationModelCommand;
 })(opendolphin || (opendolphin = {}));
 var opendolphin;
@@ -699,7 +699,7 @@ var opendolphin;
             return this.keys.slice(0);
         };
         return Map;
-    })();
+    }());
     opendolphin.Map = Map;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -714,7 +714,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.DeletedAllPresentationModelsOfTypeNotification";
         }
         return DeletedAllPresentationModelsOfTypeNotification;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.DeletedAllPresentationModelsOfTypeNotification = DeletedAllPresentationModelsOfTypeNotification;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -729,7 +729,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.DeletedPresentationModelNotification";
         }
         return DeletedPresentationModelNotification;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.DeletedPresentationModelNotification = DeletedPresentationModelNotification;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="ClientPresentationModel.ts"/>
@@ -992,7 +992,7 @@ var opendolphin;
             });
         };
         return ClientModelStore;
-    })();
+    }());
     opendolphin.ClientModelStore = ClientModelStore;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="NamedCommand.ts" />
@@ -1109,7 +1109,7 @@ var opendolphin;
             this.clientConnector.setPushEnabled(false);
         };
         return ClientDolphin;
-    })();
+    }());
     opendolphin.ClientDolphin = ClientDolphin;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -1124,7 +1124,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.PresentationModelResetedCommand";
         }
         return PresentationModelResetedCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.PresentationModelResetedCommand = PresentationModelResetedCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -1139,7 +1139,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.SavedPresentationModelNotification";
         }
         return SavedPresentationModelNotification;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.SavedPresentationModelNotification = SavedPresentationModelNotification;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="ClientPresentationModel.ts" />
@@ -1163,7 +1163,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.InitializeAttributeCommand";
         }
         return InitializeAttributeCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.InitializeAttributeCommand = InitializeAttributeCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -1179,7 +1179,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.SwitchPresentationModelCommand";
         }
         return SwitchPresentationModelCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.SwitchPresentationModelCommand = SwitchPresentationModelCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -1194,7 +1194,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.DeleteAllPresentationModelsOfTypeCommand";
         }
         return DeleteAllPresentationModelsOfTypeCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.DeleteAllPresentationModelsOfTypeCommand = DeleteAllPresentationModelsOfTypeCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -1209,7 +1209,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.DeletePresentationModelCommand";
         }
         return DeletePresentationModelCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.DeletePresentationModelCommand = DeletePresentationModelCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -1224,7 +1224,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.DataCommand";
         }
         return DataCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.DataCommand = DataCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="ClientPresentationModel.ts" />
@@ -1523,7 +1523,7 @@ var opendolphin;
             this.transmitter.signal(this.releaseCommand);
         };
         return ClientConnector;
-    })();
+    }());
     opendolphin.ClientConnector = ClientConnector;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="DolphinBuilder.ts"/>
@@ -1573,7 +1573,7 @@ var opendolphin;
             // do nothing
         };
         return NoTransmitter;
-    })();
+    }());
     opendolphin.NoTransmitter = NoTransmitter;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts"/>
@@ -1683,7 +1683,7 @@ var opendolphin;
             this.http.send();
         };
         return HttpTransmitter;
-    })();
+    }());
     opendolphin.HttpTransmitter = HttpTransmitter;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="ClientDolphin.ts"/>
@@ -1742,7 +1742,7 @@ var opendolphin;
             return clientDolphin;
         };
         return DolphinBuilder;
-    })();
+    }());
     opendolphin.DolphinBuilder = DolphinBuilder;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -1757,7 +1757,7 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.GetPresentationModelCommand";
         }
         return GetPresentationModelCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.GetPresentationModelCommand = GetPresentationModelCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
@@ -1772,8 +1772,9 @@ var opendolphin;
             this.className = "org.opendolphin.core.comm.ResetPresentationModelCommand";
         }
         return ResetPresentationModelCommand;
-    })(opendolphin.Command);
+    }(opendolphin.Command));
     opendolphin.ResetPresentationModelCommand = ResetPresentationModelCommand;
 })(opendolphin || (opendolphin = {}));
+//# sourceMappingURL=opendolphin.js.map
 
 module.exports = opendolphin;
