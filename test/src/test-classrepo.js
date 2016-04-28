@@ -35,7 +35,8 @@ describe('ClassRepository primitive properties', function() {
                 { propertyName: 'booleanProperty', value: consts.BOOLEAN },
                 { propertyName: 'floatProperty', value: consts.DOUBLE },
                 { propertyName: 'integerProperty', value: consts.INT },
-                { propertyName: 'stringProperty', value: consts.STRING }
+                { propertyName: 'stringProperty', value: consts.STRING },
+                { propertyName: 'dateProperty', value: consts.DATE }
             ]
         };
         classRepo.registerClass(classModel);
@@ -50,7 +51,8 @@ describe('ClassRepository primitive properties', function() {
                 { propertyName: 'booleanProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} },
                 { propertyName: 'floatProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} },
                 { propertyName: 'integerProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} },
-                { propertyName: 'stringProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+                { propertyName: 'stringProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} },
+                { propertyName: 'dateProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
             ]
         };
         var bean = classRepo.load(beanModel);
@@ -58,6 +60,7 @@ describe('ClassRepository primitive properties', function() {
         expect(bean.floatProperty).to.be.null;
         expect(bean.integerProperty).to.be.null;
         expect(bean.stringProperty).to.be.null;
+        expect(bean.dateProperty).to.be.null;
     }));
 
     it('can set boolean from opendolphin', sinon.test(function() {
@@ -155,13 +158,45 @@ describe('ClassRepository primitive properties', function() {
             ]
         };
         var bean = classRepo.load(beanModel);
-        stringPropertyChangeListener({oldValue: null, newValue: "Hello World"});
-        stringPropertyChangeListener({oldValue: "Hello World", newValue: "Goodbye World"});
-        stringPropertyChangeListener({oldValue: "Goodbye World", newValue: null});
+        stringPropertyChangeListener({oldValue: null, newValue: 'Hello World'});
+        stringPropertyChangeListener({oldValue: 'Hello World', newValue: 'Goodbye World'});
+        stringPropertyChangeListener({oldValue: 'Goodbye World', newValue: null});
         sinon.assert.callCount(onBeanUpdateHandler, 3);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'stringProperty', "Hello World", null);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'stringProperty', "Goodbye World", "Hello World");
-        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'stringProperty', null, "Goodbye World");
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'stringProperty', 'Hello World', null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'stringProperty', 'Goodbye World', 'Hello World');
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'stringProperty', null, 'Goodbye World');
+    }));
+
+    it('can set date from opendolphin', sinon.test(function() {
+        var date1 = new Date();
+        date1.setUTCFullYear(2016, 1, 29);
+        date1.setUTCHours(0, 1, 2, 3);
+        var date2 = new Date();
+        date2.setUTCFullYear(2015, 1, 28);
+        date2.setUTCHours(0, 1, 2, 3);
+        var onBeanUpdateHandler = this.spy();
+        classRepo.onBeanUpdate(onBeanUpdateHandler);
+        var datePropertyChangeListener = function() {};
+        var beanModel = {
+            presentationModelType: 'ComplexClass',
+            attributes: [
+                {
+                    propertyName: 'dateProperty',
+                    tag: opendolphin.Tag.value(),
+                    onValueChange: function(listener) {
+                        datePropertyChangeListener = listener;
+                    }
+                }
+            ]
+        };
+        var bean = classRepo.load(beanModel);
+        datePropertyChangeListener({oldValue: null, newValue: '2016-02-29T00:01:02.003Z'});
+        datePropertyChangeListener({oldValue: '2016-02-29T00:01:02.003Z', newValue: '2015-02-28T00:01:02.003Z'});
+        datePropertyChangeListener({oldValue: '2015-02-28T00:01:02.003Z', newValue: null});
+        sinon.assert.callCount(onBeanUpdateHandler, 3);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'dateProperty', date1, null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'dateProperty', date2, date1);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'dateProperty', null, date2);
     }));
 
     it('can set boolean from user', sinon.test(function(done) {
@@ -322,7 +357,7 @@ describe('ClassRepository primitive properties', function() {
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
-                    expect(newValue).to.equal("Goodbye!");
+                    expect(newValue).to.equal('Goodbye!');
                 });
             },
             getValue: this.stub()
@@ -336,7 +371,7 @@ describe('ClassRepository primitive properties', function() {
         dolphin.findPresentationModelById.returns(beanModel);
         attribute.getValue.returns(null);
         var bean = classRepo.load(beanModel);
-        classRepo.notifyBeanChange(bean, 'stringProperty', "Goodbye!");
+        classRepo.notifyBeanChange(bean, 'stringProperty', 'Goodbye!');
     }));
 
     it('can set string to null from user', sinon.test(function(done) {
@@ -359,9 +394,65 @@ describe('ClassRepository primitive properties', function() {
             findAttributeByPropertyName: this.stub().withArgs('stringProperty').returns(attribute)
         };
         dolphin.findPresentationModelById.returns(beanModel);
-        attribute.getValue.returns("Goodbye!");
+        attribute.getValue.returns('Goodbye!');
         var bean = classRepo.load(beanModel);
         classRepo.notifyBeanChange(bean, 'stringProperty', null);
+    }));
+
+    it('can set date from user', sinon.test(function(done) {
+        var date1 = new Date();
+        date1.setUTCFullYear(2016, 1, 29);
+        date1.setUTCHours(0, 1, 2, 3);
+        this.stub(dolphin, 'findPresentationModelById');
+        var attribute =  {
+            propertyName: 'dateProperty',
+            tag: opendolphin.Tag.value(),
+            onValueChange: function() {},
+            setValue: function(newValue) {
+                check(done, function() {
+                    expect(newValue).to.equal('2016-02-29T00:01:02.003Z');
+                });
+            },
+            getValue: this.stub()
+        };
+        var beanModel = {
+            id: 'myId',
+            presentationModelType: 'ComplexClass',
+            attributes: [ attribute ],
+            findAttributeByPropertyName: this.stub().withArgs('dateProperty').returns(attribute)
+        };
+        dolphin.findPresentationModelById.returns(beanModel);
+        attribute.getValue.returns(null);
+        var bean = classRepo.load(beanModel);
+        classRepo.notifyBeanChange(bean, 'dateProperty', date1);
+    }));
+
+    it('can set string to null from user', sinon.test(function(done) {
+        var date1 = new Date();
+        date1.setUTCFullYear(2016, 1, 29);
+        date1.setUTCHours(0, 1, 2, 3);
+        this.stub(dolphin, 'findPresentationModelById');
+        var attribute =  {
+            propertyName: 'dateProperty',
+            tag: opendolphin.Tag.value(),
+            onValueChange: function() {},
+            setValue: function(newValue) {
+                check(done, function() {
+                    expect(newValue).to.be.null;
+                });
+            },
+            getValue: this.stub()
+        };
+        var beanModel = {
+            id: 'myId',
+            presentationModelType: 'ComplexClass',
+            attributes: [ attribute ],
+            findAttributeByPropertyName: this.stub().withArgs('dateProperty').returns(attribute)
+        };
+        dolphin.findPresentationModelById.returns(beanModel);
+        attribute.getValue.returns(date1);
+        var bean = classRepo.load(beanModel);
+        classRepo.notifyBeanChange(bean, 'dateProperty', null);
     }));
 });
 

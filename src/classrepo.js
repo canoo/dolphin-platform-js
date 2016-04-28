@@ -50,15 +50,31 @@ function fixType(type, value) {
 }
 
 function fromDolphin(classRepository, type, value) {
-    return !exists(value)? null
-      : type === consts.DOLPHIN_BEAN? classRepository.beanFromDolphin.get(String(value))
-      : fixType(type, value);
+    if (! exists(value)) {
+        return null;
+    }
+    switch (type) {
+        case consts.DOLPHIN_BEAN:
+            return classRepository.beanFromDolphin.get(String(value));
+        case consts.DATE:
+            return new Date(String(value));
+        default:
+            return fixType(type, value);
+    }
 }
 
 function toDolphin(classRepository, type, value) {
-    return !exists(value)? null
-      : type === consts.DOLPHIN_BEAN? classRepository.beanToDolphin.get(value)
-      : fixType(type, value);
+    if (! exists(value)) {
+        return null;
+    }
+    switch (type) {
+        case consts.DOLPHIN_BEAN:
+            return classRepository.beanToDolphin.get(value);
+        case consts.DATE:
+            return value instanceof Date? value.toISOString() : value;
+        default:
+            return fixType(type, value);
+    }
 }
 
 function sendListSplice(classRepository, modelId, propertyName, from, to, newElements) {
