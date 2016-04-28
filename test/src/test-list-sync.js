@@ -18,9 +18,10 @@ describe('List Sync (adding primitive elements as User)', function() {
 
     beforeEach(function () {
         dolphin = {
-            attribute: function () {
-            },
-            presentationModel: function () {
+            attribute: function() {},
+            presentationModel: function() {},
+            findPresentationModelById: function(id) {
+                return id === 'source_id' ? sourceModel : null;
             }
         };
         var classRepository = new ClassRepository(dolphin);
@@ -44,10 +45,6 @@ describe('List Sync (adding primitive elements as User)', function() {
             }
         };
         bean = classRepository.load(sourceModel);
-
-        dolphin.findPresentationModelById = function(id) {
-            return id === 'source_id'? sourceModel : null;
-        };
     });
 
 
@@ -301,7 +298,10 @@ describe('List Sync (deleting primitive elements as User)', function() {
     beforeEach(function() {
         dolphin = {
             attribute: function() {},
-            presentationModel: function() {}
+            presentationModel: function() {},
+            findPresentationModelById: function(id) {
+                return id === 'source_id' ? sourceModel : null;
+            }
         };
         var classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
@@ -323,10 +323,6 @@ describe('List Sync (deleting primitive elements as User)', function() {
             findAttributeByPropertyName: function() {}
         };
         bean = classRepository.load(sourceModel);
-
-        dolphin.findPresentationModelById = function(id) {
-            return id === 'source_id'? sourceModel : null;
-        };
     });
 
 
@@ -544,9 +540,10 @@ describe('List Sync (replacing primitive elements as User)', function() {
 
     beforeEach(function () {
         dolphin = {
-            attribute: function () {
-            },
-            presentationModel: function () {
+            attribute: function() {},
+            presentationModel: function() {},
+            findPresentationModelById: function(id) {
+                return id === 'source_id' ? sourceModel : null;
             }
         };
         var classRepository = new ClassRepository(dolphin);
@@ -570,10 +567,6 @@ describe('List Sync (replacing primitive elements as User)', function() {
             }
         };
         bean = classRepository.load(sourceModel);
-
-        dolphin.findPresentationModelById = function(id) {
-            return id === 'source_id'? sourceModel : null;
-        };
     });
 
 
@@ -959,9 +952,10 @@ describe('List Sync (adding objects as User)', function() {
 
     beforeEach(function() {
         dolphin = {
-            attribute: function () {
-            },
-            presentationModel: function () {
+            attribute: function () {},
+            presentationModel: function () {},
+            findPresentationModelById: function(id) {
+                return id === 'source_id' ? sourceModel : null;
             }
         };
 
@@ -1017,21 +1011,6 @@ describe('List Sync (adding objects as User)', function() {
             ]
         };
         bean3 = classRepository.load(bean3Model);
-
-        dolphin.findPresentationModelById = function(id) {
-            switch (id) {
-                case 'source_id':
-                    return sourceModel;
-                case 'id1':
-                    return bean1Model;
-                case 'id2':
-                    return bean2Model;
-                case 'id3':
-                    return bean3Model;
-                default:
-                    return null;
-            }
-        };
     });
 
 
@@ -1286,9 +1265,10 @@ describe('List Sync (deleting objects as User)', function() {
 
     beforeEach(function() {
         dolphin = {
-            attribute: function () {
-            },
-            presentationModel: function () {
+            attribute: function () {},
+            presentationModel: function () {},
+            findPresentationModelById: function(id) {
+                return id === 'source_id' ? sourceModel : null;
             }
         };
 
@@ -1344,21 +1324,6 @@ describe('List Sync (deleting objects as User)', function() {
             ]
         };
         bean3 = classRepository.load(bean3Model);
-
-        dolphin.findPresentationModelById = function(id) {
-            switch (id) {
-                case 'source_id':
-                    return sourceModel;
-                case 'id1':
-                    return bean1Model;
-                case 'id2':
-                    return bean2Model;
-                case 'id3':
-                    return bean3Model;
-                default:
-                    return null;
-            }
-        };
     });
 
 
@@ -1578,9 +1543,10 @@ describe('List Sync (replacing objects as User)', function() {
 
     beforeEach(function() {
         dolphin = {
-            attribute: function () {
-            },
-            presentationModel: function () {
+            attribute: function () {},
+            presentationModel: function () {},
+            findPresentationModelById: function(id) {
+                return id === 'source_id' ? sourceModel : null;
             }
         };
 
@@ -1636,21 +1602,6 @@ describe('List Sync (replacing objects as User)', function() {
             ]
         };
         bean3 = classRepository.load(bean3Model);
-
-        dolphin.findPresentationModelById = function(id) {
-            switch (id) {
-                case 'source_id':
-                    return sourceModel;
-                case 'id1':
-                    return bean1Model;
-                case 'id2':
-                    return bean2Model;
-                case 'id3':
-                    return bean3Model;
-                default:
-                    return null;
-            }
-        };
     });
 
 
