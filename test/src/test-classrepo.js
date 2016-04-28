@@ -1,3 +1,4 @@
+/*jslint browserify: true, mocha: true, expr: true */
 "use strict";
 
 var expect = require('chai').expect;
@@ -564,16 +565,16 @@ describe('ClassRepository.mapParamToDolphin()', function() {
 
     it('arbitrary object', function() {
         var classRepo = new ClassRepository({});
-        expect(function() {classRepo.mapParamToDolphin({})}).to.throw(TypeError);
+        expect(function() {classRepo.mapParamToDolphin({});}).to.throw(TypeError);
     });
 
     it('array', function() {
         var classRepo = new ClassRepository({});
-        expect(function() {classRepo.mapParamToDolphin([])}).to.throw(TypeError);
+        expect(function() {classRepo.mapParamToDolphin([]);}).to.throw(TypeError);
     });
 
     it('function', function() {
         var classRepo = new ClassRepository({});
-        expect(function() {classRepo.mapParamToDolphin(function() {})}).to.throw(TypeError);
+        expect(function() {classRepo.mapParamToDolphin(function() {});}).to.throw(TypeError);
     });
 });

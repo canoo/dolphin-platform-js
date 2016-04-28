@@ -26,13 +26,13 @@ gulp.task('clean', function() {
 
 
 gulp.task('lint', function() {
-    return gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
+    return gulp.src(['./src/**/*.js', '!./src/polyfills.js', './test/src/**/*.js'])
         .pipe($.jshint())
         .pipe($.jshint.reporter('default'));
 });
 
 gulp.task('lint-tc', function() {
-    return gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
+    return gulp.src(['./src/**/*.js', '!./src/polyfills.js', './test/src/**/*.js'])
         .pipe($.jshint())
         .pipe($.jshint.reporter('jshint-teamcity'))
 });
