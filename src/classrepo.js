@@ -43,6 +43,7 @@ function fixType(type, value) {
         case consts.BOOLEAN:
             return 'true' === String(value).toLowerCase();
         case consts.STRING:
+        case consts.ENUM:
             return String(value);
         default:
             return value;
@@ -358,11 +359,15 @@ ClassRepository.prototype.mapParamToDolphin = function(param) {
     }
     var type = typeof param;
     if (type === 'object') {
-        var value = this.beanToDolphin.get(param);
-        if (exists(value)) {
-            return value;
+        if (param instanceof Date) {
+            return param.toISOString();
+        } else {
+            var value = this.beanToDolphin.get(param);
+            if (exists(value)) {
+                return value;
+            }
+            throw new TypeError("Only managed Dolphin Beans can be used");
         }
-        throw new TypeError("Only managed Dolphin Beans can be used");
     }
     if (type === 'string' || type === 'number' || type === 'boolean') {
         return param;

@@ -8,3 +8,4 @@ exports.DOUBLE = 6;
 exports.BOOLEAN = 7;
 exports.STRING = 8;
 exports.DATE = 9;
+exports.ENUM = 10;

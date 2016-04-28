@@ -36,7 +36,8 @@ describe('ClassRepository primitive properties', function() {
                 { propertyName: 'floatProperty', value: consts.DOUBLE },
                 { propertyName: 'integerProperty', value: consts.INT },
                 { propertyName: 'stringProperty', value: consts.STRING },
-                { propertyName: 'dateProperty', value: consts.DATE }
+                { propertyName: 'dateProperty', value: consts.DATE },
+                { propertyName: 'enumProperty', value: consts.ENUM }
             ]
         };
         classRepo.registerClass(classModel);
@@ -52,7 +53,8 @@ describe('ClassRepository primitive properties', function() {
                 { propertyName: 'floatProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} },
                 { propertyName: 'integerProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} },
                 { propertyName: 'stringProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} },
-                { propertyName: 'dateProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
+                { propertyName: 'dateProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} },
+                { propertyName: 'enumProperty', tag: opendolphin.Tag.value(), onValueChange: function() {} }
             ]
         };
         var bean = classRepo.load(beanModel);
@@ -61,6 +63,7 @@ describe('ClassRepository primitive properties', function() {
         expect(bean.integerProperty).to.be.null;
         expect(bean.stringProperty).to.be.null;
         expect(bean.dateProperty).to.be.null;
+        expect(bean.enumProperty).to.be.null;
     }));
 
     it('can set boolean from opendolphin', sinon.test(function() {
@@ -197,6 +200,32 @@ describe('ClassRepository primitive properties', function() {
         sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'dateProperty', date1, null);
         sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'dateProperty', date2, date1);
         sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'dateProperty', null, date2);
+    }));
+
+    it('can set enum from opendolphin', sinon.test(function() {
+        var onBeanUpdateHandler = this.spy();
+        classRepo.onBeanUpdate(onBeanUpdateHandler);
+        var enumPropertyChangeListener = function() {};
+        var beanModel = {
+            presentationModelType: 'ComplexClass',
+            attributes: [
+                {
+                    propertyName: 'enumProperty',
+                    tag: opendolphin.Tag.value(),
+                    onValueChange: function(listener) {
+                        enumPropertyChangeListener = listener;
+                    }
+                }
+            ]
+        };
+        var bean = classRepo.load(beanModel);
+        enumPropertyChangeListener({oldValue: null, newValue: 'VALUE_1'});
+        enumPropertyChangeListener({oldValue: 'VALUE_1', newValue: 'VALUE_2'});
+        enumPropertyChangeListener({oldValue: 'VALUE_2', newValue: null});
+        sinon.assert.callCount(onBeanUpdateHandler, 3);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'enumProperty', 'VALUE_1', null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'enumProperty', 'VALUE_2', 'VALUE_1');
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'enumProperty', null, 'VALUE_2');
     }));
 
     it('can set boolean from user', sinon.test(function(done) {
@@ -427,7 +456,7 @@ describe('ClassRepository primitive properties', function() {
         classRepo.notifyBeanChange(bean, 'dateProperty', date1);
     }));
 
-    it('can set string to null from user', sinon.test(function(done) {
+    it('can set date to null from user', sinon.test(function(done) {
         var date1 = new Date();
         date1.setUTCFullYear(2016, 1, 29);
         date1.setUTCHours(0, 1, 2, 3);
@@ -453,6 +482,56 @@ describe('ClassRepository primitive properties', function() {
         attribute.getValue.returns(date1);
         var bean = classRepo.load(beanModel);
         classRepo.notifyBeanChange(bean, 'dateProperty', null);
+    }));
+
+    it('can set enum from user', sinon.test(function(done) {
+        this.stub(dolphin, 'findPresentationModelById');
+        var attribute =  {
+            propertyName: 'enumProperty',
+            tag: opendolphin.Tag.value(),
+            onValueChange: function() {},
+            setValue: function(newValue) {
+                check(done, function() {
+                    expect(newValue).to.equal('VALUE_1');
+                });
+            },
+            getValue: this.stub()
+        };
+        var beanModel = {
+            id: 'myId',
+            presentationModelType: 'ComplexClass',
+            attributes: [ attribute ],
+            findAttributeByPropertyName: this.stub().withArgs('enumProperty').returns(attribute)
+        };
+        dolphin.findPresentationModelById.returns(beanModel);
+        attribute.getValue.returns(null);
+        var bean = classRepo.load(beanModel);
+        classRepo.notifyBeanChange(bean, 'enumProperty', 'VALUE_1');
+    }));
+
+    it('can set enum to null from user', sinon.test(function(done) {
+        this.stub(dolphin, 'findPresentationModelById');
+        var attribute =  {
+            propertyName: 'enumProperty',
+            tag: opendolphin.Tag.value(),
+            onValueChange: function() {},
+            setValue: function(newValue) {
+                check(done, function() {
+                    expect(newValue).to.be.null;
+                });
+            },
+            getValue: this.stub()
+        };
+        var beanModel = {
+            id: 'myId',
+            presentationModelType: 'ComplexClass',
+            attributes: [ attribute ],
+            findAttributeByPropertyName: this.stub().withArgs('enumProperty').returns(attribute)
+        };
+        dolphin.findPresentationModelById.returns(beanModel);
+        attribute.getValue.returns('VALUE_1');
+        var bean = classRepo.load(beanModel);
+        classRepo.notifyBeanChange(bean, 'enumProperty', null);
     }));
 });
 
@@ -648,6 +727,21 @@ describe('ClassRepository.mapParamToDolphin()', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin('');
         expect(result).to.equal('');
+    });
+
+    it('date', function() {
+        var date1 = new Date();
+        date1.setUTCFullYear(2016, 1, 29);
+        date1.setUTCHours(0, 1, 2, 3);
+        var classRepo = new ClassRepository({});
+        var result = classRepo.mapParamToDolphin(date1);
+        expect(result).to.equal('2016-02-29T00:01:02.003Z');
+    });
+
+    it('enum', function() {
+        var classRepo = new ClassRepository({});
+        var result = classRepo.mapParamToDolphin('VALUE_1');
+        expect(result).to.equal('VALUE_1');
     });
 
     // TODO Implement once it is possible to create beans on the client
