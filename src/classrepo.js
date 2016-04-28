@@ -21,40 +21,68 @@ require('./polyfills.js');
 var Map = require('../bower_components/core.js/library/fn/map');
 var opendolphin = require('../libsrc/opendolphin.js');
 
+var consts = require('./constants');
+
 var utils = require('./utils.js');
 var exists = utils.exists;
 var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
 
-var UNKNOWN = 0,
-    BASIC_TYPE = 1,
-    DOLPHIN_BEAN = 2;
-
 var blocked = null;
 
-function fromDolphin(classRepository, type, value) {
-    return ! exists(value)? null
-        : type === DOLPHIN_BEAN? classRepository.beanFromDolphin.get(value) : value;
+function fixType(type, value) {
+    switch (type) {
+        case consts.BYTE:
+        case consts.SHORT:
+        case consts.INT:
+        case consts.LONG:
+            return parseInt(value);
+        case consts.FLOAT:
+        case consts.DOUBLE:
+            return parseFloat(value);
+        case consts.BOOLEAN:
+            return 'true' === String(value).toLowerCase();
+        case consts.STRING:
+            return String(value);
+        default:
+            return value;
+    }
 }
 
-function toDolphin(classRepository, value) {
-    return typeof value === 'object' && value !== null? classRepository.beanToDolphin.get(value) : value;
+function fromDolphin(classRepository, type, value) {
+    return !exists(value)? null
+      : type === consts.DOLPHIN_BEAN? classRepository.beanFromDolphin.get(String(value))
+      : fixType(type, value);
+}
+
+function toDolphin(classRepository, type, value) {
+    return !exists(value)? null
+      : type === consts.DOLPHIN_BEAN? classRepository.beanToDolphin.get(value)
+      : fixType(type, value);
 }
 
 function sendListSplice(classRepository, modelId, propertyName, from, to, newElements) {
     var dolphin = classRepository.dolphin;
-    var attributes = [
-        dolphin.attribute('@@@ SOURCE_SYSTEM @@@', null, 'client'),
-        dolphin.attribute('source', null, modelId),
-        dolphin.attribute('attribute', null, propertyName),
-        dolphin.attribute('from', null, from),
-        dolphin.attribute('to', null, to),
-        dolphin.attribute('count', null, newElements.length)
-    ];
-    newElements.forEach(function(element, index) {
-        attributes.push(dolphin.attribute(index.toString(), null, toDolphin(classRepository, element)));
-    });
-    dolphin.presentationModel.apply(dolphin, [null, '@DP:LS@'].concat(attributes));
+    var model = dolphin.findPresentationModelById(modelId);
+    if (exists(model)) {
+        var classInfo = classRepository.classes.get(model.presentationModelType);
+        var type = classInfo[propertyName];
+        if (exists(type)) {
+
+            var attributes = [
+                dolphin.attribute('@@@ SOURCE_SYSTEM @@@', null, 'client'),
+                dolphin.attribute('source', null, modelId),
+                dolphin.attribute('attribute', null, propertyName),
+                dolphin.attribute('from', null, from),
+                dolphin.attribute('to', null, to),
+                dolphin.attribute('count', null, newElements.length)
+            ];
+            newElements.forEach(function(element, index) {
+                attributes.push(dolphin.attribute(index.toString(), null, toDolphin(classRepository, type, element)));
+            });
+            dolphin.presentationModel.apply(dolphin, [null, '@DP:LS@'].concat(attributes));
+        }
+    }
 }
 
 function validateList(classRepository, type, bean, propertyName) {
@@ -119,7 +147,7 @@ ClassRepository.prototype.notifyBeanChange = function(bean, propertyName, newVal
             var attribute = model.findAttributeByPropertyName(propertyName);
             if (exists(type) && exists(attribute)) {
                 var oldValue = attribute.getValue();
-                attribute.setValue(toDolphin(this, newValue));
+                attribute.setValue(toDolphin(this, type, newValue));
                 return fromDolphin(this, type, oldValue);
             }
         }
@@ -187,11 +215,7 @@ ClassRepository.prototype.registerClass = function (model) {
     model.attributes.filter(function(attribute) {
         return attribute.propertyName.search(/^@/) < 0;
     }).forEach(function (attribute) {
-        classInfo[attribute.propertyName] = UNKNOWN;
-
-        attribute.onValueChange(function (event) {
-            classInfo[attribute.propertyName] = event.newValue;
-        });
+        classInfo[attribute.propertyName] = attribute.value;
     });
     this.classes.set(model.id, classInfo);
 };
@@ -314,30 +338,27 @@ ClassRepository.prototype.spliceListEntry = function(model) {
 
 ClassRepository.prototype.mapParamToDolphin = function(param) {
     if (!exists(param)) {
-        return {value: param, type: UNKNOWN};
+        return param;
     }
     var type = typeof param;
     if (type === 'object') {
         var value = this.beanToDolphin.get(param);
         if (exists(value)) {
-            return {value: value, type: DOLPHIN_BEAN};
+            return value;
         }
         throw new TypeError("Only managed Dolphin Beans can be used");
     }
     if (type === 'string' || type === 'number' || type === 'boolean') {
-        return {value: param, type: BASIC_TYPE};
+        return param;
     }
     throw new TypeError("Only managed Dolphin Beans and primitive types can be used");
 };
 
 
-ClassRepository.prototype.mapDolphinToBean = function(value, type) {
-    return fromDolphin(this, type, value);
+ClassRepository.prototype.mapDolphinToBean = function(value) {
+    return fromDolphin(this, consts.DOLPHIN_BEAN, value);
 };
 
 
 
 exports.ClassRepository = ClassRepository;
-exports.UNKNOWN = UNKNOWN;
-exports.BASIC_TYPE = BASIC_TYPE;
-exports.DOLPHIN_BEAN = DOLPHIN_BEAN;

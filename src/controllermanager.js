@@ -27,8 +27,6 @@ var checkParam = utils.checkParam;
 
 var ControllerProxy = require('./controllerproxy.js').ControllerProxy;
 
-var DOLPHIN_BEAN_TYPE = require('./classrepo.js').DOLPHIN_BEAN;
-
 var SOURCE_SYSTEM = require('./connector.js').SOURCE_SYSTEM;
 var SOURCE_SYSTEM_CLIENT = require('./connector.js').SOURCE_SYSTEM_CLIENT;
 var ACTION_CALL_BEAN = require('./connector.js').ACTION_CALL_BEAN;
@@ -71,7 +69,7 @@ ControllerManager.prototype.createController = function(name) {
             self.connector.invoke(REGISTER_CONTROLLER_COMMAND_NAME).then(function() {
                 controllerId = highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).getValue();
                 modelId = highlanderPM.findAttributeByPropertyName(MODEL).getValue();
-                model = self.classRepository.mapDolphinToBean(modelId, DOLPHIN_BEAN_TYPE);
+                model = self.classRepository.mapDolphinToBean(modelId);
                 controller = new ControllerProxy(controllerId, model, self);
                 self.controllers.add(controller);
                 resolve(controller);
@@ -100,8 +98,7 @@ ControllerManager.prototype.invokeAction = function(controllerId, actionName, pa
             for (var prop in params) {
                 if (params.hasOwnProperty(prop)) {
                     var param = self.classRepository.mapParamToDolphin(params[prop]);
-                    attributes.push(self.dolphin.attribute(PARAM_PREFIX + prop, null, param.value, 'VALUE'));
-                    attributes.push(self.dolphin.attribute(PARAM_PREFIX + prop, null, param.type, 'VALUE_TYPE'));
+                    attributes.push(self.dolphin.attribute(PARAM_PREFIX + prop, null, param, 'VALUE'));
                 }
             }
         }

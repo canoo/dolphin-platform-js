@@ -5,9 +5,7 @@ var sinon = require('sinon');
 
 var opendolphin = require('../../libsrc/opendolphin.js');
 
-var UNKNOWN      = 0;
-var BASIC_TYPE   = 1;
-var DOLPHIN_BEAN = 2;
+var consts = require('../../src/constants');
 
 var ClassRepository = require('../../src/classrepo.js').ClassRepository;
 
@@ -33,10 +31,10 @@ describe('ClassRepository primitive properties', function() {
         classModel = {
             id: 'ComplexClass',
             attributes: [
-                { propertyName: 'booleanProperty', onValueChange: function() {} },
-                { propertyName: 'floatProperty', onValueChange: function() {} },
-                { propertyName: 'integerProperty', onValueChange: function() {} },
-                { propertyName: 'stringProperty', onValueChange: function() {} }
+                { propertyName: 'booleanProperty', value: consts.BOOLEAN },
+                { propertyName: 'floatProperty', value: consts.DOUBLE },
+                { propertyName: 'integerProperty', value: consts.INT },
+                { propertyName: 'stringProperty', value: consts.STRING }
             ]
         };
         classRepo.registerClass(classModel);
@@ -64,17 +62,9 @@ describe('ClassRepository primitive properties', function() {
     it('can set boolean from opendolphin', sinon.test(function() {
         var onBeanUpdateHandler = this.spy();
         classRepo.onBeanUpdate(onBeanUpdateHandler);
-
-        classModel = {
-            id: 'TypedComplexClass',
-            attributes: [
-                { propertyName: 'booleanProperty', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
-            ]
-        };
-        classRepo.registerClass(classModel);
         var booleanPropertyChangeListener = function() {};
         var beanModel = {
-            presentationModelType: 'TypedComplexClass',
+            presentationModelType: 'ComplexClass',
             attributes: [
                 {
                     propertyName: 'booleanProperty',
@@ -90,25 +80,17 @@ describe('ClassRepository primitive properties', function() {
         booleanPropertyChangeListener({oldValue: true, newValue: false});
         booleanPropertyChangeListener({oldValue: false, newValue: null});
         sinon.assert.callCount(onBeanUpdateHandler, 3);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'booleanProperty', true, null);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'booleanProperty', false, true);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'booleanProperty', null, false);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'booleanProperty', true, null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'booleanProperty', false, true);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'booleanProperty', null, false);
     }));
 
     it('can set float from opendolphin', sinon.test(function() {
         var onBeanUpdateHandler = this.spy();
         classRepo.onBeanUpdate(onBeanUpdateHandler);
-
-        classModel = {
-            id: 'TypedComplexClass',
-            attributes: [
-                { propertyName: 'floatProperty', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
-            ]
-        };
-        classRepo.registerClass(classModel);
         var floatPropertyChangeListener = function() {};
         var beanModel = {
-            presentationModelType: 'TypedComplexClass',
+            presentationModelType: 'ComplexClass',
             attributes: [
                 {
                     propertyName: 'floatProperty',
@@ -124,25 +106,17 @@ describe('ClassRepository primitive properties', function() {
         floatPropertyChangeListener({oldValue: 3.1415, newValue: 2.7182});
         floatPropertyChangeListener({oldValue: 2.7182, newValue: null});
         sinon.assert.callCount(onBeanUpdateHandler, 3);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'floatProperty', 3.1415, null);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'floatProperty', 2.7182, 3.1415);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'floatProperty', null, 2.7182);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'floatProperty', 3.1415, null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'floatProperty', 2.7182, 3.1415);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'floatProperty', null, 2.7182);
     }));
 
     it('can set integer from opendolphin', sinon.test(function() {
         var onBeanUpdateHandler = this.spy();
         classRepo.onBeanUpdate(onBeanUpdateHandler);
-
-        classModel = {
-            id: 'TypedComplexClass',
-            attributes: [
-                { propertyName: 'integerProperty', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
-            ]
-        };
-        classRepo.registerClass(classModel);
         var integerPropertyChangeListener = function() {};
         var beanModel = {
-            presentationModelType: 'TypedComplexClass',
+            presentationModelType: 'ComplexClass',
             attributes: [
                 {
                     propertyName: 'integerProperty',
@@ -158,25 +132,17 @@ describe('ClassRepository primitive properties', function() {
         integerPropertyChangeListener({oldValue: 42,   newValue: 4711});
         integerPropertyChangeListener({oldValue: 4711, newValue: null});
         sinon.assert.callCount(onBeanUpdateHandler, 3);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'integerProperty', 42, null);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'integerProperty', 4711, 42);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'integerProperty', null, 4711);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'integerProperty', 42, null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'integerProperty', 4711, 42);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'integerProperty', null, 4711);
     }));
 
     it('can set string from opendolphin', sinon.test(function() {
         var onBeanUpdateHandler = this.spy();
         classRepo.onBeanUpdate(onBeanUpdateHandler);
-
-        classModel = {
-            id: 'TypedComplexClass',
-            attributes: [
-                { propertyName: 'stringProperty', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
-            ]
-        };
-        classRepo.registerClass(classModel);
         var stringPropertyChangeListener = function() {};
         var beanModel = {
-            presentationModelType: 'TypedComplexClass',
+            presentationModelType: 'ComplexClass',
             attributes: [
                 {
                     propertyName: 'stringProperty',
@@ -192,9 +158,9 @@ describe('ClassRepository primitive properties', function() {
         stringPropertyChangeListener({oldValue: "Hello World", newValue: "Goodbye World"});
         stringPropertyChangeListener({oldValue: "Goodbye World", newValue: null});
         sinon.assert.callCount(onBeanUpdateHandler, 3);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'stringProperty', "Hello World", null);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'stringProperty', "Goodbye World", "Hello World");
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'stringProperty', null, "Goodbye World");
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'stringProperty', "Hello World", null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'stringProperty', "Goodbye World", "Hello World");
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'stringProperty', null, "Goodbye World");
     }));
 
     it('can set boolean from user', sinon.test(function(done) {
@@ -415,14 +381,14 @@ describe('ClassRepository Dolphin Bean properties', function() {
         var simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
-                { propertyName: 'text', onValueChange: function() {} }
+                { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepo.registerClass(simpleClassModel);
         complexClassModel = {
             id: 'ComplexClass',
             attributes: [
-                { propertyName: 'reference', onValueChange: function() {} }
+                { propertyName: 'reference', value: consts.DOLPHIN_BEAN }
             ]
         };
         classRepo.registerClass(complexClassModel);
@@ -460,17 +426,9 @@ describe('ClassRepository Dolphin Bean properties', function() {
     it('can be set from opendolphin', sinon.test(function() {
         var onBeanUpdateHandler = this.spy();
         classRepo.onBeanUpdate(onBeanUpdateHandler);
-
-        complexClassModel = {
-            id: 'TypedComplexClass',
-            attributes: [
-                { propertyName: 'reference', onValueChange: this.stub().yields({oldValue: UNKNOWN, newValue: DOLPHIN_BEAN}) }
-            ]
-        };
-        classRepo.registerClass(complexClassModel);
         var propertyChangeListener = function() {};
         var beanModel = {
-            presentationModelType: 'TypedComplexClass',
+            presentationModelType: 'ComplexClass',
             attributes: [
                 {
                     propertyName: 'reference',
@@ -486,9 +444,9 @@ describe('ClassRepository Dolphin Bean properties', function() {
         propertyChangeListener({oldValue: 'id1', newValue: 'id2'});
         propertyChangeListener({oldValue: 'id2', newValue: null});
         sinon.assert.callCount(onBeanUpdateHandler, 3);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'reference', bean1, null);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'reference', bean2, bean1);
-        sinon.assert.calledWith(onBeanUpdateHandler, 'TypedComplexClass', bean, 'reference', null,  bean2);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'reference', bean1, null);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'reference', bean2, bean1);
+        sinon.assert.calledWith(onBeanUpdateHandler, 'ComplexClass', bean, 'reference', null,  bean2);
     }));
 
     it('can be set from user', sinon.test(function(done) {
@@ -549,64 +507,55 @@ describe('ClassRepository.mapParamToDolphin()', function() {
     it('undefined', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(undefined);
-        expect(result).to.have.property('value', undefined);
-        expect(result).to.have.property('type', UNKNOWN);
+        expect(result).to.be.undefined;
     });
 
     it('null', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(null);
-        expect(result).to.have.property('value', null);
-        expect(result).to.have.property('type', UNKNOWN);
+        expect(result).to.be.null;
     });
 
     it('boolean true', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(true);
-        expect(result).to.have.property('value', true);
-        expect(result).to.have.property('type', BASIC_TYPE);
+        expect(result).to.be.true;
     });
 
     it('boolean false', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(false);
-        expect(result).to.have.property('value', false);
-        expect(result).to.have.property('type', BASIC_TYPE);
+        expect(result).to.be.false;
     });
 
     it('number 0', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(0);
-        expect(result).to.have.property('value', 0);
-        expect(result).to.have.property('type', BASIC_TYPE);
+        expect(result).to.equal(0);
     });
 
     it('number positive integer', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(42);
-        expect(result).to.have.property('value', 42);
-        expect(result).to.have.property('type', BASIC_TYPE);
+        expect(result).to.equal(42);
     });
 
     it('number negative float', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin(-0.1);
-        expect(result).to.have.property('value', -0.1);
-        expect(result).to.have.property('type', BASIC_TYPE);
+        expect(result).to.equal(-0.1);
     });
 
     it('string', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin('42');
-        expect(result).to.have.property('value', '42');
-        expect(result).to.have.property('type', BASIC_TYPE);
+        expect(result).to.equal('42');
     });
 
     it('string (empty)', function() {
         var classRepo = new ClassRepository({});
         var result = classRepo.mapParamToDolphin('');
-        expect(result).to.have.property('value', '');
-        expect(result).to.have.property('type', BASIC_TYPE);
+        expect(result).to.equal('');
     });
 
     // TODO Implement once it is possible to create beans on the client

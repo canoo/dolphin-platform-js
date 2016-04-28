@@ -5,10 +5,7 @@ var opendolphin = require('../../libsrc/opendolphin.js');
 var ClassRepository = require('../../src/classrepo.js').ClassRepository;
 var BeanManager = require('../../src/beanmanager.js').BeanManager;
 
-
-var UNKNOWN      = 0;
-var BASIC_TYPE   = 1;
-var DOLPHIN_BEAN = 2;
+var consts = require('../../src/constants');
 
 var DP_LS = '@DP:LS@';
 
@@ -31,10 +28,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         var classModel = {
             id: 'SourceClass',
             attributes: [
-                {
-                    propertyName: 'primitiveList',
-                    onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE})
-                }
+                { propertyName: 'primitiveList', value: consts.STRING }
             ]
         };
         classRepository.registerClass(classModel);
@@ -43,15 +37,16 @@ describe('List Sync (adding primitive elements as User)', function() {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
-                {
-                    propertyName: 'primitiveList', tag: opendolphin.Tag.value(), onValueChange: function () {
-                }
-                }
+                { propertyName: 'primitiveList', tag: opendolphin.Tag.value(), onValueChange: function () {} }
             ],
             findAttributeByPropertyName: function () {
             }
         };
         bean = classRepository.load(sourceModel);
+
+        dolphin.findPresentationModelById = function(id) {
+            return id === 'source_id'? sourceModel : null;
+        }
     });
 
 
@@ -313,7 +308,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         var classModel = {
             id: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
+                { propertyName: 'primitiveList', value: consts.STRING }
             ]
         };
         classRepository.registerClass(classModel);
@@ -327,6 +322,10 @@ describe('List Sync (deleting primitive elements as User)', function() {
             findAttributeByPropertyName: function() {}
         };
         bean = classRepository.load(sourceModel);
+
+        dolphin.findPresentationModelById = function(id) {
+            return id === 'source_id'? sourceModel : null;
+        }
     });
 
 
@@ -555,10 +554,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         var classModel = {
             id: 'SourceClass',
             attributes: [
-                {
-                    propertyName: 'primitiveList',
-                    onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE})
-                }
+                { propertyName: 'primitiveList', value: consts.STRING }
             ]
         };
         classRepository.registerClass(classModel);
@@ -567,15 +563,16 @@ describe('List Sync (replacing primitive elements as User)', function() {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
-                {
-                    propertyName: 'primitiveList', tag: opendolphin.Tag.value(), onValueChange: function () {
-                }
-                }
+                { propertyName: 'primitiveList', tag: opendolphin.Tag.value(), onValueChange: function () {} }
             ],
             findAttributeByPropertyName: function () {
             }
         };
         bean = classRepository.load(sourceModel);
+
+        dolphin.findPresentationModelById = function(id) {
+            return id === 'source_id'? sourceModel : null;
+        }
     });
 
 
@@ -973,14 +970,14 @@ describe('List Sync (adding objects as User)', function() {
         var simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
-                { propertyName: 'text', onValueChange: function() {} }
+                { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
         var complexClassModel = {
             id: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: DOLPHIN_BEAN}) }
+                { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
             ]
         };
         classRepository.registerClass(complexClassModel);
@@ -1019,6 +1016,21 @@ describe('List Sync (adding objects as User)', function() {
             ]
         };
         bean3 = classRepository.load(bean3Model);
+
+        dolphin.findPresentationModelById = function(id) {
+            switch (id) {
+                case 'source_id':
+                    return sourceModel;
+                case 'id1':
+                    return bean1Model;
+                case 'id2':
+                    return bean2Model;
+                case 'id3':
+                    return bean3Model;
+                default:
+                    return null;
+            }
+        }
     });
 
 
@@ -1285,14 +1297,14 @@ describe('List Sync (deleting objects as User)', function() {
         var simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
-                { propertyName: 'text', onValueChange: function() {} }
+                { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
         var complexClassModel = {
             id: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: DOLPHIN_BEAN}) }
+                { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
             ]
         };
         classRepository.registerClass(complexClassModel);
@@ -1331,6 +1343,21 @@ describe('List Sync (deleting objects as User)', function() {
             ]
         };
         bean3 = classRepository.load(bean3Model);
+
+        dolphin.findPresentationModelById = function(id) {
+            switch (id) {
+                case 'source_id':
+                    return sourceModel;
+                case 'id1':
+                    return bean1Model;
+                case 'id2':
+                    return bean2Model;
+                case 'id3':
+                    return bean3Model;
+                default:
+                    return null;
+            }
+        }
     });
 
 
@@ -1562,14 +1589,14 @@ describe('List Sync (replacing objects as User)', function() {
         var simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
-                { propertyName: 'text', onValueChange: function() {} }
+                { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
         var complexClassModel = {
             id: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: DOLPHIN_BEAN}) }
+                { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
             ]
         };
         classRepository.registerClass(complexClassModel);
@@ -1608,6 +1635,21 @@ describe('List Sync (replacing objects as User)', function() {
             ]
         };
         bean3 = classRepository.load(bean3Model);
+
+        dolphin.findPresentationModelById = function(id) {
+            switch (id) {
+                case 'source_id':
+                    return sourceModel;
+                case 'id1':
+                    return bean1Model;
+                case 'id2':
+                    return bean2Model;
+                case 'id3':
+                    return bean3Model;
+                default:
+                    return null;
+            }
+        }
     });
 
 
@@ -1996,7 +2038,7 @@ describe('List Sync (adding primitive elements from OpenDolphin)', function() {
         var classModel = {
             id: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
+                { propertyName: 'primitiveList', value: consts.STRING }
             ]
         };
         classRepository.registerClass(classModel);
@@ -2162,7 +2204,7 @@ describe('List Sync (deleting primitive elements from OpenDolphin)', function() 
         var classModel = {
             id: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
+                { propertyName: 'primitiveList', value: consts.STRING }
             ]
         };
         classRepository.registerClass(classModel);
@@ -2288,7 +2330,7 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
         var classModel = {
             id: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: BASIC_TYPE}) }
+                { propertyName: 'primitiveList', value: consts.STRING }
             ]
         };
         classRepository.registerClass(classModel);
@@ -2533,14 +2575,14 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
         var simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
-                { propertyName: 'text', onValueChange: function() {} }
+                { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
         var complexClassModel = {
             id: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: DOLPHIN_BEAN}) }
+                { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
             ]
         };
         classRepository.registerClass(complexClassModel);
@@ -2734,14 +2776,14 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
         var simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
-                { propertyName: 'text', onValueChange: function() {} }
+                { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
         var complexClassModel = {
             id: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', onValueChange: sinon.stub().yields({oldValue: UNKNOWN, newValue: DOLPHIN_BEAN}) }
+                { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
             ]
         };
         classRepository.registerClass(complexClassModel);
