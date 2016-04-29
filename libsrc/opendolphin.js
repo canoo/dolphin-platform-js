@@ -71,10 +71,11 @@ var opendolphin;
 /// <reference path="Command.ts" />
 /// <reference path="Tag.ts" />
 var __extends = (this && this.__extends) || function (d, b) {
-        for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var opendolphin;
 (function (opendolphin) {
     var AttributeCreatedNotification = (function (_super) {
@@ -111,6 +112,21 @@ var opendolphin;
         return AttributeMetadataChangedCommand;
     })(opendolphin.Command);
     opendolphin.AttributeMetadataChangedCommand = AttributeMetadataChangedCommand;
+})(opendolphin || (opendolphin = {}));
+/// <reference path="Command.ts" />
+var opendolphin;
+(function (opendolphin) {
+    var BaseValueChangedCommand = (function (_super) {
+        __extends(BaseValueChangedCommand, _super);
+        function BaseValueChangedCommand(attributeId) {
+            _super.call(this);
+            this.attributeId = attributeId;
+            this.id = 'BaseValueChanged';
+            this.className = "org.opendolphin.core.comm.BaseValueChangedCommand";
+        }
+        return BaseValueChangedCommand;
+    })(opendolphin.Command);
+    opendolphin.BaseValueChangedCommand = BaseValueChangedCommand;
 })(opendolphin || (opendolphin = {}));
 /// <reference path="Command.ts" />
 var opendolphin;
@@ -745,6 +761,7 @@ var opendolphin;
 /// <reference path="EventBus.ts"/>
 /// <reference path="ClientPresentationModel.ts"/>
 /// <reference path="DeletedPresentationModelNotification.ts"/>
+/// <reference path="BaseValueChangedCommand.ts"/>
 var opendolphin;
 (function (opendolphin) {
     (function (Type) {
@@ -798,7 +815,7 @@ var opendolphin;
             });
             // all attributes with the same qualifier should have the same base value
             attribute.onBaseValueChange(function (evt) {
-                var baseValueChangeCommand = new opendolphin.ChangeAttributeMetadataCommand(attribute.id, opendolphin.Attribute.BASE_VALUE, evt.newValue);
+                var baseValueChangeCommand = new opendolphin.BaseValueChangedCommand(attribute.id);
                 _this.clientDolphin.getClientConnector().send(baseValueChangeCommand, null);
                 if (attribute.getQualifier()) {
                     var attrs = _this.findAttributesByFilter(function (attr) {
@@ -1016,9 +1033,6 @@ var opendolphin;
         };
         ClientDolphin.prototype.send = function (commandName, onFinished) {
             this.clientConnector.send(new opendolphin.NamedCommand(commandName), onFinished);
-        };
-        ClientDolphin.prototype.reset = function (successHandler) {
-            this.clientConnector.reset(successHandler);
         };
         ClientDolphin.prototype.sendEmpty = function (onFinished) {
             this.clientConnector.send(new opendolphin.EmptyNotification(), onFinished);
@@ -1239,6 +1253,7 @@ var opendolphin;
 /// <reference path="SavedPresentationModelNotification.ts" />
 /// <reference path="InitializeAttributeCommand.ts" />
 /// <reference path="SwitchPresentationModelCommand.ts" />
+/// <reference path="BaseValueChangedCommand.ts" />
 /// <reference path="ValueChangedCommand.ts" />
 /// <reference path="DeleteAllPresentationModelsOfTypeCommand.ts" />
 /// <reference path="DeleteAllPresentationModelsOfTypeCommand.ts" />
@@ -1275,9 +1290,6 @@ var opendolphin;
         };
         ClientConnector.prototype.setReleaseCommand = function (newCommand) {
             this.releaseCommand = newCommand;
-        };
-        ClientConnector.prototype.reset = function (successHandler) {
-            this.transmitter.reset(successHandler);
         };
         ClientConnector.prototype.send = function (command, onFinished) {
             this.commandQueue.push({ command: command, handler: onFinished });
@@ -1333,6 +1345,9 @@ var opendolphin;
             }
             else if (command.id == "ValueChanged") {
                 return this.handleValueChangedCommand(command);
+            }
+            else if (command.id == "BaseValueChanged") {
+                return this.handleBaseValueChangedCommand(command);
             }
             else if (command.id == "SwitchPresentationModel") {
                 return this.handleSwitchPresentationModelCommand(command);
@@ -1414,6 +1429,15 @@ var opendolphin;
             //                            " was set to value " + serverCommand.newValue + " even though the change was based on an outdated old value of " + serverCommand.oldValue);
             //            }
             clientAttribute.setValue(serverCommand.newValue);
+            return null;
+        };
+        ClientConnector.prototype.handleBaseValueChangedCommand = function (serverCommand) {
+            var clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
+            if (!clientAttribute) {
+                console.log("attribute with id " + serverCommand.attributeId + " not found, cannot set base value.");
+                return null;
+            }
+            clientAttribute.rebase();
             return null;
         };
         ClientConnector.prototype.handleSwitchPresentationModelCommand = function (serverCommand) {
@@ -1569,9 +1593,6 @@ var opendolphin;
         NoTransmitter.prototype.signal = function (command) {
             // do nothing
         };
-        NoTransmitter.prototype.reset = function (successHandler) {
-            // do nothing
-        };
         return NoTransmitter;
     })();
     opendolphin.NoTransmitter = NoTransmitter;
@@ -1606,7 +1627,6 @@ var opendolphin;
             }
             this.codec = new opendolphin.Codec();
             if (reset) {
-                console.log('HttpTransmitter.invalidate() is deprecated. Use ClientDolphin.reset(OnSuccessHandler) instead');
                 this.invalidate();
             }
         }
@@ -1662,24 +1682,8 @@ var opendolphin;
             this.sig.open('POST', this.url, true);
             this.sig.send(this.codec.encode([command]));
         };
-        // Deprecated ! Use 'reset(OnSuccessHandler) instead
         HttpTransmitter.prototype.invalidate = function () {
             this.http.open('POST', this.url + 'invalidate?', false);
-            this.http.send();
-        };
-        HttpTransmitter.prototype.reset = function (successHandler) {
-            var _this = this;
-            this.http.onreadystatechange = function (evt) {
-                if (_this.http.readyState == _this.HttpCodes.finished) {
-                    if (_this.http.status == _this.HttpCodes.success) {
-                        successHandler.onSuccess();
-                    }
-                    else {
-                        _this.handleError('application', "HttpTransmitter.reset(): HTTP Status != 200");
-                    }
-                }
-            };
-            this.http.open('POST', this.url + 'invalidate?', true);
             this.http.send();
         };
         return HttpTransmitter;
