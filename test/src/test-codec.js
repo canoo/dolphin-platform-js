@@ -1,3 +1,4 @@
+/*jslint browserify: true, mocha: true, expr: true */
 "use strict";
 
 var expect = require('chai').expect;
@@ -129,7 +130,7 @@ describe('Codec.decode', function() {
     });
 
     it('should decode single CreatePresentationModelCommand', function() {
-        var commands = Codec.decode('[' + createCPMCommandString() + ']')
+        var commands = Codec.decode('[' + createCPMCommandString() + ']');
 
         expect(commands).to.deep.equal([createCPMCommand()]);
     });

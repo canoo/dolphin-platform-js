@@ -26,13 +26,13 @@ gulp.task('clean', function() {
 
 
 gulp.task('lint', function() {
-    return gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
+    return gulp.src(['./src/**/*.js', '!./src/polyfills.js', './test/src/**/*.js'])
         .pipe($.jshint())
         .pipe($.jshint.reporter('default'));
 });
 
 gulp.task('lint-tc', function() {
-    return gulp.src(['./src/**/*.js', '!./src/polyfills.js'])
+    return gulp.src(['./src/**/*.js', '!./src/polyfills.js', './test/src/**/*.js'])
         .pipe($.jshint())
         .pipe($.jshint.reporter('jshint-teamcity'))
 });
@@ -124,7 +124,7 @@ gulp.task('sonar', ['ci'], function () {
             },
             projectKey: 'dolphin-js',
             projectName: 'Dolphin Platform JS',
-            projectVersion: '0.8.2',
+            projectVersion: '0.8.3',
             sources: 'src',
             language: 'js',
             sourceEncoding: 'UTF-8',

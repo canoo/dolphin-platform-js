@@ -1,3 +1,4 @@
+/*jslint browserify: true, mocha: true, expr: true */
 "use strict";
 
 var expect = require('chai').expect;

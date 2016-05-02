@@ -1,7 +1,7 @@
+/*jslint browserify: true, mocha: true, expr: true */
 "use strict";
 
 var sinon = require('sinon');
-var connect = require('../../src/dolphin.js').connect;
 var Connector = require('../../src/connector.js').Connector;
 var BeanManager = require('../../src/beanmanager.js').BeanManager;
 var ClassRepository = require('../../src/classrepo.js').ClassRepository;
