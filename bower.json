@@ -28,6 +28,6 @@
     "sauce-template.json"
   ],
   "devDependencies": {
-    "core.js": "2.0.x"
+    "core.js": "2.4.x"
   }
 }
