@@ -19,7 +19,7 @@
 
 require('./polyfills.js');
 var Map = require('../bower_components/core.js/library/fn/map');
-var opendolphin = require('../libsrc/opendolphin.js');
+var opendolphin = require('../opendolphin/build/opendolphin.js');
 
 var consts = require('./constants');
 

@@ -20,7 +20,7 @@ var config = typeof $.util.env['configFile'] === 'string'? require($.util.env['c
 
 
 gulp.task('clean', function() {
-    del(['dist', 'test/build', 'coverage']);
+    del(['dist', 'test/build', 'opendolphin/build', 'coverage']);
 });
 
 
@@ -55,7 +55,7 @@ function rebundleTest(bundler) {
         .pipe(gulp.dest('./test/build'))
 }
 
-gulp.task('build-test', function() {
+gulp.task('build-test', ['build-od'], function() {
     return rebundleTest(testBundler);
 });
 
@@ -69,6 +69,13 @@ gulp.task('test', ['build-test'], function(done) {
 gulp.task('verify', ['lint', 'test']);
 
 
+
+gulp.task('build-od', function() {
+    return gulp.src('opendolphin/js/dolphin/*.ts')
+      .pipe($.typescript({
+          out: 'opendolphin.js'
+      }))
+      .pipe(gulp.dest('opendolphin/build'));});
 
 var mainBundler = browserify(assign({}, watchify.args, {
     entries: './src/dolphin.js',
@@ -91,7 +98,7 @@ function rebundle(bundler) {
         .pipe(gulp.dest('./dist'));
 }
 
-gulp.task('build', function() {
+gulp.task('build', ['build-od'], function() {
     return rebundle(mainBundler);
 });
 

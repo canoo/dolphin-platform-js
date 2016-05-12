@@ -19,7 +19,7 @@
 
 require('./polyfills.js');
 var Promise = require('../bower_components/core.js/library/fn/promise');
-var opendolphin = require('../libsrc/opendolphin.js');
+var opendolphin = require('../opendolphin/build/opendolphin.js');
 var utils = require('./utils.js');
 var exists = utils.exists;
 var checkMethod = utils.checkMethod;
