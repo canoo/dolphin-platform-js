@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Basic Server Connect Tests</title>
+    <script data-main="../../js/dolphin/"  src="../../libs/require.js"></script>
+    <link href="functional_tests.css" rel="stylesheet">
+</head>
+<body>
+<h1>Basic Server Connect Tests with inline JavaScript</h1>
+
+<p>Please make sure you have the server running. If not, start via<br>
+<pre>
+    cd dolphin-grails
+    grailsw run-app
+</pre>
+</p>
+
+<p>Enter text here and click "send" to see the server-side change (prefix "server:")</p><p>
+<input id="instant-update-input" type="text" value=""></p><p>
+<button id="send-to-server-button" >Send to server</button>
+</p>
+
+<p>Instantly updated label from the same Attribute:
+<div id="instant-update-label" class="label">unchanged</div>
+</p>
+
+<p>List of weather entries (temp, humidity) coming from the server:
+
+<button id="add-from-server-button"  >Add from server</button>
+<ul id="add-list" class="label">
+
+</ul>
+</p>
+
+<script>
+    require([ 'opendolphin' ], function (dol) {
+
+        const SERVER_URL   = "http://localhost:8080/dolphin-grails/dolphin/";
+
+        const CMD_ECHO     = "org.opendolphin.demo.Tutorial.echo"
+        const PM_ID_MODEL  = 'org.opendolphin.demo.Tutorial.modelId'
+        const ATTR_ID      = "attrId"
+        const CMD_ADD      = "org.opendolphin.demo.Tutorial.add"
+
+        // setting up the dolphin
+        var dolphin = dol.dolphin(SERVER_URL, false);
+
+        // make the known PM
+        var instantUpdateAttribute = dolphin.attribute(ATTR_ID, null, "");
+        dolphin.presentationModel(PM_ID_MODEL, undefined, instantUpdateAttribute);
+
+        // html elements to bind against
+        var instantUpdateInput  = document.getElementById("instant-update-input");
+        var instantUpdateLabel  = document.getElementById("instant-update-label");
+        var sendButton          = document.getElementById("send-to-server-button");
+        var addButton           = document.getElementById("add-from-server-button");
+        var addList             = document.getElementById("add-list");
+
+        // bind input of textfield to attribute
+        instantUpdateInput.oninput = function (event) {
+            instantUpdateAttribute.setValue(instantUpdateInput.value);
+        };
+        // bind other direction as well (e.g. for rebase or server-side change)
+        instantUpdateAttribute.onValueChange(function (event) {
+            instantUpdateInput.value = event.newValue;
+        });
+        // bind value of attribute to value of instantUpdateLabel
+        instantUpdateAttribute.onValueChange(function (event) {
+            instantUpdateLabel.innerHTML = event.newValue;
+        });
+
+        // request server value change
+        sendButton.onclick = function () {
+            dolphin.send(CMD_ECHO)
+        };
+
+        // request new server PM to add
+        addButton.onclick = function () {
+            dolphin.send(CMD_ADD, { onFinished: function(models) {
+                var newItem = document.createElement("li");
+                newItem.innerText = models[0].getAt("temperature").getValue() + " : " + models[0].getAt("humidity").getValue();
+                addList.appendChild(newItem);
+            }})
+        };
+    });
+</script>
+
+
+</body>
+</html>
