@@ -1,17 +1,14 @@
-/// <reference path="Command.ts"/>
+import Command from './Command'
 
-module opendolphin {
 
-    export class NamedCommand extends Command {
+export default class NamedCommand extends Command {
 
-        className:string;
+    className:string;
 
-        constructor(name:string) {
-            super();
-            this.id = name;
-            this.className = "org.opendolphin.core.comm.NamedCommand";
-        }
-
+    constructor(name:string) {
+        super();
+        this.id = name;
+        this.className = "org.opendolphin.core.comm.NamedCommand";
     }
 
 }

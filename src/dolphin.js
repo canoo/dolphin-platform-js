@@ -18,7 +18,7 @@
 "use strict";
 
 require('./polyfills.js');
-var opendolphin = require('../opendolphin/build/opendolphin.js');
+var OpenDolphin = require('../opendolphin/build/OpenDolphin.js').default;
 
 var utils = require('./utils.js');
 var exists = utils.exists;
@@ -35,7 +35,7 @@ exports.connect = function(url, config) {
     checkMethod('connect(url, config)');
     checkParam(url, 'url');
 
-    var builder = opendolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true);
+    var builder = OpenDolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true);
     if (exists(config) && exists(config.errorHandler)) {
         builder.errorHandler(config.errorHandler);
     }

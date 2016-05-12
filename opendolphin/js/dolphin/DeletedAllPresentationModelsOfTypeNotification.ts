@@ -1,14 +1,13 @@
-/// <reference path="Command.ts" />
-module opendolphin {
+import Command from './Command'
 
-    export class DeletedAllPresentationModelsOfTypeNotification extends Command {
 
-        className:string;
+export default class DeletedAllPresentationModelsOfTypeNotification extends Command {
 
-        constructor(public pmType:string) {
-            super();
-            this.id = 'DeletedAllPresentationModelsOfType';
-            this.className = "org.opendolphin.core.comm.DeletedAllPresentationModelsOfTypeNotification";
-        }
+    className:string;
+
+    constructor(public pmType:string) {
+        super();
+        this.id = 'DeletedAllPresentationModelsOfType';
+        this.className = "org.opendolphin.core.comm.DeletedAllPresentationModelsOfTypeNotification";
     }
 }

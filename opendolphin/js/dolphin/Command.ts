@@ -1,9 +1,6 @@
-module opendolphin {
+export default class Command {
 
-    export class Command {
-
-        id:string ="dolphin-core-command";
-        constructor(){
-        }
+    id:string ="dolphin-core-command";
+    constructor(){
     }
 }

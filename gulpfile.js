@@ -41,7 +41,8 @@ gulp.task('lint-tc', function() {
 
 
 var testBundler = browserify(assign({}, watchify.args, {
-    entries: glob.sync('./test/src/**/test-*.js')
+    entries: glob.sync('./test/src/**/test-*.js'),
+    debug: true
 }));
 
 function rebundleTest(bundler) {
@@ -52,6 +53,9 @@ function rebundleTest(bundler) {
         .bundle()
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
         .pipe(source('test-bundle.js'))
+        .pipe(buffer())
+        .pipe($.sourcemaps.init({loadMaps: true}))
+        .pipe($.sourcemaps.write('./'))
         .pipe(gulp.dest('./test/build'))
 }
 
@@ -73,9 +77,12 @@ gulp.task('verify', ['lint', 'test']);
 gulp.task('build-od', function() {
     return gulp.src('opendolphin/js/dolphin/*.ts')
       .pipe($.typescript({
-          out: 'opendolphin.js'
+          module: 'commonjs'
       }))
-      .pipe(gulp.dest('opendolphin/build'));});
+      .pipe($.sourcemaps.init({loadMaps: true}))
+      .pipe($.sourcemaps.write('./'))
+      .pipe(gulp.dest('opendolphin/build/'));
+});
 
 var mainBundler = browserify(assign({}, watchify.args, {
     entries: './src/dolphin.js',

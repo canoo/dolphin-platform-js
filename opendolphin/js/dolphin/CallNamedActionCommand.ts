@@ -1,15 +1,13 @@
-/// <reference path="Command.ts" />
+import Command from './Command'
 
-module opendolphin {
 
-    export class CallNamedActionCommand extends Command {
+export default class CallNamedActionCommand extends Command {
 
-        className:string;
+    className:string;
 
-        constructor(public actionName:string) {
-            super();
-            this.id = 'CallNamedAction';
-            this.className = "org.opendolphin.core.comm.CallNamedActionCommand";
-        }
+    constructor(public actionName:string) {
+        super();
+        this.id = 'CallNamedAction';
+        this.className = "org.opendolphin.core.comm.CallNamedActionCommand";
     }
 }

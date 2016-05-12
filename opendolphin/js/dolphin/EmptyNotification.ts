@@ -1,15 +1,13 @@
-/// <reference path="Command.ts"/>
+import Command from './Command'
 
-module opendolphin {
 
-    export class EmptyNotification extends Command{
+export default class EmptyNotification extends Command{
 
-        className:string;
-        constructor(){
-            super();
-            this.id = "Empty";
-            this.className ="org.opendolphin.core.comm.EmptyNotification";
-        }
-
+    className:string;
+    constructor(){
+        super();
+        this.id = "Empty";
+        this.className ="org.opendolphin.core.comm.EmptyNotification";
     }
+
 }

@@ -1,14 +1,13 @@
-/// <reference path="Command.ts" />
-module opendolphin {
+import Command from './Command'
 
-    export class SwitchPresentationModelCommand extends Command {
 
-        className:string;
+export default class SwitchPresentationModelCommand extends Command {
 
-        constructor(public pmId:string, public sourcePmId:string) {
-            super();
-            this.id = 'SwitchPresentationModel';
-            this.className = "org.opendolphin.core.comm.SwitchPresentationModelCommand";
-        }
+    className:string;
+
+    constructor(public pmId:string, public sourcePmId:string) {
+        super();
+        this.id = 'SwitchPresentationModel';
+        this.className = "org.opendolphin.core.comm.SwitchPresentationModelCommand";
     }
 }

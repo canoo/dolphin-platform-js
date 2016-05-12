@@ -20,14 +20,10 @@ describe('Dolphin Message Distribution', function() {
     };
 
 
-    beforeEach(sinon.test(function() {
-        //var openDolphinBuilder = new opendolphin.DolphinBuilder();
-        //this.stub(openDolphinBuilder, "build").returns(dolphin);
-        //this.stub(opendolphin, "makeDolphin").returns(openDolphinBuilder);
-
+    beforeEach(function() {
         classRepository = new ClassRepository(dolphin);
         new Connector('http://localhost', dolphin, classRepository);
-    }));
+    });
 
 
     it('should call registerClass()', sinon.test(function() {

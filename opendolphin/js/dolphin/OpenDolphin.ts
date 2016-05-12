@@ -1,4 +1,6 @@
-/// <reference path="DolphinBuilder.ts"/>
+import ClientDolphin from "./ClientDolphin";
+import DolphinBuilder from "./DolphinBuilder";
+
 
 /**
  * JS-friendly facade to avoid too many dependencies in plain JS code.
@@ -9,16 +11,13 @@
  * Dierk Koenig
  */
 
-module opendolphin {
-    // factory method for the initialized dolphin
-    // Deprecated ! Use 'makeDolphin() instead
-    export function dolphin(url:string, reset:boolean, slackMS:number = 300):ClientDolphin {
-        return makeDolphin().url(url).reset(reset).slackMS(slackMS).build();
-    }
+// factory method for the initialized dolphin
+// Deprecated ! Use 'makeDolphin() instead
+export function dolphin(url:string, reset:boolean, slackMS:number = 300):ClientDolphin {
+    return makeDolphin().url(url).reset(reset).slackMS(slackMS).build();
+}
 
-    // factory method to build an initialized dolphin
-    export function makeDolphin():DolphinBuilder {
-        return new DolphinBuilder();
-    }
-
+// factory method to build an initialized dolphin
+export function makeDolphin():DolphinBuilder {
+    return new DolphinBuilder();
 }

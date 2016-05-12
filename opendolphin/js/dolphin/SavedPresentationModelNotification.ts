@@ -1,14 +1,13 @@
-/// <reference path="Command.ts" />
-module opendolphin {
+import Command from './Command'
 
-    export class SavedPresentationModelNotification extends Command {
 
-        className:string;
+export default class SavedPresentationModelNotification extends Command {
 
-        constructor(public pmId:string) {
-            super();
-            this.id = 'SavedPresentationModel';
-            this.className = "org.opendolphin.core.comm.SavedPresentationModelNotification";
-        }
+    className:string;
+
+    constructor(public pmId:string) {
+        super();
+        this.id = 'SavedPresentationModel';
+        this.className = "org.opendolphin.core.comm.SavedPresentationModelNotification";
     }
 }

@@ -1,15 +1,13 @@
-/// <reference path="Command.ts" />
+import Command from './Command'
 
-module opendolphin {
 
-    export class ChangeAttributeMetadataCommand extends Command {
+export default class ChangeAttributeMetadataCommand extends Command {
 
-        className:string;
+    className:string;
 
-        constructor(public attributeId:string, public metadataName:string, public value:any) {
-            super();
-            this.id = 'ChangeAttributeMetadata';
-            this.className = "org.opendolphin.core.comm.ChangeAttributeMetadataCommand";
-        }
+    constructor(public attributeId:string, public metadataName:string, public value:any) {
+        super();
+        this.id = 'ChangeAttributeMetadata';
+        this.className = "org.opendolphin.core.comm.ChangeAttributeMetadataCommand";
     }
 }

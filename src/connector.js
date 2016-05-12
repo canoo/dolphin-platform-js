@@ -19,7 +19,7 @@
 
 require('./polyfills.js');
 var Promise = require('../bower_components/core.js/library/fn/promise');
-var opendolphin = require('../opendolphin/build/opendolphin.js');
+var ClientModelStore = require('../opendolphin/build/ClientModelStore');
 var utils = require('./utils.js');
 var exists = utils.exists;
 var checkMethod = utils.checkMethod;
@@ -60,9 +60,9 @@ function Connector(url, dolphin, classRepository, config) {
         var model = event.clientPresentationModel;
         var sourceSystem = model.findAttributeByPropertyName(SOURCE_SYSTEM);
         if (exists(sourceSystem) && sourceSystem.value === SOURCE_SYSTEM_SERVER) {
-            if (event.eventType === opendolphin.Type.ADDED) {
+            if (event.eventType === ClientModelStore.Type.ADDED) {
                 self.onModelAdded(model);
-            } else if (event.eventType === opendolphin.Type.REMOVED) {
+            } else if (event.eventType === ClientModelStore.Type.REMOVED) {
                 self.onModelRemoved(model);
             }
         }

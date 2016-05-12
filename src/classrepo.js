@@ -19,8 +19,7 @@
 
 require('./polyfills.js');
 var Map = require('../bower_components/core.js/library/fn/map');
-var opendolphin = require('../opendolphin/build/opendolphin.js');
-
+var Tag = require('../opendolphin/build/Tag').default;
 var consts = require('./constants');
 
 var utils = require('./utils.js');
@@ -254,7 +253,7 @@ ClassRepository.prototype.load = function (model) {
     var classInfo = this.classes.get(model.presentationModelType);
     var bean = {};
     model.attributes.filter(function (attribute) {
-        return (attribute.tag === opendolphin.Tag.value()) && (attribute.propertyName.search(/^@/) < 0);
+        return (attribute.tag === Tag.value()) && (attribute.propertyName.search(/^@/) < 0);
     }).forEach(function (attribute) {
         bean[attribute.propertyName] = null;
         attribute.onValueChange(function (event) {

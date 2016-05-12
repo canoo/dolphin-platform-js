@@ -8,13 +8,11 @@
 </head>
 <body>
 <div id="mocha"></div>
-<script src="../bower_components/open-dolphin-js/dist/opendolphin.js"></script>
 <script src="../node_modules/mocha/mocha.js"></script>
 <script>mocha.setup('bdd')</script>
 <script src="./build/test-bundle.js"></script>
 <script>
     mocha.checkLeaks();
-    mocha.globals(['opendolphin']);
     if (window.mochaPhantomJS) {
         mochaPhantomJS.run();
     } else {

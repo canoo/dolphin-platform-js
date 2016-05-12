@@ -1,14 +1,13 @@
-/// <reference path="Command.ts" />
-module opendolphin {
+import Command from './Command'
 
-    export class ResetPresentationModelCommand extends Command {
 
-        className:string;
+export default class ResetPresentationModelCommand extends Command {
 
-        constructor(public pmId:string) {
-            super();
-            this.id = 'ResetPresentationModel';
-            this.className = "org.opendolphin.core.comm.ResetPresentationModelCommand";
-        }
+    className:string;
+
+    constructor(public pmId:string) {
+        super();
+        this.id = 'ResetPresentationModel';
+        this.className = "org.opendolphin.core.comm.ResetPresentationModelCommand";
     }
 }
