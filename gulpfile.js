@@ -63,7 +63,7 @@ var testBundler = browserify(assign({}, watchify.args, {
 function rebundleTest(bundler) {
     return bundler
         .transform(istanbul({
-            ignore: ['**/src/polyfills.js', '**/libsrc/**/*.js']
+            ignore: ['**/src/polyfills.js', '**/opendolphin/**/*.js']
         }))
         .bundle()
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
