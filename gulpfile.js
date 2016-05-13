@@ -185,7 +185,7 @@ gulp.task('sonar', ['ci'], function () {
 
 
 
-gulp.task('ci-common', ['build', 'build-test', 'build-test:od', 'lint-tc']);
+gulp.task('ci-common', ['build', 'build-test', /* 'build-test:od', */ 'lint-tc']);
 
 gulp.task('ci-test:od', ['ci-common'], function(done) {
     new Server({
@@ -209,7 +209,7 @@ gulp.task('ci-test', ['ci-common'], function(done) {
     }, done).start();
 });
 
-gulp.task('ci', ['ci-common', 'ci-test', 'ci-test:od']);
+gulp.task('ci', ['ci-common', 'ci-test' /*, 'ci-test:od' */]);
 
 
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
