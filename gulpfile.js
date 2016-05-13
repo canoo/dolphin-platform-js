@@ -185,7 +185,7 @@ gulp.task('sonar', ['ci'], function () {
 
 
 
-gulp.task('ci-common', ['build', 'build-test', 'lint-tc']);
+gulp.task('ci-common', ['build', 'build-test', 'build-test:od', 'lint-tc']);
 
 gulp.task('ci-test:od', ['ci-common'], function(done) {
     new Server({
