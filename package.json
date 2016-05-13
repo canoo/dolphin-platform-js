@@ -34,7 +34,6 @@
     "jshint": "2.9.x",
     "jshint-teamcity": "1.0.x",
     "karma": "0.13.x",
-    "karma-browserify": "5.0.x",
     "karma-coverage": "1.0.x",
     "karma-mocha": "1.0.x",
     "karma-phantomjs-launcher": "1.0.x",
@@ -44,6 +43,7 @@
     "mocha": "2.4.x",
     "phantomjs": "2.1.x",
     "sinon": "1.17.x",
+    "tsify": "^0.15.5",
     "vinyl-buffer": "1.0.x",
     "vinyl-source-stream": "1.1.x",
     "watchify": "3.7.x"

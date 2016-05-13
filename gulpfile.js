@@ -11,6 +11,7 @@ var glob = require('glob');
 var assign = require('lodash.assign');
 var buffer = require('vinyl-buffer');
 var source = require('vinyl-source-stream');
+var tsify = require('tsify');
 var watchify = require('watchify');
 
 var Server = require('karma').Server;
@@ -20,7 +21,7 @@ var config = typeof $.util.env['configFile'] === 'string'? require($.util.env['c
 
 
 gulp.task('clean', function() {
-    del(['dist', 'test/build', 'opendolphin/build', 'coverage']);
+    del(['dist', 'test/build', 'opendolphin/build', 'opendolphin/test/build', 'coverage']);
 });
 
 
@@ -39,6 +40,20 @@ gulp.task('lint-tc', function() {
 });
 
 
+gulp.task('build-test:od', ['build:od'], function() {
+    var bundle = browserify({debug: true})
+        .add(glob.sync('./opendolphin/test*/**/*.ts'))
+        .add('./opendolphin/testrunner/tsUnitKarmaAdapter.js')
+        .plugin(tsify);
+
+    return bundle.bundle()
+        .on('error', $.util.log.bind($.util, 'Browserify Error'))
+        .pipe(source('test-bundle.js'))
+        .pipe(buffer())
+        .pipe($.sourcemaps.init({loadMaps: true}))
+        .pipe($.sourcemaps.write('./'))
+        .pipe(gulp.dest('./opendolphin/test/build'));
+});
 
 var testBundler = browserify(assign({}, watchify.args, {
     entries: glob.sync('./test/src/**/test-*.js'),
@@ -59,8 +74,15 @@ function rebundleTest(bundler) {
         .pipe(gulp.dest('./test/build'))
 }
 
-gulp.task('build-test', ['build-od'], function() {
+gulp.task('build-test', ['build:od'], function() {
     return rebundleTest(testBundler);
+});
+
+gulp.task('test:od', ['build-test:od'], function(done) {
+    new Server({
+        configFile: __dirname + '/opendolphin/testrunner/karma.conf.js',
+        singleRun: true
+    }, done).start();
 });
 
 gulp.task('test', ['build-test'], function(done) {
@@ -74,7 +96,7 @@ gulp.task('verify', ['lint', 'test']);
 
 
 
-gulp.task('build-od', function() {
+gulp.task('build:od', function() {
     return gulp.src('opendolphin/js/dolphin/*.ts')
       .pipe($.typescript({
           module: 'commonjs'
@@ -105,7 +127,7 @@ function rebundle(bundler) {
         .pipe(gulp.dest('./dist'));
 }
 
-gulp.task('build', ['build-od'], function() {
+gulp.task('build', ['build:od'], function() {
     return rebundle(mainBundler);
 });
 
@@ -118,7 +140,7 @@ gulp.task('watch', function() {
     watchedMainBundler.on('update', function() {rebundle(watchedMainBundler)});
 
     var watchedTestBundler = watchify(testBundler);
-    watchedTestBundler.on('update', function() {rebundle(watchedTestBundler)});
+    watchedTestBundler.on('update', function() {rebundleTest(watchedTestBundler)});
 });
 
 gulp.task('default', ['verify', 'build', 'watch']);

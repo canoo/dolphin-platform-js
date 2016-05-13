@@ -1,40 +1,39 @@
-/// <reference path="../testsuite/tsUnit.ts"/>
-/// <reference path="../test/dolphin/ClientAttributeTests.ts"/>
-/// <reference path="../test/dolphin/ClientPresentationModelTests.ts"/>
-/// <reference path="../test/dolphin/NamedCommandTests.ts"/>
-/// <reference path="../test/dolphin/ValueChangedCommandTests.ts"/>
-/// <reference path="../test/dolphin/ChangeAttributeMetadataCommandTests.ts"/>
-/// <reference path="../test/dolphin/EmptyNotificationTests.ts"/>
-/// <reference path="../test/dolphin/CreatePresentationModelCommandTests.ts"/>
-/// <reference path="../test/dolphin/ClientDolphinTests.ts"/>
-/// <reference path="../test/dolphin/ClientConnectorTests.ts"/>
-/// <reference path="../test/dolphin/CommandBatcherTests.ts"/>
-/// <reference path="../test/dolphin/MapTests.ts"/>
-/// <reference path="../test/dolphin/ClientModelStoreTests.ts"/>
-/// <reference path="../test/dolphin/CodecTest.ts"/>
-/// <reference path="../test/dolphin/DolphinBuilderTest.ts"/>
+import ChangeAttributeMetadataCommandTests from "../test/dolphin/ChangeAttributeMetadataCommandTests";
+import ClientAttributeTests from '../test/dolphin/ClientAttributeTests';
+import ClientConnectorTests from "../test/dolphin/ClientConnectorTests";
+import ClientDolphinTests from "../test/dolphin/ClientDolphinTests";
+import ClientModelStoreTests from "../test/dolphin/ClientModelStoreTests";
+import ClientPresentationModelTests from "../test/dolphin/ClientPresentationModelTests";
+import CodecTest from "../test/dolphin/CodecTest";
+import CommandBatcherTests from "../test/dolphin/CommandBatcherTests";
+import CreatePresentationModelCommandTests from "../test/dolphin/CreatePresentationModelCommandTests";
+import DolphinBuilderTest from "../test/dolphin/DolphinBuilderTest";
+import EmptyNotificationTests from "../test/dolphin/EmptyNotificationTests";
+import MapTests from "../test/dolphin/MapTests";
+import NamedCommandTests from "../test/dolphin/NamedCommandTests";
+import ValueChangedCommandTests from "../test/dolphin/ValueChangedCommandTests";
 
-module allTests {
-    export function testAll() {
-        var test = new tsUnit.Test();
+import { Test } from "./tsUnit";
 
-        // add your test class (you can call this multiple times)
-        test.addTestClass(new opendolphin.ClientAttributeTests(), "ClientAttributeTests");
-        test.addTestClass(new opendolphin.ClientPresentationModelTests(), "ClientPresentationModelTests");
-        test.addTestClass(new opendolphin.NamedCommandTests(), "NamedCommandTests");
-        test.addTestClass(new opendolphin.ValueChangedCommandTests(), "ValueChangedCommandTests");
-        test.addTestClass(new opendolphin.ChangeAttributeMetadataCommandTests(), "ChangeAttributeMetadataCommandTests");
-        test.addTestClass(new opendolphin.EmptyNotificationTests(), "EmptyNotificationTests");
-        test.addTestClass(new opendolphin.CreatePresentationModelCommandTests(), "CreatePresentationModelCommandTests");
-        test.addTestClass(new opendolphin.ClientDolphinTests(), "ClientDolphinTests");
-        test.addTestClass(new opendolphin.ClientConnectorTests(), "ClientConnectorTests");
-        test.addTestClass(new opendolphin.CommandBatcherTests(), "CommandBatcherTests");
-        test.addTestClass(new opendolphin.MapTests(), "MapTests");
-        test.addTestClass(new opendolphin.ClientModelStoreTests(), "ClientModelStoreTests");
-        test.addTestClass(new opendolphin.CodecTest(), "CodecTest");
-        test.addTestClass(new opendolphin.DolphinBuilderTest(), "DolphinBuilder");
 
-        return test.run();
-    }
+export function testAll() {
+    var test = new Test();
+
+    // add your test class (you can call this multiple times)
+    test.addTestClass(new ClientAttributeTests(), "ClientAttributeTests");
+    test.addTestClass(new ClientPresentationModelTests(), "ClientPresentationModelTests");
+    test.addTestClass(new NamedCommandTests(), "NamedCommandTests");
+    test.addTestClass(new ValueChangedCommandTests(), "ValueChangedCommandTests");
+    test.addTestClass(new ChangeAttributeMetadataCommandTests(), "ChangeAttributeMetadataCommandTests");
+    test.addTestClass(new EmptyNotificationTests(), "EmptyNotificationTests");
+    test.addTestClass(new CreatePresentationModelCommandTests(), "CreatePresentationModelCommandTests");
+    test.addTestClass(new ClientDolphinTests(), "ClientDolphinTests");
+    test.addTestClass(new ClientConnectorTests(), "ClientConnectorTests");
+    test.addTestClass(new CommandBatcherTests(), "CommandBatcherTests");
+    test.addTestClass(new MapTests(), "MapTests");
+    test.addTestClass(new ClientModelStoreTests(), "ClientModelStoreTests");
+    test.addTestClass(new CodecTest(), "CodecTest");
+    test.addTestClass(new DolphinBuilderTest(), "DolphinBuilder");
+
+    return test.run();
 }
-

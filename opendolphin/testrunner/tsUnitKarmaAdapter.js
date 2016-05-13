@@ -1,3 +1,5 @@
+var allTests = require('./AllTests');
+
 (function (window) {
 
     window.__karma__.start = runAllTests(window.__karma__);

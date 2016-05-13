@@ -1,15 +1,14 @@
-/// <reference path="../../testsuite/tsUnit.ts"/>
-/// <reference path="../../js/dolphin/NamedCommand.ts"/>
+import NamedCommand from "../../js/dolphin/NamedCommand";
+
+import { TestClass } from "../../testrunner/tsUnit";
 
 
-module opendolphin {
-    export class NamedCommandTests extends tsUnit.TestClass {
+export default class NamedCommandTests extends TestClass {
 
-        createNamedCommandWithGivenParameter(){
-            var namedCommand = new NamedCommand("CustomId");
-            this.areIdentical(namedCommand.id,"CustomId");
-            this.areIdentical(namedCommand.className,"org.opendolphin.core.comm.NamedCommand");
-        }
-
+    createNamedCommandWithGivenParameter(){
+        var namedCommand = new NamedCommand("CustomId");
+        this.areIdentical(namedCommand.id,"CustomId");
+        this.areIdentical(namedCommand.className,"org.opendolphin.core.comm.NamedCommand");
     }
+
 }
