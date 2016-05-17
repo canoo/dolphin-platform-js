@@ -21,8 +21,13 @@ describe('Dolphin Message Distribution', function() {
 
 
     beforeEach(function() {
+        var server = sinon.fakeServer.create();
+
         classRepository = new ClassRepository(dolphin);
         new Connector('http://localhost', dolphin, classRepository);
+
+        server.respond();
+        server.restore();
     });
 
 
@@ -111,13 +116,14 @@ describe('Dolphin Event Handling', function() {
 
 
     beforeEach(sinon.test(function() {
-        //var openDolphinBuilder = new opendolphin.DolphinBuilder();
-        //this.stub(openDolphinBuilder, "build").returns(dolphin);
-        //this.stub(opendolphin, "makeDolphin").returns(openDolphinBuilder);
+        var server = sinon.fakeServer.create();
 
         classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
         new Connector('http://localhost', dolphin, classRepository);
+
+        server.respond();
+        server.restore();
     }));
 
 
@@ -484,7 +490,13 @@ describe('Dolphin Command', function() {
         classRepository = new ClassRepository(dolphin);
         this.server.respondImmediately = true;
         this.server.respondWith([200, {}, '']);
+
+        var server = sinon.fakeServer.create();
+
         connector = new Connector('http://localhost', dolphin, classRepository);
+
+        server.respond();
+        server.restore();
     }));
 
 
