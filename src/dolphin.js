@@ -18,7 +18,7 @@
 "use strict";
 
 require('./polyfills.js');
-var OpenDolphin = require('../opendolphin/build/OpenDolphin.js').default;
+var OpenDolphin = require('../opendolphin/build/OpenDolphin.js');
 
 var utils = require('./utils.js');
 var exists = utils.exists;
