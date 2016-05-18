@@ -40,8 +40,6 @@ var SOURCE_SYSTEM_SERVER = 'server';
 
 
 
-var initializer;
-
 function Connector(url, dolphin, classRepository, config) {
     checkMethod('Connector(url, dolphin, classRepository, config)');
     checkParam(url, 'url');
@@ -73,27 +71,6 @@ function Connector(url, dolphin, classRepository, config) {
             dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
         }, 500);
     }
-
-    initializer = new Promise(function(resolve, reject) {
-        var req = new XMLHttpRequest();
-        req.withCredentials = true;
-
-        req.onload = function() {
-            if (req.status === 200) {
-                resolve();
-            }
-            else {
-                reject(Error(req.statusText));
-            }
-        };
-
-        req.onerror = function() {
-            reject(Error("Network Error"));
-        };
-
-        req.open('POST', url + 'invalidate?');
-        req.send();
-    });
 }
 
 
@@ -148,13 +125,11 @@ Connector.prototype.invoke = function(command) {
 
     var dolphin = this.dolphin;
     return new Promise(function(resolve) {
-        //initializer.then(function () {
-            dolphin.send(command, {
-                onFinished: function() {
-                    resolve();
-                }
-            });
-        //});
+        dolphin.send(command, {
+            onFinished: function() {
+                resolve();
+            }
+        });
     });
 };
 
