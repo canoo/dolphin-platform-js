@@ -25,6 +25,8 @@ var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 var INIT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'initClientContext';
 var DISCONNECT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'disconnectClientContext';
 
+// TODO: Extend Emitter
+
 function ClientContext(dolphin, beanManager, controllerManager, connector) {
     checkMethod('ClientContext(dolphin, beanManager, controllerManager, connector)');
     checkParam(dolphin, 'dolphin');

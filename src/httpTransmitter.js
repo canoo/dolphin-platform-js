@@ -13,10 +13,11 @@
  * limitations under the License.
  */
 
+import Emitter from 'emitter-component';
+
+
 import { OnSuccessHandler, Transmitter } from '../opendolphin/build/ClientConnector';
-import { Codec } from './codec';
-import Command from '../opendolphin/build/Command';
-import SignalCommand from '../opendolphin/build/SignalCommand';
+import { encode, decode } from './codec';
 
 
 const FINISHED = 4;
@@ -24,84 +25,60 @@ const SUCCESS = 200;
 
 export default class HttpTransmitter {
 
-    constructor(url, errorHandler = null) {
+    constructor(url) {
         this.url = url;
-        this.charset = 'UTF-8';
-        this.errorHandler = errorHandler;
-        this.http = new XMLHttpRequest();
-        this.sig  = new XMLHttpRequest();
-        if ('withCredentials' in this.http) { // browser supports CORS
-            this.http.withCredentials = true; // NOTE: doing this for non CORS requests has no impact
-            this.sig.withCredentials = true;
-        }
-        // NOTE: Browser might support CORS partially so we simply try to use 'this.http' for CORS requests instead of forbidding it
-        // NOTE: XDomainRequest for IE 8, IE 9 not supported by dolphin because XDomainRequest does not support cookies in CORS requests (which are needed for the JSESSIONID cookie)
 
-        this.codec = Codec;
+        this.http = new XMLHttpRequest();
+        this.http.withCredentials = true;
+
+        this.sig  = new XMLHttpRequest();
+        this.sig.withCredentials = true;
     }
 
     transmit(commands, onDone) {
 
-        this.http.onerror = () => {
-            this.handleError('onerror', '');
-            onDone([]);
-        };
+        this.http.onerror = () => this.emit('error', new Error('HttpTransmitter: Network error'));
 
         this.http.onreadystatechange = () => {
             if (this.http.readyState === FINISHED){
                 if(this.http.status === SUCCESS) {
+                    // TODO: Extract clientId
+                    // TODO: Check sessionId
                     const responseText = this.http.responseText;
                     if (responseText.trim().length > 0) {
                         try {
-                            const responseCommands = this.codec.decode(responseText);
+                            const responseCommands = decode(responseText);
                             onDone(responseCommands);
                         } catch (err) {
-                            console.log('Error occurred parsing responseText: ', err);
-                            console.log('Incorrect responseText: ', responseText);
-                            this.handleError('application', 'HttpTransmitter: Incorrect responseText: ' + responseText);
+                            this.emit('error', 'HttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')');
                             onDone([]);
                         }
-                    }
-                    else {
-                        this.handleError('application', 'HttpTransmitter: empty responseText');
+                    } else {
+                        this.emit('error', 'HttpTransmitter: Empty response');
                         onDone([]);
                     }
-                }
-                else {
-                    this.handleError('application', 'HttpTransmitter: HTTP Status != 200');
+                } else {
+                    this.emit('error', 'HttpTransmitter: HTTP Status != 200 (' + this.http.status + ')');
                     onDone([]);
                 }
             }
         };
 
-        this.http.open('POST', this.url, true);
+        this.http.open('POST', this.url);
+        // TODO: Set clientId
         if ('overrideMimeType' in this.http) {
-            this.http.overrideMimeType('application/json; charset=' + this.charset ); // todo make injectable
+            this.http.overrideMimeType('application/json; charset=UTF-8');
         }
-        this.http.send(this.codec.encode(commands));
+        this.http.send(encode(commands));
 
-    }
-
-    handleError(kind, message) {
-        const errorEvent = {
-            kind,
-            url: this.url,
-            httpStatus: this.http.status,
-            message
-        };
-        if (this.errorHandler) {
-            this.errorHandler(errorEvent);
-        } else {
-            console.log('Error occurred: ', errorEvent);
-        }
     }
 
     signal(command) {
-        this.sig.open('POST', this.url, true);
-        this.sig.send(this.codec.encode([command]));
+        this.sig.open('POST', this.url);
+        // TODO: Set clientId
+        this.sig.send(encode([command]));
     }
 
-    // Deprecated ! Use 'reset(OnSuccessHandler) instead
     static invalidate() {
         throw new Error('HttpTransmitter.invalidate() has been deprecated');
     }
@@ -109,5 +86,6 @@ export default class HttpTransmitter {
     static reset() {
         throw new Error('HttpTransmitter.reset() has been deprecated');
     }
-
 }
+
+Emitter(HttpTransmitter.prototype);

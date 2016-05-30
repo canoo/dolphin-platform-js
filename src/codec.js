@@ -14,10 +14,9 @@
  */
 
 /*jslint browserify: true */
-"use strict";
 
 
-var exists = require('./utils.js').exists;
+import { exists } from './utils.js';
 
 
 function encodeCreatePresentationModelCommand(command) {
@@ -87,30 +86,28 @@ function decodeValueChangedCommand(command) {
 }
 
 
-exports.Codec = {
-    encode: function (commands) {
-        return JSON.stringify(commands.map(function (command) {
+export function encode(commands) {
+    return JSON.stringify(commands.map(function (command) {
+        if (command.id === 'CreatePresentationModel') {
+            return encodeCreatePresentationModelCommand(command);
+        } else if (command.id === 'ValueChanged') {
+            return encodeValueChangedCommand(command);
+        }
+        return command;
+    }));
+}
+
+export function decode(transmitted) {
+    if (typeof transmitted === 'string') {
+        return JSON.parse(transmitted).map(function (command) {
             if (command.id === 'CreatePresentationModel') {
-                return encodeCreatePresentationModelCommand(command);
+                return decodeCreatePresentationModelCommand(command);
             } else if (command.id === 'ValueChanged') {
-                return encodeValueChangedCommand(command);
+                return decodeValueChangedCommand(command);
             }
             return command;
-        }));
-    },
-    decode: function (transmitted) {
-        if (typeof transmitted == 'string') {
-            return JSON.parse(transmitted).map(function (command) {
-                if (command.id === 'CreatePresentationModel') {
-                    return decodeCreatePresentationModelCommand(command);
-                } else if (command.id === 'ValueChanged') {
-                    return decodeValueChangedCommand(command);
-                }
-                return command;
-            });
-        }
-        else {
-            return transmitted;
-        }
+        });
+    } else {
+        return transmitted;
     }
-};
+}

@@ -3,20 +3,22 @@
 
 var expect = require('chai').expect;
 
-var Codec = require('../../src/codec.js').Codec;
+var Codec = require('../../src/codec.js');
+var encode = Codec.encode;
+var decode = Codec.decode;
 
 
 
-describe('Codec.encode', function() {
+describe('encode', function() {
 
     it('should encode an empty array', function() {
-        var json = Codec.encode([]);
+        var json = encode([]);
         expect(json).to.equal('[]');
     });
 
     it('should encode single CreatePresentationModelCommand', function() {
         var command = createCPMCommand();
-        var json = Codec.encode([command]);
+        var json = encode([command]);
         expect(json).to.equal('[' + createCPMCommandString() + ']');
     });
 
@@ -28,7 +30,7 @@ describe('Codec.encode', function() {
             "oldValue": null,
             "newValue": null
         };
-        var json = Codec.encode([command]);
+        var json = encode([command]);
         expect(json).to.equal('[{"a":"3357S","id":"ValueChanged"}]');
     });
 
@@ -40,7 +42,7 @@ describe('Codec.encode', function() {
             "oldValue": "Hello World",
             "newValue": "Good Bye"
         };
-        var json = Codec.encode([command]);
+        var json = encode([command]);
         expect(json).to.equal('[{"a":"3357S","o":"Hello World","n":"Good Bye","id":"ValueChanged"}]');
     });
 
@@ -52,7 +54,7 @@ describe('Codec.encode', function() {
             "oldValue": 41,
             "newValue": 42
         };
-        var json = Codec.encode([command]);
+        var json = encode([command]);
         expect(json).to.equal('[{"a":"3357S","o":41,"n":42,"id":"ValueChanged"}]');
     });
 
@@ -64,7 +66,7 @@ describe('Codec.encode', function() {
             "oldValue": 3.1415,
             "newValue": 2.7182
         };
-        var json = Codec.encode([command]);
+        var json = encode([command]);
         expect(json).to.equal('[{"a":"3357S","o":3.1415,"n":2.7182,"id":"ValueChanged"}]');
     });
 
@@ -76,26 +78,26 @@ describe('Codec.encode', function() {
             "oldValue": true,
             "newValue": false
         };
-        var json = Codec.encode([command]);
+        var json = encode([command]);
         expect(json).to.equal('[{"a":"3357S","o":true,"n":false,"id":"ValueChanged"}]');
     });
 
     it('should encode single NamedCommand', function() {
         var command = createNamedCommand();
-        var json = Codec.encode([command]);
+        var json = encode([command]);
         expect(json).to.equal('[' + createNamedCommandString() + ']');
     });
 
     it('should encode two custom codec commands', function() {
         var command = createCPMCommand();
-        var json = Codec.encode([command, command]);
+        var json = encode([command, command]);
         var expected = createCPMCommandString();
         expect(json).to.equal('[' + expected + ',' + expected + ']');
     });
 
     it('should encode two standard codec commands', function() {
         var command = createNamedCommand();
-        var json = Codec.encode([command, command]);
+        var json = encode([command, command]);
         var expected = createNamedCommandString();
         expect(json).to.equal('[' + expected + ',' + expected + ']');
     });
@@ -103,7 +105,7 @@ describe('Codec.encode', function() {
     it('should encode custom codec command and standard codec command', function() {
         var customCodecCommand = createCPMCommand();
         var standardCodecCommand = createNamedCommand();
-        var json = Codec.encode([customCodecCommand, standardCodecCommand]);
+        var json = encode([customCodecCommand, standardCodecCommand]);
         var customCodecCommandString = createCPMCommandString();
         var standardCodecCommandString = createNamedCommandString();
         expect(json).to.equal('[' + customCodecCommandString + ',' + standardCodecCommandString + ']');
@@ -112,7 +114,7 @@ describe('Codec.encode', function() {
     it('should encode custom codec command and standard codec command', function() {
         var standardCodecCommand = createNamedCommand();
         var customCodecCommand = createCPMCommand();
-        var json = Codec.encode([standardCodecCommand, customCodecCommand]);
+        var json = encode([standardCodecCommand, customCodecCommand]);
         var standardCodecCommandString = createNamedCommandString();
         var customCodecCommandString = createCPMCommandString();
         expect(json).to.equal('[' + standardCodecCommandString + ',' + customCodecCommandString + ']');
@@ -121,22 +123,22 @@ describe('Codec.encode', function() {
 
 
 
-describe('Codec.decode', function() {
+describe('decode', function() {
 
     it('should decode an empty array', function() {
-        var commands = Codec.decode('[]');
+        var commands = decode('[]');
 
         expect(commands).to.be.empty;
     });
 
     it('should decode single CreatePresentationModelCommand', function() {
-        var commands = Codec.decode('[' + createCPMCommandString() + ']');
+        var commands = decode('[' + createCPMCommandString() + ']');
 
         expect(commands).to.deep.equal([createCPMCommand()]);
     });
 
     it('should decode single ValueChangedCommand with nulls', function() {
-        var commands = Codec.decode('[{"a":"3357S","id":"ValueChanged"}]');
+        var commands = decode('[{"a":"3357S","id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
@@ -148,7 +150,7 @@ describe('Codec.decode', function() {
     });
 
     it('should decode single ValueChangedCommand with Strings', function() {
-        var commands = Codec.decode('[{"a":"3357S","o":"Hello World","n":"Good Bye","id":"ValueChanged"}]');
+        var commands = decode('[{"a":"3357S","o":"Hello World","n":"Good Bye","id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
@@ -160,7 +162,7 @@ describe('Codec.decode', function() {
     });
 
     it('should decode single ValueChangedCommand with ints', function() {
-        var commands = Codec.decode('[{"a":"3357S","o":41,"n":42,"id":"ValueChanged"}]');
+        var commands = decode('[{"a":"3357S","o":41,"n":42,"id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
@@ -172,7 +174,7 @@ describe('Codec.decode', function() {
     });
 
     it('should decode single ValueChangedCommand with floating points', function() {
-        var commands = Codec.decode('[{"a":"3357S","o":3.1415,"n":2.7182,"id":"ValueChanged"}]');
+        var commands = decode('[{"a":"3357S","o":3.1415,"n":2.7182,"id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
@@ -184,7 +186,7 @@ describe('Codec.decode', function() {
     });
 
     it('should decode single ValueChangedCommand with booleans', function() {
-        var commands = Codec.decode('[{"a":"3357S","o":true,"n":false,"id":"ValueChanged"}]');
+        var commands = decode('[{"a":"3357S","o":true,"n":false,"id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
@@ -196,7 +198,7 @@ describe('Codec.decode', function() {
     });
 
     it('should decode single NamedCommand', function() {
-        var commands = Codec.decode('[' + createNamedCommandString() + ']');
+        var commands = decode('[' + createNamedCommandString() + ']');
 
         expect(commands).to.deep.equal([createNamedCommand()]);
     });
@@ -204,7 +206,7 @@ describe('Codec.decode', function() {
     it('should decode two custom codec commands', function() {
         var customCodecCommandString = createCPMCommandString();
 
-        var commands = Codec.decode('[' + customCodecCommandString + ',' + customCodecCommandString + ']');
+        var commands = decode('[' + customCodecCommandString + ',' + customCodecCommandString + ']');
 
         var customCodecCommand = createCPMCommand();
         expect(commands).to.deep.equal([customCodecCommand, customCodecCommand]);
@@ -213,7 +215,7 @@ describe('Codec.decode', function() {
     it('should decode two standard codec commands', function() {
         var standardCodecCommandString = createNamedCommandString();
 
-        var commands = Codec.decode('[' + standardCodecCommandString + ',' + standardCodecCommandString + ']');
+        var commands = decode('[' + standardCodecCommandString + ',' + standardCodecCommandString + ']');
 
         var standardCodecCommand = createNamedCommand();
         expect(commands).to.deep.equal([standardCodecCommand, standardCodecCommand]);
@@ -223,7 +225,7 @@ describe('Codec.decode', function() {
         var customCodecCommandString = createCPMCommandString();
         var standardCodecCommandString = createNamedCommandString();
 
-        var commands = Codec.decode('[' + customCodecCommandString + ',' + standardCodecCommandString + ']');
+        var commands = decode('[' + customCodecCommandString + ',' + standardCodecCommandString + ']');
 
         var customCodecCommand = createCPMCommand();
         var standardCodecCommand = createNamedCommand();
@@ -234,7 +236,7 @@ describe('Codec.decode', function() {
         var standardCodecCommandString = createNamedCommandString();
         var customCodecCommandString = createCPMCommandString();
 
-        var commands = Codec.decode('[' + standardCodecCommandString + ',' + customCodecCommandString + ']');
+        var commands = decode('[' + standardCodecCommandString + ',' + customCodecCommandString + ']');
 
         var standardCodecCommand = createNamedCommand();
         var customCodecCommand = createCPMCommand();

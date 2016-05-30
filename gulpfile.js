@@ -10,7 +10,6 @@ var buffer = require('vinyl-buffer');
 var del = require('del');
 var glob = require('glob');
 var istanbul = require('browserify-istanbul');
-var shim = require('browserify-shim');
 var source = require('vinyl-source-stream');
 var tsify = require('tsify');
 var watchify = require('watchify');
@@ -26,6 +25,7 @@ gulp.task('clean', function() {
 });
 
 
+// TODO: Fix lint for es6
 
 gulp.task('lint', function() {
     return gulp.src(['./src/**/*.js', '!./src/polyfills.js', './test/src/**/*.js'])
@@ -63,6 +63,7 @@ var testBundler = browserify(assign({}, watchify.args, {
 
 function rebundleTest(bundler) {
     return bundler
+        .transform('babelify')
         .transform(istanbul({
             ignore: ['**/src/polyfills.js', '**/opendolphin/**/*.js']
         }))

@@ -20,7 +20,6 @@
     "babelify": "^7.3.0",
     "browserify": "13.0.x",
     "browserify-istanbul": "2.0.x",
-    "browserify-shim": "3.8.x",
     "chai": "3.5.x",
     "del": "2.2.x",
     "eslint": "^2.11.0",
@@ -55,15 +54,9 @@
     "vinyl-source-stream": "1.1.x",
     "watchify": "3.7.x"
   },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
-  "browserify-shim": {
-    "opendolphin": "global:opendolphin"
-  },
   "dependencies": {
-    "babel-polyfill": "^6.9.1"
+    "babel-polyfill": "^6.9.1",
+    "emitter-component": "^1.1.1",
+    "http-browserify": "^1.7.0"
   }
 }

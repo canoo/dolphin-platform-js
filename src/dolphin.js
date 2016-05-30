@@ -43,6 +43,8 @@ exports.connect = function(url, config) {
 
     dolphin.clientConnector.transmitter = new HttpTransmitter(url);
 
+    // TODO: Forward error-events from transmitter to clientContext
+
     var classRepository = new ClassRepository(dolphin);
     var beanManager = new BeanManager(classRepository);
     var connector = new Connector(url, dolphin, classRepository, config);
