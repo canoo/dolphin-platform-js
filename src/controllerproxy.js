@@ -17,7 +17,6 @@
 /* global console */
 "use strict";
 
-require('./polyfills.js');
 var Set = require('../bower_components/core.js/library/fn/set');
 var utils = require('./utils.js');
 var checkMethod = utils.checkMethod;

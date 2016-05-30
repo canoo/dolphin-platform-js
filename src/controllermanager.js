@@ -17,7 +17,6 @@
 /* global console */
 "use strict";
 
-require('./polyfills.js');
 var Promise = require('../bower_components/core.js/library/fn/promise');
 var Set = require('../bower_components/core.js/library/fn/set');
 var utils = require('./utils.js');

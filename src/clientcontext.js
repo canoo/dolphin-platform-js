@@ -17,7 +17,6 @@
 /* global console */
 "use strict";
 
-require('./polyfills.js');
 var utils = require('./utils.js');
 var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;

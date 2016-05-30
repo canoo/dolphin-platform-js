@@ -17,7 +17,6 @@
 /* global console */
 "use strict";
 
-require('./polyfills.js');
 var Map = require('../bower_components/core.js/library/fn/map');
 var utils = require('./utils.js');
 var exists = utils.exists;

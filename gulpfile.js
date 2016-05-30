@@ -1,15 +1,16 @@
 "use strict";
 
+require('babel-register');
+
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
-
+var assign = require('lodash.assign');
 var browserify = require('browserify');
-var istanbul = require('browserify-istanbul');
-var shim = require('browserify-shim');
+var buffer = require('vinyl-buffer');
 var del = require('del');
 var glob = require('glob');
-var assign = require('lodash.assign');
-var buffer = require('vinyl-buffer');
+var istanbul = require('browserify-istanbul');
+var shim = require('browserify-shim');
 var source = require('vinyl-source-stream');
 var tsify = require('tsify');
 var watchify = require('watchify');
@@ -114,6 +115,7 @@ var mainBundler = browserify(assign({}, watchify.args, {
 
 function rebundle(bundler) {
     return bundler
+        .transform('babelify')
         .bundle()
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
         .pipe(source('dolphin.js'))

@@ -17,7 +17,6 @@
 /* global console */
 "use strict";
 
-require('./polyfills.js');
 var Promise = require('../bower_components/core.js/library/fn/promise');
 var ClientModelStore = require('../opendolphin/build/ClientModelStore');
 var utils = require('./utils.js');

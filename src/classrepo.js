@@ -17,7 +17,6 @@
 /* global Platform, console */
 "use strict";
 
-require('./polyfills.js');
 var Map = require('../bower_components/core.js/library/fn/map');
 var Tag = require('../opendolphin/build/Tag').default;
 var consts = require('./constants');
