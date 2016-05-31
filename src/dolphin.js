@@ -41,14 +41,15 @@ exports.connect = function(url, config) {
     }
     var dolphin = builder.build();
 
-    dolphin.clientConnector.transmitter = new HttpTransmitter(url);
-
-    // TODO: Forward error-events from transmitter to clientContext
+    var transmitter = new HttpTransmitter(url);
+    transmitter.on('error', function(error) { clientContext.emit('error', error); });
+    dolphin.clientConnector.transmitter = transmitter;
 
     var classRepository = new ClassRepository(dolphin);
     var beanManager = new BeanManager(classRepository);
     var connector = new Connector(url, dolphin, classRepository, config);
     var controllerManager = new ControllerManager(dolphin, classRepository, connector);
 
-    return new ClientContext(dolphin, beanManager, controllerManager, connector);
+    var clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
+    return clientContext;
 };

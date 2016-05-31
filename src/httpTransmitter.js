@@ -18,10 +18,15 @@ import Emitter from 'emitter-component';
 
 import { OnSuccessHandler, Transmitter } from '../opendolphin/build/ClientConnector';
 import { encode, decode } from './codec';
+import { exists } from './utils';
 
 
 const FINISHED = 4;
 const SUCCESS = 200;
+const REQUEST_TIMEOUT = 408;
+
+const DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
+const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
 
 export default class HttpTransmitter {
 
@@ -30,42 +35,91 @@ export default class HttpTransmitter {
 
         this.http = new XMLHttpRequest();
         this.http.withCredentials = true;
+        this.http.onerror = () => this.emit('error', new Error('HttpTransmitter: Network error'));
 
         this.sig  = new XMLHttpRequest();
         this.sig.withCredentials = true;
+        this.sig.onerror = () => this.emit('error', new Error('HttpTransmitter: Network error'));
+
+        this.sig.onreadystatechange = () => {
+            if (this.sig.readyState === FINISHED){
+                switch (this.sig.status) {
+                    case SUCCESS: {
+                        const currentClientId = this.sig.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
+                        if (exists(currentClientId)) {
+                            if (exists(this.clientId) && this.clientId !== currentClientId) {
+                                this.emit('error', new Error('HttpTransmitter: ClientId of the response did not match'));
+                            }
+                            this.clientId = currentClientId;
+                        } else {
+                            this.emit('error', new Error('HttpTransmitter: Server did not send a clientId'));
+                        }
+                        break;
+                    }
+                    case REQUEST_TIMEOUT: {
+                        this.emit('error', new Error('HttpTransmitter: REQUEST_TIMEOUT'));
+                        break;
+                    }
+                    default: {
+                        this.emit('error', new Error('HttpTransmitter: HTTP Status != 200 (' + this.sig.status + ')'));
+                        break;
+                    }
+                }
+            }
+        };
+
     }
 
     transmit(commands, onDone) {
 
-        this.http.onerror = () => this.emit('error', new Error('HttpTransmitter: Network error'));
-
         this.http.onreadystatechange = () => {
             if (this.http.readyState === FINISHED){
-                if(this.http.status === SUCCESS) {
-                    // TODO: Extract clientId
-                    // TODO: Check sessionId
-                    const responseText = this.http.responseText;
-                    if (responseText.trim().length > 0) {
-                        try {
-                            const responseCommands = decode(responseText);
-                            onDone(responseCommands);
-                        } catch (err) {
-                            this.emit('error', 'HttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')');
+                switch (this.http.status) {
+                    case SUCCESS:
+                    {
+                        const currentClientId = this.http.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
+                        if (exists(currentClientId)) {
+                            if (exists(this.clientId) && this.clientId !== currentClientId) {
+                                this.emit('error', new Error('HttpTransmitter: ClientId of the response did not match'));
+                                onDone([]);
+                            }
+                            this.clientId = currentClientId;
+                        } else {
+                            this.emit('error', new Error('HttpTransmitter: Server did not send a clientId'));
+                        }
+                        const responseText = this.http.responseText;
+                        if (responseText.trim().length > 0) {
+                            try {
+                                const responseCommands = decode(responseText);
+                                onDone(responseCommands);
+                            } catch (err) {
+                                this.emit('error', new Error('HttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')'));
+                                onDone([]);
+                            }
+                        } else {
+                            this.emit('error', new Error('HttpTransmitter: Empty response'));
                             onDone([]);
                         }
-                    } else {
-                        this.emit('error', 'HttpTransmitter: Empty response');
-                        onDone([]);
+                        break;
                     }
-                } else {
-                    this.emit('error', 'HttpTransmitter: HTTP Status != 200 (' + this.http.status + ')');
-                    onDone([]);
+                    case REQUEST_TIMEOUT:
+                    {
+                        this.emit('error', new Error('HttpTransmitter: REQUEST_TIMEOUT'));
+                        break;
+                    }
+                    default:
+                    {
+                        this.emit('error', new Error('HttpTransmitter: HTTP Status != 200 (' + this.http.status + ')'));
+                        break;
+                    }
                 }
             }
         };
 
         this.http.open('POST', this.url);
-        // TODO: Set clientId
+        if (exists(this.clientId)) {
+            this.http.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, this.clientId);
+        }
         if ('overrideMimeType' in this.http) {
             this.http.overrideMimeType('application/json; charset=UTF-8');
         }
@@ -75,7 +129,9 @@ export default class HttpTransmitter {
 
     signal(command) {
         this.sig.open('POST', this.url);
-        // TODO: Set clientId
+        if (exists(this.clientId)) {
+            this.sig.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, this.clientId);
+        }
         this.sig.send(encode([command]));
     }
 

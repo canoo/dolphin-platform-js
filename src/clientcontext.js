@@ -17,6 +17,8 @@
 /* global console */
 "use strict";
 
+var Emitter = require('emitter-component');
+
 var utils = require('./utils.js');
 var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
@@ -24,8 +26,6 @@ var checkParam = utils.checkParam;
 var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 var INIT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'initClientContext';
 var DISCONNECT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'disconnectClientContext';
-
-// TODO: Extend Emitter
 
 function ClientContext(dolphin, beanManager, controllerManager, connector) {
     checkMethod('ClientContext(dolphin, beanManager, controllerManager, connector)');
@@ -41,6 +41,8 @@ function ClientContext(dolphin, beanManager, controllerManager, connector) {
 
     this._connector.invoke(INIT_COMMAND_NAME);
 }
+
+Emitter(ClientContext.prototype);
 
 
 ClientContext.prototype.createController = function(name) {
