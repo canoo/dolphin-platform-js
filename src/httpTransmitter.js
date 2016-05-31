@@ -16,9 +16,10 @@
 import Emitter from 'emitter-component';
 
 
+import { exists } from './utils';
+import { DolphinRemotingError, DolphinSessionError, HttpResponseError } from './errors';
 import { OnSuccessHandler, Transmitter } from '../opendolphin/build/ClientConnector';
 import { encode, decode } from './codec';
-import { exists } from './utils';
 
 
 const FINISHED = 4;
@@ -32,111 +33,76 @@ export default class HttpTransmitter {
 
     constructor(url) {
         this.url = url;
+    }
 
-        this.http = new XMLHttpRequest();
-        this.http.withCredentials = true;
-        this.http.onerror = () => this.emit('error', new Error('HttpTransmitter: Network error'));
+    send(commands) {
+        return new Promise((resolve, reject) => {
+            const http = new XMLHttpRequest();
+            http.withCredentials = true;
 
-        this.sig  = new XMLHttpRequest();
-        this.sig.withCredentials = true;
-        this.sig.onerror = () => this.emit('error', new Error('HttpTransmitter: Network error'));
-
-        this.sig.onreadystatechange = () => {
-            if (this.sig.readyState === FINISHED){
-                switch (this.sig.status) {
-                    case SUCCESS: {
-                        const currentClientId = this.sig.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
-                        if (exists(currentClientId)) {
-                            if (exists(this.clientId) && this.clientId !== currentClientId) {
-                                this.emit('error', new Error('HttpTransmitter: ClientId of the response did not match'));
+            http.onerror = (error) => reject(new DolphinRemotingError('HttpTransmitter: Network error', error));
+            http.onreadystatechange = () => {
+                if (http.readyState === FINISHED){
+                    switch (http.status) {
+                        case SUCCESS:
+                        {
+                            const currentClientId = http.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
+                            if (exists(currentClientId)) {
+                                if (exists(this.clientId) && this.clientId !== currentClientId) {
+                                    reject(new DolphinSessionError('HttpTransmitter: ClientId of the response did not match'));
+                                }
+                                this.clientId = currentClientId;
+                            } else {
+                                reject(new DolphinSessionError('HttpTransmitter: Server did not send a clientId'));
                             }
-                            this.clientId = currentClientId;
-                        } else {
-                            this.emit('error', new Error('HttpTransmitter: Server did not send a clientId'));
+                            resolve(http.responseText);
+                            break;
                         }
-                        break;
-                    }
-                    case REQUEST_TIMEOUT: {
-                        this.emit('error', new Error('HttpTransmitter: REQUEST_TIMEOUT'));
-                        break;
-                    }
-                    default: {
-                        this.emit('error', new Error('HttpTransmitter: HTTP Status != 200 (' + this.sig.status + ')'));
-                        break;
+
+                        case REQUEST_TIMEOUT:
+                            reject(new DolphinSessionError('HttpTransmitter: Session Timeout'));
+                            break;
+
+                        default:
+                            reject(new HttpResponseError('HttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
+                            break;
                     }
                 }
-            }
-        };
+            };
 
+            http.open('POST', this.url);
+            if (exists(this.clientId)) {
+                http.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, this.clientId);
+            }
+            http.send(encode(commands));
+        });
     }
 
     transmit(commands, onDone) {
-
-        this.http.onreadystatechange = () => {
-            if (this.http.readyState === FINISHED){
-                switch (this.http.status) {
-                    case SUCCESS:
-                    {
-                        const currentClientId = this.http.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
-                        if (exists(currentClientId)) {
-                            if (exists(this.clientId) && this.clientId !== currentClientId) {
-                                this.emit('error', new Error('HttpTransmitter: ClientId of the response did not match'));
-                                onDone([]);
-                            }
-                            this.clientId = currentClientId;
-                        } else {
-                            this.emit('error', new Error('HttpTransmitter: Server did not send a clientId'));
-                        }
-                        const responseText = this.http.responseText;
-                        if (responseText.trim().length > 0) {
-                            try {
-                                const responseCommands = decode(responseText);
-                                onDone(responseCommands);
-                            } catch (err) {
-                                this.emit('error', new Error('HttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')'));
-                                onDone([]);
-                            }
-                        } else {
-                            this.emit('error', new Error('HttpTransmitter: Empty response'));
-                            onDone([]);
-                        }
-                        break;
+        this.send(commands)
+            .then(responseText => {
+                if (responseText.trim().length > 0) {
+                    try {
+                        const responseCommands = decode(responseText);
+                        onDone(responseCommands);
+                    } catch (err) {
+                        this.emit('error', new HttpResponseError('HttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')'));
+                        onDone([]);
                     }
-                    case REQUEST_TIMEOUT:
-                    {
-                        this.emit('error', new Error('HttpTransmitter: REQUEST_TIMEOUT'));
-                        break;
-                    }
-                    default:
-                    {
-                        this.emit('error', new Error('HttpTransmitter: HTTP Status != 200 (' + this.http.status + ')'));
-                        break;
-                    }
+                } else {
+                    this.emit('error', new HttpResponseError('HttpTransmitter: Empty response'));
+                    onDone([]);
                 }
-            }
-        };
-
-        this.http.open('POST', this.url);
-        if (exists(this.clientId)) {
-            this.http.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, this.clientId);
-        }
-        if ('overrideMimeType' in this.http) {
-            this.http.overrideMimeType('application/json; charset=UTF-8');
-        }
-        this.http.send(encode(commands));
-
+            })
+            .catch(error => {
+                this.emit('error', error);
+                onDone([]);
+            });
     }
 
     signal(command) {
-        this.sig.open('POST', this.url);
-        if (exists(this.clientId)) {
-            this.sig.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, this.clientId);
-        }
-        this.sig.send(encode([command]));
-    }
-
-    static invalidate() {
-        throw new Error('HttpTransmitter.invalidate() has been deprecated');
+        this.send([command])
+            .catch(error => this.emit('error', error));
     }
 
     static reset() {
