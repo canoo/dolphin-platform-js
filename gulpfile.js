@@ -25,20 +25,37 @@ gulp.task('clean', function() {
 });
 
 
-// TODO: Fix lint for es6
-
-gulp.task('lint', function() {
-    return gulp.src(['./src/**/*.js', '!./src/polyfills.js', './test/src/**/*.js'])
+gulp.task('lint:js', function() {
+    return gulp.src(['./src/**/*.js', './test/src/**/*.js'])
         .pipe($.jshint())
         .pipe($.jshint.reporter('default'))
         .pipe($.jshint.reporter('fail'));
 });
 
-gulp.task('lint-tc', function() {
-    return gulp.src(['./src/**/*.js', '!./src/polyfills.js', './test/src/**/*.js'])
+gulp.task('lint:es', function() {
+    return gulp.src(['./src/**/*.es6', './test/src/**/*.es6'])
+        .pipe($.eslint())
+        .pipe($.eslint.format())
+        .pipe($.eslint.failAfterError());
+});
+
+gulp.task('lint', ['lint:js', 'lint:es']);
+
+
+gulp.task('lint-tc:js', function() {
+    return gulp.src(['./src/**/*.js', './test/src/**/*.js'])
         .pipe($.jshint())
         .pipe($.jshint.reporter('jshint-teamcity'));
 });
+
+gulp.task('lint-tc:es', function() {
+    return gulp.src(['./src/**/*.es6', './test/src/**/*.es6'])
+      .pipe($.eslint())
+      .pipe($.eslint.format('node_modules/eslint-teamcity'))
+      .pipe($.eslint.failAfterError());
+});
+
+gulp.task('lint-tc', ['lint-tc:js', 'lint-tc:es']);
 
 
 gulp.task('build-test:od', ['build:od'], function() {

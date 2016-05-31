@@ -1,6 +1,3 @@
-import { exists } from './utils';
-
-
 export class DolphinRemotingError extends Error {
   constructor(message = 'Network Error', detail) {
     super(message);

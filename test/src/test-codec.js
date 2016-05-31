@@ -3,7 +3,7 @@
 
 var expect = require('chai').expect;
 
-var Codec = require('../../src/codec.js');
+var Codec = require('../../src/codec.es6');
 var encode = Codec.encode;
 var decode = Codec.decode;
 

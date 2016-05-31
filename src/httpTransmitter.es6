@@ -17,9 +17,8 @@ import Emitter from 'emitter-component';
 
 
 import { exists } from './utils';
-import { DolphinRemotingError, DolphinSessionError, HttpResponseError } from './errors';
-import { OnSuccessHandler, Transmitter } from '../opendolphin/build/ClientConnector';
-import { encode, decode } from './codec';
+import { DolphinRemotingError, DolphinSessionError, HttpResponseError } from './errors.es6';
+import { encode, decode } from './codec.es6';
 
 
 const FINISHED = 4;
