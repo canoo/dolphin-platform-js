@@ -1,6 +1,6 @@
 {
   "name": "dolphin-js",
-  "version": "0.8.5",
+  "version": "0.8.6",
   "main": "./dist/dolphin.js",
   "homepage": "http://www.dolphin-platform.io",
   "authors": [
