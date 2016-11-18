@@ -3,17 +3,13 @@
 
 module.exports = function (config) {
 
-    // Use ENV vars on TeamCity and sauce.json locally to get credentials
-    if (!process.env.SAUCE_USERNAME) {
-        if (!fs.existsSync('sauce.json')) {
-            console.log('Create a sauce.json with your credentials based on the sauce-sample.json file.');
-            process.exit(1);
-        } else {
-            process.env.SAUCE_USERNAME = require('./sauce').username;
-            process.env.SAUCE_ACCESS_KEY = require('./sauce').accessKey;
-        }
-    }
+    var fs = require('fs');
 
+    // Use ENV vars on TeamCity and sauce.json locally to get credentials
+    if (!process.env.SAUCE_USERNAME && !process.env.SAUCE_ACCESS_KEY && fs.existsSync('sauce.json')) {
+        process.env.SAUCE_USERNAME = require('./sauce').username;
+        process.env.SAUCE_ACCESS_KEY = require('./sauce').accessKey;
+    }
 
 
     config.set({
@@ -39,8 +35,7 @@ module.exports = function (config) {
 
         // preprocess matching files before serving them to the browser
         // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-        preprocessors: {
-        },
+        preprocessors: {},
 
 
         // test results reporter to use
