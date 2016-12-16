@@ -1,6 +1,6 @@
 {
   "name": "dolphin-js",
-  "version": "0.8.8",
+  "version": "0.8.9",
   "description": "JavaScript client of the Dolphin Platform",
   "main": "./dist/dolphin.min.js",
   "repository": {
