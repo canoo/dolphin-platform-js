@@ -1,6 +1,5 @@
 import { ClientAttribute, ValueChangedEvent } from './ClientAttribute'
 import EventBus from './EventBus'
-import Tag from './Tag'
 
 
 export interface InvalidationEvent {
@@ -49,9 +48,9 @@ export class ClientPresentationModel {
         if(!attribute || (this.attributes.indexOf(attribute)>-1)){
             return;
         }
-        if(this.findAttributeByPropertyNameAndTag(attribute.propertyName,attribute.tag)){
+        if(this.findAttributeByPropertyName(attribute.propertyName)){
             throw new Error("There already is an attribute with property name: " + attribute.propertyName
-                +" and tag: "+attribute.tag + " in presentation model with id: "+ this.id);
+                +" in presentation model with id: "+ this.id);
         }
         if(attribute.getQualifier() && this.findAttributeByQualifier(attribute.getQualifier())){
             throw new Error("There already is an attribute with qualifier: " + attribute.getQualifier()
@@ -59,54 +58,11 @@ export class ClientPresentationModel {
         }
         attribute.setPresentationModel(this);
         this.attributes.push(attribute);
-        if(attribute.tag == Tag.value()){ // the consideration here is that only VALUE changes can make a PM dirty. TODO: consistency check with Java client.
-            this.updateDirty();
-        }
         attribute.onValueChange((evt:ValueChangedEvent)=> {
             this.invalidBus.trigger({source: this});
         });
     }
 
-    updateDirty(){
-        for(var i=0;i<this.attributes.length;i++){
-            if(this.attributes[i].isDirty()){
-                this.setDirty(true);
-                return;
-            }
-        };
-        this.setDirty(false);
-    }
-
-    updateAttributeDirtyness(){
-        for(var i=0;i<this.attributes.length;i++){
-            this.attributes[i].updateDirty();
-        }
-    }
-    isDirty(): boolean{
-        return this.dirty;
-    }
-
-    setDirty(dirty:boolean){
-        var oldVal = this.dirty;
-        this.dirty = dirty;
-        this.dirtyValueChangeBus.trigger({ 'oldValue': oldVal, 'newValue': this.dirty });
-    }
-
-    reset(): void{
-        this.attributes.forEach((attribute:ClientAttribute) => {
-            attribute.reset();
-        });
-    }
-
-    rebase(): void{
-        this.attributes.forEach((attribute:ClientAttribute) => {
-            attribute.rebase();
-        });
-    }
-
-    onDirty(eventHandler:(event:ValueChangedEvent) => void) {
-        this.dirtyValueChangeBus.onEvent(eventHandler);
-    }
     onInvalidated(handleInvalidate:(InvalidationEvent) => void) {
         this.invalidBus.onEvent(handleInvalidate);
     }
@@ -115,12 +71,8 @@ export class ClientPresentationModel {
     getAttributes(): ClientAttribute[]{
         return this.attributes.slice(0);
     }
-    getAt(propertyName:string, tag:string = Tag.value()):ClientAttribute{
-        return this.findAttributeByPropertyNameAndTag(propertyName, tag);
-    }
-
-    findAttributeByPropertyName(propertyName: string): ClientAttribute{
-        return this.findAttributeByPropertyNameAndTag(propertyName, Tag.value());
+    getAt(propertyName:string):ClientAttribute{
+        return this.findAttributeByPropertyName(propertyName);
     }
 
     findAllAttributesByPropertyName(propertyName: string): ClientAttribute[]{
@@ -134,10 +86,10 @@ export class ClientPresentationModel {
         return result;
     }
 
-    findAttributeByPropertyNameAndTag(propertyName:string, tag:string): ClientAttribute{
-        if(!propertyName || !tag) return null;
+    findAttributeByPropertyName(propertyName:string): ClientAttribute{
+        if(!propertyName) return null;
         for(var i=0;i<this.attributes.length;i++){
-            if((this.attributes[i].propertyName == propertyName) && (this.attributes[i].tag == tag)){
+            if((this.attributes[i].propertyName == propertyName)){
                 return this.attributes[i];
             }
         }
@@ -165,7 +117,7 @@ export class ClientPresentationModel {
 
     syncWith(sourcePresentationModel: ClientPresentationModel): void{
         this.attributes.forEach((targetAttribute:ClientAttribute) => {
-            var sourceAttribute = sourcePresentationModel.getAt(targetAttribute.propertyName,targetAttribute.tag);
+            var sourceAttribute = sourcePresentationModel.getAt(targetAttribute.propertyName);
             if(sourceAttribute){
                 targetAttribute.syncWith(sourceAttribute);
             }

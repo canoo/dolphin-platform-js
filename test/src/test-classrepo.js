@@ -4,8 +4,6 @@
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-var Tag = require('../../opendolphin/build/Tag').default;
-
 var consts = require('../../src/constants');
 
 var ClassRepository = require('../../src/classrepo.js').ClassRepository;
@@ -49,12 +47,12 @@ describe('ClassRepository primitive properties', function() {
         var beanModel = {
             presentationModelType: 'ComplexClass',
             attributes: [
-                { propertyName: 'booleanProperty', tag: Tag.value(), onValueChange: function() {} },
-                { propertyName: 'floatProperty', tag: Tag.value(), onValueChange: function() {} },
-                { propertyName: 'integerProperty', tag: Tag.value(), onValueChange: function() {} },
-                { propertyName: 'stringProperty', tag: Tag.value(), onValueChange: function() {} },
-                { propertyName: 'dateProperty', tag: Tag.value(), onValueChange: function() {} },
-                { propertyName: 'enumProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'booleanProperty', onValueChange: function() {} },
+                { propertyName: 'floatProperty', onValueChange: function() {} },
+                { propertyName: 'integerProperty', onValueChange: function() {} },
+                { propertyName: 'stringProperty', onValueChange: function() {} },
+                { propertyName: 'dateProperty', onValueChange: function() {} },
+                { propertyName: 'enumProperty', onValueChange: function() {} }
             ]
         };
         var bean = classRepo.load(beanModel);
@@ -75,7 +73,6 @@ describe('ClassRepository primitive properties', function() {
             attributes: [
                 {
                     propertyName: 'booleanProperty',
-                    tag: Tag.value(),
                     onValueChange: function(listener) {
                         booleanPropertyChangeListener = listener;
                     }
@@ -101,7 +98,6 @@ describe('ClassRepository primitive properties', function() {
             attributes: [
                 {
                     propertyName: 'floatProperty',
-                    tag: Tag.value(),
                     onValueChange: function(listener) {
                         floatPropertyChangeListener = listener;
                     }
@@ -127,7 +123,6 @@ describe('ClassRepository primitive properties', function() {
             attributes: [
                 {
                     propertyName: 'integerProperty',
-                    tag: Tag.value(),
                     onValueChange: function(listener) {
                         integerPropertyChangeListener = listener;
                     }
@@ -153,7 +148,6 @@ describe('ClassRepository primitive properties', function() {
             attributes: [
                 {
                     propertyName: 'stringProperty',
-                    tag: Tag.value(),
                     onValueChange: function(listener) {
                         stringPropertyChangeListener = listener;
                     }
@@ -185,7 +179,6 @@ describe('ClassRepository primitive properties', function() {
             attributes: [
                 {
                     propertyName: 'dateProperty',
-                    tag: Tag.value(),
                     onValueChange: function(listener) {
                         datePropertyChangeListener = listener;
                     }
@@ -211,7 +204,6 @@ describe('ClassRepository primitive properties', function() {
             attributes: [
                 {
                     propertyName: 'enumProperty',
-                    tag: Tag.value(),
                     onValueChange: function(listener) {
                         enumPropertyChangeListener = listener;
                     }
@@ -232,7 +224,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'booleanProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -257,7 +248,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'booleanProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -282,7 +272,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'floatProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -307,7 +296,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'floatProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -332,7 +320,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'integerProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -357,7 +344,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'integerProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -382,7 +368,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'stringProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -407,7 +392,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'stringProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -435,7 +419,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'dateProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -463,7 +446,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'dateProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -488,7 +470,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'enumProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -513,7 +494,6 @@ describe('ClassRepository primitive properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'enumProperty',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -567,7 +547,7 @@ describe('ClassRepository Dolphin Bean properties', function() {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean1 = classRepo.load(bean1Model);
@@ -575,7 +555,7 @@ describe('ClassRepository Dolphin Bean properties', function() {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean2 = classRepo.load(bean2Model);
@@ -587,7 +567,7 @@ describe('ClassRepository Dolphin Bean properties', function() {
         var beanModel = {
             presentationModelType: 'ComplexClass',
             attributes: [
-                { propertyName: 'reference', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'reference', onValueChange: function() {} }
             ]
         };
         var bean = classRepo.load(beanModel);
@@ -603,7 +583,6 @@ describe('ClassRepository Dolphin Bean properties', function() {
             attributes: [
                 {
                     propertyName: 'reference',
-                    tag: Tag.value(),
                     onValueChange: function(listener) {
                         propertyChangeListener = listener;
                     }
@@ -624,7 +603,6 @@ describe('ClassRepository Dolphin Bean properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'reference',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {
@@ -649,7 +627,6 @@ describe('ClassRepository Dolphin Bean properties', function() {
         this.stub(dolphin, 'findPresentationModelById');
         var attribute =  {
             propertyName: 'reference',
-            tag: Tag.value(),
             onValueChange: function() {},
             setValue: function(newValue) {
                 check(done, function() {

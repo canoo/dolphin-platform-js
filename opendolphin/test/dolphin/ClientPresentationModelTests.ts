@@ -43,74 +43,9 @@ export default class ClientPresentationModelTests extends TestClass {
         this.areIdentical(pm1,source);
     }
 
-    checkPresentationModelIsDirty(){
-        var pm = new ClientPresentationModel(undefined,undefined);
-        var ca1 = new ClientAttribute("prop1","qual1","value1","VALUE");
-        var ca2 = new ClientAttribute("prop2","qual2","value2","VALUE");
-
-        pm.addAttribute(ca1);
-        pm.addAttribute(ca2);
-        // attributes are not dirty
-        this.areIdentical(ca1.isDirty(),false);
-        this.areIdentical(ca2.isDirty(),false);
-        //PM is not dirty
-        this.areIdentical(pm.isDirty(),false);
-        // attribute1 is dirty
-        ca1.setValue("anotherValue");
-        this.areIdentical(ca1.isDirty(),true);
-
-        //PM should be dirty
-        this.areIdentical(pm.isDirty(),true);
-    }
-
-    checkPresentationModelIsDirtyAfterRebase(){
-        var pm = new ClientPresentationModel(undefined,undefined);
-        var ca1 = new ClientAttribute("prop1","qual1","value1","VALUE");
-        var ca2 = new ClientAttribute("prop2","qual2","value2","VALUE");
-
-        pm.addAttribute(ca1);
-        pm.addAttribute(ca2);
-        // attribute1 is dirty
-        ca1.setValue("anotherValue");
-        this.areIdentical(ca1.isDirty(),true);
-
-        //PM should be dirty
-        this.areIdentical(pm.isDirty(),true);
-
-        pm.rebase();
-        // attributes should not be dirty
-        this.areIdentical(ca1.isDirty(),false);
-        this.areIdentical(ca2.isDirty(),false);
-        //PM should not be dirty
-        this.areIdentical(pm.isDirty(),false);
-    }
-
-    checkPresentationModelIsDirtyAfterReset(){
-        var pm = new ClientPresentationModel(undefined,undefined);
-        var ca1 = new ClientAttribute("prop1","qual1","value1","VALUE");
-        var ca2 = new ClientAttribute("prop2","qual2","value2","VALUE");
-
-        pm.addAttribute(ca1);
-        pm.addAttribute(ca2);
-
-        // attribute1 is dirty
-        ca1.setValue("anotherValue");
-        this.areIdentical(ca1.isDirty(),true);
-
-        //PM should be dirty
-        this.areIdentical(pm.isDirty(),true);
-
-        pm.reset();
-        // attributes should not be dirty
-        this.areIdentical(ca1.isDirty(),false);
-        this.areIdentical(ca2.isDirty(),false);
-        //PM should not be dirty
-        this.areIdentical(pm.isDirty(),false);
-    }
-
     findAttributeById(){
         var pm = new ClientPresentationModel(undefined,undefined);
-        var ca1 = new ClientAttribute("prop1","qual1","value1","VALUE");
+        var ca1 = new ClientAttribute("prop1","qual1","value1");
 
         pm.addAttribute(ca1);
         var result = pm.findAttributeById(ca1.id);
@@ -122,7 +57,7 @@ export default class ClientPresentationModelTests extends TestClass {
 
     findAttributeByQualifier(){
         var pm = new ClientPresentationModel(undefined,undefined);
-        var ca1 = new ClientAttribute("prop1","qual1","value1","VALUE");
+        var ca1 = new ClientAttribute("prop1","qual1","value1");
 
         pm.addAttribute(ca1);
         var result = pm.findAttributeByQualifier("qual1");
@@ -132,39 +67,9 @@ export default class ClientPresentationModelTests extends TestClass {
         this.areIdentical(result, null);
     }
 
-    findAttributeByPropertyNameAndTag(){
-        var pm = new ClientPresentationModel(undefined,undefined);
-        var ca1 = new ClientAttribute("prop1","qual1","value1","VALUE");
-        var ca2 = new ClientAttribute("prop2", "qual", 0);
-
-        pm.addAttribute(ca1);
-        pm.addAttribute(ca2);
-        var result = pm.findAttributeByPropertyNameAndTag("prop1","VALUE");
-        this.areIdentical(ca1,result);
-        // find by invalid property name
-        result=pm.findAttributeByPropertyNameAndTag("dummy","VALUE");
-        this.areIdentical(result, null);
-    }
-
-    findAllAttributesByPropertyName(){
-        var pm = new ClientPresentationModel(undefined,undefined);
-        var ca1 = new ClientAttribute("prop1","qual1","value1","VALUE");
-        var ca2 = new ClientAttribute("prop1","qual2","value2","TOOLTIP");
-
-        pm.addAttribute(ca1);
-        pm.addAttribute(ca2);
-        var result = pm.findAllAttributesByPropertyName("prop1");
-        this.areIdentical(result.length, 2);
-        this.areIdentical(ca1,result[0]);
-        this.areIdentical(ca2,result[1]);
-        // find by invalid property name
-        result=pm.findAllAttributesByPropertyName("dummy");
-        this.areIdentical(result.length, 0);
-    }
-
     simpleCopy() {
-        var ca1 = new ClientAttribute("prop1","qual1","value1","VALUE");
-        var ca2 = new ClientAttribute("prop2","qual2","value2","VALUE");
+        var ca1 = new ClientAttribute("prop1","qual1","value1");
+        var ca2 = new ClientAttribute("prop2","qual2","value2");
         var pm1 = new ClientPresentationModel("pmId","pmType");
         pm1.addAttribute(ca1);
         pm1.addAttribute(ca2);

@@ -6,8 +6,6 @@ import Command from "../../js/dolphin/Command";
 import DeleteAllPresentationModelsOfTypeCommand from "../../js/dolphin/DeleteAllPresentationModelsOfTypeCommand";
 import DeletePresentationModelCommand from "../../js/dolphin/DeletePresentationModelCommand";
 import InitializeAttributeCommand from "../../js/dolphin/InitializeAttributeCommand";
-import PresentationModelResetedCommand from "../../js/dolphin/PresentationModelResetedCommand";
-import SavedPresentationModelNotification from "../../js/dolphin/SavedPresentationModelNotification";
 import SignalCommand from "../../js/dolphin/SignalCommand";
 import SwitchPresentationModelCommand from "../../js/dolphin/SwitchPresentationModelCommand";
 import ValueChangedCommand from "../../js/dolphin/ValueChangedCommand";
@@ -124,62 +122,17 @@ export default class ClientConnectorTests extends TestClass {
         //before calling SwitchPresentationModelCommand
         var pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
         this.areNotIdentical(pms[0].getAttributes()[0].getValue(), pms[1].getAttributes()[0].getValue());
-        this.areNotIdentical(pms[0].getAttributes()[0].getBaseValue(), pms[1].getAttributes()[0].getBaseValue());
 
         //call SwitchPresentationModelCommand
         TestHelper.clientConnector.handle(serverCommand);
         pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
         // Both attribute of same property and tag ("prop1", "VALUE")  should be equal
         this.areIdentical(pms[0].getAttributes()[0].getValue(), pms[1].getAttributes()[0].getValue());
-        this.areIdentical(pms[0].getAttributes()[0].getBaseValue(), pms[1].getAttributes()[0].getBaseValue());
 
         //other attributes should be unaffected
         this.areNotIdentical(pms[0].getAttributes()[1].getValue(), pms[1].getAttributes()[1].getValue());
-        this.areNotIdentical(pms[0].getAttributes()[1].getBaseValue(), pms[1].getAttributes()[1].getBaseValue());
     }
 
-    handleSavedPresentationModelNotification(){
-        TestHelper.initialize();
-        var serverCommand:SavedPresentationModelNotification = new SavedPresentationModelNotification("pmId1");
-
-        //before calling SavedPresentationModelNotification
-        var pm = TestHelper.clientDolphin.findPresentationModelById("pmId1");
-        this.areIdentical(pm.getAttributes()[0].getValue(), pm.getAttributes()[0].getBaseValue());
-        this.areIdentical(pm.getAttributes()[1].getValue(), pm.getAttributes()[1].getBaseValue());
-
-        TestHelper.attr1.setValue(10);
-        //call SavedPresentationModelNotification
-        TestHelper.clientConnector.handle(serverCommand);
-        pm = TestHelper.clientDolphin.findPresentationModelById("pmId1");
-        this.areIdentical(pm.getAttributes()[0].getValue(), pm.getAttributes()[0].getBaseValue());
-        this.areIdentical(pm.getAttributes()[1].getValue(), pm.getAttributes()[1].getBaseValue());
-
-        this.areIdentical(pm.getAttributes()[0].getValue(),10);
-        this.areIdentical(pm.getAttributes()[1].getValue(), 0);
-        this.areIdentical(pm.getAttributes()[0].getBaseValue(),10);
-        this.areIdentical(pm.getAttributes()[1].getBaseValue(), 0);
-    }
-    handlePresentationModelResetedCommand(){
-        TestHelper.initialize();
-        var serverCommand: PresentationModelResetedCommand = new  PresentationModelResetedCommand("pmId1");
-
-        //before calling PresentationModelResetedCommand
-        var pm = TestHelper.clientDolphin.findPresentationModelById("pmId1");
-        this.areIdentical(pm.getAttributes()[0].getValue(), pm.getAttributes()[0].getBaseValue());
-        this.areIdentical(pm.getAttributes()[1].getValue(), pm.getAttributes()[1].getBaseValue());
-
-        TestHelper.attr1.setValue(10);
-        //call PresentationModelResetedCommand
-        TestHelper.clientConnector.handle(serverCommand);
-        pm = TestHelper.clientDolphin.findPresentationModelById("pmId1");
-        this.areIdentical(pm.getAttributes()[0].getValue(), pm.getAttributes()[0].getBaseValue());
-        this.areIdentical(pm.getAttributes()[1].getValue(), pm.getAttributes()[1].getBaseValue());
-
-        this.areIdentical(pm.getAttributes()[0].getValue(),0);
-        this.areIdentical(pm.getAttributes()[1].getValue(), 0);
-        this.areIdentical(pm.getAttributes()[0].getBaseValue(),0);
-        this.areIdentical(pm.getAttributes()[1].getBaseValue(), 0);
-    }
     handleInitializeAttributeCommand(){
         TestHelper.initialize();
         //new PM with existing attribute qualifier

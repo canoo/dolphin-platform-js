@@ -2,7 +2,6 @@
 "use strict";
 
 var sinon = require('sinon');
-var Tag = require('../../opendolphin/build/Tag').default;
 var ClassRepository = require('../../src/classrepo.js').ClassRepository;
 var BeanManager = require('../../src/beanmanager.js').BeanManager;
 
@@ -39,7 +38,7 @@ describe('List Sync (adding primitive elements as User)', function() {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', tag: Tag.value(), onValueChange: function () {} }
+                { propertyName: 'primitiveList', onValueChange: function () {} }
             ],
             findAttributeByPropertyName: function () {
             }
@@ -318,7 +317,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'primitiveList', onValueChange: function() {} }
             ],
             findAttributeByPropertyName: function() {}
         };
@@ -561,7 +560,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', tag: Tag.value(), onValueChange: function () {} }
+                { propertyName: 'primitiveList', onValueChange: function () {} }
             ],
             findAttributeByPropertyName: function () {
             }
@@ -981,7 +980,7 @@ describe('List Sync (adding objects as User)', function() {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'referenceList', onValueChange: function() {} }
             ],
             findAttributeByPropertyName: function() {}
         };
@@ -991,7 +990,7 @@ describe('List Sync (adding objects as User)', function() {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean1 = classRepository.load(bean1Model);
@@ -999,7 +998,7 @@ describe('List Sync (adding objects as User)', function() {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean2 = classRepository.load(bean2Model);
@@ -1007,7 +1006,7 @@ describe('List Sync (adding objects as User)', function() {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean3 = classRepository.load(bean3Model);
@@ -1294,7 +1293,7 @@ describe('List Sync (deleting objects as User)', function() {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'referenceList', onValueChange: function() {} }
             ],
             findAttributeByPropertyName: function() {}
         };
@@ -1304,7 +1303,7 @@ describe('List Sync (deleting objects as User)', function() {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean1 = classRepository.load(bean1Model);
@@ -1312,7 +1311,7 @@ describe('List Sync (deleting objects as User)', function() {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean2 = classRepository.load(bean2Model);
@@ -1320,7 +1319,7 @@ describe('List Sync (deleting objects as User)', function() {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean3 = classRepository.load(bean3Model);
@@ -1572,7 +1571,7 @@ describe('List Sync (replacing objects as User)', function() {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'referenceList', onValueChange: function() {} }
             ],
             findAttributeByPropertyName: function() {}
         };
@@ -1582,7 +1581,7 @@ describe('List Sync (replacing objects as User)', function() {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean1 = classRepository.load(bean1Model);
@@ -1590,7 +1589,7 @@ describe('List Sync (replacing objects as User)', function() {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean2 = classRepository.load(bean2Model);
@@ -1598,7 +1597,7 @@ describe('List Sync (replacing objects as User)', function() {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean3 = classRepository.load(bean3Model);
@@ -1999,7 +1998,7 @@ describe('List Sync (adding primitive elements from OpenDolphin)', function() {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'primitiveList', onValueChange: function() {} }
             ],
             findAttributeByPropertyName: function() {}
         };
@@ -2165,7 +2164,7 @@ describe('List Sync (deleting primitive elements from OpenDolphin)', function() 
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'primitiveList', onValueChange: function() {} }
             ],
             findAttributeByPropertyName: function() {}
         };
@@ -2291,7 +2290,7 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
-                { propertyName: 'primitiveList', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'primitiveList', onValueChange: function() {} }
             ],
             findAttributeByPropertyName: function() {}
         };
@@ -2543,7 +2542,7 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'referenceList', onValueChange: function() {} }
             ],
             findAttributeByPropertyName: function() {}
         };
@@ -2553,7 +2552,7 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean1 = classRepository.load(bean1Model);
@@ -2561,7 +2560,7 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean2 = classRepository.load(bean2Model);
@@ -2569,7 +2568,7 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean3 = classRepository.load(bean3Model);
@@ -2744,7 +2743,7 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
-                { propertyName: 'referenceList', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'referenceList', onValueChange: function() {} }
             ],
             findAttributeByPropertyName: function() {}
         };
@@ -2754,7 +2753,7 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean1 = classRepository.load(bean1Model);
@@ -2762,7 +2761,7 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean2 = classRepository.load(bean2Model);
@@ -2770,7 +2769,7 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
-                { propertyName: 'textProperty', tag: Tag.value(), onValueChange: function() {} }
+                { propertyName: 'textProperty', onValueChange: function() {} }
             ]
         };
         bean3 = classRepository.load(bean3Model);
