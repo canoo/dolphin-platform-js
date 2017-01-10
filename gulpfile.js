@@ -136,7 +136,7 @@ function rebundle(bundler) {
         .transform('babelify')
         .bundle()
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
-        .pipe(source('dolphin.js'))
+        .pipe(source('dolphin-platform.js'))
         .pipe($.derequire())
         .pipe(gulp.dest('./dist'))
         .pipe(buffer())

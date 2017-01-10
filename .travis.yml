@@ -7,7 +7,7 @@ addons:
       token:
         secure: ${SONAR_TOKEN}
       branches:
-        - DP-312_CreateSonarReportsForDolphinPlatformJs
+        - master
 before_script:
   - npm install -g grunt-cli
   - npm install -g bower
