@@ -1,7 +1,13 @@
 language: node_js
 node_js:
     - "0.10"
-
+dist: trusty
+addons:
+  sonarqube:
+      token:
+        secure: ${SONAR_TOKEN}
+      branches:
+        - master
 before_script:
   - npm install -g grunt-cli
   - npm install -g bower
@@ -13,4 +19,8 @@ before_script:
 
 script:
   - gulp clean verify build
+  - sonar-scanner
 
+cache:
+  directories:
+    - '$HOME/.sonar/cache'

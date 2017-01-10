@@ -1,8 +1,8 @@
 {
-  "name": "dolphin-js",
+  "name": "dolphin-platform-js",
   "version": "0.8.9",
   "description": "JavaScript client of the Dolphin Platform",
-  "main": "./dist/dolphin.min.js",
+  "main": "./dist/dolphin-platform.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/canoo/dolphin-platform-js.git"
@@ -32,7 +32,6 @@
     "gulp-load-plugins": "1.2.x",
     "gulp-mocha": "2.2.x",
     "gulp-rename": "1.2.x",
-    "gulp-sonar": "2.1.x",
     "gulp-sourcemaps": "1.6.x",
     "gulp-typescript": "^2.13.4",
     "gulp-uglify": "1.5.x",

@@ -1,7 +1,7 @@
 {
-  "name": "dolphin-js",
+  "name": "dolphin-platform-js",
   "version": "0.8.9",
-  "main": "./dist/dolphin.js",
+  "main": "./dist/dolphin-platform.js",
   "homepage": "http://www.dolphin-platform.io",
   "authors": [
     "Michael Heinrichs <michael.heinrichs@canoo.com>"
