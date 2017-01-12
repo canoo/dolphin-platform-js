@@ -23,11 +23,13 @@
     "lib",
     "src",
     "test",
+    "opendolphin",
     "gulpfile.js",
     "karma.conf.js",
     "package.json",
     "sauce.launchers.js",
-    "sauce-template.json"
+    "sauce-template.json",
+    "sonar-project.properties"
   ],
   "devDependencies": {
     "core.js": "2.4.x"
