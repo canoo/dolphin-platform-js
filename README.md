@@ -1,7 +1,7 @@
 <p align="right">
 <a href="http://www.canoo.com"><img src="http://www.guigarage.com/wordpress/wp-content/uploads/2016/08/canoo_support.png"/></a>
 </p>
-# Dolphin Platform JS client API [![Build Status](https://travis-ci.org/canoo/dolphin-platform-js.svg?branch=master)](https://travis-ci.org/canoo/dolphin-platform-js)
+# Dolphin Platform JS client API [![Build Status](https://travis-ci.org/canoo/dolphin-platform-js.svg?branch=master)](https://travis-ci.org/canoo/dolphin-platform-js)[![Build Status](https://saucelabs.com/buildstatus/kunsingh)](https://saucelabs.com/beta/builds/ddb89fc1d76b4f189bda3c6d144abba4)
 
 This repository contains all JavaScript related sources of the Dolphin Platform JS client library. Clients for specific JS frameworks like [Polymer](https://github.com/canoo/dolphin-platform-polymer) can be found in seperate repositories. The Java server and client sourceas can be found [here](https://github.com/canoo/dolphin-platform).
 
@@ -22,6 +22,9 @@ By doing so you can create enterprise application with a single server and sever
 The Server sources of the Dolphin Platform can be found [here](https://github.com/canoo/dolphin-platform). 
 
 For more information read the [documentation](https://canoo.github.io/dolphin-platform/) of the Dolphin Platform.
+
+## Browser compatibility
+[![Build Status](https://saucelabs.com/browser-matrix/kunsingh.svg)](https://saucelabs.com/beta/builds/ddb89fc1d76b4f189bda3c6d144abba4)
 
 ## Issue Tracking
 Please use the issue tracking system of the [Dolphin Platform](https://github.com/canoo/dolphin-platform) to report any bug or feature request.
