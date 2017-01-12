@@ -8,7 +8,10 @@ addons:
         secure: ${SONAR_TOKEN}
       branches:
         - master
+
 before_script:
+  - set SAUCE_ACCESS_KEY = ${SAUCE_ACCESS_KEY}
+  - set SAUCE_USERNAME = ${SAUCE_USERNAME}
   - npm install -g grunt-cli
   - npm install -g bower
   - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
@@ -19,6 +22,7 @@ before_script:
 
 script:
   - gulp clean verify build
+  - gulp ci:nightly
 
 after_success:
   - sonar-scanner

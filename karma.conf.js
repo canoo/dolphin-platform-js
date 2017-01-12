@@ -64,7 +64,7 @@ module.exports = function (config) {
 
         // Sauce Labs configuration
         sauceLabs: {
-            testName: 'dolphin-js Unit Tests',
+            testName: 'dolphin-platform-js Unit Tests',
             recordScreenshots: true,
             recordVideo: false
         },
