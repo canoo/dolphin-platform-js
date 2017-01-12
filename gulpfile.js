@@ -42,22 +42,6 @@ gulp.task('lint:es', function () {
 
 gulp.task('lint', ['lint:js', 'lint:es']);
 
-//team-city report
-gulp.task('lint-tc:js', function () {
-    return gulp.src(['./src/**/*.js', './test/src/**/*.js'])
-        .pipe($.jshint())
-        .pipe($.jshint.reporter('jshint-teamcity'));
-});
-
-//team-city report
-gulp.task('lint-tc:es', function () {
-    return gulp.src(['./src/**/*.es6', './test/src/**/*.es6'])
-        .pipe($.eslint())
-        .pipe($.eslint.format('node_modules/eslint-teamcity'))
-        .pipe($.eslint.failAfterError());
-});
-
-gulp.task('lint-tc', ['lint-tc:js']);
 
 /* END: lint */
 
@@ -183,7 +167,7 @@ gulp.task('test:od', ['build-test:od'], function(done) {
 
 /* END: build opendolphin tests  */
 
-gulp.task('ci-common', ['build', 'build-test', 'build-test:od',  'lint-tc']);
+gulp.task('ci-common', ['build', 'build-test', 'build-test:od']);
 
 //Test opendolphin
 gulp.task('ci-test:od', ['ci-common'], function(done) {
@@ -244,17 +228,7 @@ function createSauceLabsTestPipe(customLaunchers, step) {
     step();
 }
 
-gulp.task('ci:nightly', ['ci-common'], function (done) {
-    var customLaunchers = require('./sauce.launchers.js').daily;
-    return createSauceLabsTestPipe(customLaunchers, done);
-});
-
-gulp.task('ci:weekly', ['ci-common'], function (done) {
-    var customLaunchers = require('./sauce.launchers.js').weekly;
-    return createSauceLabsTestPipe(customLaunchers, done);
-});
-
-gulp.task('ci:manual', ['ci-common'], function (done) {
-    var customLaunchers = require('./sauce.launchers.js').manual;
+gulp.task('saucelabs', ['ci-common'], function (done) {
+    var customLaunchers = require('./sauce.launchers.js').browsers;
     return createSauceLabsTestPipe(customLaunchers, done);
 });

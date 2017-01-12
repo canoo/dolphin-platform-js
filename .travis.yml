@@ -1,6 +1,5 @@
 language: node_js
-node_js:
-    - "0.12"
+node_js: stable
 dist: trusty
 addons:
   sonarqube:
@@ -22,7 +21,7 @@ before_script:
 
 script:
   - gulp clean verify build
-  - gulp ci:nightly
+  - gulp saucelabs
 
 after_success:
   - sonar-scanner
