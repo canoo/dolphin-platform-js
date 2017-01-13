@@ -197,8 +197,8 @@ function createSauceLabsTestStep(customLaunchers, browsers, done) {
             browsers: browsers,
             reporters: ['saucelabs'],
             singleRun: true
-        },function(err){
-            if(err === 0){
+        },function(result){
+            if(result === 0){
                 done();
             } else {
                 return done(new Error(`Karma exited with status code ${result}`));
