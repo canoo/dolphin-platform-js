@@ -157,14 +157,6 @@ gulp.task('build-test:od', ['build:od'], function () {
         .pipe(gulp.dest('./opendolphin/test/build'));
 });
 
-
-gulp.task('test:od', ['build-test:od'], function(done) {
-    new Server({
-        configFile: __dirname + '/opendolphin/testrunner/karma.conf.js',
-        singleRun: true
-    }, done).start();
-});
-
 /* END: build opendolphin tests  */
 
 gulp.task('ci-common', ['build', 'build-test', 'build-test:od']);
@@ -173,7 +165,7 @@ gulp.task('ci-common', ['build', 'build-test', 'build-test:od']);
 gulp.task('ci-test:od', ['ci-common'], function(done) {
     new Server({
         configFile: __dirname + '/opendolphin/testrunner/karma.conf.js',
-        reporters: ['teamcity', 'coverage'],
+        reporters: ['coverage'],
         singleRun: true
     }, done).start();
 });
@@ -185,8 +177,7 @@ gulp.task('ci-test', ['ci-common'], function (done) {
         reporters: ['teamcity', 'coverage'],
         coverageReporter: {
             reporters: [
-                {type: 'lcovonly', subdir: '.'},
-                {type: 'teamcity', subdir: '.'}
+                {type: 'lcovonly', subdir: '.'}
             ]
         },
         singleRun: true
@@ -204,9 +195,15 @@ function createSauceLabsTestStep(customLaunchers, browsers, done) {
             configFile: __dirname + '/karma.conf.js',
             customLaunchers: customLaunchers,
             browsers: browsers,
-            reporters: ['saucelabs', 'teamcity'],
+            reporters: ['saucelabs'],
             singleRun: true
-        }, done).start();
+        },function(err){
+            if(err === 0){
+                done();
+            } else {
+                return done(new Error('Karma exited with status code ${err}'));
+            }
+        }).start();
     }
 }
 

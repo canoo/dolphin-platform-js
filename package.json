@@ -44,7 +44,6 @@
     "karma-mocha": "1.0.x",
     "karma-phantomjs-launcher": "1.0.x",
     "karma-sauce-launcher": "1.0.x",
-    "karma-teamcity-reporter": "1.0.x",
     "lodash.assign": "4.0.x",
     "mocha": "2.4.x",
     "phantomjs": "2.1.x",

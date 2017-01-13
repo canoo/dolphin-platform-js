@@ -3,15 +3,6 @@
 
 module.exports = function (config) {
 
-    var fs = require('fs');
-
-    // Use ENV vars on TeamCity and sauce.json locally to get credentials
-    if (!process.env.SAUCE_USERNAME && !process.env.SAUCE_ACCESS_KEY && fs.existsSync('sauce.json')) {
-        process.env.SAUCE_USERNAME = require('./sauce').username;
-        process.env.SAUCE_ACCESS_KEY = require('./sauce').accessKey;
-    }
-
-
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
