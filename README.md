@@ -23,6 +23,9 @@ The Server sources of the Dolphin Platform can be found [here](https://github.co
 
 For more information read the [documentation](https://canoo.github.io/dolphin-platform/) of the Dolphin Platform.
 
+## Browser compatibility
+[![Build Status](https://saucelabs.com/browser-matrix/kunsingh.svg)](https://saucelabs.com/beta/builds/ddb89fc1d76b4f189bda3c6d144abba4)
+
 ## Issue Tracking
 Please use the issue tracking system of the [Dolphin Platform](https://github.com/canoo/dolphin-platform) to report any bug or feature request.
 
