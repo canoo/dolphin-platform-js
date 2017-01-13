@@ -201,7 +201,7 @@ function createSauceLabsTestStep(customLaunchers, browsers, done) {
             if(result === 0){
                 done();
             } else {
-                process.exit(1);
+                return done(new Error(result));
             }
         }).start();
     }
