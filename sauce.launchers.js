@@ -153,7 +153,7 @@ var browsers = {
         base: 'SauceLabs',
         browserName: 'Browser',
         appiumVersion: '1.4.16',
-        deviceName: 'Android Simulator',
+        deviceName: 'Android Emulator',
         deviceOrientation: 'portrait',
         platformName: 'Android',
         platformVersion: '5.1'
@@ -209,7 +209,7 @@ var browsers = {
         base: 'SauceLabs',
         browserName: 'Browser',
         appiumVersion: '1.4.16',
-        deviceName: 'Android Simulator',
+        deviceName: 'Android Emulator',
         deviceOrientation: 'portrait',
         platformName: 'Android',
         platformVersion: '5.0'
@@ -219,7 +219,7 @@ var browsers = {
         base: 'SauceLabs',
         browserName: 'Browser',
         appiumVersion: '1.4.16',
-        deviceName: 'Android Simulator',
+        deviceName: 'Android Emulator',
         deviceOrientation: 'portrait',
         platformName: 'Android',
         platformVersion: '4.4'
