@@ -210,7 +210,7 @@ function createSauceLabsTestStep(customLaunchers, browsers, done) {
 function createSauceLabsTestPipe(customLaunchers, step) {
     // We cannot run too many instances at Sauce Labs in parallel, thus we need to run it several times
     // with only a few environments set
-    var numSauceLabsVMs = 3;
+    var numSauceLabsVMs = 5;
     var allBrowsers = Object.keys(customLaunchers);
 
     while (allBrowsers.length > 0) {

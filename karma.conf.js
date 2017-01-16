@@ -56,6 +56,7 @@ module.exports = function (config) {
         // Sauce Labs configuration
         sauceLabs: {
             testName: 'dolphin-platform-js Unit Tests',
+            tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
             recordScreenshots: true,
             recordVideo: false
         },

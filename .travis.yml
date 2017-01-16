@@ -2,6 +2,7 @@ language: node_js
 node_js: stable
 dist: trusty
 addons:
+  sauce_connect: true
   sonarqube:
       token:
         secure: ${SONAR_TOKEN}
@@ -9,8 +10,6 @@ addons:
         - master
 
 before_script:
-  - set SAUCE_ACCESS_KEY = ${SAUCE_ACCESS_KEY}
-  - set SAUCE_USERNAME = ${SAUCE_USERNAME}
   - npm install -g grunt-cli
   - npm install -g bower
   - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
