@@ -62,7 +62,7 @@ module.exports = function (config) {
         captureTimeout: 120000,
         browserDisconnectTimeout: 10 * 1000,
         browserDisconnectTolerance: 3,
-        browserNoActivityTimeout: 20 * 1000,
+        browserNoActivityTimeout: 4 * 60 * 1000,
 
 
         // Coverage configuration
