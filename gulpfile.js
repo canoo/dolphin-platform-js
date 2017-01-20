@@ -192,7 +192,7 @@ gulp.task('ci', ['ci-common', 'ci-test' , 'ci-test:od' ]);
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
     return function () {
         new Server({
-            configFile: './karma.conf.js',
+            configFile: __dirname + '/karma.conf.js',
             // customLaunchers: customLaunchers,
             // browsers: browsers,
             reporters: ['saucelabs'],
