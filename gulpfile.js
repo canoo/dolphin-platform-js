@@ -174,7 +174,7 @@ gulp.task('ci-test:od', ['ci-common'], function(done) {
 gulp.task('ci-test', ['ci-common'], function (done) {
     new Server({
         configFile: __dirname + '/karma.conf.js',
-        reporters: ['teamcity', 'coverage'],
+        reporters: ['coverage'],
         coverageReporter: {
             reporters: [
                 {type: 'lcovonly', subdir: '.'}

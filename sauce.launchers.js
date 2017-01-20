@@ -183,7 +183,8 @@ var browsers = {
         deviceName: 'iPad Simulator',
         deviceOrientation: 'portrait',
         platformName: 'iOS',
-        platformVersion: '8.3'
+        platformVersion: '8.3',
+        flags: ['--disable-web-security']
     },
     sl_ipad_9_2: {
         base: 'SauceLabs',
@@ -192,7 +193,8 @@ var browsers = {
         deviceName: 'iPad Simulator',
         deviceOrientation: 'portrait',
         platformName: 'iOS',
-        platformVersion: '9.2'
+        platformVersion: '9.2',
+        flags: ['--disable-web-security']
     },
 
     sl_ipad_9_1: {
@@ -202,7 +204,8 @@ var browsers = {
         deviceName: 'iPad Simulator',
         deviceOrientation: 'portrait',
         platformName: 'iOS',
-        platformVersion: '9.1'
+        platformVersion: '9.1',
+        flags: ['--disable-web-security']
     },
 
     sl_android_5_0: {
@@ -212,7 +215,8 @@ var browsers = {
         deviceName: 'Android Emulator',
         deviceOrientation: 'portrait',
         platformName: 'Android',
-        platformVersion: '5.0'
+        platformVersion: '5.0',
+        flags: ['--disable-web-security']
     },
 
     sl_android_4_4: {
@@ -222,7 +226,8 @@ var browsers = {
         deviceName: 'Android Emulator',
         deviceOrientation: 'portrait',
         platformName: 'Android',
-        platformVersion: '4.4'
+        platformVersion: '4.4',
+        flags: ['--disable-web-security']
     }
 };
 
