@@ -172,22 +172,22 @@ var browsers = {
         platform: 'OS X 10.9',
         version: '42.0'
     },
-    // sl_mac9_safari: {
-    //     base: 'SauceLabs',
-    //     browserName: 'safari',
-    //     platform: 'OS X 10.9',
-    //     version: '7.0'
-    // },
-    // sl_ipad_8_3: {
-    //     base: 'SauceLabs',
-    //     browserName: 'Safari',
-    //     appiumVersion: '1.4.16',
-    //     deviceName: 'iPad Simulator',
-    //     deviceOrientation: 'portrait',
-    //     platformName: 'iOS',
-    //     platformVersion: '8.3',
-    //     flags: ['--disable-web-security']
-    // },
+    sl_mac9_safari: {
+        base: 'SauceLabs',
+        browserName: 'safari',
+        platform: 'OS X 10.9',
+        version: '7.0'
+    },
+    sl_ipad_8_3: {
+        base: 'SauceLabs',
+        browserName: 'Safari',
+        appiumVersion: '1.4.16',
+        deviceName: 'iPad Simulator',
+        deviceOrientation: 'portrait',
+        platformName: 'iOS',
+        platformVersion: '8.3',
+        flags: ['--disable-web-security']
+    }
     // sl_ipad_9_2: {
     //     base: 'SauceLabs',
     //     browserName: 'Safari',
