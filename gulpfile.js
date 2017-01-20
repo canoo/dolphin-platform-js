@@ -197,14 +197,14 @@ function createSauceLabsTestStep(customLaunchers, browsers, done) {
             browsers: browsers,
             reporters: ['saucelabs'],
             singleRun: true
-        }, done).start();
-        // ,function(result){
-        //     if(result === 0){
-        //         done();
-        //     } else {
-        //         done('Karma test failed: '+result);
-        //     }
-        // }).start();
+        }
+        ,function(result){
+            if(result === 0){
+                done();
+            } else {
+                done('Karma test failed: '+result);
+            }
+        }).start();
     }
 }
 
