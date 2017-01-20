@@ -193,8 +193,8 @@ function createSauceLabsTestStep(customLaunchers, browsers, done) {
     return function () {
         new Server({
             configFile: __dirname + '/karma.conf.js',
-            // customLaunchers: customLaunchers,
-            // browsers: browsers,
+            customLaunchers: customLaunchers,
+            browsers: browsers,
             reporters: ['saucelabs'],
             singleRun: true
         }, done).start();
