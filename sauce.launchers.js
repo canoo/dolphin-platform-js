@@ -179,16 +179,16 @@ var browsers = {
     //     version: '7.0'
     // }
     // ,
-    sl_ipad_8_3: {
-        base: 'SauceLabs',
-        browserName: 'Safari',
-        appiumVersion: '1.6.3',
-        deviceName: 'iPad Simulator',
-        deviceOrientation: 'portrait',
-        platformName: 'iOS',
-        platformVersion: '8.3',
-        flags: ['--disable-web-security']
-    },
+    // sl_ipad_8_3: {
+    //     base: 'SauceLabs',
+    //     browserName: 'Safari',
+    //     appiumVersion: '1.6.3',
+    //     deviceName: 'iPad Simulator',
+    //     deviceOrientation: 'portrait',
+    //     platformName: 'iOS',
+    //     platformVersion: '8.3',
+    //     flags: ['--disable-web-security']
+    // },
     // sl_ipad_9_2: {
     //     base: 'SauceLabs',
     //     browserName: 'Safari',
@@ -200,39 +200,39 @@ var browsers = {
     //     flags: ['--disable-web-security']
     // }
     //
-    sl_ipad_9_1: {
-        base: 'SauceLabs',
-        browserName: 'Safari',
-        appiumVersion: '1.6.3',
-        deviceName: 'iPad Simulator',
-        deviceOrientation: 'portrait',
-        platformName: 'iOS',
-        platformVersion: '9.1',
-        flags: ['--disable-web-security']
-    }
-    // ,
-    //
-    // sl_android_5_0: {
+    // sl_ipad_9_1: {
     //     base: 'SauceLabs',
-    //     browserName: 'Browser',
-    //     appiumVersion: '1.4.16',
-    //     deviceName: 'Android Emulator',
+    //     browserName: 'Safari',
+    //     appiumVersion: '1.6.3',
+    //     deviceName: 'iPad Simulator',
     //     deviceOrientation: 'portrait',
-    //     platformName: 'Android',
-    //     platformVersion: '5.0',
-    //     flags: ['--disable-web-security']
-    // },
-    //
-    // sl_android_4_4: {
-    //     base: 'SauceLabs',
-    //     browserName: 'Browser',
-    //     appiumVersion: '1.4.16',
-    //     deviceName: 'Android Emulator',
-    //     deviceOrientation: 'portrait',
-    //     platformName: 'Android',
-    //     platformVersion: '4.4',
+    //     platformName: 'iOS',
+    //     platformVersion: '9.1',
     //     flags: ['--disable-web-security']
     // }
+    // ,
+
+    sl_android_5_0: {
+        base: 'SauceLabs',
+        browserName: 'Browser',
+        appiumVersion: '1.5.3',
+        deviceName: 'Android Emulator',
+        deviceOrientation: 'portrait',
+        platformName: 'Android',
+        platformVersion: '5.0',
+        flags: ['--disable-web-security']
+    },
+
+    sl_android_4_4: {
+        base: 'SauceLabs',
+        browserName: 'Browser',
+        appiumVersion: '1.5.3',
+        deviceName: 'Android Emulator',
+        deviceOrientation: 'portrait',
+        platformName: 'Android',
+        platformVersion: '4.4',
+        flags: ['--disable-web-security']
+    }
 };
 
 
