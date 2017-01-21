@@ -19,7 +19,11 @@ module.exports = function (config) {
             './test/build/**/test-*.js'
         ],
 
-
+        client: {
+            mocha: {
+                timeout: 20000 // 20 seconds
+            }
+         },
         // list of files to exclude
         exclude: [],
 
@@ -61,10 +65,10 @@ module.exports = function (config) {
             recordVideo: false,
             startConnect: false
         },
-        captureTimeout: 150000,
+        captureTimeout: 4 * 60 * 1000,
         browserDisconnectTimeout: 20 * 1000,
         browserDisconnectTolerance: 3,
-        browserNoActivityTimeout: 50 * 1000,
+        browserNoActivityTimeout: 4 * 60 * 1000,
 
 
         // Coverage configuration
