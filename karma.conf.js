@@ -65,10 +65,10 @@ module.exports = function (config) {
             recordVideo: false,
             startConnect: false
         },
-        captureTimeout: 4 * 60 * 1000,
+        captureTimeout: 5 * 60 * 1000,
         browserDisconnectTimeout: 20 * 1000,
         browserDisconnectTolerance: 3,
-        browserNoActivityTimeout: 4 * 60 * 1000,
+        browserNoActivityTimeout: 5 * 60 * 1000,
 
 
         // Coverage configuration
