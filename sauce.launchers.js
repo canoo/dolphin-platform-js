@@ -189,27 +189,27 @@ var browsers = {
         platformVersion: '8.3',
         flags: ['--disable-web-security']
     },
-    sl_ipad_9_2: {
+    // sl_ipad_9_2: {
+    //     base: 'SauceLabs',
+    //     browserName: 'Safari',
+    //     appiumVersion: '1.6.3',
+    //     deviceName: 'iPad Simulator',
+    //     deviceOrientation: 'portrait',
+    //     platformName: 'iOS',
+    //     platformVersion: '9.2',
+    //     flags: ['--disable-web-security']
+    // }
+    //
+    sl_ipad_9_1: {
         base: 'SauceLabs',
         browserName: 'Safari',
         appiumVersion: '1.6.3',
         deviceName: 'iPad Simulator',
         deviceOrientation: 'portrait',
         platformName: 'iOS',
-        platformVersion: '9.2',
+        platformVersion: '9.1',
         flags: ['--disable-web-security']
     }
-    //
-    // sl_ipad_9_1: {
-    //     base: 'SauceLabs',
-    //     browserName: 'Safari',
-    //     appiumVersion: '1.4.16',
-    //     deviceName: 'iPad Simulator',
-    //     deviceOrientation: 'portrait',
-    //     platformName: 'iOS',
-    //     platformVersion: '9.1',
-    //     flags: ['--disable-web-security']
-    // }
     // ,
     //
     // sl_android_5_0: {
