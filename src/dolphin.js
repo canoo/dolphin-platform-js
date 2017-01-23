@@ -35,7 +35,7 @@ exports.connect = function(url, config) {
     checkMethod('connect(url, config)');
     checkParam(url, 'url');
 
-    var builder = OpenDolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true);
+    var builder = OpenDolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
     if (exists(config) && exists(config.errorHandler)) {
         builder.errorHandler(config.errorHandler);
     }
