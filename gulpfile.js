@@ -16,23 +16,24 @@ var watchify = require('watchify');
 
 var Server = require('karma').Server;
 
-var config = typeof $.util.env['configFile'] === 'string'? require($.util.env['configFile']) : {};
+var config = typeof $.util.env['configFile'] === 'string' ? require($.util.env['configFile']) : {};
 
 
-
-gulp.task('clean', function() {
+gulp.task('clean', function () {
     del(['dist', 'test/build', 'opendolphin/build', 'opendolphin/test/build', 'coverage']);
 });
 
-
-gulp.task('lint:js', function() {
+/* START: lint */
+//local report
+gulp.task('lint:js', function () {
     return gulp.src(['./src/**/*.js', './test/src/**/*.js'])
         .pipe($.jshint())
         .pipe($.jshint.reporter('default'))
         .pipe($.jshint.reporter('fail'));
 });
 
-gulp.task('lint:es', function() {
+//local report
+gulp.task('lint:es', function () {
     return gulp.src(['./src/**/*.es6', './test/src/**/*.es6'])
         .pipe($.eslint())
         .pipe($.eslint.format())
@@ -42,41 +43,9 @@ gulp.task('lint:es', function() {
 gulp.task('lint', ['lint:js', 'lint:es']);
 
 
-gulp.task('lint-tc:js', function() {
-    return gulp.src(['./src/**/*.js', './test/src/**/*.js'])
-        .pipe($.jshint())
-        .pipe($.jshint.reporter('jshint-teamcity'));
-});
+/* END: lint */
 
-gulp.task('lint-tc:es', function() {
-    return gulp.src(['./src/**/*.es6', './test/src/**/*.es6'])
-      .pipe($.eslint())
-      .pipe($.eslint.format('node_modules/eslint-teamcity'))
-      .pipe($.eslint.failAfterError());
-});
-
-gulp.task('lint-tc', ['lint-tc:js', 'lint-tc:es']);
-
-
-gulp.task('build-test:od', ['build:od'], function() {
-    var bundle = browserify({debug: true})
-        .add(glob.sync('./opendolphin/test*/**/*.ts'))
-        .add('./opendolphin/testrunner/tsUnitKarmaAdapter.js')
-        .plugin(tsify);
-
-    return bundle.bundle()
-        .on('error', $.util.log.bind($.util, 'Browserify Error'))
-        .pipe(source('test-bundle.js'))
-        .pipe(buffer())
-        .pipe($.sourcemaps.init({loadMaps: true}))
-        .pipe($.sourcemaps.write('./'))
-        .pipe(gulp.dest('./opendolphin/test/build'));
-});
-
-var testBundler = browserify(assign({}, watchify.args, {
-    entries: glob.sync('./test/src/**/test-*.js'),
-    debug: true
-}));
+/* START : build dolphin-platform related tests */
 
 function rebundleTest(bundler) {
     return bundler
@@ -93,36 +62,36 @@ function rebundleTest(bundler) {
         .pipe(gulp.dest('./test/build'))
 }
 
-gulp.task('build-test', ['build:od'], function() {
+var testBundler = browserify(assign({}, watchify.args, {
+    entries: glob.sync('./test/src/**/test-*.js'),
+    debug: true
+}));
+
+gulp.task('build-test', ['build:od'], function () {
     return rebundleTest(testBundler);
 });
 
-gulp.task('test:od', ['build-test:od'], function(done) {
-    new Server({
-        configFile: __dirname + '/opendolphin/testrunner/karma.conf.js',
-        singleRun: true
-    }, done).start();
-});
-
-gulp.task('test', ['build-test'], function(done) {
+gulp.task('test', ['build-test'], function (done) {
     new Server({
         configFile: __dirname + '/karma.conf.js',
         singleRun: true
     }, done).start();
 });
+/* END : build dolphin-platform related tests */
 
 gulp.task('verify', ['lint', 'test']);
 
+/* START: Building opendolphin and dolphin-platform.js */
 
-
-gulp.task('build:od', function() {
+//build opendolphin
+gulp.task('build:od', function () {
     return gulp.src('opendolphin/js/dolphin/*.ts')
-      .pipe($.typescript({
-          module: 'commonjs'
-      }))
-      .pipe($.sourcemaps.init({loadMaps: true}))
-      .pipe($.sourcemaps.write('./'))
-      .pipe(gulp.dest('opendolphin/build/'));
+        .pipe($.typescript({
+            module: 'commonjs'
+        }))
+        .pipe($.sourcemaps.init({loadMaps: true}))
+        .pipe($.sourcemaps.write('./'))
+        .pipe(gulp.dest('opendolphin/build/'));
 });
 
 var mainBundler = browserify(assign({}, watchify.args, {
@@ -146,74 +115,108 @@ function rebundle(bundler) {
         .pipe($.sourcemaps.write('./'))
         .pipe(gulp.dest('./dist'));
 }
-
-gulp.task('build', ['build:od'], function() {
+//build dolphin-platform
+gulp.task('build', ['build:od'], function () {
     return rebundle(mainBundler);
 });
+/* END: Building opendolphin and dolphin-platform.js */
 
 
-
-gulp.task('watch', function() {
+//Watching for changes
+gulp.task('watch', function () {
     gulp.watch(['src/**', 'test/**'], ['test']);
 
     var watchedMainBundler = watchify(mainBundler);
-    watchedMainBundler.on('update', function() {rebundle(watchedMainBundler)});
+    watchedMainBundler.on('update', function () {
+        rebundle(watchedMainBundler)
+    });
 
     var watchedTestBundler = watchify(testBundler);
-    watchedTestBundler.on('update', function() {rebundleTest(watchedTestBundler)});
+    watchedTestBundler.on('update', function () {
+        rebundleTest(watchedTestBundler)
+    });
 });
 
 gulp.task('default', ['verify', 'build', 'watch']);
 
 
-gulp.task('ci-common', ['build', 'build-test', /* 'build-test:od', */ 'lint-tc']);
+/* START: build opendolphin tests  */
 
+gulp.task('build-test:od', ['build:od'], function () {
+    var bundle = browserify({debug: true})
+        .add(glob.sync('./opendolphin/test*/**/*.ts'))
+        .add('./opendolphin/testrunner/tsUnitKarmaAdapter.js')
+        .plugin(tsify);
+
+    return bundle.bundle()
+        .on('error', $.util.log.bind($.util, 'Browserify Error'))
+        .pipe(source('test-bundle.js'))
+        .pipe(buffer())
+        .pipe($.sourcemaps.init({loadMaps: true}))
+        .pipe($.sourcemaps.write('./'))
+        .pipe(gulp.dest('./opendolphin/test/build'));
+});
+
+/* END: build opendolphin tests  */
+
+gulp.task('ci-common', ['build', 'build-test', 'build-test:od']);
+
+//Test opendolphin
 gulp.task('ci-test:od', ['ci-common'], function(done) {
     new Server({
         configFile: __dirname + '/opendolphin/testrunner/karma.conf.js',
-        reporters: ['teamcity', 'coverage'],
+        reporters: ['coverage'],
         singleRun: true
     }, done).start();
 });
 
-gulp.task('ci-test', ['ci-common'], function(done) {
+//Test dolphin-platform
+gulp.task('ci-test', ['ci-common'], function (done) {
     new Server({
         configFile: __dirname + '/karma.conf.js',
-        reporters: ['teamcity', 'coverage'],
+        reporters: ['coverage'],
         coverageReporter: {
             reporters: [
-                {type: 'lcovonly', subdir: '.'},
-                {type: 'teamcity', subdir: '.'}
+                {type: 'lcovonly', subdir: '.'}
             ]
         },
         singleRun: true
     }, done).start();
 });
 
-gulp.task('ci', ['ci-common', 'ci-test' /*, 'ci-test:od' */]);
+gulp.task('ci', ['ci-common', 'ci-test' , 'ci-test:od' ]);
 
+
+// START: Saucelabs
 
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
-    return function() {
+    return function () {
         new Server({
             configFile: __dirname + '/karma.conf.js',
             customLaunchers: customLaunchers,
             browsers: browsers,
-            reporters: ['saucelabs', 'teamcity'],
+            reporters: ['saucelabs'],
             singleRun: true
-        }, done).start();
+        }
+        ,function(result){
+            if(result === 0){
+                done();
+            } else {
+                done('Karma test failed: '+result);
+            }
+        }).start();
     }
 }
 
 function createSauceLabsTestPipe(customLaunchers, step) {
     // We cannot run too many instances at Sauce Labs in parallel, thus we need to run it several times
     // with only a few environments set
-    var numSauceLabsVMs = 3;
+    var numSauceLabsVMs = 5;
     var allBrowsers = Object.keys(customLaunchers);
 
     while (allBrowsers.length > 0) {
         var browsers = [];
-        for (var i=0; i<numSauceLabsVMs && allBrowsers.length > 0; i++) {
+        for (var i = 0; i < numSauceLabsVMs && allBrowsers.length > 0; i++) {
             browsers.push(allBrowsers.shift());
         }
 
@@ -223,17 +226,7 @@ function createSauceLabsTestPipe(customLaunchers, step) {
     step();
 }
 
-gulp.task('ci:nightly', ['ci-common'], function(done) {
-    var customLaunchers = require('./sauce.launchers.js').daily;
-    return createSauceLabsTestPipe(customLaunchers, done);
-});
-
-gulp.task('ci:weekly', ['ci-common'], function(done) {
-    var customLaunchers = require('./sauce.launchers.js').weekly;
-    return createSauceLabsTestPipe(customLaunchers, done);
-});
-
-gulp.task('ci:manual', ['ci-common'], function(done) {
-    var customLaunchers = require('./sauce.launchers.js').manual;
+gulp.task('saucelabs', ['ci-common'], function (done) {
+    var customLaunchers = require('./sauce.launchers.js').browsers;
     return createSauceLabsTestPipe(customLaunchers, done);
 });

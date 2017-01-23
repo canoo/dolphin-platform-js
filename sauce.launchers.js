@@ -1,6 +1,6 @@
 // Browsers to run on Sauce Labs
 
-var daily = {
+var browsers = {
     sl_winXP_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
@@ -149,25 +149,23 @@ var daily = {
         platformName: 'iOS',
         platformVersion: '8.4'
     },
-
     sl_android_5_1: {
         base: 'SauceLabs',
         browserName: 'Browser',
         appiumVersion: '1.4.16',
-        deviceName: 'Android Simulator',
+        deviceName: 'Android Emulator',
         deviceOrientation: 'portrait',
         platformName: 'Android',
         platformVersion: '5.1'
     }
-};
-
-var weekly = {
+    ,
     sl_mac9_chrome: {
         base: 'SauceLabs',
         browserName: 'chrome',
         platform: 'OS X 10.9',
         version: '46.0'
-    },
+    }
+    ,
     sl_mac9_firefox: {
         base: 'SauceLabs',
         browserName: 'firefox',
@@ -180,65 +178,62 @@ var weekly = {
         platform: 'OS X 10.9',
         version: '7.0'
     },
-
     sl_ipad_8_3: {
         base: 'SauceLabs',
         browserName: 'Safari',
-        appiumVersion: '1.4.16',
+        appiumVersion: '1.6.3',
         deviceName: 'iPad Simulator',
         deviceOrientation: 'portrait',
         platformName: 'iOS',
-        platformVersion: '8.3'
+        platformVersion: '8.3',
+        flags: ['--disable-web-security']
     }
+    // sl_ipad_9_2: {
+    //     base: 'SauceLabs',
+    //     browserName: 'Safari',
+    //     appiumVersion: '1.6.3',
+    //     deviceName: 'iPad Simulator',
+    //     deviceOrientation: 'portrait',
+    //     platformName: 'iOS',
+    //     platformVersion: '9.2',
+    //     flags: ['--disable-web-security']
+    // }
+    //
+    // sl_ipad_9_1: {
+    //     base: 'SauceLabs',
+    //     browserName: 'Safari',
+    //     appiumVersion: '1.6.3',
+    //     deviceName: 'iPad Simulator',
+    //     deviceOrientation: 'portrait',
+    //     platformName: 'iOS',
+    //     platformVersion: '9.1',
+    //     flags: ['--disable-web-security']
+    // }
+    // ,
 
+    // sl_android_5_0: {
+    //     base: 'SauceLabs',
+    //     browserName: 'Browser',
+    //     appiumVersion: '1.5.3',
+    //     deviceName: 'Android Emulator',
+    //     deviceOrientation: 'portrait',
+    //     platformName: 'Android',
+    //     platformVersion: '5.0',
+    //     flags: ['--disable-web-security']
+    // },
+    //
+    // sl_android_4_4: {
+    //     base: 'SauceLabs',
+    //     browserName: 'Browser',
+    //     appiumVersion: '1.5.3',
+    //     deviceName: 'Android Emulator',
+    //     deviceOrientation: 'portrait',
+    //     platformName: 'Android',
+    //     platformVersion: '4.4',
+    //     flags: ['--disable-web-security']
+    // }
 };
 
 
 
-var manual = {
-    sl_ipad_9_2: {
-        base: 'SauceLabs',
-        browserName: 'Safari',
-        appiumVersion: '1.4.16',
-        deviceName: 'iPad Simulator',
-        deviceOrientation: 'portrait',
-        platformName: 'iOS',
-        platformVersion: '9.2'
-    },
-
-    sl_ipad_9_1: {
-        base: 'SauceLabs',
-        browserName: 'Safari',
-        appiumVersion: '1.4.16',
-        deviceName: 'iPad Simulator',
-        deviceOrientation: 'portrait',
-        platformName: 'iOS',
-        platformVersion: '9.1'
-    },
-
-    sl_android_5_0: {
-        base: 'SauceLabs',
-        browserName: 'Browser',
-        appiumVersion: '1.4.16',
-        deviceName: 'Android Simulator',
-        deviceOrientation: 'portrait',
-        platformName: 'Android',
-        platformVersion: '5.0'
-    },
-
-    sl_android_4_4: {
-        base: 'SauceLabs',
-        browserName: 'Browser',
-        appiumVersion: '1.4.16',
-        deviceName: 'Android Simulator',
-        deviceOrientation: 'portrait',
-        platformName: 'Android',
-        platformVersion: '4.4'
-    }
-};
-
-
-
-exports.daily = daily;
-exports.weekly = weekly;
-exports.manual = manual;
+exports.browsers = browsers;

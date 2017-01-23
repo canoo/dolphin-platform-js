@@ -3,15 +3,6 @@
 
 module.exports = function (config) {
 
-    var fs = require('fs');
-
-    // Use ENV vars on TeamCity and sauce.json locally to get credentials
-    if (!process.env.SAUCE_USERNAME && !process.env.SAUCE_ACCESS_KEY && fs.existsSync('sauce.json')) {
-        process.env.SAUCE_USERNAME = require('./sauce').username;
-        process.env.SAUCE_ACCESS_KEY = require('./sauce').accessKey;
-    }
-
-
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -28,7 +19,11 @@ module.exports = function (config) {
             './test/build/**/test-*.js'
         ],
 
-
+        client: {
+            mocha: {
+                timeout: 20000 // 20 seconds
+            }
+         },
         // list of files to exclude
         exclude: [],
 
@@ -64,14 +59,16 @@ module.exports = function (config) {
 
         // Sauce Labs configuration
         sauceLabs: {
-            testName: 'dolphin-js Unit Tests',
+            testName: 'dolphin-platform-js Unit Tests',
+            tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER,
             recordScreenshots: true,
-            recordVideo: false
+            recordVideo: false,
+            startConnect: false
         },
-        captureTimeout: 120000,
-        browserDisconnectTimeout: 10 * 1000,
+        captureTimeout: 5 * 60 * 1000,
+        browserDisconnectTimeout: 20 * 1000,
         browserDisconnectTolerance: 3,
-        browserNoActivityTimeout: 20 * 1000,
+        browserNoActivityTimeout: 5 * 60 * 1000,
 
 
         // Coverage configuration
