@@ -9,7 +9,6 @@ import CommandBatcherTests from "../test/dolphin/CommandBatcherTests";
 import CreatePresentationModelCommandTests from "../test/dolphin/CreatePresentationModelCommandTests";
 import DolphinBuilderTest from "../test/dolphin/DolphinBuilderTest";
 import EmptyNotificationTests from "../test/dolphin/EmptyNotificationTests";
-import MapTests from "../test/dolphin/MapTests";
 import NamedCommandTests from "../test/dolphin/NamedCommandTests";
 import ValueChangedCommandTests from "../test/dolphin/ValueChangedCommandTests";
 
@@ -30,7 +29,6 @@ export function testAll() {
     test.addTestClass(new ClientDolphinTests(), "ClientDolphinTests");
     test.addTestClass(new ClientConnectorTests(), "ClientConnectorTests");
     test.addTestClass(new CommandBatcherTests(), "CommandBatcherTests");
-    test.addTestClass(new MapTests(), "MapTests");
     test.addTestClass(new ClientModelStoreTests(), "ClientModelStoreTests");
     test.addTestClass(new CodecTest(), "CodecTest");
     test.addTestClass(new DolphinBuilderTest(), "DolphinBuilder");

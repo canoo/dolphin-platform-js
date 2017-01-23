@@ -136,7 +136,7 @@ function rebundle(bundler) {
         .transform('babelify')
         .bundle()
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
-        .pipe(source('dolphin.js'))
+        .pipe(source('dolphin-platform.js'))
         .pipe($.derequire())
         .pipe(gulp.dest('./dist'))
         .pipe(buffer())
@@ -164,45 +164,6 @@ gulp.task('watch', function() {
 });
 
 gulp.task('default', ['verify', 'build', 'watch']);
-
-
-
-gulp.task('sonar', ['ci'], function () {
-
-    var options = {
-        sonar: {
-            host: {
-                url: config.sonar.host.url
-            },
-            jdbc: {
-                url: config.sonar.jdbc.url,
-                username: config.sonar.jdbc.username,
-                password: config.sonar.jdbc.password
-            },
-            projectKey: 'dolphin-js',
-            projectName: 'Dolphin Platform JS',
-            projectVersion: '0.8.9',
-            sources: 'src',
-            language: 'js',
-            sourceEncoding: 'UTF-8',
-            javascript: {
-                lcov: {
-                    reportPath: 'coverage/lcov.info'
-                }
-            },
-            exec: {
-                // All these properties will be send to the child_process.exec method (see: https://nodejs.org/api/child_process.html#child_process_child_process_exec_command_options_callback )
-                // Increase the amount of data allowed on stdout or stderr (if this value is exceeded then the child process is killed, and the gulp-sonar will fail).
-                maxBuffer : 1024*1024
-            }
-        }
-    };
-
-    return gulp.src([])
-        .pipe($.sonar(options))
-        .on('error', $.util.log);
-});
-
 
 
 gulp.task('ci-common', ['build', 'build-test', /* 'build-test:od', */ 'lint-tc']);

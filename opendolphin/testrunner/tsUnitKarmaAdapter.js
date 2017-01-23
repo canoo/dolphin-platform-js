@@ -1,4 +1,5 @@
 var allTests = require('./AllTests');
+window.Map = require('../../bower_components/core.js/library/fn/map');
 
 (function (window) {
 
