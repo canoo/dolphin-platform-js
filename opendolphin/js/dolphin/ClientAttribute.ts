@@ -16,15 +16,11 @@ export class ClientAttribute {
     private presentationModel   : ClientPresentationModel;
     private valueChangeBus      : EventBus<ValueChangedEvent>;
     private qualifierChangeBus  : EventBus<ValueChangedEvent>;
-    private dirtyValueChangeBus : EventBus<ValueChangedEvent>;
-    private baseValueChangeBus  : EventBus<ValueChangedEvent>;
 
     constructor(public propertyName:string, qualifier:string, value:any) {
         this.id = "" + (ClientAttribute.clientAttributeInstanceCount++) + "C";
         this.valueChangeBus = new EventBus();
         this.qualifierChangeBus = new EventBus();
-        this.dirtyValueChangeBus = new EventBus();
-        this.baseValueChangeBus = new EventBus();
         this.setValue(value);
         this.setQualifier(qualifier);
     }
@@ -104,7 +100,7 @@ export class ClientAttribute {
         if (sourceAttribute) {
             this.setQualifier(sourceAttribute.getQualifier());     // sequence is important
             this.setValue(sourceAttribute.value);
-            // syncing propertyName and tag is not needed since they must be identical anyway
+            // syncing propertyName is not needed since they must be identical anyway
         }
     }
 }

@@ -8,8 +8,8 @@ import { TestClass } from "../../testrunner/tsUnit";
 export default class ClientAttributeTests extends TestClass {
 
     attributesShouldGetUniqueIds() {
-        var ca1 = new ClientAttribute("prop","qual","tag");
-        var ca2 = new ClientAttribute("prop","qual","tag");
+        var ca1 = new ClientAttribute("prop","qual");
+        var ca2 = new ClientAttribute("prop","qual");
         this.areNotIdentical(ca1.id, ca2.id);
     }
 
@@ -99,7 +99,7 @@ export default class ClientAttributeTests extends TestClass {
     }
 
     simpleCopy() {
-        var ca1 = new ClientAttribute("prop","qual","tag");
+        var ca1 = new ClientAttribute("prop","qual","value");
         var ca2 = ca1.copy();
 
         this.areNotIdentical(ca1.id, ca2.id); // id must not be copied

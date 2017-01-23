@@ -126,7 +126,7 @@ export default class ClientConnectorTests extends TestClass {
         //call SwitchPresentationModelCommand
         TestHelper.clientConnector.handle(serverCommand);
         pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        // Both attribute of same property and tag ("prop1", "VALUE")  should be equal
+        // Attribute of same property ("prop1", )  should be equal
         this.areIdentical(pms[0].getAttributes()[0].getValue(), pms[1].getAttributes()[0].getValue());
 
         //other attributes should be unaffected
