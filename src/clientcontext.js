@@ -18,7 +18,7 @@
 "use strict";
 
 var Emitter = require('emitter-component');
-
+var Promise = require('../bower_components/core.js/library/fn/promise');
 var utils = require('./utils.js');
 var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
