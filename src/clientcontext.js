@@ -18,7 +18,7 @@
 "use strict";
 
 var Emitter = require('emitter-component');
-
+var Promise = require('../bower_components/core.js/library/fn/promise');
 var utils = require('./utils.js');
 var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
@@ -57,12 +57,15 @@ ClientContext.prototype.disconnect = function() {
     // TODO: Implement ClientContext.disconnect [DP-46]
     var self = this;
     this.dolphin.stopPushListening();
-    this._controllerManager.destroy().then(function() {
-        self._connector.invoke(DISCONNECT_COMMAND_NAME);
-        self.dolphin = null;
-        self.beanManager = null;
-        self._controllerManager = null;
-        self._connector = null;
+    return new Promise(function(resolve) {
+        this._controllerManager.destroy().then(function () {
+            self._connector.invoke(DISCONNECT_COMMAND_NAME);
+            self.dolphin = null;
+            self.beanManager = null;
+            self._controllerManager = null;
+            self._connector = null;
+            resolve();
+        });
     });
 };
 
