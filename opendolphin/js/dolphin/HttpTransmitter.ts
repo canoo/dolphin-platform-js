@@ -11,17 +11,20 @@ export default class HttpTransmitter implements Transmitter {
     codec:Codec;
     private errorHandler: (any) => void;
     supportCORS: boolean;
+    headersInfo: Object;
 
 
     HttpCodes = {
         finished: 4,
         success : 200
     };
-    constructor(public url: string, reset: boolean = true, public charset: string = "UTF-8", errorHandler: (any) => void = null, supportCORS: boolean = false) {
+
+    constructor(public url: string, reset: boolean = true, public charset: string = "UTF-8", errorHandler: (any) => void = null, supportCORS: boolean = false, headersInfo: Object = null) {
         this.errorHandler = errorHandler;
         this.supportCORS = supportCORS;
+        this.headersInfo = headersInfo;
         this.http = new XMLHttpRequest();
-        this.sig  = new XMLHttpRequest();
+        this.sig = new XMLHttpRequest();
         if (this.supportCORS) {
             if ("withCredentials" in this.http) { // browser supports CORS
                 this.http.withCredentials = true; // NOTE: doing this for non CORS requests has no impact
@@ -75,11 +78,22 @@ export default class HttpTransmitter implements Transmitter {
         };
 
         this.http.open('POST', this.url, true);
+        this.setHeaders(this.http);
         if ("overrideMimeType" in this.http) {
             this.http.overrideMimeType("application/json; charset=" + this.charset ); // todo make injectable
         }
         this.http.send(this.codec.encode(commands));
 
+    }
+
+    private setHeaders(httpReq:XMLHttpRequest){
+        if (this.headersInfo) {
+            for (var i in this.headersInfo) {
+                if (this.headersInfo.hasOwnProperty(i)) {
+                    httpReq.setRequestHeader(i, this.headersInfo[i]);
+                }
+            }
+        }
     }
 
     private handleError(kind:String, message:String) {
@@ -94,6 +108,7 @@ export default class HttpTransmitter implements Transmitter {
 
     signal(command : SignalCommand) {
         this.sig.open('POST', this.url, true);
+        this.setHeaders(this.sig);
         this.sig.send(this.codec.encode([command]));
     }
 
