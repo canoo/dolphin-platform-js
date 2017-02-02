@@ -47,7 +47,7 @@ exports.connect = function (url, config) {
 
     var dolphin = builder.build();
 
-    var transmitter = new HttpTransmitter(url, config.headersInfo);
+    var transmitter = new HttpTransmitter(url, exists(config)?config.headersInfo : null);
     transmitter.on('error', function (error) {
         clientContext.emit('error', error);
     });
