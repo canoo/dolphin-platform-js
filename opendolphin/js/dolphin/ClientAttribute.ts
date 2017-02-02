@@ -1,6 +1,5 @@
 import { ClientPresentationModel } from './ClientPresentationModel'
 import EventBus from './EventBus'
-import Tag from './Tag'
 
 
 export interface ValueChangedEvent {
@@ -13,39 +12,23 @@ export class ClientAttribute {
     static clientAttributeInstanceCount : number = 0;
     id                          : string;
     private value               : any;
-    private dirty               : boolean = false;
-    private baseValue           : any;
     private qualifier           : string;
     private presentationModel   : ClientPresentationModel;
     private valueChangeBus      : EventBus<ValueChangedEvent>;
     private qualifierChangeBus  : EventBus<ValueChangedEvent>;
-    private dirtyValueChangeBus : EventBus<ValueChangedEvent>;
-    private baseValueChangeBus  : EventBus<ValueChangedEvent>;
 
-    constructor(public propertyName:string, qualifier:string, value:any, public tag:string = Tag.value()) {
+    constructor(public propertyName:string, qualifier:string, value:any) {
         this.id = "" + (ClientAttribute.clientAttributeInstanceCount++) + "C";
         this.valueChangeBus = new EventBus();
         this.qualifierChangeBus = new EventBus();
-        this.dirtyValueChangeBus = new EventBus();
-        this.baseValueChangeBus = new EventBus();
         this.setValue(value);
-        this.setBaseValue(value);
         this.setQualifier(qualifier);
     }
 
     /** a copy constructor with new id and no presentation model */
     copy() {
-        var result = new ClientAttribute(this.propertyName, this.getQualifier(), this.getValue(), this.tag);
-        result.setBaseValue(this.getBaseValue());
+        var result = new ClientAttribute(this.propertyName, this.getQualifier(), this.getValue());
         return result;
-    }
-
-    isDirty():boolean {
-        return this.dirty;
-    }
-
-    getBaseValue() {
-        return this.baseValue;
     }
 
     setPresentationModel(presentationModel:ClientPresentationModel) {
@@ -68,27 +51,7 @@ export class ClientAttribute {
         if (this.value == verifiedValue) return;
         var oldValue = this.value;
         this.value = verifiedValue;
-        this.setDirty(this.calculateDirty(this.baseValue, verifiedValue));
         this.valueChangeBus.trigger({ 'oldValue': oldValue, 'newValue': verifiedValue });
-    }
-
-    private calculateDirty(baseValue:any, value:any):boolean {
-        if (baseValue == null) {
-            return value != null;
-        } else {
-            return baseValue != value;
-        }
-    }
-
-    updateDirty() {
-        this.setDirty(this.calculateDirty(this.baseValue, this.value));
-    }
-
-    private setDirty(dirty:boolean) {
-        var oldVal = this.dirty;
-        this.dirty = dirty;
-        this.dirtyValueChangeBus.trigger({ 'oldValue': oldVal, 'newValue': this.dirty });
-        if (this.presentationModel) this.presentationModel.updateDirty();
     }
 
     setQualifier(newQualifier) {
@@ -100,24 +63,6 @@ export class ClientAttribute {
 
     getQualifier(): string{
         return this.qualifier;
-    }
-
-    setBaseValue(baseValue:any) {
-        if (this.baseValue == baseValue) return;
-        var oldBaseValue = this.baseValue;
-        this.baseValue = baseValue;
-        this.setDirty(this.calculateDirty(baseValue, this.value));
-        this.baseValueChangeBus.trigger({ 'oldValue': oldBaseValue, 'newValue': baseValue });
-    }
-
-    rebase() {
-        this.setBaseValue(this.value);
-        this.setDirty(false); // this is not superfluous!
-    }
-
-    reset() {
-        this.setValue(this.baseValue);
-        this.setDirty(false); // this is not superfluous!
     }
 
     static checkValue(value:any) : any {
@@ -151,20 +96,11 @@ export class ClientAttribute {
         this.qualifierChangeBus.onEvent(eventHandler);
     }
 
-    onDirty(eventHandler:(event:ValueChangedEvent) => void) {
-        this.dirtyValueChangeBus.onEvent(eventHandler);
-    }
-
-    onBaseValueChange(eventHandler:(event:ValueChangedEvent) => void) {
-        this.baseValueChangeBus.onEvent(eventHandler);
-    }
-
     syncWith(sourceAttribute:ClientAttribute) {
         if (sourceAttribute) {
             this.setQualifier(sourceAttribute.getQualifier());     // sequence is important
-            this.setBaseValue(sourceAttribute.getBaseValue());
             this.setValue(sourceAttribute.value);
-            // syncing propertyName and tag is not needed since they must be identical anyway
+            // syncing propertyName is not needed since they must be identical anyway
         }
     }
 }

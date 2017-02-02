@@ -31,9 +31,6 @@ function encodeCreatePresentationModelCommand(command) {
             if (exists(attribute.value)) {
                 result.v = attribute.value;
             }
-            if (exists(attribute.tag) && attribute.tag !== 'VALUE') {
-                result.t = attribute.tag;
-            }
             return result;
         }),
         'id': 'CreatePresentationModel'
@@ -52,9 +49,7 @@ function decodeCreatePresentationModelCommand(command) {
                 'propertyName': attribute.n,
                 'id': attribute.i,
                 'value': exists(attribute.v)? attribute.v : null,
-                'baseValue': exists(attribute.v)? attribute.v : null,
-                'qualifier': null,
-                'tag': exists(attribute.t)? attribute.t : 'VALUE'
+                'qualifier': null
             };
         })
     };

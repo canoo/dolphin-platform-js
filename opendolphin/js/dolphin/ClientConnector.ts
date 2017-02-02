@@ -12,11 +12,8 @@ import DeleteAllPresentationModelsOfTypeCommand from "./DeleteAllPresentationMod
 import DeletePresentationModelCommand from "./DeletePresentationModelCommand";
 import InitializeAttributeCommand from "./InitializeAttributeCommand";
 import NamedCommand from "./NamedCommand";
-import PresentationModelResetedCommand from "./PresentationModelResetedCommand";
-import SavedPresentationModelNotification from "./SavedPresentationModelNotification";
 import SignalCommand from "./SignalCommand";
 import SwitchPresentationModelCommand from "./SwitchPresentationModelCommand";
-import Tag from "./Tag";
 import ValueChangedCommand from "./ValueChangedCommand";
 
 
@@ -143,10 +140,6 @@ export class ClientConnector {
             return this.handleSwitchPresentationModelCommand(< SwitchPresentationModelCommand>command);
         }else if(command.id == "InitializeAttribute"){
             return this.handleInitializeAttributeCommand(< InitializeAttributeCommand>command);
-        }else if(command.id == "SavedPresentationModel"){
-            return this.handleSavedPresentationModelNotification(< SavedPresentationModelNotification>command);
-        }else if(command.id == "PresentationModelReseted"){
-            return this.handlePresentationModelResetedCommand(< PresentationModelResetedCommand>command);
         }else if(command.id == "AttributeMetadataChanged"){
             return this.handleAttributeMetadataChangedCommand(< AttributeMetadataChangedCommand>command);
         }else if(command.id == "CallNamedAction"){
@@ -176,8 +169,7 @@ export class ClientConnector {
         }
         var attributes: ClientAttribute[] = [];
         serverCommand.attributes.forEach((attr) =>{
-            var clientAttribute = this.clientDolphin.attribute(attr.propertyName,attr.qualifier,attr.value, attr.tag ? attr.tag :  Tag.value());
-            clientAttribute.setBaseValue(attr.baseValue);
+            var clientAttribute = this.clientDolphin.attribute(attr.propertyName,attr.qualifier,attr.value);
             if(attr.id && attr.id.match(".*S$")) {
                 clientAttribute.id = attr.id;
             }
@@ -190,8 +182,6 @@ export class ClientConnector {
         }
         this.clientDolphin.getClientModelStore().add(clientPm);
         this.clientDolphin.updatePresentationModelQualifier(clientPm);
-        clientPm.updateAttributeDirtyness();
-        clientPm.updateDirty();
         return clientPm;
     }
     private handleValueChangedCommand(serverCommand: ValueChangedCommand): ClientPresentationModel{
@@ -229,7 +219,7 @@ export class ClientConnector {
         return switchPm;
     }
     private handleInitializeAttributeCommand(serverCommand:  InitializeAttributeCommand): ClientPresentationModel{
-        var attribute = new  ClientAttribute(serverCommand.propertyName,serverCommand.qualifier,serverCommand.newValue, serverCommand.tag);
+        var attribute = new  ClientAttribute(serverCommand.propertyName,serverCommand.qualifier,serverCommand.newValue);
         if(serverCommand.qualifier){
             var attributesCopy: ClientAttribute[]= this.clientDolphin.getClientModelStore().findAllAttributesByQualifier(serverCommand.qualifier);
             if(attributesCopy){
@@ -256,26 +246,6 @@ export class ClientConnector {
         this.clientDolphin.addAttributeToModel(presentationModel,attribute);
         this.clientDolphin.updatePresentationModelQualifier(presentationModel);
         return presentationModel;
-    }
-    private handleSavedPresentationModelNotification(serverCommand:  SavedPresentationModelNotification){
-        if(!serverCommand.pmId) return null;
-        var model: ClientPresentationModel = this.clientDolphin.getClientModelStore().findPresentationModelById(serverCommand.pmId);
-        if(!model){
-            console.log("model with id "+serverCommand.pmId+" not found, cannot rebase.");
-            return null;
-        }
-        model.rebase();
-        return model;
-    }
-    private handlePresentationModelResetedCommand(serverCommand:  PresentationModelResetedCommand):  ClientPresentationModel{
-        if(!serverCommand.pmId) return null;
-        var model: ClientPresentationModel = this.clientDolphin.getClientModelStore().findPresentationModelById(serverCommand.pmId);
-        if(!model){
-            console.log("model with id "+serverCommand.pmId+" not found, cannot reset.");
-            return null;
-        }
-        model.reset();
-        return model;
     }
     private handleAttributeMetadataChangedCommand(serverCommand:  AttributeMetadataChangedCommand):  ClientPresentationModel{
         var clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);

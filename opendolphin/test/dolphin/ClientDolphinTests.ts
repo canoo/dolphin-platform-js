@@ -4,7 +4,6 @@ import ClientDolphin from "../../js/dolphin/ClientDolphin";
 import { ClientModelStore } from "../../js/dolphin/ClientModelStore";
 import { ClientPresentationModel } from "../../js/dolphin/ClientPresentationModel";
 import NoTransmitter from "../../js/dolphin/NoTransmitter";
-import Tag from "../../js/dolphin/Tag";
 
 import { TestClass } from "../../testrunner/tsUnit";
 
@@ -37,8 +36,6 @@ export default class ClientDolphinTests extends TestClass {
         var pm:ClientPresentationModel = clientDolphin.presentationModel("myId", "myType");
         this.areIdentical(pm.getAttributes().length, 0);
 
-        clientDolphin.tag(pm,"property","value",Tag.tooltip());
         this.areIdentical(pm.getAttributes().length, 1);
-        this.areIdentical(pm.getAttributes()[0].tag, "TOOLTIP");
     }
 }

@@ -15,9 +15,6 @@ import DeletePresentationModelCommand from "../../js/dolphin/DeletePresentationM
 import EmptyNotification from "../../js/dolphin/EmptyNotification";
 import InitializeAttributeCommand from "../../js/dolphin/InitializeAttributeCommand";
 import NamedCommand from "../../js/dolphin/NamedCommand";
-import PresentationModelResetedCommand from "../../js/dolphin/PresentationModelResetedCommand";
-import ResetPresentationModelCommand from "../../js/dolphin/ResetPresentationModelCommand";
-import SavedPresentationModelNotification from "../../js/dolphin/SavedPresentationModelNotification";
 import SignalCommand from "../../js/dolphin/SignalCommand";
 import SwitchPresentationModelCommand from "../../js/dolphin/SwitchPresentationModelCommand";
 import ValueChangedCommand from "../../js/dolphin/ValueChangedCommand";
@@ -56,7 +53,7 @@ export default class CodecTest extends TestClass {
     }
 
     testCodingCommands() {
-        this.isTrue(CodecTestHelper.testCodingCommand(new AttributeCreatedNotification("pmId", "5", "prop", "äöüéàè", "qualifier", "TOOLTIP")))
+        this.isTrue(CodecTestHelper.testCodingCommand(new AttributeCreatedNotification("pmId", "5", "prop", "äöüéàè", "qualifier")))
         this.isTrue(CodecTestHelper.testCodingCommand(new AttributeMetadataChangedCommand("5", "name", "value")))
         this.isTrue(CodecTestHelper.testCodingCommand(new CallNamedActionCommand("some-action")))
         this.isTrue(CodecTestHelper.testCodingCommand(new CreatePresentationModelCommand(new ClientPresentationModel("MyId", "MyType"))))
@@ -70,9 +67,6 @@ export default class CodecTest extends TestClass {
         this.isTrue(CodecTestHelper.testCodingCommand(new EmptyNotification()))
         this.isTrue(CodecTestHelper.testCodingCommand(new InitializeAttributeCommand("pmId", "prop", "qualifier", "value", "pmType")))
         this.isTrue(CodecTestHelper.testCodingCommand(new NamedCommand("name")))
-        this.isTrue(CodecTestHelper.testCodingCommand(new PresentationModelResetedCommand("pmId")))
-        this.isTrue(CodecTestHelper.testCodingCommand(new ResetPresentationModelCommand("pmId")))
-        this.isTrue(CodecTestHelper.testCodingCommand(new SavedPresentationModelNotification("pmId")))
         this.isTrue(CodecTestHelper.testCodingCommand(new SignalCommand("signal")))
         this.isTrue(CodecTestHelper.testCodingCommand(new SwitchPresentationModelCommand("pmId", "sourcePmId")))
         this.isTrue(CodecTestHelper.testCodingCommand(new ValueChangedCommand("5", "oldValue", "newValue")))

@@ -25,7 +25,6 @@ export default class CreatePresentationModelCommand extends Command {
                 id:             attr.id,
                 qualifier:      attr.getQualifier(),
                 value:          attr.getValue(),
-                tag:            attr.tag
             });
         });
 

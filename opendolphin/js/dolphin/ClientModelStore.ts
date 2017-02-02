@@ -79,20 +79,6 @@ export class ClientModelStore {
                 })
             }
         });
-        // all attributes with the same qualifier should have the same base value
-        attribute.onBaseValueChange((evt:ValueChangedEvent)=> {
-            var baseValueChangeCommand:ChangeAttributeMetadataCommand =
-                new ChangeAttributeMetadataCommand(attribute.id, Attribute.BASE_VALUE, evt.newValue);
-            this.clientDolphin.getClientConnector().send(baseValueChangeCommand, null);
-            if (attribute.getQualifier()) {
-                var attrs = this.findAttributesByFilter((attr:ClientAttribute) => {
-                    return attr !== attribute && attr.getQualifier() == attribute.getQualifier();
-                })
-                attrs.forEach((attr:ClientAttribute) => {
-                    attr.setBaseValue(attribute.getBaseValue());
-                })
-            }
-        });
 
         attribute.onQualifierChange((evt:ValueChangedEvent)=> {
             var changeAttrMetadataCmd:ChangeAttributeMetadataCommand =

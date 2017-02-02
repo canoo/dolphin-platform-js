@@ -256,41 +256,31 @@ function createCPMCommand() {
                 "propertyName": "@@@ SOURCE_SYSTEM @@@",
                 "id": "3204S",
                 "qualifier": null,
-                "value": "server",
-                "baseValue": "server",
-                "tag": "VALUE"
+                "value": "server"
             },
             {
                 "propertyName": "caseDetailsLabel",
                 "id": "3205S",
                 "qualifier": null,
-                "value": null,
-                "baseValue": null,
-                "tag": "VALUE"
+                "value": null
             },
             {
                 "propertyName": "caseIdLabel",
                 "id": "3206S",
                 "qualifier": null,
-                "value": null,
-                "baseValue": null,
-                "tag": "VALUE"
+                "value": null
             },
             {
                 "propertyName": "statusLabel",
                 "id": "3207S",
                 "qualifier": null,
-                "value": null,
-                "baseValue": null,
-                "tag": "VALUE"
+                "value": null
             },
             {
                 "propertyName": "status",
                 "id": "3208S",
                 "qualifier": null,
-                "value": null,
-                "baseValue": null,
-                "tag": "VALUE"
+                "value": null
             }
         ],
         "pmType": "com.canoo.icos.casemanager.model.casedetails.CaseInfoBean",

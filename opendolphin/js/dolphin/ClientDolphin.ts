@@ -35,8 +35,8 @@ export default class ClientDolphin {
     }
 
     // factory method for attributes
-    attribute(propertyName, qualifier, value, tag) {
-        return new ClientAttribute(propertyName, qualifier, value, tag);
+    attribute(propertyName, qualifier, value) {
+        return new ClientAttribute(propertyName, qualifier, value);
     }
 
     // factory method for presentation models
@@ -96,16 +96,8 @@ export default class ClientDolphin {
         if(!sourceAttribute.getQualifier()) return;
         var attributes = this.getClientModelStore().findAllAttributesByQualifier(sourceAttribute.getQualifier());
         attributes.forEach(targetAttribute => {
-            if(targetAttribute.tag != sourceAttribute.tag) return;       // attributes with same qualifier and tag
             targetAttribute.setValue(sourceAttribute.getValue());        // should always have the same value
-            targetAttribute.setBaseValue(sourceAttribute.getBaseValue());// and same base value and so dirtyness
         });
-    }
-
-    tag(presentationModel: ClientPresentationModel,propertyName:string,value:any, tag:string):  ClientAttribute{
-        var clientAttribute: ClientAttribute = new ClientAttribute(propertyName, null, value, tag);
-        this.addAttributeToModel(presentationModel, clientAttribute);
-        return clientAttribute;
     }
 
     addAttributeToModel(presentationModel:ClientPresentationModel, clientAttribute: ClientAttribute){
@@ -117,8 +109,7 @@ export default class ClientDolphin {
                                                 clientAttribute.id,
                                                 clientAttribute.propertyName,
                                                 clientAttribute.getValue(),
-                                                clientAttribute.getQualifier(),
-                                                clientAttribute.tag
+                                                clientAttribute.getQualifier()
                                                 ), null);
         }
     }
