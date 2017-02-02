@@ -31,18 +31,26 @@ var ControllerManager = require('./controllermanager.js').ControllerManager;
 var ClientContext = require('./clientcontext.js').ClientContext;
 var HttpTransmitter = require('./httpTransmitter.es6').default;
 
-exports.connect = function(url, config) {
+exports.connect = function (url, config) {
     checkMethod('connect(url, config)');
     checkParam(url, 'url');
 
     var builder = OpenDolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
-    if (exists(config) && exists(config.errorHandler)) {
-        builder.errorHandler(config.errorHandler);
+    if (exists(config)) {
+        if (exists(config.errorHandler)) {
+            builder.errorHandler(config.errorHandler);
+        }
+        if (exists(config.headersInfo) &&  Object.keys(config.headersInfo ).length > 0) {
+           builder.headersInfo(config.headersInfo);
+        }
     }
+
     var dolphin = builder.build();
 
-    var transmitter = new HttpTransmitter(url);
-    transmitter.on('error', function(error) { clientContext.emit('error', error); });
+    var transmitter = new HttpTransmitter(url, exists(config)?config.headersInfo : null);
+    transmitter.on('error', function (error) {
+        clientContext.emit('error', error);
+    });
     dolphin.clientConnector.transmitter = transmitter;
 
     var classRepository = new ClassRepository(dolphin);

@@ -30,15 +30,15 @@ const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
 
 export default class HttpTransmitter {
 
-    constructor(url) {
+    constructor(url, headersInfo) {
         this.url = url;
+        this.headersInfo = headersInfo;
     }
 
     send(commands) {
         return new Promise((resolve, reject) => {
             const http = new XMLHttpRequest();
             http.withCredentials = true;
-
             http.onerror = (error) => reject(new DolphinRemotingError('HttpTransmitter: Network error', error));
             http.onreadystatechange = () => {
                 if (http.readyState === FINISHED){
@@ -72,6 +72,14 @@ export default class HttpTransmitter {
             http.open('POST', this.url);
             if (exists(this.clientId)) {
                 http.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, this.clientId);
+            }
+
+            if (exists(this.headersInfo)) {
+                for (var i in this.headersInfo) {
+                    if (this.headersInfo.hasOwnProperty(i)) {
+                        http.setRequestHeader(i, this.headersInfo[i]);
+                    }
+                }
             }
             http.send(encode(commands));
         });

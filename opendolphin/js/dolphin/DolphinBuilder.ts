@@ -13,6 +13,7 @@ export default class DolphinBuilder {
     maxBatchSize_ :number = 50;
     supportCORS_: boolean = false;
     errorHandler_:(any) => void;
+    headersInfo_: Object;
 
     constructor(){
     }
@@ -41,12 +42,16 @@ export default class DolphinBuilder {
         this.errorHandler_ = errorHandler;
         return this;
     }
+    public headersInfo(headersInfo:(Object) => void):DolphinBuilder {
+        this.headersInfo_ = headersInfo;
+        return this;
+    }
     public build():ClientDolphin {
         console.log("OpenDolphin js found");
         var clientDolphin = new ClientDolphin();
         var transmitter;
         if (this.url_ != null && this.url_.length > 0) {
-            transmitter = new HttpTransmitter(this.url_, this.reset_, "UTF-8", this.errorHandler_, this.supportCORS_);
+            transmitter = new HttpTransmitter(this.url_, this.reset_, "UTF-8", this.errorHandler_, this.supportCORS_, this.headersInfo_);
         } else {
             transmitter = new NoTransmitter();
         }
