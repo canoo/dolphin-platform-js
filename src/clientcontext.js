@@ -58,7 +58,7 @@ ClientContext.prototype.disconnect = function() {
     var self = this;
     this.dolphin.stopPushListening();
     return new Promise(function(resolve) {
-        this._controllerManager.destroy().then(function () {
+        self._controllerManager.destroy().then(function () {
             self._connector.invoke(DISCONNECT_COMMAND_NAME);
             self.dolphin = null;
             self.beanManager = null;
