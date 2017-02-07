@@ -8,8 +8,8 @@ import { TestClass } from "../../testrunner/tsUnit";
 export default class ClientAttributeTests extends TestClass {
 
     attributesShouldGetUniqueIds() {
-        var ca1 = new ClientAttribute("prop","qual");
-        var ca2 = new ClientAttribute("prop","qual");
+        var ca1 = new ClientAttribute("prop","qual", "value");
+        var ca2 = new ClientAttribute("prop","qual", "value");
         this.areNotIdentical(ca1.id, ca2.id);
     }
 
