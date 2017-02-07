@@ -26,16 +26,4 @@ export default class ClientDolphinTests extends TestClass {
         this.areIdentical(pm2.id, "myId2");
         this.areIdentical(pm2.getAttributes().length, 2);
     }
-
-    tagTheAttribute(){
-        var clientDolphin:ClientDolphin = new ClientDolphin();
-        var clientModelStore:ClientModelStore = new ClientModelStore(clientDolphin);
-        clientDolphin.setClientModelStore(clientModelStore);
-        clientDolphin.setClientConnector(new ClientConnector(new NoTransmitter(), clientDolphin));
-
-        var pm:ClientPresentationModel = clientDolphin.presentationModel("myId", "myType");
-        this.areIdentical(pm.getAttributes().length, 0);
-
-        this.areIdentical(pm.getAttributes().length, 1);
-    }
 }
