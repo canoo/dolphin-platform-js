@@ -157,7 +157,7 @@ gulp.task('build-test:od', ['build:od'], function () {
 gulp.task('test:od', ['build-test:od'], function(done) {
     new Server({
         configFile: __dirname + '/opendolphin/testrunner/karma.conf.js',
-        // reporters: ['coverage'],
+        reporters: ['coverage'],
         singleRun: true
     }, done).start();
 });
@@ -166,7 +166,7 @@ gulp.task('test:od', ['build-test:od'], function(done) {
 gulp.task('test:dp', ['build-test:dp'], function (done) {
     new Server({
         configFile: __dirname + '/karma.conf.js',
-        // reporters: ['coverage'],
+        reporters: ['coverage'],
         coverageReporter: {
             reporters: [
                 {type: 'lcovonly', subdir: '.'},
