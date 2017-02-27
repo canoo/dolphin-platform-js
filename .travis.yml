@@ -19,7 +19,7 @@ before_script:
   - bower update
 
 script:
-  - gulp clean verify ci build
+  - gulp clean verify build
   - gulp saucelabs
 
 after_success:
