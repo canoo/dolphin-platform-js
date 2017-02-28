@@ -67,16 +67,10 @@ var testBundler = browserify(assign({}, watchify.args, {
     debug: true
 }));
 
-gulp.task('build-test', ['build:od'], function () {
+gulp.task('build-test:dp', ['build:od'], function () {
     return rebundleTest(testBundler);
 });
 
-gulp.task('test', ['build-test'], function (done) {
-    new Server({
-        configFile: __dirname + '/karma.conf.js',
-        singleRun: true
-    }, done).start();
-});
 /* END : build dolphin-platform related tests */
 
 gulp.task('verify', ['lint', 'test']);
@@ -159,10 +153,8 @@ gulp.task('build-test:od', ['build:od'], function () {
 
 /* END: build opendolphin tests  */
 
-gulp.task('ci-common', ['build', 'build-test', 'build-test:od']);
-
 //Test opendolphin
-gulp.task('ci-test:od', ['ci-common'], function(done) {
+gulp.task('test:od', ['build-test:od'], function(done) {
     new Server({
         configFile: __dirname + '/opendolphin/testrunner/karma.conf.js',
         reporters: ['coverage'],
@@ -171,23 +163,25 @@ gulp.task('ci-test:od', ['ci-common'], function(done) {
 });
 
 //Test dolphin-platform
-gulp.task('ci-test', ['ci-common'], function (done) {
+gulp.task('test:dp', ['build-test:dp'], function (done) {
     new Server({
         configFile: __dirname + '/karma.conf.js',
         reporters: ['coverage'],
         coverageReporter: {
             reporters: [
-                {type: 'lcovonly', subdir: '.'}
+                {type: 'lcovonly', subdir: '.'},
+                {type: 'html', subdir: 'report-html' },
             ]
         },
         singleRun: true
     }, done).start();
 });
 
-gulp.task('ci', ['ci-common', 'ci-test' , 'ci-test:od' ]);
+gulp.task('test', ['test:dp' , 'test:od' ]);
 
 
 // START: Saucelabs
+gulp.task('common', ['build', 'build-test:dp', 'build-test:od']);
 
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
     return function () {
@@ -226,7 +220,7 @@ function createSauceLabsTestPipe(customLaunchers, step) {
     step();
 }
 
-gulp.task('saucelabs', ['ci-common'], function (done) {
+gulp.task('saucelabs', ['common'], function (done) {
     var customLaunchers = require('./sauce.launchers.js').browsers;
     return createSauceLabsTestPipe(customLaunchers, done);
 });
