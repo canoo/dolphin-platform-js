@@ -135,14 +135,16 @@ gulp.task('default', ['verify', 'build', 'watch']);
 
 
 /* START: build opendolphin tests  */
-
-gulp.task('build-test:od', ['build:od'], function () {
-    var bundle = browserify({debug: true})
-        .add(glob.sync('./opendolphin/test*/**/*.ts'))
-        .add('./opendolphin/testrunner/tsUnitKarmaAdapter.js')
+gulp.task('build-test:od', function () {
+    var bundler = browserify({debug: true})
+        .add(glob.sync('./opendolphin/test/src/**/*.ts'))
         .plugin(tsify);
-
-    return bundle.bundle()
+    return bundler
+        .transform('babelify')
+        .transform(istanbul({
+            ignore: ['**/src/polyfills.js', '**/opendolphin/**/*.js']
+        }))
+        .bundle()
         .on('error', $.util.log.bind($.util, 'Browserify Error'))
         .pipe(source('test-bundle.js'))
         .pipe(buffer())
@@ -151,12 +153,9 @@ gulp.task('build-test:od', ['build:od'], function () {
         .pipe(gulp.dest('./opendolphin/test/build'));
 });
 
-/* END: build opendolphin tests  */
-
-//Test opendolphin
 gulp.task('test:od', ['build-test:od'], function(done) {
     new Server({
-        configFile: __dirname + '/opendolphin/testrunner/karma.conf.js',
+        configFile: __dirname + '/opendolphin/test/karma.conf.js',
         reporters: ['coverage'],
         singleRun: true
     }, done).start();
