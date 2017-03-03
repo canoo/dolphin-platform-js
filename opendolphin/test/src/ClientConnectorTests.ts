@@ -1,3 +1,6 @@
+/// <reference path="../../../node_modules/@types/mocha/index.d.ts" />
+/// <reference path="../../../node_modules/@types/chai/index.d.ts" />
+
 import { ClientConnector, OnSuccessHandler, Transmitter } from "../../js/dolphin/ClientConnector";
 import { ClientAttribute } from "../../js/dolphin/ClientAttribute";
 import ClientDolphin from "../../js/dolphin/ClientDolphin";
@@ -10,8 +13,7 @@ import SignalCommand from "../../js/dolphin/SignalCommand";
 import SwitchPresentationModelCommand from "../../js/dolphin/SwitchPresentationModelCommand";
 import ValueChangedCommand from "../../js/dolphin/ValueChangedCommand";
 
-import { TestClass } from "../../testrunner/tsUnit";
-
+import { assert } from 'chai';
 
 class TestTransmitter implements Transmitter {
     constructor(public clientCommands, public serverCommands) {
@@ -25,144 +27,144 @@ class TestTransmitter implements Transmitter {
     reset(successHandler:OnSuccessHandler) : void { /** do nothing */ }
 }
 
-export default class ClientConnectorTests extends TestClass {
+describe('DolphinBuilderTest', () => {
 
-    sendingOneCommandMustCallTheTransmission() {
+    it('sending one command must call the Transmission', () => {
         var singleCommand   = new Command();
         var serverCommand:Command[]=[];
-        var transmitter     = new TestTransmitter(singleCommand, serverCommand)
+        var transmitter     = new TestTransmitter(singleCommand, serverCommand);
         var clientConnector = new ClientConnector(transmitter,null);
 
-        clientConnector.send(singleCommand, undefined)
+        clientConnector.send(singleCommand, undefined);
 
-        this.areIdentical( transmitter.clientCommands.length, 1)
-        this.areIdentical( transmitter.clientCommands[0], singleCommand)
-    }
+        assert.equal( transmitter.clientCommands.length, 1);
+        assert.equal( transmitter.clientCommands[0], singleCommand);
+    });
 
-    sendingMultipleCommands() {
+    it('sending multiple commands', () => {
         var singleCommand   = new Command();
         var serverCommand:Command[]=[];
         var lastCommand     = new Command();
-        var transmitter     = new TestTransmitter(undefined, serverCommand)
+        var transmitter     = new TestTransmitter(undefined, serverCommand);
         var clientConnector = new ClientConnector(transmitter,null);
 
-        clientConnector.send(singleCommand, undefined)
-        clientConnector.send(singleCommand, undefined)
-        clientConnector.send(lastCommand, undefined)
+        clientConnector.send(singleCommand, undefined);
+        clientConnector.send(singleCommand, undefined);
+        clientConnector.send(lastCommand, undefined);
 
-        this.areIdentical( transmitter.clientCommands.length, 1)
-        this.areIdentical( transmitter.clientCommands[0].id, lastCommand.id)
-    }
+        assert.equal( transmitter.clientCommands.length, 1);
+        assert.equal( transmitter.clientCommands[0].id, lastCommand.id)
+    });
 
-    handleDeletePresentationModelCommand(){
+    it('handle DeletePresentationModelCommand', () => {
         TestHelper.initialize();
-        var serverCommand:DeletePresentationModelCommand = new DeletePresentationModelCommand("pmId1")
+        var serverCommand:DeletePresentationModelCommand = new DeletePresentationModelCommand("pmId1");
 
         //before calling DeletePresentationModelCommand
         var pm1 = TestHelper.clientDolphin.findPresentationModelById("pmId1");
-        this.areIdentical(pm1.id,"pmId1");
+        assert.equal(pm1.id,"pmId1");
 
         //call DeletePresentationModelCommand
         TestHelper.clientConnector.handle(serverCommand);
         pm1 = TestHelper.clientDolphin.findPresentationModelById("pmId1");
-        this.areIdentical(pm1,undefined); // should be undefined
+        assert.equal(pm1,undefined); // should be undefined
 
         //other PM should be unaffected
         var pm2 = TestHelper.clientDolphin.findPresentationModelById("pmId2");
-        this.areIdentical(pm2.id,"pmId2");
+        assert.equal(pm2.id,"pmId2");
 
         //deleting with dummyId
-        serverCommand  = new DeletePresentationModelCommand("dummyId")
+        serverCommand  = new DeletePresentationModelCommand("dummyId");
         var result = TestHelper.clientConnector.handle(serverCommand);
-        this.areIdentical(result,null);// there is no pm with dummyId
-    }
+        assert.equal(result,null);// there is no pm with dummyId
+    });
 
-    handleDeleteAllPresentationModelOfTypeCommand(){
+    it('handle delete all PresentationModel of type command', () => {
         TestHelper.initialize();
         var serverCommand:DeleteAllPresentationModelsOfTypeCommand = new DeleteAllPresentationModelsOfTypeCommand("pmType")
 
         //before calling DeleteAllPresentationModelsOfTypeCommand
         var pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        this.areIdentical(pms.length,2);
+        assert.equal(pms.length,2);
 
         //call DeleteAllPresentationModelsOfTypeCommand
         TestHelper.clientConnector.handle(serverCommand);
         pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        this.areIdentical(pms.length,0); //both pm of pmType is deleted
+        assert.equal(pms.length,0); //both pm of pmType is deleted
 
         //initialize again
         TestHelper.initialize();
         //sending dummyType
-        serverCommand = new DeleteAllPresentationModelsOfTypeCommand("dummyType")
+        serverCommand = new DeleteAllPresentationModelsOfTypeCommand("dummyType");
         TestHelper.clientConnector.handle(serverCommand);
         var pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        this.areIdentical(pms.length,2);// nothing is deleted
-    }
+        assert.equal(pms.length,2);// nothing is deleted
+    });
 
-    handleValueChangedCommand(){
+    it('handle ValueChangedCommand', () => {
         TestHelper.initialize();
         var serverCommand:ValueChangedCommand = new ValueChangedCommand(TestHelper.attr1.id,0,10);
 
         //before calling ValueChangedCommand
         var attribute = TestHelper.clientDolphin.getClientModelStore().findAttributeById(TestHelper.attr1.id);
-        this.areIdentical(attribute.getValue, TestHelper.attr1.getValue);
-        this.areIdentical(attribute.getValue(),0);
+        assert.equal(attribute.getValue, TestHelper.attr1.getValue);
+        assert.equal(attribute.getValue(),0);
 
         //call ValueChangedCommand
         TestHelper.clientConnector.handle(serverCommand);
         attribute = TestHelper.clientDolphin.getClientModelStore().findAttributeById(TestHelper.attr1.id);
-        this.areIdentical(attribute.getValue(), TestHelper.attr1.getValue());
-        this.areIdentical(attribute.getValue(),10);
-    }
+        assert.equal(attribute.getValue(), TestHelper.attr1.getValue());
+        assert.equal(attribute.getValue(),10);
+    });
 
-    handleSwitchPresentationModelCommand(){
+    it('handle switch PresentationModelCommand', () => {
         TestHelper.initialize();
         var serverCommand:SwitchPresentationModelCommand = new SwitchPresentationModelCommand("pmId1","pmId2");
 
         //before calling SwitchPresentationModelCommand
         var pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        this.areNotIdentical(pms[0].getAttributes()[0].getValue(), pms[1].getAttributes()[0].getValue());
+        assert.notEqual(pms[0].getAttributes()[0].getValue(), pms[1].getAttributes()[0].getValue());
 
         //call SwitchPresentationModelCommand
         TestHelper.clientConnector.handle(serverCommand);
         pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
         // Attribute of same property ("prop1", )  should be equal
-        this.areIdentical(pms[0].getAttributes()[0].getValue(), pms[1].getAttributes()[0].getValue());
+        assert.equal(pms[0].getAttributes()[0].getValue(), pms[1].getAttributes()[0].getValue());
 
         //other attributes should be unaffected
-        this.areNotIdentical(pms[0].getAttributes()[1].getValue(), pms[1].getAttributes()[1].getValue());
-    }
+        assert.notEqual(pms[0].getAttributes()[1].getValue(), pms[1].getAttributes()[1].getValue());
+    });
 
-    handleInitializeAttributeCommand(){
+    it('handle initialize attribute command', () => {
         TestHelper.initialize();
         //new PM with existing attribute qualifier
         var serverCommand: InitializeAttributeCommand = new  InitializeAttributeCommand("newPm","newPmType","newProp","qual1","newValue");
         //before calling InitializeAttributeCommand
         var attribute = TestHelper.clientDolphin.getClientModelStore().findAllAttributesByQualifier("qual1");
-        this.areIdentical(attribute[0].getValue(), 0);
-        this.areIdentical(TestHelper.clientDolphin.listPresentationModelIds().length, 2);
+        assert.equal(attribute[0].getValue(), 0);
+        assert.equal(TestHelper.clientDolphin.listPresentationModelIds().length, 2);
 
         //call InitializeAttributeCommand
         TestHelper.clientConnector.handle(serverCommand);
         attribute = TestHelper.clientDolphin.getClientModelStore().findAllAttributesByQualifier("qual1");
-        this.areIdentical(attribute[0].getValue(), "newValue");// same attribute value will change
-        this.areIdentical(TestHelper.clientDolphin.listPresentationModelIds().length, 3);
+        assert.equal(attribute[0].getValue(), "newValue");// same attribute value will change
+        assert.equal(TestHelper.clientDolphin.listPresentationModelIds().length, 3);
 
         //existing PM with existing attribute qualifier
         var serverCommand: InitializeAttributeCommand = new  InitializeAttributeCommand("pmId1","pmType1","newProp","qual3","newValue");
         //before calling InitializeAttributeCommand
         var attribute = TestHelper.clientDolphin.getClientModelStore().findAllAttributesByQualifier("qual3");
-        this.areIdentical(attribute[0].getValue(), 5);
-        this.areIdentical(TestHelper.clientDolphin.listPresentationModelIds().length, 3);
+        assert.equal(attribute[0].getValue(), 5);
+        assert.equal(TestHelper.clientDolphin.listPresentationModelIds().length, 3);
 
         //call InitializeAttributeCommand
         TestHelper.clientConnector.handle(serverCommand);
         attribute = TestHelper.clientDolphin.getClientModelStore().findAllAttributesByQualifier("qual3");
-        this.areIdentical(attribute[0].getValue(), "newValue");// same attribute value will change
-        this.areIdentical(TestHelper.clientDolphin.listPresentationModelIds().length, 3);// no PM added
-    }
+        assert.equal(attribute[0].getValue(), "newValue");// same attribute value will change
+        assert.equal(TestHelper.clientDolphin.listPresentationModelIds().length, 3);// no PM added
+    });
 
-}
+});
 
 class TestHelper{
     static transmitter:TestTransmitter;
