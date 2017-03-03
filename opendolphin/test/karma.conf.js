@@ -11,6 +11,7 @@ module.exports = function(config) {
     // frameworks to use
     // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
     frameworks: [
+        'mocha'
     ],
 
 
@@ -19,10 +20,10 @@ module.exports = function(config) {
     preprocessors: {
     },
 
-
     // list of files / patterns to load in the browser
     files: [
-      '../test/build/test-bundle.js'
+        '../../node_modules/es6-shim/es6-shim.js',
+        './build/test-bundle.js',
     ],
 
 
@@ -56,7 +57,8 @@ module.exports = function(config) {
 
     // start these browsers
     // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    browsers: ['PhantomJS'],
+    // browsers: ['Chrome'],
+      browsers: ['PhantomJS'],
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 60000,

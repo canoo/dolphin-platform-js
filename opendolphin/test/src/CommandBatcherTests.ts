@@ -1,33 +1,38 @@
+/// <reference path="../../../node_modules/@types/mocha/index.d.ts" />
+/// <reference path="../../../node_modules/@types/chai/index.d.ts" />
+
+
 import { CommandAndHandler, OnFinishedHandler } from "../../js/dolphin/ClientConnector";
 import { BlindCommandBatcher, NoCommandBatcher } from "../../js/dolphin/CommandBatcher";
 import ValueChangedCommand from "../../js/dolphin/ValueChangedCommand";
 
-import { TestClass } from "../../testrunner/tsUnit";
 
+import { expect } from 'chai';
 
-export default class CommandBatcherTests extends TestClass {
+describe('CommandBatcherTests', () => {
 
-    noBatcherDoesNotBatch() {
+    it('Batcher Does Not Batch', () => {
+
         var whateverCommandAndHandler : CommandAndHandler = {command: null, handler: null};
         var queue = [ whateverCommandAndHandler, whateverCommandAndHandler, whateverCommandAndHandler ];
 
         var batcher = new NoCommandBatcher();
 
         var result = batcher.batch(queue);
-        this.areIdentical( result.length, 1);
-        this.areIdentical( queue.length,  2);
+        expect(result.length).to.equal(1);
+        expect(queue.length).to.equal(2);
 
         var result = batcher.batch(queue);
-        this.areIdentical( result.length, 1);
-        this.areIdentical( queue.length,  1);
+        expect(result.length).to.equal(1);
+        expect(queue.length).to.equal(1);
 
         var result = batcher.batch(queue);
-        this.areIdentical( result.length, 1);
-        this.areIdentical( queue.length,  0);
+        expect(result.length).to.equal(1);
+        expect(queue.length).to.equal(0);
+    });
 
-    }
+    it('Simple Blind Batching', () => {
 
-    simpleBlindBatching() {
         var whateverCommandAndHandler : CommandAndHandler = { command: { id:"x" }, handler: null };
         var queue = [ whateverCommandAndHandler, whateverCommandAndHandler, whateverCommandAndHandler ];
 
@@ -35,11 +40,13 @@ export default class CommandBatcherTests extends TestClass {
 
         var result = batcher.batch(queue);
 
-        this.areIdentical( result.length, 3);
-        this.areIdentical( queue.length,  0);
-    }
+        expect(result.length).to.equal(3);
+        expect(queue.length).to.equal(0);
+    });
 
-    blindBatchingWithNonBlind() {
+
+    it('Blind Batching With Non Blind', () => {
+
         var blind   : CommandAndHandler = { command: { id:"x"}, handler: null };
         var finisher: OnFinishedHandler = { onFinished : null, onFinishedData: null };
         var handled : CommandAndHandler = { command: { id:"x"}, handler: finisher };
@@ -49,21 +56,22 @@ export default class CommandBatcherTests extends TestClass {
         var batcher = new BlindCommandBatcher();
 
         var result = batcher.batch(queue);
-        this.areIdentical( result.length, 1);
+        expect(result.length).to.equal(1);
 
         var result = batcher.batch(queue);
-        this.areIdentical( result.length, 3);
+        expect(result.length).to.equal(3);
 
         var result = batcher.batch(queue);
-        this.areIdentical( result.length, 2);
+        expect(result.length).to.equal(2);
 
-        this.areIdentical(result[0], blind);  // make sure we have the right sequence
-        this.areIdentical(result[1], handled);
+        expect(result[0]).to.equal(blind); // make sure we have the right sequence
+        expect(result[1]).to.equal(handled);
 
-        this.areIdentical( queue.length,  0);
-    }
+        expect(queue.length).to.equal(0);
+    });
 
-    blindFolding() {
+    it('Blind Folding', () => {
+
         var cmd1    : ValueChangedCommand = new ValueChangedCommand("1", 0, 1);
         var cmd2    : ValueChangedCommand = new ValueChangedCommand("2", 0, 1); // other id, will be batched
         var cmd3    : ValueChangedCommand = new ValueChangedCommand("1", 1, 2); // will be folded
@@ -78,13 +86,15 @@ export default class CommandBatcherTests extends TestClass {
         var batcher = new BlindCommandBatcher();
 
         var result = batcher.batch(queue);
-        this.areIdentical( result.length, 2);
+        expect(result.length).to.equal(2);
 
-        this.areIdentical(result[0].command['attributeId'], "1");
-        this.areIdentical(result[0].command['oldValue'],    0);
-        this.areIdentical(result[0].command['newValue'],    2);
-        this.areIdentical(result[1], unfolded);
+        expect(result[0].command['attributeId']).to.equal("1");
+        expect(result[0].command['oldValue']).to.equal(0);
+        expect(result[0].command['newValue']).to.equal(2);
+        expect(result[1]).to.equal(unfolded);
 
-        this.areIdentical( queue.length,  0);
-    }
-}
+        expect(queue.length).to.equal(0);
+
+    });
+
+});
