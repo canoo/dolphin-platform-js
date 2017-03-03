@@ -25,6 +25,10 @@ const FINISHED = 4;
 const SUCCESS = 200;
 const REQUEST_TIMEOUT = 408;
 
+const MY_COOL_CONST = 408;
+
+
+
 const DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
 

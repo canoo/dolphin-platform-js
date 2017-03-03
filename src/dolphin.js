@@ -30,6 +30,8 @@ var ClassRepository = require('./classrepo.js').ClassRepository;
 var ControllerManager = require('./controllermanager.js').ControllerManager;
 var ClientContext = require('./clientcontext.js').ClientContext;
 var HttpTransmitter = require('./httpTransmitter.es6').default;
+var SockJsTransmitter = require('./sockJsTransmitter.es6').default;
+
 
 exports.connect = function (url, config) {
     checkMethod('connect(url, config)');
