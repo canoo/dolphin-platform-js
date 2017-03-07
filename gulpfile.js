@@ -223,3 +223,55 @@ gulp.task('saucelabs', ['common'], function (done) {
     var customLaunchers = require('./sauce.launchers.js').browsers;
     return createSauceLabsTestPipe(customLaunchers, done);
 });
+
+
+var mainBundlerAng = browserify(assign({}, watchify.args, {
+    entries: './demo/lib/dolphin-platform-angular.js',
+    debug: true
+}));
+
+function rebundleAng(bundler) {
+    return bundler
+        .transform('babelify')
+        .bundle()
+        .on('error', $.util.log.bind($.util, 'Browserify Error'))
+        .pipe(source('dolphin-platform-angular.js'))
+        .pipe($.derequire())
+        .pipe(gulp.dest('./demo/dist'))
+        .pipe(buffer())
+        .pipe($.rename({extname: '.min.js'}))
+        .pipe($.sourcemaps.init({loadMaps: true}))
+        .pipe($.uglify())
+        .pipe($.sourcemaps.write('./'))
+        .pipe(gulp.dest('./dist'));
+}
+
+gulp.task('buildAng', function() {
+    return rebundleAng(mainBundlerAng);
+});
+
+
+var mainBundlerAng = browserify(assign({}, watchify.args, {
+    entries: './demo/lib/dolphin-platform-angular.js',
+    debug: true
+}));
+
+function rebundleAng(bundler) {
+    return bundler
+        .transform('babelify')
+        .bundle()
+        .on('error', $.util.log.bind($.util, 'Browserify Error'))
+        .pipe(source('dolphin-platform-angular.js'))
+        .pipe($.derequire())
+        .pipe(gulp.dest('./demo/dist'))
+        .pipe(buffer())
+        .pipe($.rename({extname: '.min.js'}))
+        .pipe($.sourcemaps.init({loadMaps: true}))
+        .pipe($.uglify())
+        .pipe($.sourcemaps.write('./'))
+        .pipe(gulp.dest('./dist'));
+}
+
+gulp.task('buildAng', ['build'], function() {
+    return rebundleAng(mainBundlerAng);
+});
