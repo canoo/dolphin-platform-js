@@ -35,6 +35,8 @@
     "core.js": "2.4.x"
   },
   "dependencies": {
-    "sockjs-client": "^1.1.2"
+    "angular": "^1.6.0",
+    "sockjs-client": "^1.1.2",
+    "bootstrap": "^3.3.7"
   }
 }

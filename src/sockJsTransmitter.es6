@@ -15,7 +15,7 @@
 
 import Emitter from 'emitter-component';
 import { encode, decode } from './codec.es6';
-import SockJS from '../bower_components/sockjs-client/dist/sockjs.js';
+import SockJS from '../bower_components/sockjs-client/dist/sockjs.min.js';
 
 
 export default class SockJsTransmitter {
@@ -31,15 +31,40 @@ export default class SockJsTransmitter {
     }
 
     send(commands, onDone) {
-        console.log('SockJS sending....');
+        var that = this;
         this.sockJsClient.onmessage = function(e) {
             console.log('SockJS received message');
             const responseCommands = decode(e);
             onDone(responseCommands);
         };
-        this.sockJsClient.send(encode(commands));
+        this.waitForSocketConnection(function(){
+            console.log('SockJS sending....');
+            that.sockJsClient.send(encode(commands));
+        });
+
+
+
     }
 
+    // Make the function wait until the connection is made...
+    waitForSocketConnection(callback){
+        var that = this;
+        setTimeout(
+            function () {
+                if (that.sockJsClient.readyState === SockJS.OPEN) {
+                    console.log("Connection is made");
+                    if(callback != null){
+                        callback();
+                    }
+                    return;
+
+                } else {
+                    console.log("wait for connection...");
+                    that.waitForSocketConnection(callback);
+                }
+
+            }, 5); // wait 5 milisecond for the connection...
+    }
     transmit(commands, onDone) {
         this.send(commands, onDone);
     }
@@ -55,4 +80,4 @@ export default class SockJsTransmitter {
     }
 }
 
-Emitter(HttpTransmitter.prototype);
+Emitter(SockJsTransmitter.prototype);

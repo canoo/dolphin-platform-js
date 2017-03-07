@@ -49,10 +49,10 @@ exports.connect = function (url, config) {
 
     var dolphin = builder.build();
 
-    var transmitter = new HttpTransmitter(url, exists(config)?config.headersInfo : null);
-    transmitter.on('error', function (error) {
-        clientContext.emit('error', error);
-    });
+    var transmitter = new SockJsTransmitter(url);//, exists(config)?config.headersInfo : null);
+    // transmitter.on('error', function (error) {
+    //     clientContext.emit('error', error);
+    // });
     dolphin.clientConnector.transmitter = transmitter;
 
     var classRepository = new ClassRepository(dolphin);
