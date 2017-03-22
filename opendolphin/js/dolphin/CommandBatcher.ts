@@ -1,7 +1,4 @@
-import { ClientConnector, CommandAndHandler } from './ClientConnector'
-import Command from './Command'
-import EmptyNotification from './EmptyNotification'
-import NamedCommand from './NamedCommand'
+import { CommandAndHandler } from './ClientConnector'
 import ValueChangedCommand from './ValueChangedCommand'
 
 
@@ -51,7 +48,6 @@ export class BlindCommandBatcher implements CommandBatcher {
                 batch.push(candidate);
             }
             if (candidate.handler ||                 // handler defined: we have a blind
-                (candidate.command['className'] == "org.opendolphin.core.comm.NamedCommand") ||     // or unknown server side effect
                 (candidate.command['className'] == "org.opendolphin.core.comm.EmptyNotification")   // or unknown client side effect
             ) {
                 break; // leave the loop

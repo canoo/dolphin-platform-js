@@ -1,6 +1,5 @@
 import Command from './Command'
 
-
 export default class DeletedPresentationModelNotification extends Command {
 
     className:string;

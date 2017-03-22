@@ -1,7 +1,6 @@
 import { ClientPresentationModel } from './ClientPresentationModel'
 import EventBus from './EventBus'
 
-
 export interface ValueChangedEvent {
     oldValue;
     newValue;

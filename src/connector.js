@@ -37,8 +37,6 @@ var SOURCE_SYSTEM = '@@@ SOURCE_SYSTEM @@@';
 var SOURCE_SYSTEM_CLIENT = 'client';
 var SOURCE_SYSTEM_SERVER = 'server';
 
-
-
 function Connector(url, dolphin, classRepository, config) {
     checkMethod('Connector(url, dolphin, classRepository, config)');
     checkParam(url, 'url');
@@ -72,7 +70,6 @@ function Connector(url, dolphin, classRepository, config) {
     }
 }
 
-
 Connector.prototype.onModelAdded = function(model) {
     checkMethod('Connector.onModelAdded(model)');
     checkParam(model, 'model');
@@ -98,7 +95,6 @@ Connector.prototype.onModelAdded = function(model) {
     }
 };
 
-
 Connector.prototype.onModelRemoved = function(model) {
     checkMethod('Connector.onModelRemoved(model)');
     checkParam(model, 'model');
@@ -117,7 +113,6 @@ Connector.prototype.onModelRemoved = function(model) {
     }
 };
 
-
 Connector.prototype.invoke = function(command) {
     checkMethod('Connector.invoke(command)');
     checkParam(command, 'command');
@@ -132,12 +127,9 @@ Connector.prototype.invoke = function(command) {
     });
 };
 
-
 Connector.prototype.getHighlanderPM = function() {
     return this.highlanderPMPromise;
 };
-
-
 
 exports.Connector = Connector;
 exports.SOURCE_SYSTEM = SOURCE_SYSTEM;

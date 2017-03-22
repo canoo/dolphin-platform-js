@@ -321,7 +321,6 @@ BeanManager.prototype.onBeanUpdate = function(type, eventHandler) {
     }
 };
 
-
 BeanManager.prototype.onArrayUpdate = function(type, eventHandler) {
     var self = this;
     if (!exists(eventHandler)) {

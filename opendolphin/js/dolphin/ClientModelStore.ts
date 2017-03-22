@@ -7,11 +7,9 @@ import { ClientConnector } from "./ClientConnector";
 import ClientDolphin from "./ClientDolphin";
 import { ClientPresentationModel } from "./ClientPresentationModel";
 import CreatePresentationModelCommand from "./CreatePresentationModelCommand";
-import DeletedAllPresentationModelsOfTypeNotification from "./DeletedAllPresentationModelsOfTypeNotification";
 import DeletedPresentationModelNotification from "./DeletedPresentationModelNotification";
 import EventBus from "./EventBus";
 import ValueChangedCommand from "./ValueChangedCommand";
-
 
 export enum Type{
     ADDED   = <any> 'ADDED',
@@ -205,14 +203,6 @@ export class ClientModelStore {
             return [];
         }
         return this.presentationModelsPerType.get(type).slice(0);// slice is used to clone the array
-    }
-
-    deleteAllPresentationModelOfType(presentationModelType:string) {
-        var presentationModels:ClientPresentationModel[] = this.findAllPresentationModelByType(presentationModelType);
-        presentationModels.forEach(pm => {
-            this.deletePresentationModel(pm, false);
-        });
-        this.clientDolphin.getClientConnector().send(new DeletedAllPresentationModelsOfTypeNotification(presentationModelType), undefined);
     }
 
     deletePresentationModel(model:ClientPresentationModel, notify:boolean) {
