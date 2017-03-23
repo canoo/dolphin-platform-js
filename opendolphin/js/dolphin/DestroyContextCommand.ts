@@ -1,4 +1,5 @@
 import Command from './Command'
+import CommandConstants from "./CommandConstants";
 
 export default class DestroyContextCommand extends Command {
 
@@ -6,7 +7,7 @@ export default class DestroyContextCommand extends Command {
 
     constructor() {
         super();
-        this.id = 'DestroyContextCommand';
+        this.id = CommandConstants.DESTROY_CONTEXT_COMMAND_NAME;
         this.className = "com.canoo.dolphin.impl.commands.DestroyContextCommand";
     }
 }

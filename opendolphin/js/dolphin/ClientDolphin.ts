@@ -92,9 +92,9 @@ export default class ClientDolphin {
     }
 
     ////// push support ///////
-    startPushListening(pushActionName: string, releaseActionName: string) {
-        this.clientConnector.setPushListener(new StartLongPollCommand());
-        this.clientConnector.setReleaseCommand(new SignalCommand(releaseActionName));
+    startPushListening(pushCommand: Command, releaseCommand: SignalCommand) {
+        this.clientConnector.setPushListener(pushCommand);
+        this.clientConnector.setReleaseCommand(releaseCommand);
         this.clientConnector.setPushEnabled(true);
         this.clientConnector.listen();
     }

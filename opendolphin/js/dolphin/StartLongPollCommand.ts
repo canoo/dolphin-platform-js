@@ -1,4 +1,5 @@
 import Command from './Command'
+import CommandConstants from "./CommandConstants";
 
 export default class StartLongPollCommand extends Command {
 
@@ -6,7 +7,7 @@ export default class StartLongPollCommand extends Command {
 
     constructor() {
         super();
-        this.id = 'StartLongPollCommand';
+        this.id = CommandConstants.START_LONG_POLL_COMMAND_NAME;
         this.className = "com.canoo.dolphin.impl.commands.StartLongPollCommand";
     }
 }

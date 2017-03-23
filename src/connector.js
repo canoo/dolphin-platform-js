@@ -17,6 +17,8 @@
 /* global console */
 "use strict";
 
+var OpenDolphin = require('../opendolphin/build/OpenDolphin.js');
+
 var Promise = require('../bower_components/core.js/library/fn/promise');
 var ClientModelStore = require('../opendolphin/build/ClientModelStore');
 var utils = require('./utils.js');
@@ -60,7 +62,7 @@ function Connector(url, dolphin, classRepository, config) {
 
     if (!exists(config) || !exists(config.serverPush) || config.serverPush === true) {
         setTimeout(function() {
-            dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
+            dolphin.startPushListening(OpenDolphin.createStartLongPollCommand(), OpenDolphin.createInterruptLongPollCommand());
         }, 500);
     }
 }
