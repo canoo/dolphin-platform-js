@@ -24,11 +24,6 @@ var exists = utils.exists;
 var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
 
-
-var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
-var POLL_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'longPoll';
-var RELEASE_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'release';
-
 var DOLPHIN_BEAN = '@@@ DOLPHIN_BEAN @@@';
 var ACTION_CALL_BEAN = '@@@ CONTROLLER_ACTION_CALL_BEAN @@@';
 var HIGHLANDER_BEAN = '@@@ HIGHLANDER_BEAN @@@';
