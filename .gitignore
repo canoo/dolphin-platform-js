@@ -6,3 +6,4 @@ test/build/
 coverage/
 sauce.json
 opendolphin/build
+opendolphin/js/dolphin/*.js

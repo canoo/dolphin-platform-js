@@ -6,7 +6,7 @@ export default class StartLongPollCommand extends Command {
 
     constructor() {
         super();
-        this.id = 'CallNamedAction';
+        this.id = 'StartLongPollCommand';
         this.className = "com.canoo.dolphin.impl.commands.StartLongPollCommand";
     }
 }
