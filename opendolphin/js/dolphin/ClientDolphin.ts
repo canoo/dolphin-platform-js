@@ -1,17 +1,15 @@
-import AttributeCreatedNotification from "./AttributeCreatedNotification";
 import { ClientAttribute } from "./ClientAttribute";
 import { ClientConnector, OnFinishedHandler, OnSuccessHandler } from "./ClientConnector";
 import { ClientModelStore } from "./ClientModelStore";
 import { ClientPresentationModel } from "./ClientPresentationModel";
-import EmptyNotification from "./EmptyNotification";
-import NamedCommand from "./NamedCommand";
 import SignalCommand from "./SignalCommand";
-
+import Command from "./Command";
+import StartLongPollCommand from "./StartLongPollCommand";
 
 export default class ClientDolphin {
 
-
     private clientConnector:ClientConnector;
+
     private clientModelStore:ClientModelStore;
 
     setClientConnector(clientConnector:ClientConnector) {
@@ -22,16 +20,12 @@ export default class ClientDolphin {
         return this.clientConnector;
     }
 
-    send(commandName:string, onFinished:OnFinishedHandler) {
-        this.clientConnector.send(new NamedCommand(commandName), onFinished);
+    send(command:Command, onFinished:OnFinishedHandler) {
+        this.clientConnector.send(command, onFinished);
     }
 
     reset(successHandler:OnSuccessHandler) {
         this.clientConnector.reset(successHandler);
-    }
-
-    sendEmpty(onFinished:OnFinishedHandler) {
-        this.clientConnector.send(new EmptyNotification(), onFinished);
     }
 
     // factory method for attributes
@@ -78,12 +72,9 @@ export default class ClientDolphin {
     findPresentationModelById(id:string):ClientPresentationModel {
         return this.getClientModelStore().findPresentationModelById(id);
     }
+
     deletePresentationModel(modelToDelete:ClientPresentationModel) {
         this.getClientModelStore().deletePresentationModel(modelToDelete, true);
-    }
-
-    deleteAllPresentationModelOfType(presentationModelType:string) {
-        this.getClientModelStore().deleteAllPresentationModelOfType(presentationModelType);
     }
 
     updatePresentationModelQualifier(presentationModel:ClientPresentationModel):void{
@@ -100,24 +91,10 @@ export default class ClientDolphin {
         });
     }
 
-    addAttributeToModel(presentationModel:ClientPresentationModel, clientAttribute: ClientAttribute){
-        presentationModel.addAttribute(clientAttribute);
-        this.getClientModelStore().registerAttribute(clientAttribute);
-        if(!presentationModel.clientSideOnly){
-            this.clientConnector.send(new AttributeCreatedNotification(
-                                                presentationModel.id,
-                                                clientAttribute.id,
-                                                clientAttribute.propertyName,
-                                                clientAttribute.getValue(),
-                                                clientAttribute.getQualifier()
-                                                ), null);
-        }
-    }
-
     ////// push support ///////
-    startPushListening(pushActionName: string, releaseActionName: string) {
-        this.clientConnector.setPushListener(new NamedCommand(pushActionName));
-        this.clientConnector.setReleaseCommand(new SignalCommand(releaseActionName));
+    startPushListening(pushCommand: Command, releaseCommand: SignalCommand) {
+        this.clientConnector.setPushListener(pushCommand);
+        this.clientConnector.setReleaseCommand(releaseCommand);
         this.clientConnector.setPushEnabled(true);
         this.clientConnector.listen();
     }

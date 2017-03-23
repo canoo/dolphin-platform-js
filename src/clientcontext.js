@@ -17,15 +17,13 @@
 /* global console */
 "use strict";
 
+var OpenDolphin = require('../opendolphin/build/OpenDolphin.js');
+
 var Emitter = require('emitter-component');
 var Promise = require('../bower_components/core.js/library/fn/promise');
 var utils = require('./utils.js');
 var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
-
-var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
-var INIT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'initClientContext';
-var DISCONNECT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'disconnectClientContext';
 
 function ClientContext(dolphin, beanManager, controllerManager, connector) {
     checkMethod('ClientContext(dolphin, beanManager, controllerManager, connector)');
@@ -39,7 +37,7 @@ function ClientContext(dolphin, beanManager, controllerManager, connector) {
     this._controllerManager = controllerManager;
     this._connector = connector;
 
-    this._connector.invoke(INIT_COMMAND_NAME);
+    this._connector.invoke(OpenDolphin.createCreateContextCommand());
 }
 
 Emitter(ClientContext.prototype);
@@ -59,7 +57,7 @@ ClientContext.prototype.disconnect = function() {
     this.dolphin.stopPushListening();
     return new Promise(function(resolve) {
         self._controllerManager.destroy().then(function () {
-            self._connector.invoke(DISCONNECT_COMMAND_NAME);
+            self._connector.invoke(OpenDolphin.createDestroyContextCommand());
             self.dolphin = null;
             self.beanManager = null;
             self._controllerManager = null;

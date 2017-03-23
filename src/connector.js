@@ -17,17 +17,14 @@
 /* global console */
 "use strict";
 
+var OpenDolphin = require('../opendolphin/build/OpenDolphin.js');
+
 var Promise = require('../bower_components/core.js/library/fn/promise');
 var ClientModelStore = require('../opendolphin/build/ClientModelStore');
 var utils = require('./utils.js');
 var exists = utils.exists;
 var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
-
-
-var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
-var POLL_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'longPoll';
-var RELEASE_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'release';
 
 var DOLPHIN_BEAN = '@@@ DOLPHIN_BEAN @@@';
 var ACTION_CALL_BEAN = '@@@ CONTROLLER_ACTION_CALL_BEAN @@@';
@@ -36,8 +33,6 @@ var DOLPHIN_LIST_SPLICE = '@DP:LS@';
 var SOURCE_SYSTEM = '@@@ SOURCE_SYSTEM @@@';
 var SOURCE_SYSTEM_CLIENT = 'client';
 var SOURCE_SYSTEM_SERVER = 'server';
-
-
 
 function Connector(url, dolphin, classRepository, config) {
     checkMethod('Connector(url, dolphin, classRepository, config)');
@@ -67,11 +62,10 @@ function Connector(url, dolphin, classRepository, config) {
 
     if (!exists(config) || !exists(config.serverPush) || config.serverPush === true) {
         setTimeout(function() {
-            dolphin.startPushListening(POLL_COMMAND_NAME, RELEASE_COMMAND_NAME);
+            dolphin.startPushListening(OpenDolphin.createStartLongPollCommand(), OpenDolphin.createInterruptLongPollCommand());
         }, 500);
     }
 }
-
 
 Connector.prototype.onModelAdded = function(model) {
     checkMethod('Connector.onModelAdded(model)');
@@ -98,7 +92,6 @@ Connector.prototype.onModelAdded = function(model) {
     }
 };
 
-
 Connector.prototype.onModelRemoved = function(model) {
     checkMethod('Connector.onModelRemoved(model)');
     checkParam(model, 'model');
@@ -117,7 +110,6 @@ Connector.prototype.onModelRemoved = function(model) {
     }
 };
 
-
 Connector.prototype.invoke = function(command) {
     checkMethod('Connector.invoke(command)');
     checkParam(command, 'command');
@@ -132,12 +124,9 @@ Connector.prototype.invoke = function(command) {
     });
 };
 
-
 Connector.prototype.getHighlanderPM = function() {
     return this.highlanderPMPromise;
 };
-
-
 
 exports.Connector = Connector;
 exports.SOURCE_SYSTEM = SOURCE_SYSTEM;

@@ -17,6 +17,8 @@
 /* global console */
 "use strict";
 
+var OpenDolphin = require('../opendolphin/build/OpenDolphin.js');
+
 var Promise = require('../bower_components/core.js/library/fn/promise');
 var Set = require('../bower_components/core.js/library/fn/set');
 var utils = require('./utils.js');
@@ -29,11 +31,6 @@ var ControllerProxy = require('./controllerproxy.js').ControllerProxy;
 var SOURCE_SYSTEM = require('./connector.js').SOURCE_SYSTEM;
 var SOURCE_SYSTEM_CLIENT = require('./connector.js').SOURCE_SYSTEM_CLIENT;
 var ACTION_CALL_BEAN = require('./connector.js').ACTION_CALL_BEAN;
-
-var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
-var REGISTER_CONTROLLER_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'registerController';
-var CALL_CONTROLLER_ACTION_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'callControllerAction';
-var DESTROY_CONTROLLER_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'destroyController';
 
 var CONTROLLER_NAME = 'controllerName';
 var CONTROLLER_ID = 'controllerId';
@@ -65,7 +62,7 @@ ControllerManager.prototype.createController = function(name) {
     return new Promise(function(resolve) {
         self.connector.getHighlanderPM().then(function (highlanderPM) {
             highlanderPM.findAttributeByPropertyName(CONTROLLER_NAME).setValue(name);
-            self.connector.invoke(REGISTER_CONTROLLER_COMMAND_NAME).then(function() {
+            self.connector.invoke(OpenDolphin.createCreateControllerCommand()).then(function() {
                 controllerId = highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).getValue();
                 modelId = highlanderPM.findAttributeByPropertyName(MODEL).getValue();
                 model = self.classRepository.mapDolphinToBean(modelId);
@@ -104,7 +101,7 @@ ControllerManager.prototype.invokeAction = function(controllerId, actionName, pa
 
         var pm = self.dolphin.presentationModel.apply(self.dolphin, [null, ACTION_CALL_BEAN].concat(attributes));
 
-        self.connector.invoke(CALL_CONTROLLER_ACTION_COMMAND_NAME, params).then(function() {
+        self.connector.invoke(OpenDolphin.createCallActionCommand(), params).then(function() {
             var isError = pm.findAttributeByPropertyName(ERROR_CODE).getValue();
             if (isError) {
                 reject(new Error("ControllerAction caused an error"));
@@ -126,7 +123,7 @@ ControllerManager.prototype.destroyController = function(controller) {
         self.connector.getHighlanderPM().then(function (highlanderPM) {
             self.controllers.delete(controller);
             highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).setValue(controller.controllerId);
-            self.connector.invoke(DESTROY_CONTROLLER_COMMAND_NAME).then(resolve);
+            self.connector.invoke(OpenDolphin.createDestroyContextCommand()).then(resolve);
         });
     });
 };

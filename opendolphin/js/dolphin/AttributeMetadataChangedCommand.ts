@@ -1,6 +1,5 @@
 import Command from './Command'
 
-
 export default class AttributeMetadataChangedCommand extends Command {
 
     className:string;

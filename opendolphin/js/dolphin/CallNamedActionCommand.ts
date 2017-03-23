@@ -1,6 +1,5 @@
 import Command from './Command'
 
-
 export default class CallNamedActionCommand extends Command {
 
     className:string;

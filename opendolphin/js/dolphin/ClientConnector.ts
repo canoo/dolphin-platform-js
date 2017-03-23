@@ -1,5 +1,4 @@
 import AttributeMetadataChangedCommand from "./AttributeMetadataChangedCommand";
-import CallNamedActionCommand from "./CallNamedActionCommand";
 import { ClientAttribute } from "./ClientAttribute";
 import ClientDolphin from "./ClientDolphin";
 import { ClientPresentationModel } from "./ClientPresentationModel";
@@ -7,15 +6,9 @@ import Codec from "./Codec";
 import Command from "./Command";
 import { BlindCommandBatcher, CommandBatcher } from "./CommandBatcher";
 import CreatePresentationModelCommand from "./CreatePresentationModelCommand";
-import DataCommand from "./DataCommand";
-import DeleteAllPresentationModelsOfTypeCommand from "./DeleteAllPresentationModelsOfTypeCommand";
 import DeletePresentationModelCommand from "./DeletePresentationModelCommand";
-import InitializeAttributeCommand from "./InitializeAttributeCommand";
-import NamedCommand from "./NamedCommand";
 import SignalCommand from "./SignalCommand";
-import SwitchPresentationModelCommand from "./SwitchPresentationModelCommand";
 import ValueChangedCommand from "./ValueChangedCommand";
-
 
 export interface OnSuccessHandler {
     onSuccess():void
@@ -48,7 +41,7 @@ export class ClientConnector {
     private commandBatcher:      CommandBatcher;
 
     /////// push support state  ///////
-    private pushListener:        NamedCommand;
+    private pushListener:        Command;
     private releaseCommand:      SignalCommand;
     private pushEnabled:        boolean = false;
     private waiting:            boolean = false;
@@ -68,7 +61,7 @@ export class ClientConnector {
     setPushEnabled(enabled:boolean) {
         this.pushEnabled = enabled;
     }
-    setPushListener(newListener:  NamedCommand) {
+    setPushListener(newListener:  Command) {
         this.pushListener = newListener
     }
     setReleaseCommand(newCommand:  SignalCommand) {
@@ -126,42 +119,25 @@ export class ClientConnector {
 
 
     handle(command: Command):  ClientPresentationModel{
-        if(command.id == "Data"){
-            return this.handleDataCommand(< DataCommand>command);
-        }else if(command.id == "DeletePresentationModel"){
+        if(command.id == "DeletePresentationModel"){
             return this.handleDeletePresentationModelCommand(< DeletePresentationModelCommand>command);
-        }else if(command.id == "DeleteAllPresentationModelsOfType"){
-            return this.handleDeleteAllPresentationModelOfTypeCommand(< DeleteAllPresentationModelsOfTypeCommand>command);
         }else if(command.id == "CreatePresentationModel"){
             return this.handleCreatePresentationModelCommand(< CreatePresentationModelCommand>command);
         }else if(command.id == "ValueChanged"){
             return this.handleValueChangedCommand(< ValueChangedCommand>command);
-        }else if(command.id == "SwitchPresentationModel"){
-            return this.handleSwitchPresentationModelCommand(< SwitchPresentationModelCommand>command);
-        }else if(command.id == "InitializeAttribute"){
-            return this.handleInitializeAttributeCommand(< InitializeAttributeCommand>command);
         }else if(command.id == "AttributeMetadataChanged"){
             return this.handleAttributeMetadataChangedCommand(< AttributeMetadataChangedCommand>command);
-        }else if(command.id == "CallNamedAction"){
-            return this.handleCallNamedActionCommand(< CallNamedActionCommand>command);
         }else{
             console.log("Cannot handle, unknown command "+command);
         }
 
         return null;
     }
-    private handleDataCommand(serverCommand:  DataCommand): any{
-        return serverCommand.data;
-    }
     private handleDeletePresentationModelCommand(serverCommand: DeletePresentationModelCommand): ClientPresentationModel{
         var model: ClientPresentationModel =  this.clientDolphin.findPresentationModelById(serverCommand.pmId);
         if(!model) return null;
         this.clientDolphin.getClientModelStore().deletePresentationModel(model, true);
         return model;
-    }
-    private handleDeleteAllPresentationModelOfTypeCommand(serverCommand: DeleteAllPresentationModelsOfTypeCommand){
-        this.clientDolphin.deleteAllPresentationModelOfType(serverCommand.pmType);
-        return null;
     }
     private handleCreatePresentationModelCommand(serverCommand: CreatePresentationModelCommand): ClientPresentationModel{
         if(this.clientDolphin.getClientModelStore().containsPresentationModel(serverCommand.pmId)){
@@ -204,57 +180,10 @@ export class ClientConnector {
         clientAttribute.setValue(serverCommand.newValue);
         return null;
     }
-    private handleSwitchPresentationModelCommand(serverCommand: SwitchPresentationModelCommand): ClientPresentationModel{
-        var switchPm: ClientPresentationModel = this.clientDolphin.getClientModelStore().findPresentationModelById(serverCommand.pmId);
-        if(!switchPm){
-            console.log("switch model with id "+serverCommand.pmId+" not found, cannot switch.");
-            return null;
-        }
-        var sourcePm = this.clientDolphin.getClientModelStore().findPresentationModelById(serverCommand.sourcePmId);
-        if(!sourcePm){
-            console.log("source model with id "+serverCommand.sourcePmId+" not found, cannot switch.");
-            return null;
-        }
-        switchPm.syncWith(sourcePm);
-        return switchPm;
-    }
-    private handleInitializeAttributeCommand(serverCommand:  InitializeAttributeCommand): ClientPresentationModel{
-        var attribute = new  ClientAttribute(serverCommand.propertyName,serverCommand.qualifier,serverCommand.newValue);
-        if(serverCommand.qualifier){
-            var attributesCopy: ClientAttribute[]= this.clientDolphin.getClientModelStore().findAllAttributesByQualifier(serverCommand.qualifier);
-            if(attributesCopy){
-                if(!serverCommand.newValue){
-                    var attr = attributesCopy.shift();
-                    if(attr){
-                        attribute.setValue(attr.getValue());
-                    }
-                }else{
-                    attributesCopy.forEach(attr =>{
-                        attr.setValue(attribute.getValue());
-                    });
-                }
-            }
-        }
-        var presentationModel:  ClientPresentationModel;
-        if(serverCommand.pmId){
-            presentationModel = this.clientDolphin.getClientModelStore().findPresentationModelById(serverCommand.pmId);
-        }
-        if(!presentationModel){
-            presentationModel = new  ClientPresentationModel(serverCommand.pmId,serverCommand.pmType);
-            this.clientDolphin.getClientModelStore().add(presentationModel);
-        }
-        this.clientDolphin.addAttributeToModel(presentationModel,attribute);
-        this.clientDolphin.updatePresentationModelQualifier(presentationModel);
-        return presentationModel;
-    }
     private handleAttributeMetadataChangedCommand(serverCommand:  AttributeMetadataChangedCommand):  ClientPresentationModel{
         var clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
         if(!clientAttribute) return null;
         clientAttribute[serverCommand.metadataName] = serverCommand.value
-        return null;
-    }
-    private handleCallNamedActionCommand(serverCommand:  CallNamedActionCommand):  ClientPresentationModel{
-        this.clientDolphin.send(serverCommand.actionName,null);
         return null;
     }
 

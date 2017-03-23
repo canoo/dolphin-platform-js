@@ -1,4 +1,3 @@
-import { ClientAttribute } from './ClientAttribute'
 import { ClientPresentationModel } from './ClientPresentationModel'
 import Command from './Command'
 

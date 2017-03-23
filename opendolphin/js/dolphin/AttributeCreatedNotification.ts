@@ -1,6 +1,5 @@
 import Command from "./Command";
 
-
 export default class AttributeCreatedNotification extends Command {
 
     className:string;
