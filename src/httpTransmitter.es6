@@ -30,9 +30,12 @@ const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
 
 export default class HttpTransmitter {
 
-    constructor(url, headersInfo) {
+    constructor(url, headersInfo, connection) {
         this.url = url;
         this.headersInfo = headersInfo;
+        this.maxRetry = exists(connection) && exists(connection.maxRetry)?connection.maxRetry: 3;
+        this.timeout = exists(connection) && exists(connection.timeout)?connection.timeout: 5000;
+        this.failed_attempt = 0;
     }
 
     send(commands) {
@@ -43,8 +46,10 @@ export default class HttpTransmitter {
             http.onreadystatechange = () => {
                 if (http.readyState === FINISHED){
                     switch (http.status) {
+
                         case SUCCESS:
                         {
+                            this.failed_attempt = 0;
                             const currentClientId = http.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
                             if (exists(currentClientId)) {
                                 if (exists(this.clientId) && this.clientId !== currentClientId) {
@@ -63,6 +68,9 @@ export default class HttpTransmitter {
                             break;
 
                         default:
+                            if(this.failed_attempt <= this.maxRetry){
+                                this.failed_attempt = this.failed_attempt + 1;
+                            }
                             reject(new HttpResponseError('HttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
                             break;
                     }
@@ -81,7 +89,14 @@ export default class HttpTransmitter {
                     }
                 }
             }
-            http.send(encode(commands));
+            if (this.failed_attempt > this.maxRetry) {
+                setTimeout(function() {
+                    http.send(encode(commands));
+                }, this.timeout);
+            }else{
+                http.send(encode(commands));
+            }
+
         });
     }
 
