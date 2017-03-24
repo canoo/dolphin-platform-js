@@ -56,6 +56,8 @@ function fromDolphin(classRepository, type, value) {
             return classRepository.beanFromDolphin.get(String(value));
         case consts.DATE:
             return new Date(String(value));
+        case consts.CALENDAR:
+            return new Date(String(value));
         default:
             return fixType(type, value);
     }
@@ -69,6 +71,8 @@ function toDolphin(classRepository, type, value) {
         case consts.DOLPHIN_BEAN:
             return classRepository.beanToDolphin.get(value);
         case consts.DATE:
+            return value instanceof Date? value.toISOString() : value;
+        case consts.CALENDAR:
             return value instanceof Date? value.toISOString() : value;
         default:
             return fixType(type, value);
