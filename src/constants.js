@@ -9,3 +9,4 @@ exports.BOOLEAN = 7;
 exports.STRING = 8;
 exports.DATE = 9;
 exports.ENUM = 10;
+exports.CALENDAR= 11;
