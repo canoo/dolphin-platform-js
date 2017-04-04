@@ -10,7 +10,6 @@ import DeleteAllPresentationModelsOfTypeCommand from "../../js/dolphin/DeleteAll
 import DeletePresentationModelCommand from "../../js/dolphin/DeletePresentationModelCommand";
 import InitializeAttributeCommand from "../../js/dolphin/InitializeAttributeCommand";
 import SignalCommand from "../../js/dolphin/SignalCommand";
-import SwitchPresentationModelCommand from "../../js/dolphin/SwitchPresentationModelCommand";
 import ValueChangedCommand from "../../js/dolphin/ValueChangedCommand";
 
 import { assert } from 'chai';
@@ -117,23 +116,7 @@ describe('DolphinBuilderTest', () => {
         assert.equal(attribute.getValue(),10);
     });
 
-    it('handle switch PresentationModelCommand', () => {
-        TestHelper.initialize();
-        var serverCommand:SwitchPresentationModelCommand = new SwitchPresentationModelCommand("pmId1","pmId2");
 
-        //before calling SwitchPresentationModelCommand
-        var pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        assert.notEqual(pms[0].getAttributes()[0].getValue(), pms[1].getAttributes()[0].getValue());
-
-        //call SwitchPresentationModelCommand
-        TestHelper.clientConnector.handle(serverCommand);
-        pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        // Attribute of same property ("prop1", )  should be equal
-        assert.equal(pms[0].getAttributes()[0].getValue(), pms[1].getAttributes()[0].getValue());
-
-        //other attributes should be unaffected
-        assert.notEqual(pms[0].getAttributes()[1].getValue(), pms[1].getAttributes()[1].getValue());
-    });
 
     it('handle initialize attribute command', () => {
         TestHelper.initialize();

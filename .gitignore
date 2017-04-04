@@ -7,3 +7,7 @@ coverage/
 sauce.json
 opendolphin/build
 opendolphin/js/dolphin/*.js
+opendolphin/test/build
+NamedCommandTests.js
+CodecTest.js
+ClientConnectorTests.js
