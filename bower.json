@@ -6,7 +6,8 @@
   "authors": [
     "Michael Heinrichs <michael.heinrichs@canoo.com>",
     "Hendrik Ebbers <hendrik.ebbers@canoo.com>",
-    "Kunal Singh <kunal.singh@canoo.com>"
+    "Kunal Singh <kunal.singh@canoo.com>",
+    "Timo Brandstätter <timo.brandstaetter@canoo.com>"
   ],
   "description": "The Dolphin Platform framework implements the presentation model pattern and provides a modern way to create enterprise applications.",
   "keywords": [
