@@ -1,71 +1,74 @@
 // Karma configuration
 // Generated on Fri Aug 21 2015 16:37:20 GMT+0200 (Romance Daylight Time)
 
-module.exports = function(config) {
-  config.set({
+module.exports = function (config) {
+    config.set({
 
-    // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: '',
-
-
-    // frameworks to use
-    // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-    frameworks: [
-        'mocha'
-    ],
+        // base path that will be used to resolve all patterns (eg. files, exclude)
+        basePath: '',
 
 
-    // preprocess matching files before serving them to the browser
-    // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
-    preprocessors: {
-    },
+        // frameworks to use
+        // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
+        frameworks: [
+            'mocha'
+        ],
 
-    // list of files / patterns to load in the browser
-    files: [
-        '../../node_modules/es6-shim/es6-shim.js',
-        './build/test-bundle.js',
-    ],
+        client: {
+            mocha: {
+                timeout: 20000 // 20 seconds
+            }
+        },
+        // preprocess matching files before serving them to the browser
+        // available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
+        preprocessors: {},
 
-
-    // list of files to exclude
-    exclude: [
-    ],
-
-
-    // test results reporter to use
-    // possible values: 'dots', 'progress'
-    // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
-
-
-    // web server port
-    port: 9876,
+        // list of files / patterns to load in the browser
+        files: [
+            '../../node_modules/es6-shim/es6-shim.js',
+            './build/test-bundle.js',
+        ],
 
 
-    // enable / disable colors in the output (reporters and logs)
-    colors: true,
+        // list of files to exclude
+        exclude: [],
 
 
-    // level of logging
-    // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_INFO,
+        // test results reporter to use
+        // possible values: 'dots', 'progress'
+        // available reporters: https://npmjs.org/browse/keyword/karma-reporter
+        reporters: ['progress', 'coverage'],
 
 
-    // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
+        // web server port
+        port: 9876,
 
 
-    // start these browsers
-    // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
-    // browsers: ['Chrome'],
-      browsers: ['PhantomJS'],
-
-    // If browser does not capture in given timeout [ms], kill it
-    captureTimeout: 60000,
+        // enable / disable colors in the output (reporters and logs)
+        colors: true,
 
 
-    // Continuous Integration mode
-    // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true
-  })
+        // level of logging
+        // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
+        logLevel: config.LOG_INFO,
+
+
+        // enable / disable watching file and executing tests whenever any file changes
+        autoWatch: false,
+
+
+        // start these browsers
+        // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
+        // browsers: ['Chrome'],
+        browsers: ['PhantomJS'],
+
+        // If browser does not capture in given timeout [ms], kill it
+        captureTimeout: 60000,
+
+
+        // Coverage configuration
+        coverageReporter: {
+            subdir: '.'
+        }
+    })
 };

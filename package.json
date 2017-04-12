@@ -49,7 +49,6 @@
     "karma-sauce-launcher": "1.1.x",
     "lodash.assign": "4.0.x",
     "mocha": "2.4.x",
-    "phantomjs": "2.1.x",
     "sinon": "1.17.x",
     "tsify": "^3.0.1",
     "typescript": "^2.2.1",
