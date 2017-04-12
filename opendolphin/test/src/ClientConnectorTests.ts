@@ -78,27 +78,6 @@ describe('DolphinBuilderTest', () => {
         assert.equal(result,null);// there is no pm with dummyId
     });
 
-    it('handle delete all PresentationModel of type command', () => {
-        TestHelper.initialize();
-        var serverCommand:DeleteAllPresentationModelsOfTypeCommand = new DeleteAllPresentationModelsOfTypeCommand("pmType")
-
-        //before calling DeleteAllPresentationModelsOfTypeCommand
-        var pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        assert.equal(pms.length,2);
-
-        //call DeleteAllPresentationModelsOfTypeCommand
-        TestHelper.clientConnector.handle(serverCommand);
-        pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        assert.equal(pms.length,0); //both pm of pmType is deleted
-
-        //initialize again
-        TestHelper.initialize();
-        //sending dummyType
-        serverCommand = new DeleteAllPresentationModelsOfTypeCommand("dummyType");
-        TestHelper.clientConnector.handle(serverCommand);
-        var pms = TestHelper.clientDolphin.findAllPresentationModelByType("pmType");
-        assert.equal(pms.length,2);// nothing is deleted
-    });
 
     it('handle ValueChangedCommand', () => {
         TestHelper.initialize();
@@ -114,37 +93,6 @@ describe('DolphinBuilderTest', () => {
         attribute = TestHelper.clientDolphin.getClientModelStore().findAttributeById(TestHelper.attr1.id);
         assert.equal(attribute.getValue(), TestHelper.attr1.getValue());
         assert.equal(attribute.getValue(),10);
-    });
-
-
-
-    it('handle initialize attribute command', () => {
-        TestHelper.initialize();
-        //new PM with existing attribute qualifier
-        var serverCommand: InitializeAttributeCommand = new  InitializeAttributeCommand("newPm","newPmType","newProp","qual1","newValue");
-        //before calling InitializeAttributeCommand
-        var attribute = TestHelper.clientDolphin.getClientModelStore().findAllAttributesByQualifier("qual1");
-        assert.equal(attribute[0].getValue(), 0);
-        assert.equal(TestHelper.clientDolphin.listPresentationModelIds().length, 2);
-
-        //call InitializeAttributeCommand
-        TestHelper.clientConnector.handle(serverCommand);
-        attribute = TestHelper.clientDolphin.getClientModelStore().findAllAttributesByQualifier("qual1");
-        assert.equal(attribute[0].getValue(), "newValue");// same attribute value will change
-        assert.equal(TestHelper.clientDolphin.listPresentationModelIds().length, 3);
-
-        //existing PM with existing attribute qualifier
-        var serverCommand: InitializeAttributeCommand = new  InitializeAttributeCommand("pmId1","pmType1","newProp","qual3","newValue");
-        //before calling InitializeAttributeCommand
-        var attribute = TestHelper.clientDolphin.getClientModelStore().findAllAttributesByQualifier("qual3");
-        assert.equal(attribute[0].getValue(), 5);
-        assert.equal(TestHelper.clientDolphin.listPresentationModelIds().length, 3);
-
-        //call InitializeAttributeCommand
-        TestHelper.clientConnector.handle(serverCommand);
-        attribute = TestHelper.clientDolphin.getClientModelStore().findAllAttributesByQualifier("qual3");
-        assert.equal(attribute[0].getValue(), "newValue");// same attribute value will change
-        assert.equal(TestHelper.clientDolphin.listPresentationModelIds().length, 3);// no PM added
     });
 
 });

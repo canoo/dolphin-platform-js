@@ -1,7 +1,8 @@
 "use strict";
 
 require('babel-register');
-
+var os = require('os');
+os.tmpDir = os.tmpdir;
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var assign = require('lodash.assign');
@@ -54,7 +55,10 @@ function rebundleTest(bundler) {
             ignore: ['**/src/polyfills.js', '**/opendolphin/**/*.js']
         }))
         .bundle()
-        .on('error', $.util.log.bind($.util, 'Browserify Error'))
+        .on('error', function (err) {
+            $.util.log.bind($.util, 'Browserify Error: ' + err.toString());
+            process.exit(1)
+        })
         .pipe(source('test-bundle.js'))
         .pipe(buffer())
         .pipe($.sourcemaps.init({loadMaps: true}))
@@ -98,7 +102,10 @@ function rebundle(bundler) {
     return bundler
         .transform('babelify')
         .bundle()
-        .on('error', $.util.log.bind($.util, 'Browserify Error'))
+        .on('error', function (err) {
+            $.util.log.bind($.util, 'Browserify Error: ' + err.toString());
+            process.exit(1)
+        })
         .pipe(source('dolphin-platform.js'))
         .pipe($.derequire())
         .pipe(gulp.dest('./dist'))
@@ -145,7 +152,11 @@ gulp.task('build-test:od', function () {
             ignore: ['**/src/polyfills.js', '**/opendolphin/**/*.js']
         }))
         .bundle()
-        .on('error', $.util.log.bind($.util, 'Browserify Error'))
+        .on('error', function (err) {
+            console.log("Error:: "+err.toString());
+            $.util.log.bind($.util, 'Browserify Error: ' + err.toString());
+            process.exit(1)
+        })
         .pipe(source('test-bundle.js'))
         .pipe(buffer())
         .pipe($.sourcemaps.init({loadMaps: true}))
@@ -153,12 +164,26 @@ gulp.task('build-test:od', function () {
         .pipe(gulp.dest('./opendolphin/test/build'));
 });
 
-gulp.task('test:od', ['build-test:od'], function(done) {
+gulp.task('test:od', ['build-test:od'], function (done) {
     new Server({
         configFile: __dirname + '/opendolphin/test/karma.conf.js',
         reporters: ['coverage'],
+            coverageReporter: {
+                reporters: [
+                    {type: 'lcovonly', subdir: '.'},
+                    {type: 'html', subdir: 'report-html'},
+                ]
+            },
         singleRun: true
-    }, done).start();
+    },
+    function (result) {
+        if (result === 0) {
+            done();
+        } else {
+            done('Karma test failed for opendolphin: ' + result);
+            process.exit(1)
+        }
+    }).start();
 });
 
 //Test dolphin-platform
@@ -169,14 +194,22 @@ gulp.task('test:dp', ['build-test:dp'], function (done) {
         coverageReporter: {
             reporters: [
                 {type: 'lcovonly', subdir: '.'},
-                {type: 'html', subdir: 'report-html' },
+                {type: 'html', subdir: 'report-html'},
             ]
         },
         singleRun: true
-    }, done).start();
+    } ,
+    function (result) {
+        if (result === 0) {
+            done();
+        } else {
+            done('Karma test failed for dolphin-platform: ' + result);
+            process.exit(1)
+        }
+    }).start();
 });
 
-gulp.task('test', ['test:dp' , 'test:od' ]);
+gulp.task('test', ['test:dp', 'test:od']);
 
 
 // START: Saucelabs
@@ -185,19 +218,20 @@ gulp.task('common', ['build', 'build-test:dp', 'build-test:od']);
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
     return function () {
         new Server({
-            configFile: __dirname + '/karma.conf.js',
-            customLaunchers: customLaunchers,
-            browsers: browsers,
-            reporters: ['saucelabs'],
-            singleRun: true
-        }
-        ,function(result){
-            if(result === 0){
-                done();
-            } else {
-                done('Karma test failed: '+result);
+                configFile: __dirname + '/karma.conf.js',
+                customLaunchers: customLaunchers,
+                browsers: browsers,
+                reporters: ['saucelabs'],
+                singleRun: true
             }
-        }).start();
+            , function (result) {
+                if (result === 0) {
+                    done();
+                } else {
+                    done('Karma test failed on Saucelabs: ' + result);
+                    process.exit(1)
+                }
+            }).start();
     }
 }
 
