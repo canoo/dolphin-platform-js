@@ -32,11 +32,17 @@ var browsers = {
         platform: 'Windows 7',
         version: '11.0'
     },
-    sl_win7_chrome: {
+    sl_win7_chrome46: {
         base: 'SauceLabs',
         browserName: 'chrome',
         platform: 'Windows 7',
         version: '46.0'
+    },
+    sl_win7_chrome57: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'Windows 7',
+        version: '57.0'
     },
     sl_win7_firefox: {
         base: 'SauceLabs',
@@ -51,11 +57,17 @@ var browsers = {
         platform: 'Windows 8',
         version: '10.0'
     },
-    sl_win8_0_chrome: {
+    sl_win8_0_chrome46: {
         base: 'SauceLabs',
         browserName: 'chrome',
         platform: 'Windows 8',
         version: '46.0'
+    },
+    sl_win8_0_chrome57: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'Windows 8',
+        version: '57.0'
     },
     sl_win8_0_firefox: {
         base: 'SauceLabs',
@@ -70,11 +82,17 @@ var browsers = {
         platform: 'Windows 8.1',
         version: '11.0'
     },
-    sl_win8_1_chrome: {
+    sl_win8_1_chrome46: {
         base: 'SauceLabs',
         browserName: 'chrome',
         platform: 'Windows 8.1',
         version: '46.0'
+    },
+    sl_win8_1_chrome57: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'Windows 8.1',
+        version: '57.0'
     },
     sl_win8_1_firefox: {
         base: 'SauceLabs',
@@ -83,11 +101,17 @@ var browsers = {
         version: '42.0'
     },
 
-    sl_mac11_chrome: {
+    sl_mac11_chrome46: {
         base: 'SauceLabs',
         browserName: 'chrome',
         platform: 'OS X 10.11',
         version: '46.0'
+    },
+    sl_mac11_chrome57: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'OS X 10.11',
+        version: '57.0'
     },
     sl_mac11_firefox: {
         base: 'SauceLabs',
@@ -101,12 +125,17 @@ var browsers = {
         platform: 'OS X 10.11',
         version: '9.0'
     },
-
-    sl_mac10_chrome: {
+    sl_mac10_chrome46: {
         base: 'SauceLabs',
         browserName: 'chrome',
         platform: 'OS X 10.10',
         version: '46.0'
+    },
+    sl_mac10_chrome57: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'OS X 10.10',
+        version: '57.0'
     },
     sl_mac10_firefox: {
         base: 'SauceLabs',
@@ -120,8 +149,7 @@ var browsers = {
         platform: 'OS X 10.10',
         version: '8.0'
     },
-
-    sl_linux_chrome: {
+    sl_linux_chrome46: {
         base: 'SauceLabs',
         browserName: 'chrome',
         platform: 'Linux',
@@ -159,11 +187,18 @@ var browsers = {
         platformVersion: '5.1'
     }
     ,
-    sl_mac9_chrome: {
+    sl_mac9_chrome46: {
         base: 'SauceLabs',
         browserName: 'chrome',
         platform: 'OS X 10.9',
         version: '46.0'
+    }
+    ,
+    sl_mac9_chrome57: {
+        base: 'SauceLabs',
+        browserName: 'chrome',
+        platform: 'OS X 10.9',
+        version: '57.0'
     }
     ,
     sl_mac9_firefox: {
