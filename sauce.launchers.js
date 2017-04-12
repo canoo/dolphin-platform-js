@@ -155,12 +155,6 @@ var browsers = {
         platform: 'Linux',
         version: '46.0'
     },
-    sl_linux_chrome57: {
-        base: 'SauceLabs',
-        browserName: 'chrome',
-        platform: 'Linux',
-        version: '57.0'
-    },
     sl_linux_firefox: {
         base: 'SauceLabs',
         browserName: 'firefox',
