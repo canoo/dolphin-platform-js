@@ -168,8 +168,21 @@ gulp.task('test:od', ['build-test:od'], function (done) {
     new Server({
         configFile: __dirname + '/opendolphin/test/karma.conf.js',
         reporters: ['coverage'],
+            coverageReporter: {
+                reporters: [
+                    {type: 'lcovonly', subdir: '.'},
+                    {type: 'html', subdir: 'report-html'},
+                ]
+            },
         singleRun: true
-    }, done).start();
+    },
+    function (result) {
+        if (result === 0) {
+            done();
+        } else {
+            done('Karma test failed for opendolphin: ' + result);
+        }
+    }).start();
 });
 
 //Test dolphin-platform
@@ -184,7 +197,14 @@ gulp.task('test:dp', ['build-test:dp'], function (done) {
             ]
         },
         singleRun: true
-    }, done).start();
+    } ,
+    function (result) {
+        if (result === 0) {
+            done();
+        } else {
+            done('Karma test failed for dolphin-platform: ' + result);
+        }
+    }).start();
 });
 
 gulp.task('test', ['test:dp', 'test:od']);
@@ -206,7 +226,7 @@ function createSauceLabsTestStep(customLaunchers, browsers, done) {
                 if (result === 0) {
                     done();
                 } else {
-                    done('Karma test failed: ' + result);
+                    done('Karma test failed on Saucelabs: ' + result);
                 }
             }).start();
     }
