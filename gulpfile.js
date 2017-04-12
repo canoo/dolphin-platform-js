@@ -181,6 +181,7 @@ gulp.task('test:od', ['build-test:od'], function (done) {
             done();
         } else {
             done('Karma test failed for opendolphin: ' + result);
+            process.exit(1)
         }
     }).start();
 });
@@ -203,6 +204,7 @@ gulp.task('test:dp', ['build-test:dp'], function (done) {
             done();
         } else {
             done('Karma test failed for dolphin-platform: ' + result);
+            process.exit(1)
         }
     }).start();
 });
@@ -227,6 +229,7 @@ function createSauceLabsTestStep(customLaunchers, browsers, done) {
                     done();
                 } else {
                     done('Karma test failed on Saucelabs: ' + result);
+                    process.exit(1)
                 }
             }).start();
     }
