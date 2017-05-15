@@ -123,7 +123,7 @@ ControllerManager.prototype.destroyController = function(controller) {
         self.connector.getHighlanderPM().then(function (highlanderPM) {
             self.controllers.delete(controller);
             highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).setValue(controller.controllerId);
-            self.connector.invoke(OpenDolphin.createDestroyContextCommand()).then(resolve);
+            self.connector.invoke(OpenDolphin.createDestroyControllerCommand()).then(resolve);
         });
     });
 };
