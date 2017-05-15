@@ -93,7 +93,7 @@ gulp.task('build:od', function () {
 });
 
 var mainBundler = browserify(assign({}, watchify.args, {
-    entries: './src/dolphin.js',
+    entries: './src/clientContextFactory.es6',
     standalone: 'dolphin',
     debug: true
 }));
