@@ -26,7 +26,7 @@ var exists = utils.exists;
 var checkMethod = utils.checkMethod;
 var checkParam = utils.checkParam;
 
-var ControllerProxy = require('./controllerproxy.js').ControllerProxy;
+var ControllerProxy = require('./controllerproxy.es6').default;
 
 var SOURCE_SYSTEM = require('./connector.js').SOURCE_SYSTEM;
 var SOURCE_SYSTEM_CLIENT = require('./connector.js').SOURCE_SYSTEM_CLIENT;
