@@ -20,7 +20,7 @@
 import OpenDolphin from '../opendolphin/build/OpenDolphin.js';
 import Emitter from 'emitter-component';
 import Promise from '../bower_components/core.js/library/fn/promise';
-
+import {exists} from './utils.js';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
 
@@ -54,7 +54,7 @@ export default class ClientContext{
     }
 
     onConnect(){
-        if(this.connectionPromise){
+        if(exists(this.connectionPromise)){
             if(!this.isConnected){
                 return this.connectionPromise;
             }else{
