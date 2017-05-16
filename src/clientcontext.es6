@@ -46,7 +46,7 @@ export default class ClientContext{
         this.connectionPromise = new Promise(function(resolve){
             self._connector.connect();
             self._connector.invoke(OpenDolphin.createCreateContextCommand()).then(function(){
-                that.isConnected = true;
+                self.isConnected = true;
                 resolve();
             });
         });
