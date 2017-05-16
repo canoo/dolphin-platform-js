@@ -42,10 +42,10 @@ export default class ClientContext{
     }
 
     connect(){
-        var that = this;
+        var self = this;
         this.connectionPromise = new Promise(function(resolve){
-            that._connector.connect();
-            that._connector.invoke(OpenDolphin.createCreateContextCommand()).then(function(){
+            self._connector.connect();
+            self._connector.invoke(OpenDolphin.createCreateContextCommand()).then(function(){
                 that.isConnected = true;
                 resolve();
             });
@@ -75,7 +75,6 @@ export default class ClientContext{
     }
 
     disconnect(){
-        // TODO: Implement ClientContext.disconnect [DP-46]
         var self = this;
         this.dolphin.stopPushListening();
         return new Promise(function(resolve) {

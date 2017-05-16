@@ -15,6 +15,7 @@
 
 /*jslint browserify: true */
 /* global console */
+/* global exports */
 "use strict";
 import OpenDolphin from '../opendolphin/build/OpenDolphin.js';
 import {exists} from './utils';
