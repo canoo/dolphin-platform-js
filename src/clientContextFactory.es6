@@ -17,7 +17,6 @@
 /* global console */
 "use strict";
 import OpenDolphin from '../opendolphin/build/OpenDolphin.js';
-import Emitter from 'emitter-component';
 import {exists} from './utils';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
@@ -63,4 +62,6 @@ export default class ClientContextFactory{
         return clientContext;
     }
 }
-Emitter(ClientContextFactory.prototype);
+
+exports.ClientContextFactory = ClientContextFactory;
+
