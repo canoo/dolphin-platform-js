@@ -59,15 +59,15 @@ function Connector(url, dolphin, classRepository, config) {
             }
         }
     });
-
-    if (!exists(config) || !exists(config.serverPush) || config.serverPush === true) {
-        setTimeout(function() {
-            dolphin.startPushListening(OpenDolphin.createStartLongPollCommand(), OpenDolphin.createInterruptLongPollCommand());
-        }, 500);
-    }
 }
 
-Connector.prototype.onModelAdded = function(model) {
+Connector.prototype.connect = function () {
+    var that = this;
+    setTimeout(function () {
+        that.dolphin.startPushListening(OpenDolphin.createStartLongPollCommand(), OpenDolphin.createInterruptLongPollCommand());
+    }, 0);
+};
+Connector.prototype.onModelAdded = function (model) {
     checkMethod('Connector.onModelAdded(model)');
     checkParam(model, 'model');
 
