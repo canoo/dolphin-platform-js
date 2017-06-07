@@ -17,8 +17,8 @@ import Emitter from 'emitter-component';
 
 
 import { exists } from './utils';
-import { DolphinRemotingError, DolphinSessionError, HttpResponseError } from './errors.es6';
-import { encode, decode } from './codec.es6';
+import { DolphinRemotingError, DolphinSessionError, HttpResponseError } from './errors.js';
+import Codec from './codec.es6';
 
 
 const FINISHED = 4;
@@ -91,10 +91,10 @@ export default class HttpTransmitter {
             }
             if (this.failed_attempt > this.maxRetry) {
                 setTimeout(function() {
-                    http.send(encode(commands));
+                    http.send(Codec.encode(commands));
                 }, this.timeout);
             }else{
-                http.send(encode(commands));
+                http.send(Codec.encode(commands));
             }
 
         });
@@ -105,7 +105,7 @@ export default class HttpTransmitter {
             .then(responseText => {
                 if (responseText.trim().length > 0) {
                     try {
-                        const responseCommands = decode(responseText);
+                        const responseCommands = Codec.decode(responseText);
                         onDone(responseCommands);
                     } catch (err) {
                         this.emit('error', new HttpResponseError('HttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')'));

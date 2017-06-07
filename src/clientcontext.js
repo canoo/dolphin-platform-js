@@ -42,10 +42,10 @@ export default class ClientContext{
     }
 
     connect(){
-        var self = this;
-        this.connectionPromise = new Promise(function(resolve){
+        let self = this;
+        this.connectionPromise = new Promise((resolve) => {
             self._connector.connect();
-            self._connector.invoke(OpenDolphin.createCreateContextCommand()).then(function(){
+            self._connector.invoke(OpenDolphin.createCreateContextCommand()).then(() => {
                 self.isConnected = true;
                 resolve();
             });
@@ -58,7 +58,7 @@ export default class ClientContext{
             if(!this.isConnected){
                 return this.connectionPromise;
             }else{
-                return new Promise(function(resolve){
+                return new Promise((resolve) => {
                     resolve();
                 });
             }
@@ -75,10 +75,10 @@ export default class ClientContext{
     }
 
     disconnect(){
-        var self = this;
+        let self = this;
         this.dolphin.stopPushListening();
-        return new Promise(function(resolve) {
-            self._controllerManager.destroy().then(function () {
+        return new Promise((resolve) => {
+            self._controllerManager.destroy().then(() => {
                 self._connector.invoke(OpenDolphin.createDestroyContextCommand());
                 self.dolphin = null;
                 self.beanManager = null;

@@ -21,12 +21,12 @@ import OpenDolphin from '../opendolphin/build/OpenDolphin.js';
 import {exists} from './utils';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
-import {Connector} from './connector.js';
-var BeanManager = require('./beanmanager.js').BeanManager;
-import {ClassRepository} from './classrepo.js';
-import {ControllerManager} from './controllermanager.js';
-import ClientContext from './clientcontext.es6';
-import HttpTransmitter from './httpTransmitter.es6';
+import Connector from './connector.js';
+import BeanManager from './beanmanager.js';
+import ClassRepository from './classrepo.js';
+import ControllerManager from './controllermanager.js';
+import ClientContext from './clientcontext.js';
+import HttpTransmitter from './httpTransmitter.js';
 
 export default class ClientContextFactory{
 
@@ -35,7 +35,7 @@ export default class ClientContextFactory{
         checkParam(url, 'url');
         console.log('Creating client context '+ url +'    '+ JSON.stringify(config));
 
-        var builder = OpenDolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
+        let builder = OpenDolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
         if (exists(config)) {
             if (exists(config.errorHandler)) {
                 builder.errorHandler(config.errorHandler);
@@ -59,7 +59,6 @@ export default class ClientContextFactory{
         var controllerManager = new ControllerManager(dolphin, classRepository, connector);
 
         var clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
-
         return clientContext;
     }
 }
