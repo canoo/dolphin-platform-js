@@ -18,91 +18,93 @@
 
 import { exists } from './utils.js';
 
+export default class Codec{
 
-function encodeCreatePresentationModelCommand(command) {
-    return {
-        'p': command.pmId,
-        't': command.pmType,
-        'a': command.attributes.map(function (attribute) {
-            var result = {
-                'n': attribute.propertyName,
-                'i': attribute.id
-            };
-            if (exists(attribute.value)) {
-                result.v = attribute.value;
-            }
-            return result;
-        }),
-        'id': 'CreatePresentationModel'
-    };
-}
-
-function decodeCreatePresentationModelCommand(command) {
-    return {
-        'id': 'CreatePresentationModel',
-        'className': "org.opendolphin.core.comm.CreatePresentationModelCommand",
-        'clientSideOnly': false,
-        'pmId': command.p,
-        'pmType': command.t,
-        'attributes': command.a.map(function (attribute) {
-            return {
-                'propertyName': attribute.n,
-                'id': attribute.i,
-                'value': exists(attribute.v)? attribute.v : null,
-                'qualifier': null
-            };
-        })
-    };
-}
-
-
-function encodeValueChangedCommand(command) {
-    var result = {
-        'a': command.attributeId
-    };
-    if (exists(command.oldValue)) {
-        result.o = command.oldValue;
+    static encodeCreatePresentationModelCommand(command) {
+        return {
+            'p': command.pmId,
+            't': command.pmType,
+            'a': command.attributes.map((attribute) => {
+                let result = {
+                    'n': attribute.propertyName,
+                    'i': attribute.id
+                };
+                if (exists(attribute.value)) {
+                    result.v = attribute.value;
+                }
+                return result;
+            }),
+            'id': 'CreatePresentationModel'
+        };
     }
-    if (exists(command.newValue)) {
-        result.n = command.newValue;
+
+    static decodeCreatePresentationModelCommand(command) {
+        return {
+            'id': 'CreatePresentationModel',
+            'className': "org.opendolphin.core.comm.CreatePresentationModelCommand",
+            'clientSideOnly': false,
+            'pmId': command.p,
+            'pmType': command.t,
+            'attributes': command.a.map((attribute) => {
+                return {
+                    'propertyName': attribute.n,
+                    'id': attribute.i,
+                    'value': exists(attribute.v)? attribute.v : null,
+                    'qualifier': null
+                };
+            })
+        };
     }
-    result.id = 'ValueChanged';
-    return result;
-}
 
-function decodeValueChangedCommand(command) {
-    return {
-        'id': 'ValueChanged',
-        'className': "org.opendolphin.core.comm.ValueChangedCommand",
-        'attributeId': command.a,
-        'oldValue': exists(command.o)? command.o : null,
-        'newValue': exists(command.n)? command.n : null
-    };
-}
-
-
-export function encode(commands) {
-    return JSON.stringify(commands.map(function (command) {
-        if (command.id === 'CreatePresentationModel') {
-            return encodeCreatePresentationModelCommand(command);
-        } else if (command.id === 'ValueChanged') {
-            return encodeValueChangedCommand(command);
+    static encodeValueChangedCommand(command) {
+        let result = {
+            'a': command.attributeId
+        };
+        if (exists(command.oldValue)) {
+            result.o = command.oldValue;
         }
-        return command;
-    }));
-}
+        if (exists(command.newValue)) {
+            result.n = command.newValue;
+        }
+        result.id = 'ValueChanged';
+        return result;
+    }
 
-export function decode(transmitted) {
-    if (typeof transmitted === 'string') {
-        return JSON.parse(transmitted).map(function (command) {
+    static decodeValueChangedCommand(command) {
+        return {
+            'id': 'ValueChanged',
+            'className': "org.opendolphin.core.comm.ValueChangedCommand",
+            'attributeId': command.a,
+            'oldValue': exists(command.o)? command.o : null,
+            'newValue': exists(command.n)? command.n : null
+        };
+    }
+
+    static encode(commands) {
+        let self = this;
+        return JSON.stringify(commands.map((command) => {
             if (command.id === 'CreatePresentationModel') {
-                return decodeCreatePresentationModelCommand(command);
+                return self.encodeCreatePresentationModelCommand(command);
             } else if (command.id === 'ValueChanged') {
-                return decodeValueChangedCommand(command);
+                return self.encodeValueChangedCommand(command);
             }
             return command;
-        });
-    } else {
-        return transmitted;
+        }));
+    }
+
+    static decode(transmitted) {
+        let self = this;
+        if (typeof transmitted === 'string') {
+            return JSON.parse(transmitted).map(function (command) {
+                if (command.id === 'CreatePresentationModel') {
+                    return self.decodeCreatePresentationModelCommand(command);
+                } else if (command.id === 'ValueChanged') {
+                    return self.decodeValueChangedCommand(command);
+                }
+                return command;
+            });
+        } else {
+            return transmitted;
+        }
     }
 }
