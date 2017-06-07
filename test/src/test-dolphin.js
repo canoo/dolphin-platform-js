@@ -2,9 +2,9 @@
 "use strict";
 
 var sinon = require('sinon');
-var Connector = require('../../src/connector.js').Connector;
-var BeanManager = require('../../src/beanmanager.js').BeanManager;
-var ClassRepository = require('../../src/classrepo.js').ClassRepository;
+import Connector from '../../src/connector.js';
+import BeanManager from '../../src/beanmanager.js';
+import ClassRepository from '../../src/classrepo.js';
 
 describe('Dolphin Message Distribution', function() {
 

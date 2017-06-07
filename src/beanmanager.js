@@ -125,7 +125,7 @@ export default class BeanManager {
         checkParam(propertyName, 'propertyName');
 
         return this.classRepository.notifyBeanChange(bean, propertyName, newValue);
-    };
+    }
 
 
     notifyArrayChange(bean, propertyName, index, count, removedElements) {
@@ -137,7 +137,7 @@ export default class BeanManager {
         checkParam(removedElements, 'removedElements');
 
         this.classRepository.notifyArrayChange(bean, propertyName, index, count, removedElements);
-    };
+    }
 
 
     isManaged(bean) {
@@ -146,7 +146,7 @@ export default class BeanManager {
 
         // TODO: Implement dolphin.isManaged() [DP-7]
         throw new Error("Not implemented yet");
-    };
+    }
 
 
     create(type) {
@@ -155,7 +155,7 @@ export default class BeanManager {
 
         // TODO: Implement dolphin.create() [DP-7]
         throw new Error("Not implemented yet");
-    };
+    }
 
 
     add(type, bean) {
@@ -165,7 +165,7 @@ export default class BeanManager {
 
         // TODO: Implement dolphin.add() [DP-7]
         throw new Error("Not implemented yet");
-    };
+    }
 
 
     addAll(type, collection) {
@@ -175,7 +175,7 @@ export default class BeanManager {
 
         // TODO: Implement dolphin.addAll() [DP-7]
         throw new Error("Not implemented yet");
-    };
+    }
 
 
     remove(bean) {
@@ -184,7 +184,7 @@ export default class BeanManager {
 
         // TODO: Implement dolphin.remove() [DP-7]
         throw new Error("Not implemented yet");
-    };
+    }
 
 
     removeAll(collection) {
@@ -193,7 +193,7 @@ export default class BeanManager {
 
         // TODO: Implement dolphin.removeAll() [DP-7]
         throw new Error("Not implemented yet");
-    };
+    }
 
 
     removeIf(predicate) {
@@ -202,7 +202,7 @@ export default class BeanManager {
 
         // TODO: Implement dolphin.removeIf() [DP-7]
         throw new Error("Not implemented yet");
-    };
+    }
 
 
     onAdded(type, eventHandler) {
@@ -241,7 +241,7 @@ export default class BeanManager {
                 }
             };
         }
-    };
+    }
 
 
     onRemoved(type, eventHandler) {
@@ -280,7 +280,7 @@ export default class BeanManager {
                 }
             };
         }
-    };
+    }
 
 
     onBeanUpdate(type, eventHandler) {
@@ -319,7 +319,7 @@ export default class BeanManager {
                 }
             };
         }
-    };
+    }
 
     onArrayUpdate(type, eventHandler) {
         let self = this;
@@ -357,5 +357,5 @@ export default class BeanManager {
                 }
             };
         }
-    };
+    }
 }

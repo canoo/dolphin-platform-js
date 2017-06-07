@@ -3,7 +3,7 @@
 
 var expect = require('chai').expect;
 
-var exists = require('../../src/utils.js').exists;
+import {exists} from './utils.js';
 
 describe('utils.exists()', function() {
     it('undefined', function() {

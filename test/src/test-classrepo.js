@@ -6,7 +6,7 @@ var sinon = require('sinon');
 
 var consts = require('../../src/constants');
 
-var ClassRepository = require('../../src/classrepo.js').ClassRepository;
+import ClassRepository from '../../src/classrepo.js';
 
 function check( done, func ) {
     try {

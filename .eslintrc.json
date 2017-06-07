@@ -4,7 +4,7 @@
     "ecmaVersion": 6,
     "sourceType": "module",
     "ecmaFeatures": {
-      "experimentalObjectRestSpread": true
+      "jsx": true
     }
   },
   "rules": {
@@ -20,6 +20,8 @@
     "page": false,
     "Polymer": false,
     "process": false,
-    "require": false
+    "require": false,
+    "module" : false,
+    "exports": false
   }
 }

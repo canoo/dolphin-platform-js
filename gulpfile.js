@@ -27,7 +27,7 @@ gulp.task('clean', function () {
 /* START: lint */
 //local report
 gulp.task('lint:js', function () {
-    return gulp.src(['./src/**/*.js', './test/src/**/*.js'])
+    return gulp.src(['./test/src/**/*.js'])
         .pipe($.jshint())
         .pipe($.jshint.reporter('default'))
         .pipe($.jshint.reporter('fail'));
@@ -35,7 +35,7 @@ gulp.task('lint:js', function () {
 
 //local report
 gulp.task('lint:es', function () {
-    return gulp.src(['./src/**/*.es6', './test/src/**/*.es6'])
+    return gulp.src(['./src/**/*.js', './test/src/**/*.es6'])
         .pipe($.eslint())
         .pipe($.eslint.format())
         .pipe($.eslint.failAfterError());
@@ -93,7 +93,7 @@ gulp.task('build:od', function () {
 });
 
 var mainBundler = browserify(assign({}, watchify.args, {
-    entries: './src/clientContextFactory.es6',
+    entries: './src/clientContextFactory.js',
     standalone: 'dolphin',
     debug: true
 }));

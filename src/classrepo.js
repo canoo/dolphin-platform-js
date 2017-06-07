@@ -14,7 +14,6 @@
  */
 
 /*jslint browserify: true */
-/* global Platform, console */
 "use strict";
 
 import  Map from '../bower_components/core.js/library/fn/map';
@@ -123,7 +122,7 @@ export default class ClassRepository{
                     dolphin.attribute('count', null, newElements.length)
                 ];
                 newElements.forEach(function(element, index) {
-                    attributes.push(dolphin.attribute(index.toString(), null, toDolphin(classRepository, type, element)));
+                    attributes.push(dolphin.attribute(index.toString(), null, this.toDolphin(classRepository, type, element)));
                 });
                 dolphin.presentationModel.apply(dolphin, [null, '@DP:LS@'].concat(attributes));
             }

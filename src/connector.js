@@ -43,6 +43,7 @@ export default class Connector{
 
         let self = this;
         this.dolphin = dolphin;
+        this.config = config;
         this.classRepository = classRepository;
         this.highlanderPMResolver = function() {};
         this.highlanderPMPromise = new Promise(function(resolve) {

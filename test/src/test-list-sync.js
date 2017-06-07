@@ -2,8 +2,8 @@
 "use strict";
 
 var sinon = require('sinon');
-var ClassRepository = require('../../src/classrepo.js').ClassRepository;
-var BeanManager = require('../../src/beanmanager.js').BeanManager;
+import ClassRepository from '../../src/classrepo.js';
+import BeanManager from '../../src/beanmanager.js';
 
 var consts = require('../../src/constants');
 
