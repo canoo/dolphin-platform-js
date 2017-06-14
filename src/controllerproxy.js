@@ -51,7 +51,7 @@ export default class ControllerProxy{
             throw new Error('The controller was already destroyed');
         }
         this.destroyed = true;
-        this.onDestroyedHandlers.forEach(function(handler) {
+        this.onDestroyedHandlers.forEach((handler) => {
             try {
                 handler(this);
             } catch(e) {
@@ -68,7 +68,7 @@ export default class ControllerProxy{
         var self = this;
         this.onDestroyedHandlers.add(handler);
         return {
-            unsubscribe: function() {
+            unsubscribe: () => {
                 self.onDestroyedHandlers.delete(handler);
             }
         };

@@ -17,118 +17,119 @@
 /* global console */
 "use strict";
 
-var OpenDolphin = require('../opendolphin/build/OpenDolphin.js');
+import OpenDolphin from '../opendolphin/build/OpenDolphin.js';
 
-var Promise = require('../bower_components/core.js/library/fn/promise');
-var ClientModelStore = require('../opendolphin/build/ClientModelStore');
-var utils = require('./utils.js');
-var exists = utils.exists;
-var checkMethod = utils.checkMethod;
-var checkParam = utils.checkParam;
+import Promise from '../bower_components/core.js/library/fn/promise';
+import ClientModelStore from '../opendolphin/build/ClientModelStore';
+import {exists} from './utils.js';
+import {checkMethod} from './utils';
+import {checkParam} from './utils';
 
-var DOLPHIN_BEAN = '@@@ DOLPHIN_BEAN @@@';
-var ACTION_CALL_BEAN = '@@@ CONTROLLER_ACTION_CALL_BEAN @@@';
-var HIGHLANDER_BEAN = '@@@ HIGHLANDER_BEAN @@@';
-var DOLPHIN_LIST_SPLICE = '@DP:LS@';
-var SOURCE_SYSTEM = '@@@ SOURCE_SYSTEM @@@';
-var SOURCE_SYSTEM_CLIENT = 'client';
-var SOURCE_SYSTEM_SERVER = 'server';
+const DOLPHIN_BEAN = '@@@ DOLPHIN_BEAN @@@';
+const ACTION_CALL_BEAN = '@@@ CONTROLLER_ACTION_CALL_BEAN @@@';
+const HIGHLANDER_BEAN = '@@@ HIGHLANDER_BEAN @@@';
+const DOLPHIN_LIST_SPLICE = '@DP:LS@';
+const SOURCE_SYSTEM = '@@@ SOURCE_SYSTEM @@@';
+const SOURCE_SYSTEM_CLIENT = 'client';
+const SOURCE_SYSTEM_SERVER = 'server';
 
-function Connector(url, dolphin, classRepository, config) {
-    checkMethod('Connector(url, dolphin, classRepository, config)');
-    checkParam(url, 'url');
-    checkParam(dolphin, 'dolphin');
-    checkParam(classRepository, 'classRepository');
+export default class Connector{
 
-    var self = this;
-    this.dolphin = dolphin;
-    this.classRepository = classRepository;
-    this.highlanderPMResolver = function() {};
-    this.highlanderPMPromise = new Promise(function(resolve) {
-        self.highlanderPMResolver = resolve;
-    });
+    constructor(url, dolphin, classRepository, config) {
+        checkMethod('Connector(url, dolphin, classRepository, config)');
+        checkParam(url, 'url');
+        checkParam(dolphin, 'dolphin');
+        checkParam(classRepository, 'classRepository');
 
-    dolphin.getClientModelStore().onModelStoreChange(function (event) {
-        var model = event.clientPresentationModel;
-        var sourceSystem = model.findAttributeByPropertyName(SOURCE_SYSTEM);
-        if (exists(sourceSystem) && sourceSystem.value === SOURCE_SYSTEM_SERVER) {
-            if (event.eventType === ClientModelStore.Type.ADDED) {
-                self.onModelAdded(model);
-            } else if (event.eventType === ClientModelStore.Type.REMOVED) {
-                self.onModelRemoved(model);
-            }
-        }
-    });
-}
+        let self = this;
+        this.dolphin = dolphin;
+        this.config = config;
+        this.classRepository = classRepository;
+        this.highlanderPMResolver = function() {};
+        this.highlanderPMPromise = new Promise(function(resolve) {
+            self.highlanderPMResolver = resolve;
+        });
 
-Connector.prototype.connect = function () {
-    var that = this;
-    setTimeout(function () {
-        that.dolphin.startPushListening(OpenDolphin.createStartLongPollCommand(), OpenDolphin.createInterruptLongPollCommand());
-    }, 0);
-};
-Connector.prototype.onModelAdded = function (model) {
-    checkMethod('Connector.onModelAdded(model)');
-    checkParam(model, 'model');
-
-    var type = model.presentationModelType;
-    switch (type) {
-        case ACTION_CALL_BEAN:
-            // ignore
-            break;
-        case DOLPHIN_BEAN:
-            this.classRepository.registerClass(model);
-            break;
-        case HIGHLANDER_BEAN:
-            this.highlanderPMResolver(model);
-            break;
-        case DOLPHIN_LIST_SPLICE:
-            this.classRepository.spliceListEntry(model);
-            this.dolphin.deletePresentationModel(model);
-            break;
-        default:
-            this.classRepository.load(model);
-            break;
-    }
-};
-
-Connector.prototype.onModelRemoved = function(model) {
-    checkMethod('Connector.onModelRemoved(model)');
-    checkParam(model, 'model');
-
-    var type = model.presentationModelType;
-    switch (type) {
-        case DOLPHIN_BEAN:
-            this.classRepository.unregisterClass(model);
-            break;
-        case DOLPHIN_LIST_SPLICE:
-            // do nothing
-            break;
-        default:
-            this.classRepository.unload(model);
-            break;
-    }
-};
-
-Connector.prototype.invoke = function(command) {
-    checkMethod('Connector.invoke(command)');
-    checkParam(command, 'command');
-
-    var dolphin = this.dolphin;
-    return new Promise(function(resolve) {
-        dolphin.send(command, {
-            onFinished: function() {
-                resolve();
+        dolphin.getClientModelStore().onModelStoreChange((event) => {
+            let model = event.clientPresentationModel;
+            let sourceSystem = model.findAttributeByPropertyName(SOURCE_SYSTEM);
+            if (exists(sourceSystem) && sourceSystem.value === SOURCE_SYSTEM_SERVER) {
+                if (event.eventType === ClientModelStore.Type.ADDED) {
+                    self.onModelAdded(model);
+                } else if (event.eventType === ClientModelStore.Type.REMOVED) {
+                    self.onModelRemoved(model);
+                }
             }
         });
-    });
-};
+    }
+    connect() {
+        let that = this;
+        setTimeout(() => {
+            that.dolphin.startPushListening(OpenDolphin.createStartLongPollCommand(), OpenDolphin.createInterruptLongPollCommand());
+        }, 0);
+    }
 
-Connector.prototype.getHighlanderPM = function() {
-    return this.highlanderPMPromise;
-};
+    onModelAdded(model) {
+        checkMethod('Connector.onModelAdded(model)');
+        checkParam(model, 'model');
 
-exports.Connector = Connector;
+        var type = model.presentationModelType;
+        switch (type) {
+            case ACTION_CALL_BEAN:
+                // ignore
+                break;
+            case DOLPHIN_BEAN:
+                this.classRepository.registerClass(model);
+                break;
+            case HIGHLANDER_BEAN:
+                this.highlanderPMResolver(model);
+                break;
+            case DOLPHIN_LIST_SPLICE:
+                this.classRepository.spliceListEntry(model);
+                this.dolphin.deletePresentationModel(model);
+                break;
+            default:
+                this.classRepository.load(model);
+                break;
+        }
+    }
+
+    onModelRemoved(model) {
+        checkMethod('Connector.onModelRemoved(model)');
+        checkParam(model, 'model');
+        let type = model.presentationModelType;
+        switch (type) {
+            case DOLPHIN_BEAN:
+                this.classRepository.unregisterClass(model);
+                break;
+            case DOLPHIN_LIST_SPLICE:
+                // do nothing
+                break;
+            default:
+                this.classRepository.unload(model);
+                break;
+        }
+    }
+
+    invoke(command) {
+        checkMethod('Connector.invoke(command)');
+        checkParam(command, 'command');
+
+        var dolphin = this.dolphin;
+        return new Promise((resolve) => {
+            dolphin.send(command, {
+                onFinished: () => {
+                    resolve();
+                }
+            });
+        });
+    }
+
+    getHighlanderPM() {
+        return this.highlanderPMPromise;
+    }
+}
+
 exports.SOURCE_SYSTEM = SOURCE_SYSTEM;
 exports.SOURCE_SYSTEM_CLIENT = SOURCE_SYSTEM_CLIENT;
 exports.SOURCE_SYSTEM_SERVER = SOURCE_SYSTEM_SERVER;

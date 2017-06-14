@@ -2,8 +2,7 @@
 "use strict";
 
 var expect = require('chai').expect;
-
-var exists = require('../../src/utils.js').exists;
+import {exists} from '../../src/utils.js';
 
 describe('utils.exists()', function() {
     it('undefined', function() {
