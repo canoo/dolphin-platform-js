@@ -51,9 +51,6 @@ gulp.task('lint', ['lint:js', 'lint:es']);
 function rebundleTest(bundler) {
     return bundler
         .transform('babelify')
-        .transform(istanbul({
-            ignore: ['**/src/polyfills.js', '**/opendolphin/**/*.js']
-        }))
         .bundle()
         .on('error', function (err) {
             $.util.log.bind($.util, 'Browserify Error: ' + err.toString());

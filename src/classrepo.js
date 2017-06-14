@@ -25,21 +25,21 @@ import {checkParam} from './utils';
 
 var blocked = null;
 
-export default class ClassRepository{
+export default class ClassRepository {
 
-    constructor(dolphin){
-            checkMethod('ClassRepository(dolphin)');
-            checkParam(dolphin, 'dolphin');
+    constructor(dolphin) {
+        checkMethod('ClassRepository(dolphin)');
+        checkParam(dolphin, 'dolphin');
 
-            this.dolphin = dolphin;
-            this.classes = new Map();
-            this.beanFromDolphin = new Map();
-            this.beanToDolphin = new Map();
-            this.classInfos = new Map();
-            this.beanAddedHandlers = [];
-            this.beanRemovedHandlers = [];
-            this.propertyUpdateHandlers = [];
-            this.arrayUpdateHandlers = [];
+        this.dolphin = dolphin;
+        this.classes = new Map();
+        this.beanFromDolphin = new Map();
+        this.beanToDolphin = new Map();
+        this.classInfos = new Map();
+        this.beanAddedHandlers = [];
+        this.beanRemovedHandlers = [];
+        this.propertyUpdateHandlers = [];
+        this.arrayUpdateHandlers = [];
     }
 
     fixType(type, value) {
@@ -63,7 +63,7 @@ export default class ClassRepository{
     }
 
     fromDolphin(classRepository, type, value) {
-        if (! exists(value)) {
+        if (!exists(value)) {
             return null;
         }
         switch (type) {
@@ -83,23 +83,24 @@ export default class ClassRepository{
                 return this.fixType(type, value);
         }
     }
+
     toDolphin(classRepository, type, value) {
-        if (! exists(value)) {
+        if (!exists(value)) {
             return null;
         }
         switch (type) {
             case consts.DOLPHIN_BEAN:
                 return classRepository.beanToDolphin.get(value);
             case consts.DATE:
-                return value instanceof Date? value.toISOString() : value;
+                return value instanceof Date ? value.toISOString() : value;
             case consts.CALENDAR:
-                return value instanceof Date? value.toISOString() : value;
+                return value instanceof Date ? value.toISOString() : value;
             case consts.LOCAL_DATE_FIELD_TYPE:
-                return value instanceof Date? value.toISOString() : value;
+                return value instanceof Date ? value.toISOString() : value;
             case consts.LOCAL_DATE_TIME_FIELD_TYPE:
-                return value instanceof Date? value.toISOString() : value;
+                return value instanceof Date ? value.toISOString() : value;
             case consts.ZONED_DATE_TIME_FIELD_TYPE:
-                return value instanceof Date? value.toISOString() : value;
+                return value instanceof Date ? value.toISOString() : value;
             default:
                 return this.fixType(type, value);
         }
@@ -108,6 +109,7 @@ export default class ClassRepository{
     sendListSplice(classRepository, modelId, propertyName, from, to, newElements) {
         let dolphin = classRepository.dolphin;
         let model = dolphin.findPresentationModelById(modelId);
+        let self = this;
         if (exists(model)) {
             let classInfo = classRepository.classes.get(model.presentationModelType);
             let type = classInfo[propertyName];
@@ -121,8 +123,8 @@ export default class ClassRepository{
                     dolphin.attribute('to', null, to),
                     dolphin.attribute('count', null, newElements.length)
                 ];
-                newElements.forEach(function(element, index) {
-                    attributes.push(dolphin.attribute(index.toString(), null, this.toDolphin(classRepository, type, element)));
+                newElements.forEach(function (element, index) {
+                    attributes.push(dolphin.attribute(index.toString(), null, self.toDolphin(classRepository, type, element)));
                 });
                 dolphin.presentationModel.apply(dolphin, [null, '@DP:LS@'].concat(attributes));
             }
@@ -132,10 +134,10 @@ export default class ClassRepository{
     validateList(classRepository, type, bean, propertyName) {
         let list = bean[propertyName];
         if (!exists(list)) {
-            classRepository.propertyUpdateHandlers.forEach(function(handler) {
+            classRepository.propertyUpdateHandlers.forEach(function (handler) {
                 try {
                     handler(type, bean, propertyName, [], undefined);
-                } catch(e) {
+                } catch (e) {
                     console.warn('An exception occurred while calling an onBeanUpdate-handler', e);
                 }
             });
@@ -195,7 +197,7 @@ export default class ClassRepository{
         let modelId = this.beanToDolphin.get(bean);
         let array = bean[propertyName];
         if (exists(modelId) && exists(array)) {
-            let removedElementsCount = Array.isArray(removedElements)? removedElements.length : 0;
+            let removedElementsCount = Array.isArray(removedElements) ? removedElements.length : 0;
             this.sendListSplice(this, modelId, propertyName, index, index + removedElementsCount, array.slice(index, index + count));
         }
     }
@@ -233,7 +235,7 @@ export default class ClassRepository{
         }
 
         let classInfo = {};
-        model.attributes.filter(function(attribute) {
+        model.attributes.filter(function (attribute) {
             return attribute.propertyName.search(/^@/) < 0;
         }).forEach(function (attribute) {
             classInfo[attribute.propertyName] = attribute.value;
@@ -244,7 +246,6 @@ export default class ClassRepository{
     unregisterClass(model) {
         checkMethod('ClassRepository.unregisterClass(model)');
         checkParam(model, 'model');
-
         this.classes['delete'](model.id);
     }
 
@@ -266,7 +267,7 @@ export default class ClassRepository{
                     self.propertyUpdateHandlers.forEach((handler) => {
                         try {
                             handler(model.presentationModelType, bean, attribute.propertyName, newValue, oldValue);
-                        } catch(e) {
+                        } catch (e) {
                             console.warn('An exception occurred while calling an onBeanUpdate-handler', e);
                         }
                     });
@@ -279,7 +280,7 @@ export default class ClassRepository{
         this.beanAddedHandlers.forEach((handler) => {
             try {
                 handler(model.presentationModelType, bean);
-            } catch(e) {
+            } catch (e) {
                 console.warn('An exception occurred while calling an onBeanAdded-handler', e);
             }
         });
@@ -298,7 +299,7 @@ export default class ClassRepository{
             this.beanRemovedHandlers.forEach((handler) => {
                 try {
                     handler(model.presentationModelType, bean);
-                } catch(e) {
+                } catch (e) {
                     console.warn('An exception occurred while calling an onBeanRemoved-handler', e);
                 }
             });
@@ -327,7 +328,7 @@ export default class ClassRepository{
                     element = null;
                 for (var i = 0; i < count.value; i++) {
                     element = model.findAttributeByPropertyName(i.toString());
-                    if (! exists(element)) {
+                    if (!exists(element)) {
                         throw new Error("Invalid list modification update received");
                     }
                     newElements.push(this.fromDolphin(this, classInfo[attribute.value], element.value));
@@ -337,7 +338,7 @@ export default class ClassRepository{
                     this.arrayUpdateHandlers.forEach((handler) => {
                         try {
                             handler(type, bean, attribute.value, from.value, to.value - from.value, newElements);
-                        } catch(e) {
+                        } catch (e) {
                             console.warn('An exception occurred while calling an onArrayUpdate-handler', e);
                         }
                     });

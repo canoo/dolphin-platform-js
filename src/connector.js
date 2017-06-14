@@ -97,10 +97,9 @@ export default class Connector{
     onModelRemoved(model) {
         checkMethod('Connector.onModelRemoved(model)');
         checkParam(model, 'model');
-
         let type = model.presentationModelType;
         switch (type) {
-            case this.constructor.DOLPHIN_BEAN:
+            case DOLPHIN_BEAN:
                 this.classRepository.unregisterClass(model);
                 break;
             case DOLPHIN_LIST_SPLICE:

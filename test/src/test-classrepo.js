@@ -4,7 +4,7 @@
 var expect = require('chai').expect;
 var sinon = require('sinon');
 
-var consts = require('../../src/constants');
+import * as consts from '../../src/constants';
 
 import ClassRepository from '../../src/classrepo.js';
 
