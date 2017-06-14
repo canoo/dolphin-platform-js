@@ -29,7 +29,7 @@ const REQUEST_TIMEOUT = 408;
 const DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
 
-export default class HttpTransmitter {
+export default class PlatformHttpTransmitter {
 
     constructor(url, config) {
         this.url = url;
@@ -46,12 +46,12 @@ export default class HttpTransmitter {
         reject(error);
     }
 
-    send(commands) {
+    _send(commands) {
         return new Promise((resolve, reject) => {
             const http = new XMLHttpRequest();
             http.withCredentials = true;
             http.onerror = (errorContent) => {
-                this._handleError(reject, new HttpNetworkError('HttpTransmitter: Network error', errorContent));
+                this._handleError(reject, new HttpNetworkError('PlatformHttpTransmitter: Network error', errorContent));
             }
 
             http.onreadystatechange = () => {
@@ -64,25 +64,25 @@ export default class HttpTransmitter {
                             const currentClientId = http.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
                             if (exists(currentClientId)) {
                                 if (exists(this.clientId) && this.clientId !== currentClientId) {
-                                    this._handleError(reject, new DolphinSessionError('HttpTransmitter: ClientId of the response did not match'));
+                                    this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: ClientId of the response did not match'));
                                 }
                                 this.clientId = currentClientId;
                             } else {
-                                this._handleError(reject, new DolphinSessionError('HttpTransmitter: Server did not send a clientId'));
+                                this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: Server did not send a clientId'));
                             }
                             resolve(http.responseText);
                             break;
                         }
 
                         case REQUEST_TIMEOUT:
-                            this._handleError(reject, new DolphinSessionError('HttpTransmitter: Session Timeout'));
+                            this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: Session Timeout'));
                             break;
 
                         default:
                             if(this.failed_attempt <= this.maxRetry){
                                 this.failed_attempt = this.failed_attempt + 1;
                             }
-                            this._handleError(reject, new HttpResponseError('HttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
+                            this._handleError(reject, new HttpResponseError('PlatformHttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
                             break;
                     }
                 }
@@ -112,18 +112,18 @@ export default class HttpTransmitter {
     }
 
     transmit(commands, onDone) {
-        this.send(commands)
+        this._send(commands)
             .then(responseText => {
                 if (responseText.trim().length > 0) {
                     try {
                         const responseCommands = Codec.decode(responseText);
                         onDone(responseCommands);
                     } catch (err) {
-                        this.emit('error', new DolphinRemotingError('HttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')'));
+                        this.emit('error', new DolphinRemotingError('PlatformHttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')'));
                         onDone([]);
                     }
                 } else {
-                    this.emit('error', new DolphinRemotingError('HttpTransmitter: Empty response'));
+                    this.emit('error', new DolphinRemotingError('PlatformHttpTransmitter: Empty response'));
                     onDone([]);
                 }
             })
@@ -134,9 +134,9 @@ export default class HttpTransmitter {
     }
 
     signal(command) {
-        this.send([command])
+        this._send([command])
             .catch(error => this.emit('error', error));
     }
 }
 
-Emitter(HttpTransmitter.prototype);
+Emitter(PlatformHttpTransmitter.prototype);

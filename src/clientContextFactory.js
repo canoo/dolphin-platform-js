@@ -26,7 +26,7 @@ import BeanManager from './beanmanager.js';
 import ClassRepository from './classrepo.js';
 import ControllerManager from './controllermanager.js';
 import ClientContext from './clientcontext.js';
-import HttpTransmitter from './httpTransmitter.js';
+import PlatformHttpTransmitter from './platformHttpTransmitter.js';
 
 export default class ClientContextFactory{
 
@@ -47,7 +47,7 @@ export default class ClientContextFactory{
 
         var dolphin = builder.build();
 
-        var transmitter = new HttpTransmitter(url, exists(config) ? config.headersInfo : null, exists(config) ? config.connection : null);
+        var transmitter = new PlatformHttpTransmitter(url, config);
         transmitter.on('error', function (error) {
             clientContext.emit('error', error);
         });
