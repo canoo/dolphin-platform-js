@@ -33,16 +33,20 @@ export default class PlatformHttpTransmitter {
 
     constructor(url, config) {
         this.url = url;
+        this.config = config;
         this.headersInfo = exists(config) ? config.headersInfo : null;
         let connectionConfig = exists(config) ? config.connection : null;
         this.maxRetry = exists(connectionConfig) && exists(connectionConfig.maxRetry)?connectionConfig.maxRetry: 3;
         this.timeout = exists(connectionConfig) && exists(connectionConfig.timeout)?connectionConfig.timeout: 5000;
         this.failed_attempt = 0;
-        this.errorHandler = exists(connectionConfig) && exists(connectionConfig.errorHandler)?connectionConfig.errorHandler: new RemotingErrorHandler();
     }
 
     _handleError(reject, error) {
-        this.errorHandler.onError(error);
+        let connectionConfig = exists(this.config) ? this.config.connection : null;
+        let errorHandlers = exists(connectionConfig) && exists(connectionConfig.errorHandlers)?connectionConfig.errorHandlers: [new RemotingErrorHandler()];
+        errorHandlers.forEach(function(handler) {
+            handler.onError(error);
+        });
         reject(error);
     }
 
