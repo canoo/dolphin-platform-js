@@ -52,6 +52,10 @@ export default class ControllerManager{
     }
 
     createController(name) {
+        return this._createController(name, null)
+    }
+
+    _createController(name, parentControllerId) {
         checkMethod('ControllerManager.createController(name)');
         checkParam(name, 'name');
 
@@ -59,8 +63,7 @@ export default class ControllerManager{
         let controllerId, modelId, model, controller;
         return new Promise((resolve) => {
             self.connector.getHighlanderPM().then((highlanderPM) => {
-                highlanderPM.findAttributeByPropertyName(CONTROLLER_NAME).setValue(name);
-                self.connector.invoke(CommandFactory.createCreateControllerCommand(name, null)).then(() => {
+                self.connector.invoke(CommandFactory.createCreateControllerCommand(name, parentControllerId)).then(() => {
                     controllerId = highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).getValue();
                     modelId = highlanderPM.findAttributeByPropertyName(MODEL).getValue();
                     model = self.classRepository.mapDolphinToBean(modelId);

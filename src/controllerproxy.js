@@ -54,6 +54,10 @@ export default class ControllerProxy{
         return this.manager.invokeAction(this.controllerId, name, params);
     }
 
+    createController(name) {
+        return this.manager._createController(name, getId());
+    }
+
     destroy(){
         if (this.destroyed) {
             throw new Error('The controller was already destroyed');
