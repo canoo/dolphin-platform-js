@@ -36,6 +36,14 @@ export default class ControllerProxy{
         this.onDestroyedHandlers = new Set();
     }
 
+    getModel() {
+        return this.model;
+    }
+
+    getId() {
+        return this.controllerId;
+    }
+
     invoke(name, params){
         checkMethod('ControllerProxy.invoke(name, params)');
         checkParam(name, 'name');
