@@ -55,7 +55,7 @@ export default class ControllerProxy{
     }
 
     createController(name) {
-        return this.manager._createController(name, getId());
+        return this.manager._createController(name, this.getId());
     }
 
     destroy(){

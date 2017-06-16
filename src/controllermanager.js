@@ -32,7 +32,6 @@ import { SOURCE_SYSTEM } from './connector.js';
 import { SOURCE_SYSTEM_CLIENT } from './connector.js';
 import { ACTION_CALL_BEAN } from './connector.js';
 
-const CONTROLLER_NAME = 'controllerName';
 const CONTROLLER_ID = 'controllerId';
 const MODEL = 'model';
 const ERROR_CODE = 'errorCode';
