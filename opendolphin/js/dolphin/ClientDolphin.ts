@@ -24,10 +24,6 @@ export default class ClientDolphin {
         this.clientConnector.send(command, onFinished);
     }
 
-    reset(successHandler:OnSuccessHandler) {
-        this.clientConnector.reset(successHandler);
-    }
-
     // factory method for attributes
     attribute(propertyName, qualifier, value) {
         return new ClientAttribute(propertyName, qualifier, value);

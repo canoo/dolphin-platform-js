@@ -17,8 +17,9 @@ import Emitter from 'emitter-component';
 
 
 import { exists } from './utils';
-import { DolphinRemotingError, DolphinSessionError, HttpResponseError } from './errors.js';
+import { DolphinRemotingError, HttpNetworkError, DolphinSessionError, HttpResponseError } from './errors.js';
 import Codec from './codec.js';
+import RemotingErrorHandler from './remotingErrorHandler';
 
 
 const FINISHED = 4;
@@ -28,21 +29,35 @@ const REQUEST_TIMEOUT = 408;
 const DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
 
-export default class HttpTransmitter {
+export default class PlatformHttpTransmitter {
 
-    constructor(url, headersInfo, connection) {
+    constructor(url, config) {
         this.url = url;
-        this.headersInfo = headersInfo;
-        this.maxRetry = exists(connection) && exists(connection.maxRetry)?connection.maxRetry: 3;
-        this.timeout = exists(connection) && exists(connection.timeout)?connection.timeout: 5000;
+        this.config = config;
+        this.headersInfo = exists(config) ? config.headersInfo : null;
+        let connectionConfig = exists(config) ? config.connection : null;
+        this.maxRetry = exists(connectionConfig) && exists(connectionConfig.maxRetry)?connectionConfig.maxRetry: 3;
+        this.timeout = exists(connectionConfig) && exists(connectionConfig.timeout)?connectionConfig.timeout: 5000;
         this.failed_attempt = 0;
     }
 
-    send(commands) {
+    _handleError(reject, error) {
+        let connectionConfig = exists(this.config) ? this.config.connection : null;
+        let errorHandlers = exists(connectionConfig) && exists(connectionConfig.errorHandlers)?connectionConfig.errorHandlers: [new RemotingErrorHandler()];
+        errorHandlers.forEach(function(handler) {
+            handler.onError(error);
+        });
+        reject(error);
+    }
+
+    _send(commands) {
         return new Promise((resolve, reject) => {
             const http = new XMLHttpRequest();
             http.withCredentials = true;
-            http.onerror = (error) => reject(new DolphinRemotingError('HttpTransmitter: Network error', error));
+            http.onerror = (errorContent) => {
+                this._handleError(reject, new HttpNetworkError('PlatformHttpTransmitter: Network error', errorContent));
+            }
+
             http.onreadystatechange = () => {
                 if (http.readyState === FINISHED){
                     switch (http.status) {
@@ -53,25 +68,25 @@ export default class HttpTransmitter {
                             const currentClientId = http.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
                             if (exists(currentClientId)) {
                                 if (exists(this.clientId) && this.clientId !== currentClientId) {
-                                    reject(new DolphinSessionError('HttpTransmitter: ClientId of the response did not match'));
+                                    this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: ClientId of the response did not match'));
                                 }
                                 this.clientId = currentClientId;
                             } else {
-                                reject(new DolphinSessionError('HttpTransmitter: Server did not send a clientId'));
+                                this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: Server did not send a clientId'));
                             }
                             resolve(http.responseText);
                             break;
                         }
 
                         case REQUEST_TIMEOUT:
-                            reject(new DolphinSessionError('HttpTransmitter: Session Timeout'));
+                            this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: Session Timeout'));
                             break;
 
                         default:
                             if(this.failed_attempt <= this.maxRetry){
                                 this.failed_attempt = this.failed_attempt + 1;
                             }
-                            reject(new HttpResponseError('HttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
+                            this._handleError(reject, new HttpResponseError('PlatformHttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
                             break;
                     }
                 }
@@ -101,18 +116,18 @@ export default class HttpTransmitter {
     }
 
     transmit(commands, onDone) {
-        this.send(commands)
+        this._send(commands)
             .then(responseText => {
                 if (responseText.trim().length > 0) {
                     try {
                         const responseCommands = Codec.decode(responseText);
                         onDone(responseCommands);
                     } catch (err) {
-                        this.emit('error', new HttpResponseError('HttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')'));
+                        this.emit('error', new DolphinRemotingError('PlatformHttpTransmitter: Parse error: (Incorrect response = ' + responseText + ')'));
                         onDone([]);
                     }
                 } else {
-                    this.emit('error', new HttpResponseError('HttpTransmitter: Empty response'));
+                    this.emit('error', new DolphinRemotingError('PlatformHttpTransmitter: Empty response'));
                     onDone([]);
                 }
             })
@@ -123,13 +138,9 @@ export default class HttpTransmitter {
     }
 
     signal(command) {
-        this.send([command])
+        this._send([command])
             .catch(error => this.emit('error', error));
-    }
-
-    static reset() {
-        throw new Error('HttpTransmitter.reset() has been deprecated');
     }
 }
 
-Emitter(HttpTransmitter.prototype);
+Emitter(PlatformHttpTransmitter.prototype);
