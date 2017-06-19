@@ -17,8 +17,6 @@
 /* global console */
 "use strict";
 
-import OpenDolphin from '../opendolphin/build/OpenDolphin.js';
-
 import Promise from '../bower_components/core.js/library/fn/promise';
 import Set from'../bower_components/core.js/library/fn/set';
 import {exists} from './utils';
@@ -27,16 +25,16 @@ import {checkParam} from './utils';
 
 import ControllerProxy from './controllerproxy.js';
 
+import {CommandFactory} from './commandFactory.js';
+
+
 import { SOURCE_SYSTEM } from './connector.js';
 import { SOURCE_SYSTEM_CLIENT } from './connector.js';
 import { ACTION_CALL_BEAN } from './connector.js';
 
-const CONTROLLER_NAME = 'controllerName';
 const CONTROLLER_ID = 'controllerId';
 const MODEL = 'model';
-const ACTION_NAME = 'actionName';
 const ERROR_CODE = 'errorCode';
-const PARAM_PREFIX = '_';
 
 export default class ControllerManager{
 
@@ -53,6 +51,10 @@ export default class ControllerManager{
     }
 
     createController(name) {
+        return this._createController(name, null)
+    }
+
+    _createController(name, parentControllerId) {
         checkMethod('ControllerManager.createController(name)');
         checkParam(name, 'name');
 
@@ -60,8 +62,7 @@ export default class ControllerManager{
         let controllerId, modelId, model, controller;
         return new Promise((resolve) => {
             self.connector.getHighlanderPM().then((highlanderPM) => {
-                highlanderPM.findAttributeByPropertyName(CONTROLLER_NAME).setValue(name);
-                self.connector.invoke(OpenDolphin.createCreateControllerCommand()).then(() => {
+                self.connector.invoke(CommandFactory.createCreateControllerCommand(name, parentControllerId)).then(() => {
                     controllerId = highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).getValue();
                     modelId = highlanderPM.findAttributeByPropertyName(MODEL).getValue();
                     model = self.classRepository.mapDolphinToBean(modelId);
@@ -72,6 +73,7 @@ export default class ControllerManager{
             });
         });
     }
+
     invokeAction(controllerId, actionName, params) {
         checkMethod('ControllerManager.invokeAction(controllerId, actionName, params)');
         checkParam(controllerId, 'controllerId');
@@ -82,23 +84,22 @@ export default class ControllerManager{
 
             let attributes = [
                 self.dolphin.attribute(SOURCE_SYSTEM, null, SOURCE_SYSTEM_CLIENT),
-                self.dolphin.attribute(CONTROLLER_ID, null, controllerId),
-                self.dolphin.attribute(ACTION_NAME, null, actionName),
                 self.dolphin.attribute(ERROR_CODE)
             ];
 
-            if (exists(params)) {
-                for (var prop in params) {
-                    if (params.hasOwnProperty(prop)) {
-                        let param = self.classRepository.mapParamToDolphin(params[prop]);
-                        attributes.push(self.dolphin.attribute(PARAM_PREFIX + prop, null, param, 'VALUE'));
+            let pm = self.dolphin.presentationModel.apply(self.dolphin, [null, ACTION_CALL_BEAN].concat(attributes));
+
+            let actionParams = [];
+            if(exists(params)) {
+                for (var param in params) {
+                    if (params.hasOwnProperty(param)) {
+                        let value = self.classRepository.mapParamToDolphin(params[param]);
+                        actionParams.push({n: param, v: value});
                     }
                 }
             }
 
-            let pm = self.dolphin.presentationModel.apply(self.dolphin, [null, ACTION_CALL_BEAN].concat(attributes));
-
-            self.connector.invoke(OpenDolphin.createCallActionCommand(), params).then(() => {
+            self.connector.invoke(CommandFactory.createCallActionCommand(controllerId, actionName, actionParams)).then(() => {
                 let isError = pm.findAttributeByPropertyName(ERROR_CODE).getValue();
                 if (isError) {
                     reject(new Error("ControllerAction caused an error"));
@@ -109,6 +110,7 @@ export default class ControllerManager{
             });
         });
     }
+
     destroyController(controller) {
         checkMethod('ControllerManager.destroyController(controller)');
         checkParam(controller, 'controller');
@@ -118,7 +120,7 @@ export default class ControllerManager{
             self.connector.getHighlanderPM().then((highlanderPM) => {
                 self.controllers.delete(controller);
                 highlanderPM.findAttributeByPropertyName(CONTROLLER_ID).setValue(controller.controllerId);
-                self.connector.invoke(OpenDolphin.createDestroyControllerCommand()).then(resolve);
+                self.connector.invoke(CommandFactory.createDestroyControllerCommand(controller.getId())).then(resolve);
             });
         });
     }

@@ -36,6 +36,14 @@ export default class ControllerProxy{
         this.onDestroyedHandlers = new Set();
     }
 
+    getModel() {
+        return this.model;
+    }
+
+    getId() {
+        return this.controllerId;
+    }
+
     invoke(name, params){
         checkMethod('ControllerProxy.invoke(name, params)');
         checkParam(name, 'name');
@@ -44,6 +52,10 @@ export default class ControllerProxy{
             throw new Error('The controller was already destroyed');
         }
         return this.manager.invokeAction(this.controllerId, name, params);
+    }
+
+    createController(name) {
+        return this.manager._createController(name, this.getId());
     }
 
     destroy(){
