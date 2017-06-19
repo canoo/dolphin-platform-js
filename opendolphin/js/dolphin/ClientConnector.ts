@@ -27,7 +27,6 @@ export interface CommandAndHandler {
 export interface Transmitter {
     transmit(commands: Command[], onDone:(result: Command[]) => void) : void ;
     signal(command: SignalCommand) : void;
-    reset(successHandler:OnSuccessHandler): void;
 }
 
 export class ClientConnector {
@@ -66,10 +65,6 @@ export class ClientConnector {
     }
     setReleaseCommand(newCommand:  SignalCommand) {
         this.releaseCommand = newCommand
-    }
-
-    reset(successHandler:OnSuccessHandler) {
-        this.transmitter.reset(successHandler);
     }
 
     send(command: Command, onFinished:OnFinishedHandler) {

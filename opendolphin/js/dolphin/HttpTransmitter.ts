@@ -117,20 +117,4 @@ export default class HttpTransmitter implements Transmitter {
         this.http.open('POST', this.url + 'invalidate?', false);
         this.http.send();
     }
-    reset(successHandler:OnSuccessHandler) {
-        this.http.onreadystatechange = (evt:ProgressEvent) => {
-            if (this.http.readyState == this.HttpCodes.finished) {
-                if (this.http.status == this.HttpCodes.success) {
-                    successHandler.onSuccess();
-                }
-                else {
-                    this.handleError('application', "HttpTransmitter.reset(): HTTP Status != 200");
-                }
-            }
-        };
-
-        this.http.open('POST', this.url + 'invalidate?', true);
-        this.http.send();
-    }
-
 }
