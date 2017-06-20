@@ -3,18 +3,14 @@
 
 import AttributeCreatedNotification from "../../js/dolphin/AttributeCreatedNotification";
 import AttributeMetadataChangedCommand from "../../js/dolphin/AttributeMetadataChangedCommand";
-import CallNamedActionCommand from "../../js/dolphin/CallNamedActionCommand";
 import ChangeAttributeMetadataCommand from "../../js/dolphin/ChangeAttributeMetadataCommand";
 import { ClientAttribute } from "../../js/dolphin/ClientAttribute";
 import { ClientPresentationModel } from "../../js/dolphin/ClientPresentationModel";
 import Codec from "../../js/dolphin/Codec";
 import CreatePresentationModelCommand from "../../js/dolphin/CreatePresentationModelCommand";
-import GetPresentationModelCommand from "../../js/dolphin/GetPresentationModelCommand";
-import DeleteAllPresentationModelsOfTypeCommand from "../../js/dolphin/DeleteAllPresentationModelsOfTypeCommand";
 import DeletedPresentationModelNotification from "../../js/dolphin/DeletedPresentationModelNotification";
 import DeletePresentationModelCommand from "../../js/dolphin/DeletePresentationModelCommand";
 import EmptyNotification from "../../js/dolphin/EmptyNotification";
-import InitializeAttributeCommand from "../../js/dolphin/InitializeAttributeCommand";
 import SignalCommand from "../../js/dolphin/SignalCommand";
 import ValueChangedCommand from "../../js/dolphin/ValueChangedCommand";
 
@@ -56,15 +52,11 @@ describe('Codec Test', () => {
 
         expect(CodecTestHelper.testCodingCommand(new AttributeCreatedNotification("pmId", "5", "prop", "äöüéàè", "qualifier"))).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new AttributeMetadataChangedCommand("5", "name", "value"))).to.be.true;
-        expect(CodecTestHelper.testCodingCommand(new CallNamedActionCommand("some-action"))).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new CreatePresentationModelCommand(new ClientPresentationModel("MyId", "MyType")))).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new ChangeAttributeMetadataCommand("5", "name", "value"))).to.be.true;
-        expect(CodecTestHelper.testCodingCommand(new GetPresentationModelCommand("pmId"))).to.be.true;
-        expect(CodecTestHelper.testCodingCommand(new DeleteAllPresentationModelsOfTypeCommand("type"))).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new DeletedPresentationModelNotification("pmId"))).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new DeletePresentationModelCommand("pmId"))).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new EmptyNotification())).to.be.true;
-        expect(CodecTestHelper.testCodingCommand(new InitializeAttributeCommand("pmId", "prop", "qualifier", "value", "pmType"))).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new SignalCommand("signal"))).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new ValueChangedCommand("5", "oldValue", "newValue"))).to.be.true;
     });

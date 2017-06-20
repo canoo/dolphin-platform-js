@@ -17,9 +17,9 @@
 /* global console */
 "use strict";
 
-import OpenDolphin from '../opendolphin/build/OpenDolphin.js';
 import Emitter from 'emitter-component';
 import Promise from '../bower_components/core.js/library/fn/promise';
+import CommandFactory from './commandFactory';
 import {exists} from './utils.js';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
@@ -45,7 +45,7 @@ export default class ClientContext{
         let self = this;
         this.connectionPromise = new Promise((resolve) => {
             self._connector.connect();
-            self._connector.invoke(OpenDolphin.createCreateContextCommand()).then(() => {
+            self._connector.invoke(CommandFactory.createCreateContextCommand()).then(() => {
                 self.isConnected = true;
                 resolve();
             });
@@ -79,7 +79,7 @@ export default class ClientContext{
         this.dolphin.stopPushListening();
         return new Promise((resolve) => {
             self._controllerManager.destroy().then(() => {
-                self._connector.invoke(OpenDolphin.createDestroyContextCommand());
+                self._connector.invoke(CommandFactory.createDestroyContextCommand());
                 self.dolphin = null;
                 self.beanManager = null;
                 self._controllerManager = null;
