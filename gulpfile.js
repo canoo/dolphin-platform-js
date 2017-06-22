@@ -164,7 +164,7 @@ gulp.task('build-test:od', function () {
 gulp.task('test:od', ['build-test:od'], function (done) {
     new Server({
         configFile: __dirname + '/opendolphin/test/karma.conf.js',
-        reporters: ['coverage'],
+        reporters: ['coverage', 'progress', 'dots'],
             coverageReporter: {
                 reporters: [
                     {type: 'lcovonly', subdir: '.'},
@@ -178,7 +178,7 @@ gulp.task('test:od', ['build-test:od'], function (done) {
             done();
         } else {
             done('Karma test failed for opendolphin: ' + result);
-            process.exit(1)
+            process.exit(1);
         }
     }).start();
 });
@@ -187,7 +187,7 @@ gulp.task('test:od', ['build-test:od'], function (done) {
 gulp.task('test:dp', ['build-test:dp'], function (done) {
     new Server({
         configFile: __dirname + '/karma.conf.js',
-        reporters: ['coverage'],
+        reporters: ['coverage', 'progress', 'dots'],
         coverageReporter: {
             reporters: [
                 {type: 'lcovonly', subdir: '.'},

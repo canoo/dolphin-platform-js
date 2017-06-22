@@ -158,20 +158,13 @@ export class ClientConnector {
     private handleValueChangedCommand(serverCommand: ValueChangedCommand): ClientPresentationModel{
         var clientAttribute:  ClientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
         if(!clientAttribute){
-            console.log("attribute with id "+serverCommand.attributeId+" not found, cannot update old value "+serverCommand.oldValue+" to new value "+serverCommand.newValue);
+            console.log("attribute with id "+serverCommand.attributeId+" not found, cannot update to new value "+serverCommand.newValue);
             return null;
         }
         if (clientAttribute.getValue() == serverCommand.newValue) {
             //console.log("nothing to do. new value == old value");
             return null;
         }
-        // Below was the code that would enforce that value changes only appear when the proper oldValue is given.
-        // While that seemed appropriate at first, there are actually valid command sequences where the oldValue is not properly set.
-        // We leave the commented code in the codebase to allow for logging/debugging such cases.
-//            if(clientAttribute.getValue() != serverCommand.oldValue) {
-//                console.log("attribute with id "+serverCommand.attributeId+" and value " + clientAttribute.getValue() +
-//                            " was set to value " + serverCommand.newValue + " even though the change was based on an outdated old value of " + serverCommand.oldValue);
-//            }
         clientAttribute.setValue(serverCommand.newValue);
         return null;
     }

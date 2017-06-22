@@ -81,7 +81,7 @@ describe('DolphinBuilderTest', () => {
 
     it('handle ValueChangedCommand', () => {
         TestHelper.initialize();
-        var serverCommand:ValueChangedCommand = new ValueChangedCommand(TestHelper.attr1.id,0,10);
+        var serverCommand:ValueChangedCommand = new ValueChangedCommand(TestHelper.attr1.id,10);
 
         //before calling ValueChangedCommand
         var attribute = TestHelper.clientDolphin.getClientModelStore().findAttributeById(TestHelper.attr1.id);
