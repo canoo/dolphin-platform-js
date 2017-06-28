@@ -6,9 +6,7 @@ import { ClientAttribute } from "../../js/dolphin/ClientAttribute";
 import ClientDolphin from "../../js/dolphin/ClientDolphin";
 import { ClientModelStore } from "../../js/dolphin/ClientModelStore";
 import Command from "../../js/dolphin/Command";
-import DeleteAllPresentationModelsOfTypeCommand from "../../js/dolphin/DeleteAllPresentationModelsOfTypeCommand";
 import DeletePresentationModelCommand from "../../js/dolphin/DeletePresentationModelCommand";
-import InitializeAttributeCommand from "../../js/dolphin/InitializeAttributeCommand";
 import SignalCommand from "../../js/dolphin/SignalCommand";
 import ValueChangedCommand from "../../js/dolphin/ValueChangedCommand";
 

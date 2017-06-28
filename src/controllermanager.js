@@ -25,7 +25,7 @@ import {checkParam} from './utils';
 
 import ControllerProxy from './controllerproxy.js';
 
-import {CommandFactory} from './commandFactory.js';
+import CommandFactory from './commandFactory.js';
 
 
 import { SOURCE_SYSTEM } from './connector.js';
