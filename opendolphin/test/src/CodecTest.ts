@@ -58,7 +58,7 @@ describe('Codec Test', () => {
         expect(CodecTestHelper.testCodingCommand(new DeletePresentationModelCommand("pmId"))).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new EmptyNotification())).to.be.true;
         expect(CodecTestHelper.testCodingCommand(new SignalCommand("signal"))).to.be.true;
-        expect(CodecTestHelper.testCodingCommand(new ValueChangedCommand("5", "oldValue", "newValue"))).to.be.true;
+        expect(CodecTestHelper.testCodingCommand(new ValueChangedCommand("5", "newValue"))).to.be.true;
     });
 });
 

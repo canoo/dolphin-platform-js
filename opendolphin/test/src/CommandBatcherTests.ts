@@ -72,16 +72,16 @@ describe('CommandBatcherTests', () => {
 
     it('Blind Folding', () => {
 
-        var cmd1    : ValueChangedCommand = new ValueChangedCommand("1", 0, 1);
-        var cmd2    : ValueChangedCommand = new ValueChangedCommand("2", 0, 1); // other id, will be batched
-        var cmd3    : ValueChangedCommand = new ValueChangedCommand("1", 1, 2); // will be folded
+        var cmd1    : ValueChangedCommand = new ValueChangedCommand("1", 1);
+        var cmd2    : ValueChangedCommand = new ValueChangedCommand("1", 2); // other id, will be batched
+        var cmd3    : ValueChangedCommand = new ValueChangedCommand("12", 2); // will be folded
 
         var queue = [
             { command: cmd1, handler: null },
             { command: cmd2, handler: null },
             { command: cmd3, handler: null }
         ];
-        var unfolded = queue[1];
+        var unfolded = queue[2];
 
         var batcher = new BlindCommandBatcher();
 
@@ -89,7 +89,6 @@ describe('CommandBatcherTests', () => {
         expect(result.length).to.equal(2);
 
         expect(result[0].command['attributeId']).to.equal("1");
-        expect(result[0].command['oldValue']).to.equal(0);
         expect(result[0].command['newValue']).to.equal(2);
         expect(result[1]).to.equal(unfolded);
 
