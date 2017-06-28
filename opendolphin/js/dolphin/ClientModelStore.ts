@@ -65,7 +65,7 @@ export class ClientModelStore {
         // whenever an attribute changes its value, the server needs to be notified
         // and all other attributes with the same qualifier are given the same value
         attribute.onValueChange((evt:ValueChangedEvent)=> {
-            var valueChangeCommand:ValueChangedCommand = new ValueChangedCommand(attribute.id, evt.oldValue, evt.newValue);
+            var valueChangeCommand:ValueChangedCommand = new ValueChangedCommand(attribute.id, evt.newValue);
             this.clientDolphin.getClientConnector().send(valueChangeCommand, null);
 
             if (attribute.getQualifier()) {
