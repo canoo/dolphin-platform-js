@@ -21,7 +21,7 @@ var config = typeof $.util.env['configFile'] === 'string' ? require($.util.env['
 
 
 gulp.task('clean', function () {
-    del(['dist', 'test/build', 'opendolphin/build', 'opendolphin/test/build', 'coverage']);
+    del(['dist', 'test/build', 'coverage']);
 });
 
 /* START: lint */
@@ -68,7 +68,7 @@ var testBundler = browserify(assign({}, watchify.args, {
     debug: true
 }));
 
-gulp.task('build-test:dp', ['build:od'], function () {
+gulp.task('build-test:dp', function () {
     return rebundleTest(testBundler);
 });
 
@@ -78,16 +78,6 @@ gulp.task('verify', ['lint', 'test']);
 
 /* START: Building opendolphin and dolphin-platform.js */
 
-//build opendolphin
-gulp.task('build:od', function () {
-    return gulp.src('opendolphin/js/dolphin/*.ts')
-        .pipe($.typescript({
-            module: 'commonjs'
-        }))
-        .pipe($.sourcemaps.init({loadMaps: true}))
-        .pipe($.sourcemaps.write('./'))
-        .pipe(gulp.dest('opendolphin/build/'));
-});
 
 var mainBundler = browserify(assign({}, watchify.args, {
     entries: './src/clientContextFactory.js',
@@ -113,8 +103,10 @@ function rebundle(bundler) {
         .pipe($.sourcemaps.write('./'))
         .pipe(gulp.dest('./dist'));
 }
+
+
 //build dolphin-platform
-gulp.task('build', ['build:od'], function () {
+gulp.task('build', function () {
     return rebundle(mainBundler);
 });
 /* END: Building opendolphin and dolphin-platform.js */
@@ -137,80 +129,34 @@ gulp.task('watch', function () {
 
 gulp.task('default', ['verify', 'build', 'watch']);
 
-
-/* START: build opendolphin tests  */
-gulp.task('build-test:od', function () {
-    var bundler = browserify({debug: true})
-        .add(glob.sync('./opendolphin/test/src/**/*.ts'))
-        .plugin(tsify);
-    return bundler
-        .transform('babelify')
-        .transform(istanbul({
-            ignore: ['**/src/polyfills.js', '**/opendolphin/**/*.js']
-        }))
-        .bundle()
-        .on('error', function (err) {
-            console.log("Error:: "+err.toString());
-            $.util.log.bind($.util, 'Browserify Error: ' + err.toString());
-            process.exit(1)
-        })
-        .pipe(source('test-bundle.js'))
-        .pipe(buffer())
-        .pipe($.sourcemaps.init({loadMaps: true}))
-        .pipe($.sourcemaps.write('./'))
-        .pipe(gulp.dest('./opendolphin/test/build'));
-});
-
-gulp.task('test:od', ['build-test:od'], function (done) {
+//Test dolphin-platform
+gulp.task('test:dp', ['build-test:dp'], function (done) {
     new Server({
-        configFile: __dirname + '/opendolphin/test/karma.conf.js',
-        reporters: ['coverage', 'progress', 'dots'],
+            configFile: __dirname + '/karma.conf.js',
+            reporters: ['coverage', 'progress', 'dots'],
             coverageReporter: {
                 reporters: [
                     {type: 'lcovonly', subdir: '.'},
                     {type: 'html', subdir: 'report-html'},
                 ]
             },
-        singleRun: true
-    },
-    function (result) {
-        if (result === 0) {
-            done();
-        } else {
-            done('Karma test failed for opendolphin: ' + result);
-            process.exit(1);
-        }
-    }).start();
-});
-
-//Test dolphin-platform
-gulp.task('test:dp', ['build-test:dp'], function (done) {
-    new Server({
-        configFile: __dirname + '/karma.conf.js',
-        reporters: ['coverage', 'progress', 'dots'],
-        coverageReporter: {
-            reporters: [
-                {type: 'lcovonly', subdir: '.'},
-                {type: 'html', subdir: 'report-html'},
-            ]
+            singleRun: true
         },
-        singleRun: true
-    } ,
-    function (result) {
-        if (result === 0) {
-            done();
-        } else {
-            done('Karma test failed for dolphin-platform: ' + result);
-            process.exit(1)
-        }
-    }).start();
+        function (result) {
+            if (result === 0) {
+                done();
+            } else {
+                done('Karma test failed for dolphin-platform: ' + result);
+                process.exit(1)
+            }
+        }).start();
 });
 
-gulp.task('test', ['test:dp', 'test:od']);
+gulp.task('test', ['test:dp']);
 
 
 // START: Saucelabs
-gulp.task('common', ['build', 'build-test:dp', 'build-test:od']);
+gulp.task('common', ['build', 'build-test:dp']);
 
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
     return function () {
