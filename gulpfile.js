@@ -26,7 +26,7 @@ gulp.task('clean', function () {
 
 //local report
 gulp.task('lint', function () {
-    return gulp.src(['./src/**/*.js'])
+    return gulp.src('./src/**/*.js')
         .pipe($.eslint())
         .pipe($.eslint.format())
         .pipe($.eslint.failAfterError());
