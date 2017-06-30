@@ -92,7 +92,7 @@ function rebundle(bundler) {
 
 
 //build dolphin-platform
-gulp.task('build', ['lint', 'test'], function () {
+gulp.task('build', ['test'], function () {
     return rebundle(mainBundler);
 });
 /* END: Building opendolphin and dolphin-platform.js */
