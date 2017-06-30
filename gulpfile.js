@@ -14,25 +14,19 @@ var istanbul = require('browserify-istanbul');
 var source = require('vinyl-source-stream');
 var tsify = require('tsify');
 var watchify = require('watchify');
-
 var Server = require('karma').Server;
-
 var config = typeof $.util.env['configFile'] === 'string' ? require($.util.env['configFile']) : {};
 
+var testBundler = browserify(assign({}, watchify.args, {
+    entries: glob.sync('./test/src/**/test-*.js'),
+    debug: true
+}));
 
-gulp.task('clean', function () {
-    del(['dist', 'test/build', 'coverage']);
-});
-
-//local report
-gulp.task('lint', function () {
-    return gulp.src(['./src/**/*.js'])
-        .pipe($.eslint())
-        .pipe($.eslint.format())
-        .pipe($.eslint.failAfterError());
-});
-
-/* START : build dolphin-platform related tests */
+var mainBundler = browserify(assign({}, watchify.args, {
+    entries: './src/clientContextFactory.js',
+    standalone: 'dolphin',
+    debug: true
+}));
 
 function rebundleTest(bundler) {
     return bundler
@@ -48,28 +42,6 @@ function rebundleTest(bundler) {
         .pipe($.sourcemaps.write('./'))
         .pipe(gulp.dest('./test/build'))
 }
-
-var testBundler = browserify(assign({}, watchify.args, {
-    entries: glob.sync('./test/src/**/test-*.js'),
-    debug: true
-}));
-
-gulp.task('build-test', function () {
-    return rebundleTest(testBundler);
-});
-
-/* END : build dolphin-platform related tests */
-
-gulp.task('verify', ['lint', 'test']);
-
-/* START: Building opendolphin and dolphin-platform.js */
-
-
-var mainBundler = browserify(assign({}, watchify.args, {
-    entries: './src/clientContextFactory.js',
-    standalone: 'dolphin',
-    debug: true
-}));
 
 function rebundle(bundler) {
     return bundler
@@ -89,58 +61,6 @@ function rebundle(bundler) {
         .pipe($.sourcemaps.write('./'))
         .pipe(gulp.dest('./dist'));
 }
-
-
-//build dolphin-platform
-gulp.task('build', ['lint', 'test'], function () {
-    return rebundle(mainBundler);
-});
-/* END: Building opendolphin and dolphin-platform.js */
-
-
-//Watching for changes
-gulp.task('watch', function () {
-    gulp.watch(['src/**', 'test/**'], ['test']);
-
-    var watchedMainBundler = watchify(mainBundler);
-    watchedMainBundler.on('update', function () {
-        rebundle(watchedMainBundler)
-    });
-
-    var watchedTestBundler = watchify(testBundler);
-    watchedTestBundler.on('update', function () {
-        rebundleTest(watchedTestBundler)
-    });
-});
-
-gulp.task('default', ['verify', 'build', 'watch']);
-
-//Test dolphin-platform
-gulp.task('test', ['build-test'], function (done) {
-    new Server({
-            configFile: __dirname + '/karma.conf.js',
-            reporters: ['coverage', 'progress', 'dots'],
-            coverageReporter: {
-                reporters: [
-                    {type: 'lcovonly', subdir: '.'},
-                    {type: 'html', subdir: 'report-html'},
-                ]
-            },
-            singleRun: true
-        },
-        function (result) {
-            if (result === 0) {
-                done();
-            } else {
-                done('Karma test failed for dolphin-platform: ' + result);
-                process.exit(1)
-            }
-        }).start();
-});
-
-
-// START: Saucelabs
-gulp.task('common', ['build', 'build-test']);
 
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
     return function () {
@@ -180,7 +100,66 @@ function createSauceLabsTestPipe(customLaunchers, step) {
     step();
 }
 
-gulp.task('saucelabs', ['common'], function (done) {
+gulp.task('clean', function () {
+    del(['dist', 'test/build', 'coverage']);
+});
+
+gulp.task('lint', function () {
+    return gulp.src(['./src/**/*.js'])
+        .pipe($.eslint())
+        .pipe($.eslint.format())
+        .pipe($.eslint.failAfterError());
+});
+
+gulp.task('build-test', function () {
+    return rebundleTest(testBundler);
+});
+
+gulp.task('test', ['build-test'], function (done) {
+    new Server({
+            configFile: __dirname + '/karma.conf.js',
+            reporters: ['coverage', 'progress', 'dots'],
+            coverageReporter: {
+                reporters: [
+                    {type: 'lcovonly', subdir: '.'},
+                    {type: 'html', subdir: 'report-html'},
+                ]
+            },
+            singleRun: true
+        },
+        function (result) {
+            if (result === 0) {
+                done();
+            } else {
+                done('Karma test failed for dolphin-platform: ' + result);
+                process.exit(1)
+            }
+        }).start();
+});
+
+gulp.task('verify', ['lint', 'test']);
+
+gulp.task('build', ['verify'], function () {
+    return rebundle(mainBundler);
+});
+
+gulp.task('watch', ['build'], function () {
+    gulp.watch(['src/**', 'test/**'], ['test']);
+
+    var watchedMainBundler = watchify(mainBundler);
+    watchedMainBundler.on('update', function () {
+        rebundle(watchedMainBundler)
+    });
+
+    var watchedTestBundler = watchify(testBundler);
+    watchedTestBundler.on('update', function () {
+        rebundleTest(watchedTestBundler)
+    });
+});
+
+gulp.task('default', ['watch']);
+
+gulp.task('saucelabs', ['build'], function (done) {
     var customLaunchers = require('./sauce.launchers.js').browsers;
     return createSauceLabsTestPipe(customLaunchers, done);
 });
