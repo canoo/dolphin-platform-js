@@ -15,6 +15,7 @@
     "es6": true
   },
   "globals": {
+    "it": false,
     "__dirname": false,
     "app": false,
     "page": false,

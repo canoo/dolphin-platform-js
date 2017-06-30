@@ -24,27 +24,13 @@ gulp.task('clean', function () {
     del(['dist', 'test/build', 'coverage']);
 });
 
-/* START: lint */
 //local report
-gulp.task('lint:js', function () {
-    return gulp.src(['./test/src/**/*.js'])
-        .pipe($.jshint())
-        .pipe($.jshint.reporter('default'))
-        .pipe($.jshint.reporter('fail'));
-});
-
-//local report
-gulp.task('lint:es', function () {
-    return gulp.src(['./src/**/*.js', './test/src/**/*.es6'])
+gulp.task('lint', function () {
+    return gulp.src(['./src/**/*.js'])
         .pipe($.eslint())
         .pipe($.eslint.format())
         .pipe($.eslint.failAfterError());
 });
-
-gulp.task('lint', ['lint:js', 'lint:es']);
-
-
-/* END: lint */
 
 /* START : build dolphin-platform related tests */
 
@@ -68,7 +54,7 @@ var testBundler = browserify(assign({}, watchify.args, {
     debug: true
 }));
 
-gulp.task('build-test:dp', function () {
+gulp.task('build-test', function () {
     return rebundleTest(testBundler);
 });
 
@@ -130,7 +116,7 @@ gulp.task('watch', function () {
 gulp.task('default', ['verify', 'build', 'watch']);
 
 //Test dolphin-platform
-gulp.task('test:dp', ['build-test:dp'], function (done) {
+gulp.task('test', ['build-test'], function (done) {
     new Server({
             configFile: __dirname + '/karma.conf.js',
             reporters: ['coverage', 'progress', 'dots'],
@@ -152,11 +138,9 @@ gulp.task('test:dp', ['build-test:dp'], function (done) {
         }).start();
 });
 
-gulp.task('test', ['test:dp']);
-
 
 // START: Saucelabs
-gulp.task('common', ['build', 'build-test:dp']);
+gulp.task('common', ['build', 'build-test']);
 
 function createSauceLabsTestStep(customLaunchers, browsers, done) {
     return function () {
