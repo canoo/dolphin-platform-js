@@ -17,10 +17,10 @@
 /* global console */
 "use strict";
 
-import OpenDolphin from '../opendolphin/build/OpenDolphin.js';
+import OpenDolphin from './OpenDolphin.js';
 
 import Promise from '../bower_components/core.js/library/fn/promise';
-import ClientModelStore from '../opendolphin/build/ClientModelStore';
+import ClientModelStore from './ClientModelStore';
 import {exists} from './utils.js';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';

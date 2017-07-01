@@ -17,7 +17,7 @@
 /* global console */
 /* global exports */
 "use strict";
-import OpenDolphin from '../opendolphin/build/OpenDolphin.js';
+import OpenDolphin from './OpenDolphin.js';
 import {exists} from './utils';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
