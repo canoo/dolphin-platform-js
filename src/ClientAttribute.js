@@ -1,31 +1,35 @@
-"use strict";
-const EventBus_1 = require('./EventBus');
+import EventBus from './EventBus';
+
 class ClientAttribute {
     constructor(propertyName, qualifier, value) {
         this.propertyName = propertyName;
         this.id = "" + (ClientAttribute.clientAttributeInstanceCount++) + "C";
-        this.valueChangeBus = new EventBus_1.default();
-        this.qualifierChangeBus = new EventBus_1.default();
+        this.valueChangeBus = new EventBus();
+        this.qualifierChangeBus = new EventBus();
         this.setValue(value);
         this.setQualifier(qualifier);
     }
-    /** a copy constructor with new id and no presentation model */
+
     copy() {
         var result = new ClientAttribute(this.propertyName, this.getQualifier(), this.getValue());
         return result;
     }
+
     setPresentationModel(presentationModel) {
         if (this.presentationModel) {
             alert("You can not set a presentation model for an attribute that is already bound.");
         }
         this.presentationModel = presentationModel;
     }
+
     getPresentationModel() {
         return this.presentationModel;
     }
+
     getValue() {
         return this.value;
     }
+
     setValue(newValue) {
         var verifiedValue = ClientAttribute.checkValue(newValue);
         if (this.value == verifiedValue)
@@ -34,6 +38,7 @@ class ClientAttribute {
         this.value = verifiedValue;
         this.valueChangeBus.trigger({ 'oldValue': oldValue, 'newValue': verifiedValue });
     }
+
     setQualifier(newQualifier) {
         if (this.qualifier == newQualifier)
             return;
@@ -41,9 +46,27 @@ class ClientAttribute {
         this.qualifier = newQualifier;
         this.qualifierChangeBus.trigger({ 'oldValue': oldQualifier, 'newValue': newQualifier });
     }
+
     getQualifier() {
         return this.qualifier;
     }
+
+    onValueChange(eventHandler) {
+        this.valueChangeBus.onEvent(eventHandler);
+        eventHandler({ "oldValue": this.value, "newValue": this.value });
+    }
+
+    onQualifierChange(eventHandler) {
+        this.qualifierChangeBus.onEvent(eventHandler);
+    }
+
+    syncWith(sourceAttribute) {
+        if (sourceAttribute) {
+            this.setQualifier(sourceAttribute.getQualifier()); // sequence is important
+            this.setValue(sourceAttribute.value);
+        }
+    }
+
     static checkValue(value) {
         if (value == null || value == undefined) {
             return null;
@@ -65,22 +88,8 @@ class ClientAttribute {
         }
         return result;
     }
-    onValueChange(eventHandler) {
-        this.valueChangeBus.onEvent(eventHandler);
-        eventHandler({ "oldValue": this.value, "newValue": this.value });
-    }
-    onQualifierChange(eventHandler) {
-        this.qualifierChangeBus.onEvent(eventHandler);
-    }
-    syncWith(sourceAttribute) {
-        if (sourceAttribute) {
-            this.setQualifier(sourceAttribute.getQualifier()); // sequence is important
-            this.setValue(sourceAttribute.value);
-        }
-    }
+
 }
+
 ClientAttribute.SUPPORTED_VALUE_TYPES = ["string", "number", "boolean"];
 ClientAttribute.clientAttributeInstanceCount = 0;
-exports.ClientAttribute = ClientAttribute;
-
-//# sourceMappingURL=ClientAttribute.js.map

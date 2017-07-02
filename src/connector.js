@@ -17,13 +17,13 @@
 /* global console */
 "use strict";
 
-import OpenDolphin from './OpenDolphin.js';
-
 import Promise from '../bower_components/core.js/library/fn/promise';
-import ClientModelStore from './ClientModelStore';
 import {exists} from './utils.js';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
+import CommandFactory from './commandFactory';
+import {ADDED_TYPE, REMOVED_TYPE} from './constants';
+
 
 const DOLPHIN_BEAN = '@@@ DOLPHIN_BEAN @@@';
 const ACTION_CALL_BEAN = '@@@ CONTROLLER_ACTION_CALL_BEAN @@@';
@@ -54,9 +54,9 @@ export default class Connector{
             let model = event.clientPresentationModel;
             let sourceSystem = model.findAttributeByPropertyName(SOURCE_SYSTEM);
             if (exists(sourceSystem) && sourceSystem.value === SOURCE_SYSTEM_SERVER) {
-                if (event.eventType === ClientModelStore.Type.ADDED) {
+                if (event.eventType === ADDED_TYPE) {
                     self.onModelAdded(model);
-                } else if (event.eventType === ClientModelStore.Type.REMOVED) {
+                } else if (event.eventType === REMOVED_TYPE) {
                     self.onModelRemoved(model);
                 }
             }
@@ -65,7 +65,7 @@ export default class Connector{
     connect() {
         let that = this;
         setTimeout(() => {
-            that.dolphin.startPushListening(OpenDolphin.createStartLongPollCommand(), OpenDolphin.createInterruptLongPollCommand());
+            that.dolphin.startPushListening(CommandFactory.createStartLongPollCommand(), CommandFactory.createInterruptLongPollCommand());
         }, 0);
     }
 

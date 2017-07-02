@@ -13,3 +13,7 @@ export const CALENDAR = 11;
 export const LOCAL_DATE_FIELD_TYPE = 55;
 export const LOCAL_DATE_TIME_FIELD_TYPE = 52;
 export const ZONED_DATE_TIME_FIELD_TYPE = 54;
+
+
+export const ADDED_TYPE = "ADDED";
+export const REMOVED_TYPE = "REMOVED";

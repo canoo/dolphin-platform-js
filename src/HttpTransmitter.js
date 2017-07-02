@@ -1,6 +1,7 @@
-"use strict";
-const Codec_1 = require("./Codec");
-class HttpTransmitter {
+import Codec from './Codec'
+
+export default class HttpTransmitter {
+
     constructor(url, reset = true, charset = "UTF-8", errorHandler = null, supportCORS = false, headersInfo = null) {
         this.url = url;
         this.charset = charset;
@@ -19,12 +20,13 @@ class HttpTransmitter {
                 this.sig.withCredentials = true;
             }
         }
-        this.codec = new Codec_1.default();
+        this.codec = new Codec();
         if (reset) {
             console.log('HttpTransmitter.invalidate() is deprecated. Use ClientDolphin.reset(OnSuccessHandler) instead');
             this.invalidate();
         }
     }
+
     transmit(commands, onDone) {
         this.http.onerror = () => {
             this.handleError('onerror', "");
@@ -64,6 +66,7 @@ class HttpTransmitter {
         }
         this.http.send(this.codec.encode(commands));
     }
+
     setHeaders(httpReq) {
         if (this.headersInfo) {
             for (var i in this.headersInfo) {
@@ -73,6 +76,7 @@ class HttpTransmitter {
             }
         }
     }
+
     handleError(kind, message) {
         var errorEvent = { kind: kind, url: this.url, httpStatus: this.http.status, message: message };
         if (this.errorHandler) {
@@ -82,18 +86,15 @@ class HttpTransmitter {
             console.log("Error occurred: ", errorEvent);
         }
     }
+
     signal(command) {
         this.sig.open('POST', this.url, true);
         this.setHeaders(this.sig);
         this.sig.send(this.codec.encode([command]));
     }
-    // Deprecated ! Use 'reset(OnSuccessHandler) instead
+
     invalidate() {
         this.http.open('POST', this.url + 'invalidate?', false);
         this.http.send();
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = HttpTransmitter;
-
-//# sourceMappingURL=HttpTransmitter.js.map

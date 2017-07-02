@@ -1,39 +1,38 @@
-/// <reference path="./core-js.d.ts" />
-"use strict";
-const Attribute_1 = require("./Attribute");
-const ChangeAttributeMetadataCommand_1 = require("./ChangeAttributeMetadataCommand");
-const CreatePresentationModelCommand_1 = require("./CreatePresentationModelCommand");
-const DeletedPresentationModelNotification_1 = require("./DeletedPresentationModelNotification");
-const EventBus_1 = require("./EventBus");
-const ValueChangedCommand_1 = require("./ValueChangedCommand");
-(function (Type) {
-    Type[Type["ADDED"] = 'ADDED'] = "ADDED";
-    Type[Type["REMOVED"] = 'REMOVED'] = "REMOVED";
-})(exports.Type || (exports.Type = {}));
-var Type = exports.Type;
-class ClientModelStore {
+import Attribute from './Attribute'
+import ChangeAttributeMetadataCommand from './commands/changeAttributeMetadataCommand'
+import CreatePresentationModelCommand from './commands/createPresentationModelCommand'
+import DeletedPresentationModelNotification from './commands/presentationModelDeletedCommand'
+import EventBus from './EventBus'
+import ValueChangedCommand from './commands/valueChangedCommand'
+import {ADDED_TYPE, REMOVED_TYPE} from './constants'
+
+export default class ClientModelStore {
+
     constructor(clientDolphin) {
         this.clientDolphin = clientDolphin;
         this.presentationModels = new Map();
         this.presentationModelsPerType = new Map();
         this.attributesPerId = new Map();
         this.attributesPerQualifier = new Map();
-        this.modelStoreChangeBus = new EventBus_1.default();
+        this.modelStoreChangeBus = new EventBus();
     }
+
     getClientDolphin() {
         return this.clientDolphin;
     }
+
     registerModel(model) {
         if (model.clientSideOnly) {
             return;
         }
         var connector = this.clientDolphin.getClientConnector();
-        var createPMCommand = new CreatePresentationModelCommand_1.default(model);
+        var createPMCommand = new CreatePresentationModelCommand(model);
         connector.send(createPMCommand, null);
         model.getAttributes().forEach(attribute => {
             this.registerAttribute(attribute);
         });
     }
+
     registerAttribute(attribute) {
         this.addAttributeById(attribute);
         if (attribute.getQualifier()) {
@@ -42,7 +41,7 @@ class ClientModelStore {
         // whenever an attribute changes its value, the server needs to be notified
         // and all other attributes with the same qualifier are given the same value
         attribute.onValueChange((evt) => {
-            var valueChangeCommand = new ValueChangedCommand_1.default(attribute.id, evt.newValue);
+            var valueChangeCommand = new ValueChangedCommand(attribute.id, evt.newValue);
             this.clientDolphin.getClientConnector().send(valueChangeCommand, null);
             if (attribute.getQualifier()) {
                 var attrs = this.findAttributesByFilter((attr) => {
@@ -54,10 +53,11 @@ class ClientModelStore {
             }
         });
         attribute.onQualifierChange((evt) => {
-            var changeAttrMetadataCmd = new ChangeAttributeMetadataCommand_1.default(attribute.id, Attribute_1.default.QUALIFIER_PROPERTY, evt.newValue);
+            var changeAttrMetadataCmd = new ChangeAttributeMetadataCommand(attribute.id, Attribute.QUALIFIER_PROPERTY, evt.newValue);
             this.clientDolphin.getClientConnector().send(changeAttrMetadataCmd, null);
         });
     }
+
     add(model) {
         if (!model) {
             return false;
@@ -70,11 +70,12 @@ class ClientModelStore {
             this.presentationModels.set(model.id, model);
             this.addPresentationModelByType(model);
             this.registerModel(model);
-            this.modelStoreChangeBus.trigger({ 'eventType': Type.ADDED, 'clientPresentationModel': model });
+            this.modelStoreChangeBus.trigger({ 'eventType': ADDED_TYPE, 'clientPresentationModel': model });
             added = true;
         }
         return added;
     }
+
     remove(model) {
         if (!model) {
             return false;
@@ -89,11 +90,12 @@ class ClientModelStore {
                     this.removeAttributeByQualifier(attribute);
                 }
             });
-            this.modelStoreChangeBus.trigger({ 'eventType': Type.REMOVED, 'clientPresentationModel': model });
+            this.modelStoreChangeBus.trigger({ 'eventType': REMOVED_TYPE, 'clientPresentationModel': model });
             removed = true;
         }
         return removed;
     }
+
     findAttributesByFilter(filter) {
         var matches = [];
         this.presentationModels.forEach((model) => {
@@ -105,6 +107,7 @@ class ClientModelStore {
         });
         return matches;
     }
+
     addPresentationModelByType(model) {
         if (!model) {
             return;
@@ -122,6 +125,7 @@ class ClientModelStore {
             presentationModels.push(model);
         }
     }
+
     removePresentationModelByType(model) {
         if (!model || !(model.presentationModelType)) {
             return;
@@ -137,6 +141,7 @@ class ClientModelStore {
             this.presentationModelsPerType.delete(model.presentationModelType);
         }
     }
+
     listPresentationModelIds() {
         var result = [];
         var iter = this.presentationModels.keys();
@@ -147,6 +152,7 @@ class ClientModelStore {
         }
         return result;
     }
+
     listPresentationModels() {
         var result = [];
         var iter = this.presentationModels.values();
@@ -157,15 +163,18 @@ class ClientModelStore {
         }
         return result;
     }
+
     findPresentationModelById(id) {
         return this.presentationModels.get(id);
     }
+
     findAllPresentationModelByType(type) {
         if (!type || !this.presentationModelsPerType.has(type)) {
             return [];
         }
         return this.presentationModelsPerType.get(type).slice(0); // slice is used to clone the array
     }
+
     deletePresentationModel(model, notify) {
         if (!model) {
             return;
@@ -175,27 +184,32 @@ class ClientModelStore {
             if (!notify || model.clientSideOnly) {
                 return;
             }
-            this.clientDolphin.getClientConnector().send(new DeletedPresentationModelNotification_1.default(model.id), null);
+            this.clientDolphin.getClientConnector().send(new DeletedPresentationModelNotification(model.id), null);
         }
     }
+
     containsPresentationModel(id) {
         return this.presentationModels.has(id);
     }
+
     addAttributeById(attribute) {
         if (!attribute || this.attributesPerId.has(attribute.id)) {
             return;
         }
         this.attributesPerId.set(attribute.id, attribute);
     }
+
     removeAttributeById(attribute) {
         if (!attribute || !this.attributesPerId.has(attribute.id)) {
             return;
         }
         this.attributesPerId.delete(attribute.id);
     }
+
     findAttributeById(id) {
         return this.attributesPerId.get(id);
     }
+
     addAttributeByQualifier(attribute) {
         if (!attribute || !attribute.getQualifier()) {
             return;
@@ -209,6 +223,7 @@ class ClientModelStore {
             attributes.push(attribute);
         }
     }
+
     removeAttributeByQualifier(attribute) {
         if (!attribute || !attribute.getQualifier()) {
             return;
@@ -224,15 +239,18 @@ class ClientModelStore {
             this.attributesPerQualifier.delete(attribute.getQualifier());
         }
     }
+
     findAllAttributesByQualifier(qualifier) {
         if (!qualifier || !this.attributesPerQualifier.has(qualifier)) {
             return [];
         }
         return this.attributesPerQualifier.get(qualifier).slice(0); // slice is used to clone the array
     }
+
     onModelStoreChange(eventHandler) {
         this.modelStoreChangeBus.onEvent(eventHandler);
     }
+
     onModelStoreChangeForType(presentationModelType, eventHandler) {
         this.modelStoreChangeBus.onEvent(pmStoreEvent => {
             if (pmStoreEvent.clientPresentationModel.presentationModelType == presentationModelType) {
@@ -241,6 +259,4 @@ class ClientModelStore {
         });
     }
 }
-exports.ClientModelStore = ClientModelStore;
 
-//# sourceMappingURL=ClientModelStore.js.map

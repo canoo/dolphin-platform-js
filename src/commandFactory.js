@@ -3,7 +3,8 @@ import CreateControllerCommand from './commands/createControllerCommand.js';
 import CallActionCommand from './commands/callActionCommand.js';
 import DestroyControllerCommand from './commands/destroyControllerCommand.js';
 import DestroyContextCommand from './commands/destroyContextCommand.js';
-
+import StartLongPollCommand from './commands/startLongPollCommand.js';
+import InterruptLongPollCommand from './commands/interruptLongPollCommand.js';
 
 export default class CommandFactory {
 
@@ -27,4 +28,11 @@ export default class CommandFactory {
         return new DestroyContextCommand();
     }
 
+    static createStartLongPollCommand() {
+        return new StartLongPollCommand();
+    }
+
+    static createInterruptLongPollCommand() {
+        return new InterruptLongPollCommand();
+    }
 }
