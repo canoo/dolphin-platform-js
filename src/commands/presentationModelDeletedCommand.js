@@ -1,7 +1,8 @@
+import {PRESENTATION_MODEL_DELETED_COMMAND_ID} from './commandConstants';
 
-export default class DeletedPresentationModelNotification {
+export default class PresentationModelDeletedCommand {
     constructor(pmId) {
-        this.id = 'DeletedPresentationModel';
+        this.id = PRESENTATION_MODEL_DELETED_COMMAND_ID;
 
         this.pmId = pmId;
     }

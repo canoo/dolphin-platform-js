@@ -1,7 +1,8 @@
+import {CREATE_PRESENTATION_MODEL_COMMAND_ID} from './commandConstants';
 
 export default class CreatePresentationModelCommand {
     constructor(presentationModel) {
-        this.id = "CreatePresentationModel";
+        this.id = CREATE_PRESENTATION_MODEL_COMMAND_ID;
 
         this.attributes = [];
         this.clientSideOnly = false;

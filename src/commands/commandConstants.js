@@ -1,8 +1,18 @@
-export const DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
-export const CREATE_CONTEXT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'initClientContext';
-export const DESTROY_CONTEXT_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'disconnectClientContext';
-export const CREATE_CONTROLLER_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'registerController';
-export const DESTROY_CONTROLLER_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'destroyController';
-export const CALL_CONTROLLER_ACTION_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'callControllerAction';
-export const START_LONG_POLL_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'longPoll';
-export const INTERRUPT_LONG_POLL_COMMAND_NAME = DOLPHIN_PLATFORM_PREFIX + 'release';
+export const ATTRIBUTE_METADATA_CHANGED_COMMAND_ID = 'AttributeMetadataChanged';
+export const CALL_ACTION_COMMAND_ID = 'CallAction';
+export const CHANGE_ATTRIBUTE_METADATA_COMMAND_ID = 'ChangeAttributeMetadata';
+export const CREATE_CONTEXT_COMMAND_ID = 'CreateContext';
+export const CREATE_CONTROLLER_COMMAND_ID = 'CreateController';
+export const CREATE_PRESENTATION_MODEL_COMMAND_ID = 'CreatePresentationModel';
+export const DELETE_PRESENTATION_MODEL_COMMAND_ID = 'DeletePresentationModel';
+export const DESTROY_CONTEXT_COMMAND_ID = 'DestroyContext';
+export const DESTROY_CONTROLLER_COMMAND_ID = 'DestroyController';
+export const INTERRUPT_LONG_POLL_COMMAND_ID = 'InterruptLongPoll';
+export const PRESENTATION_MODEL_DELETED_COMMAND_ID = 'PresentationModelDeleted';
+export const START_LONG_POLL_COMMAND_ID = 'StartLongPoll';
+export const VALUE_CHANGED_COMMAND_ID = 'ValueChanged';
+
+
+
+
+

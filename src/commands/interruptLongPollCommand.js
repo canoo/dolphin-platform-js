@@ -1,4 +1,4 @@
-import {INTERRUPT_LONG_POLL_COMMAND_NAME} from './commandConstants'
+import {INTERRUPT_LONG_POLL_COMMAND_ID} from './commandConstants'
 
 
 export default class InterruptLongPollCommand {

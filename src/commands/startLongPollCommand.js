@@ -1,4 +1,4 @@
-import {START_LONG_POLL_COMMAND_NAME} from './commandConstants'
+import {START_LONG_POLL_COMMAND_ID} from './commandConstants'
 
 export default class StartLongPollCommand {
 

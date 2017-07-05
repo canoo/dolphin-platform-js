@@ -1,3 +1,4 @@
+import {CALL_ACTION_COMMAND_ID} from './commandConstants';
 import {checkMethod} from '../utils';
 import {checkParam} from '../utils';
 
@@ -8,7 +9,7 @@ export default class CallActionCommand {
         checkParam(controllerid, 'controllerid');
         checkParam(actionName, 'actionName');
 
-        this.id = 'CallAction';
+        this.id = CALL_ACTION_COMMAND_ID;
         this.c = controllerid;
         this.n = actionName;
         this.p = params;

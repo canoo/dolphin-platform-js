@@ -5,6 +5,9 @@ import DestroyControllerCommand from './commands/destroyControllerCommand.js';
 import DestroyContextCommand from './commands/destroyContextCommand.js';
 import StartLongPollCommand from './commands/startLongPollCommand.js';
 import InterruptLongPollCommand from './commands/interruptLongPollCommand.js';
+import CreatePresentationModelCommand from './commands/createPresentationModelCommand.js';
+import DeletePresentationModelCommand from './commands/deletePresentationModelCommand.js';
+import PresentationModelDeletedCommand from './commands/presentationModelDeletedCommand.js';
 
 export default class CommandFactory {
 
@@ -34,5 +37,29 @@ export default class CommandFactory {
 
     static createInterruptLongPollCommand() {
         return new InterruptLongPollCommand();
+    }
+
+    static createCreatePresentationModelCommand(presentationModel) {
+        return new CreatePresentationModelCommand(presentationModel);
+    }
+
+    static createDeletePresentationModelCommand(pmId) {
+        return new DeletePresentationModelCommand(pmId);
+    }
+
+    static createPresentationModelDeletedCommand(pmId) {
+        return new PresentationModelDeletedCommand(pmId);
+    }
+
+    static createValueChangedCommand(attributeId, newValue) {
+        return new ValueChangedCommand(attributeId, newValue);
+    }
+
+    static createChangeAttributeMetadataCommand(attributeId, metadataName, value) {
+        return new ChangeAttributeMetadataCommand(attributeId, metadataName, value);
+    }
+
+    static createAttributeMetadataChangedCommand(attributeId, metadataName, value) {
+        return new AttributeMetadataChangedCommand(attributeId, metadataName, value);
     }
 }

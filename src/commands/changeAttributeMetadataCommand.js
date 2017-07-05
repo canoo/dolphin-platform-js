@@ -1,6 +1,8 @@
+import {CHANGE_ATTRIBUTE_METADATA_COMMAND_ID} from './commandConstants';
+
 export default class ChangeAttributeMetadataCommand {
     constructor(attributeId, metadataName, value) {
-        this.id = 'ChangeAttributeMetadata';
+        this.id = CHANGE_ATTRIBUTE_METADATA_COMMAND_ID;
 
         this.attributeId = attributeId;
         this.metadataName = metadataName;
