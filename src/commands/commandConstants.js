@@ -13,6 +13,14 @@ export const START_LONG_POLL_COMMAND_ID = 'StartLongPoll';
 export const VALUE_CHANGED_COMMAND_ID = 'ValueChanged';
 
 
-
+export const ID = "id";
+export const ATTRIBUTE_ID = "a_id";
+export const PM_ID = "p_id";
+export const CONTROLLER_ID = "c_id";
+export const PM_TYPE = "t";
+export const NAME = "n";
+export const VALUE = "v";
+export const PARAMS = "p";
+export const PM_ATTRIBUTES = "a";
 
 

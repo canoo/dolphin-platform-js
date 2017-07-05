@@ -8,6 +8,10 @@ import InterruptLongPollCommand from './commands/interruptLongPollCommand.js';
 import CreatePresentationModelCommand from './commands/createPresentationModelCommand.js';
 import DeletePresentationModelCommand from './commands/deletePresentationModelCommand.js';
 import PresentationModelDeletedCommand from './commands/presentationModelDeletedCommand.js';
+import ValueChangedCommand from './commands/valueChangedCommand.js';
+import ChangeAttributeMetadataCommand from './commands/changeAttributeMetadataCommand.js';
+import AttributeMetadataChangedCommand from './commands/attributeMetadataChangedCommand.js';
+
 
 export default class CommandFactory {
 

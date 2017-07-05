@@ -1,22 +1,5 @@
-/* Copyright 2016 Canoo Engineering AG.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-/*jslint browserify: true */
-
-
 import { exists } from './utils.js';
+import {CREATE_PRESENTATION_MODEL_COMMAND_ID, VALUE_CHANGED_COMMAND_ID} from './commands/commandConstants';
 
 export default class Codec{
 
@@ -34,18 +17,16 @@ export default class Codec{
                 }
                 return result;
             }),
-            'id': 'CreatePresentationModel'
+            'id': CREATE_PRESENTATION_MODEL_COMMAND_ID
         };
     }
 
-    static decodeCreatePresentationModelCommand(command) {
+    static decodeCreatePresentationModelCommand(jsonCommand) {
         return {
-            'id': 'CreatePresentationModel',
-            'className': "org.opendolphin.core.comm.CreatePresentationModelCommand",
-            'clientSideOnly': false,
-            'pmId': command.p,
-            'pmType': command.t,
-            'attributes': command.a.map((attribute) => {
+            'id': CREATE_PRESENTATION_MODEL_COMMAND_ID,
+            'pmId': jsonCommand.p,
+            'pmType': jsonCommand.t,
+            'attributes': jsonCommand.a.map((attribute) => {
                 return {
                     'propertyName': attribute.n,
                     'id': attribute.i,
@@ -83,9 +64,9 @@ export default class Codec{
     static encode(commands) {
         let self = this;
         return JSON.stringify(commands.map((command) => {
-            if (command.id === 'CreatePresentationModel') {
+            if (command.id === CREATE_PRESENTATION_MODEL_COMMAND_ID) {
                 return self.encodeCreatePresentationModelCommand(command);
-            } else if (command.id === 'ValueChanged') {
+            } else if (command.id === VALUE_CHANGED_COMMAND_ID) {
                 return self.encodeValueChangedCommand(command);
             }
             return command;
@@ -96,9 +77,9 @@ export default class Codec{
         let self = this;
         if (typeof transmitted === 'string') {
             return JSON.parse(transmitted).map(function (command) {
-                if (command.id === 'CreatePresentationModel') {
+                if (command.id === CREATE_PRESENTATION_MODEL_COMMAND_ID) {
                     return self.decodeCreatePresentationModelCommand(command);
-                } else if (command.id === 'ValueChanged') {
+                } else if (command.id === VALUE_CHANGED_COMMAND_ID) {
                     return self.decodeValueChangedCommand(command);
                 }
                 return command;
