@@ -4,12 +4,15 @@ import {checkParam} from '../utils';
 
 export default class DestroyControllerCommand {
 
-    constructor(controllerId) {
-        checkMethod('DestroyControllerCommand(controllerId)');
+    constructor() {
+        this.id = DESTROY_CONTROLLER_COMMAND_ID;
+    }
+
+    init(controllerId) {
+        checkMethod('DestroyControllerCommand.init()');
         checkParam(controllerId, 'controllerId');
 
-        this.id = DESTROY_CONTROLLER_COMMAND_ID;
-        this.c = controllerId;
+        this.controllerId = controllerId;
     }
 
 }

@@ -7,7 +7,8 @@ export default class ValueChangedCommand {
     }
 
     init(attributeId, newValue) {
-        this.id = VALUE_CHANGED_COMMAND_ID;
+        checkMethod('ValueChangedCommand.init()');
+        checkParam(attributeId, 'attributeId');
 
         this.attributeId = attributeId;
         this.newValue = newValue;

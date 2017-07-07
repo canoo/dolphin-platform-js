@@ -7,6 +7,9 @@ export default class CreatePresentationModelCommand {
     }
 
     init(presentationModel) {
+        checkMethod('CreatePresentationModelCommand.init()');
+        checkParam(presentationModel, 'presentationModel');
+
         this.attributes = [];
         this.clientSideOnly = false;
         this.pmId = presentationModel.id;

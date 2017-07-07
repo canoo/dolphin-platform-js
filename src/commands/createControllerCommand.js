@@ -4,13 +4,16 @@ import {checkParam} from '../utils';
 
 export default class CreateControllerCommand {
 
-    constructor(controllerName, parentControllerId) {
-        checkMethod('CreateControllerCommand.invoke(controllerName, parentControllerId)');
+    constructor() {
+        this.id = CREATE_CONTROLLER_COMMAND_ID;
+    }
+
+    init(controllerName, parentControllerId) {
+        checkMethod('CreateControllerCommand.init()');
         checkParam(controllerName, 'controllerName');
 
-        this.id = CREATE_CONTROLLER_COMMAND_ID;
-        this.n = controllerName;
-        this.p = parentControllerId;
+        this.controllerName = controllerName;
+        this.parentControllerId = parentControllerId;
     }
 
 }

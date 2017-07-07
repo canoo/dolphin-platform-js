@@ -20,15 +20,21 @@ export default class CommandFactory {
     }
 
     static createCreateControllerCommand(controllerName, parentControllerId) {
-        return new CreateControllerCommand(controllerName, parentControllerId);
+        let command = new CreateControllerCommand();
+        command.init(controllerName, parentControllerId);
+        return command;
     }
 
     static createCallActionCommand(controllerid, actionName, params) {
-        return new CallActionCommand(controllerid, actionName, params);
+        let command = new CallActionCommand();
+        command.init(controllerid, actionName, params);
+        return command;
     }
 
     static createDestroyControllerCommand(controllerId) {
-        return new DestroyControllerCommand(controllerId);
+        let command = new DestroyControllerCommand();
+        command.init(controllerId);
+        return command;
     }
 
     static createDestroyContextCommand() {
@@ -50,11 +56,15 @@ export default class CommandFactory {
     }
 
     static createDeletePresentationModelCommand(pmId) {
-        return new DeletePresentationModelCommand(pmId);
+        let command = new DeletePresentationModelCommand();
+        command.init(pmId);
+        return command;
     }
 
     static createPresentationModelDeletedCommand(pmId) {
-        return new PresentationModelDeletedCommand(pmId);
+        let command = new PresentationModelDeletedCommand();
+        command.init(pmId);
+        return command;
     }
 
     static createValueChangedCommand(attributeId, newValue) {
@@ -64,10 +74,14 @@ export default class CommandFactory {
     }
 
     static createChangeAttributeMetadataCommand(attributeId, metadataName, value) {
-        return new ChangeAttributeMetadataCommand(attributeId, metadataName, value);
+        let command = new ChangeAttributeMetadataCommand();
+        command.init(attributeId, metadataName, value);
+        return command;
     }
 
     static createAttributeMetadataChangedCommand(attributeId, metadataName, value) {
-        return new AttributeMetadataChangedCommand(attributeId, metadataName, value);
+        let command = new AttributeMetadataChangedCommand();
+        command.init(attributeId, metadataName, value);
+        return command;
     }
 }

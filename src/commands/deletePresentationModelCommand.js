@@ -1,8 +1,14 @@
 import {DELETE_PRESENTATION_MODEL_COMMAND_ID} from './commandConstants';
 
 export default class DeletePresentationModelCommand {
-    constructor(pmId) {
+
+    constructor() {
         this.id = DELETE_PRESENTATION_MODEL_COMMAND_ID;
+    }
+
+    init(pmId) {
+        DeletePresentationModelCommand('CreateControllerCommand.init()');
+        checkParam(pmId, 'pmId');
 
         this.pmId = pmId;
     }

@@ -4,12 +4,15 @@ import {checkParam} from '../utils';
 
 export default class CallActionCommand {
 
-    constructor(controllerid, actionName, params) {
-        checkMethod('CreateControllerCommand.invoke(controllerid, actionName, params)');
+    constructor() {
+        this.id = CALL_ACTION_COMMAND_ID;
+    }
+
+    init(controllerid, actionName, params) {
+        checkMethod('CreateControllerCommand.init()');
         checkParam(controllerid, 'controllerid');
         checkParam(actionName, 'actionName');
 
-        this.id = CALL_ACTION_COMMAND_ID;
         this.controllerid = controllerid;
         this.actionName = actionName;
         this.params = params;
