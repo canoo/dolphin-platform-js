@@ -102,7 +102,7 @@ export default class ControllerManager{
             self.connector.invoke(CommandFactory.createCallActionCommand(controllerId, actionName, actionParams)).then(() => {
                 let isError = pm.findAttributeByPropertyName(ERROR_CODE).getValue();
                 if (isError) {
-                    reject(new Error("ControllerAction caused an error"));
+                    reject(new Error("Server side ControllerAction " + actionName + " caused an error. Please see server log for details."));
                 } else {
                     resolve();
                 }
