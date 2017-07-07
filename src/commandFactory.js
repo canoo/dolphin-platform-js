@@ -44,7 +44,9 @@ export default class CommandFactory {
     }
 
     static createCreatePresentationModelCommand(presentationModel) {
-        return new CreatePresentationModelCommand(presentationModel);
+        let command = new CreatePresentationModelCommand();
+        command.init(presentationModel);
+        return command;
     }
 
     static createDeletePresentationModelCommand(pmId) {
@@ -56,7 +58,9 @@ export default class CommandFactory {
     }
 
     static createValueChangedCommand(attributeId, newValue) {
-        return new ValueChangedCommand(attributeId, newValue);
+        let command = new ValueChangedCommand();
+        command.init(attributeId, newValue);
+        return command;
     }
 
     static createChangeAttributeMetadataCommand(attributeId, metadataName, value) {

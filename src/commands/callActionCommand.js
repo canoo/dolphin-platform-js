@@ -10,9 +10,9 @@ export default class CallActionCommand {
         checkParam(actionName, 'actionName');
 
         this.id = CALL_ACTION_COMMAND_ID;
-        this.c = controllerid;
-        this.n = actionName;
-        this.p = params;
+        this.controllerid = controllerid;
+        this.actionName = actionName;
+        this.params = params;
     }
 
 }
