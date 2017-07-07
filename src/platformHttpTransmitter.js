@@ -18,7 +18,7 @@ import Emitter from 'emitter-component';
 
 import { exists } from './utils';
 import { DolphinRemotingError, HttpNetworkError, DolphinSessionError, HttpResponseError } from './errors.js';
-import Codec from './codec.js';
+import Codec from './commands/codec.js';
 import RemotingErrorHandler from './remotingErrorHandler';
 
 

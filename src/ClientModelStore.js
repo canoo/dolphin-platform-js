@@ -1,9 +1,9 @@
 import Attribute from './Attribute'
-import ChangeAttributeMetadataCommand from './commands/changeAttributeMetadataCommand'
-import CreatePresentationModelCommand from './commands/createPresentationModelCommand'
-import DeletedPresentationModelNotification from './commands/presentationModelDeletedCommand'
+import ChangeAttributeMetadataCommand from './commands/impl/changeAttributeMetadataCommand'
+import CreatePresentationModelCommand from './commands/impl/createPresentationModelCommand'
+import DeletedPresentationModelNotification from './commands/impl/presentationModelDeletedCommand'
 import EventBus from './EventBus'
-import ValueChangedCommand from './commands/valueChangedCommand'
+import ValueChangedCommand from './commands/impl/valueChangedCommand'
 import {ADDED_TYPE, REMOVED_TYPE} from './constants'
 
 export default class ClientModelStore {

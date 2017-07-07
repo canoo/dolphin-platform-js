@@ -1,5 +1,5 @@
 import {BlindCommandBatcher} from './CommandBatcher';
-import Codec from './codec';
+import Codec from './commands/codec';
 import ClientPresentationModel from './ClientPresentationModel'
 
 export default class ClientConnector {

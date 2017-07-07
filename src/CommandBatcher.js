@@ -1,4 +1,4 @@
-import ValueChangedCommand from './commands/valueChangedCommand'
+import ValueChangedCommand from './commands/impl/valueChangedCommand'
 
 export class NoCommandBatcher {
     batch(queue) {

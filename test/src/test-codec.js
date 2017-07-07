@@ -3,7 +3,7 @@
 
 var expect = require('chai').expect;
 
-import Codec from '../../src/codec.js';
+import Codec from '../../src/commands/codec.js';
 
 describe('encode', function() {
 
