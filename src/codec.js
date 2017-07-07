@@ -1,5 +1,6 @@
 import {exists, checkMethod, checkParam} from './utils.js';
-import {CREATE_PRESENTATION_MODEL_COMMAND_ID, VALUE_CHANGED_COMMAND_ID, ATTRIBUTE_METADATA_CHANGED_COMMAND_ID, CALL_ACTION_COMMAND_ID, CHANGE_ATTRIBUTE_METADATA_COMMAND_ID, CREATE_CONTEXT_COMMAND_ID, CREATE_CONTROLLER_COMMAND_ID, DELETE_PRESENTATION_MODEL_COMMAND_ID} from './commands/commandConstants';
+import {JS_STRING_TYPE} from './constants';
+import {CREATE_PRESENTATION_MODEL_COMMAND_ID, VALUE_CHANGED_COMMAND_ID, ATTRIBUTE_METADATA_CHANGED_COMMAND_ID, CALL_ACTION_COMMAND_ID, CHANGE_ATTRIBUTE_METADATA_COMMAND_ID, CREATE_CONTEXT_COMMAND_ID, CREATE_CONTROLLER_COMMAND_ID, DELETE_PRESENTATION_MODEL_COMMAND_ID, DESTROY_CONTEXT_COMMAND_ID, DESTROY_CONTROLLER_COMMAND_ID, INTERRUPT_LONG_POLL_COMMAND_ID, PRESENTATION_MODEL_DELETED_COMMAND_ID, START_LONG_POLL_COMMAND_ID} from './commands/commandConstants';
 import {ID, PM_ID, PM_TYPE, PM_ATTRIBUTES, NAME, ATTRIBUTE_ID, VALUE, CONTROLLER_ID, PARAMS} from './commands/commandConstants';
 import {ValueChangedCommand} from './commands/valueChangedCommand';
 import {AttributeMetadataChangedCommand} from './commands/attributeMetadataChangedCommand';
@@ -9,7 +10,12 @@ import {CreateContextCommand} from './commands/createContextCommand';
 import {CreateControllerCommand} from './commands/createControllerCommand';
 import {CreatePresentationModelCommand} from './commands/createPresentationModelCommand';
 import {DeletePresentationModelCommand} from './commands/deletePresentationModelCommand';
-
+import {DestroyContextCommand} from './commands/destroyContextCommand';
+import {DestroyControllerCommand} from './commands/destroyControllerCommand';
+import {InterruptLongPollCommand} from './commands/interruptLongPollCommand';
+import {PresentationModelDeletedCommand} from './commands/presentationModelDeletedCommand';
+import {StartLongPollCommand} from './commands/startLongPollCommand';
+import {UnknownCommandError} from './commands/unknownCommandError';
 
 
 export default class Codec {
@@ -217,6 +223,99 @@ export default class Codec {
         return command;
     }
 
+    static _encodeDestroyContextCommand(command) {
+        checkMethod("Codec._encodeDestroyContextCommand");
+        checkParam(command, "command");
+
+        let jsonCommand = {};
+        jsonCommand[ID] = DESTROY_CONTEXT_COMMAND_ID;
+        return jsonCommand;
+    }
+
+    static _decodeDestroyContextCommand(jsonCommand) {
+        checkMethod("Codec._decodeDestroyContextCommand");
+        checkParam(jsonCommand, "jsonCommand");
+
+        let command = new DestroyContextCommand();
+        return command;
+    }
+
+    static _encodeDestroyControllerCommand(command) {
+        checkMethod("Codec._encodeDestroyControllerCommand");
+        checkParam(command, "command");
+        checkParam(command.controllerId, "command.controllerId");
+
+        let jsonCommand = {};
+        jsonCommand[ID] = DESTROY_CONTROLLER_COMMAND_ID;
+        jsonCommand[CONTROLLER_ID] = command.controllerId;
+        return jsonCommand;
+    }
+
+    static _decodeDestroyControllerCommand(jsonCommand) {
+        checkMethod("Codec._decodeDestroyControllerCommand");
+        checkParam(jsonCommand, "jsonCommand");
+        checkParam(jsonCommand[CONTROLLER_ID], "jsonCommand[CONTROLLER_ID]");
+
+        let command = new DestroyControllerCommand();
+        command.controllerId = jsonCommand[CONTROLLER_ID];
+        return command;
+    }
+
+    static _encodeInterruptLongPollCommand(command) {
+        checkMethod("Codec._encodeInterruptLongPollCommand");
+        checkParam(command, "command");
+
+        let jsonCommand = {};
+        jsonCommand[ID] = INTERRUPT_LONG_POLL_COMMAND_ID;
+        return jsonCommand;
+    }
+
+    static _decodeInterruptLongPollCommand(jsonCommand) {
+        checkMethod("Codec._decodeInterruptLongPollCommand");
+        checkParam(jsonCommand, "jsonCommand");
+
+        let command = new InterruptLongPollCommand();
+        return command;
+    }
+
+    static _encodePresentationModelDeletedCommand(command) {
+        checkMethod("Codec._encodePresentationModelDeletedCommand");
+        checkParam(command, "command");
+        checkParam(command.pmId, "command.pmId");
+
+        let jsonCommand = {};
+        jsonCommand[ID] = PRESENTATION_MODEL_DELETED_COMMAND_ID;
+        jsonCommand[PM_ID] = command.pmId;
+        return jsonCommand;
+    }
+
+    static _decodePresentationModelDeletedCommand(jsonCommand) {
+        checkMethod("Codec._decodePresentationModelDeletedCommand");
+        checkParam(jsonCommand, "jsonCommand");
+        checkParam(jsonCommand[PM_ID], "jsonCommand[PM_ID]");
+
+        let command = new PresentationModelDeletedCommand();
+        command.pmId = jsonCommand[PM_ID];
+        return command;
+    }
+
+    static _encodeStartLongPollCommand(command) {
+        checkMethod("Codec._encodeStartLongPollCommand");
+        checkParam(command, "command");
+
+        let jsonCommand = {};
+        jsonCommand[ID] = START_LONG_POLL_COMMAND_ID;
+        return jsonCommand;
+    }
+
+    static _decodeStartLongPollCommand(jsonCommand) {
+        checkMethod("Codec._decodeStartLongPollCommand");
+        checkParam(jsonCommand, "jsonCommand");
+
+        let command = new StartLongPollCommand();
+        return command;
+    }
+
     static _encodeValueChangedCommand(command) {
         checkMethod("Codec.encodeValueChangedCommand");
         checkParam(command, "command");
@@ -250,23 +349,73 @@ export default class Codec {
 
         let self = this;
         return JSON.stringify(commands.map((command) => {
-            if (command.id === CREATE_PRESENTATION_MODEL_COMMAND_ID) {
+            if (command.id === ATTRIBUTE_METADATA_CHANGED_COMMAND_ID) {
+                return self._encodeAttributeMetadataChangedCommand(command);
+            } else if (command.id === CALL_ACTION_COMMAND_ID) {
+                return self._encodeCallActionCommand(command);
+            } else if (command.id === CHANGE_ATTRIBUTE_METADATA_COMMAND_ID) {
+                return self._encodeChangeAttributeMetadataCommand(command);
+            } else if (command.id === CREATE_CONTEXT_COMMAND_ID) {
+                return self._encodeCreateContextCommand(command);
+            } else if (command.id === CREATE_CONTROLLER_COMMAND_ID) {
+                return self._encodeCreateControllerCommand(command);
+            } else if (command.id === CREATE_PRESENTATION_MODEL_COMMAND_ID) {
                 return self._encodeCreatePresentationModelCommand(command);
+            } else if (command.id === DELETE_PRESENTATION_MODEL_COMMAND_ID) {
+                return self._encodeDeletePresentationModelCommand(command);
+            } else if (command.id === DESTROY_CONTEXT_COMMAND_ID) {
+                return self._encodeDestroyContextCommand(command);
+            } else if (command.id === DESTROY_CONTROLLER_COMMAND_ID) {
+                return self._encodeDestroyControllerCommand(command);
+            } else if (command.id === INTERRUPT_LONG_POLL_COMMAND_ID) {
+                return self._encodeInterruptLongPollCommand(command);
+            } else if (command.id === PRESENTATION_MODEL_DELETED_COMMAND_ID) {
+                return self._encodePresentationModelDeletedCommand(command);
+            } else if (command.id === START_LONG_POLL_COMMAND_ID) {
+                return self._encodeStartLongPollCommand(command);
             } else if (command.id === VALUE_CHANGED_COMMAND_ID) {
                 return self._encodeValueChangedCommand(command);
+            } else {
+                throw new UnknownCommandError(command.id);
             }
-            return command;
         }));
     }
 
     static decode(transmitted) {
+        checkMethod("Codec.decode");
+        checkParam(transmitted, "transmitted");
+
         let self = this;
-        if (typeof transmitted === 'string') {
+        if (typeof transmitted === JS_STRING_TYPE) {
             return JSON.parse(transmitted).map(function (command) {
-                if (command.id === CREATE_PRESENTATION_MODEL_COMMAND_ID) {
+                if (command.id === ATTRIBUTE_METADATA_CHANGED_COMMAND_ID) {
+                    return self._decodeAttributeMetadataChangedCommand(command);
+                } else if (command.id === CALL_ACTION_COMMAND_ID) {
+                    return self._decodeCallActionCommand(command);
+                } else if (command.id === CHANGE_ATTRIBUTE_METADATA_COMMAND_ID) {
+                    return self._decodeChangeAttributeMetadataCommand(command);
+                } else if (command.id === CREATE_CONTEXT_COMMAND_ID) {
+                    return self._decodeCreateContextCommand(command);
+                } else if (command.id === CREATE_CONTROLLER_COMMAND_ID) {
+                    return self._decodeCreateControllerCommand(command);
+                } else if (command.id === CREATE_PRESENTATION_MODEL_COMMAND_ID) {
                     return self._decodeCreatePresentationModelCommand(command);
+                } else if (command.id === DELETE_PRESENTATION_MODEL_COMMAND_ID) {
+                    return self._decodeDeletePresentationModelCommand(command);
+                } else if (command.id === DESTROY_CONTEXT_COMMAND_ID) {
+                    return self._decodeDestroyContextCommand(command);
+                } else if (command.id === DESTROY_CONTROLLER_COMMAND_ID) {
+                    return self._decodeDestroyControllerCommand(command);
+                } else if (command.id === INTERRUPT_LONG_POLL_COMMAND_ID) {
+                    return self._decodeInterruptLongPollCommand(command);
+                } else if (command.id === PRESENTATION_MODEL_DELETED_COMMAND_ID) {
+                    return self._decodePresentationModelDeletedCommand(command);
+                } else if (command.id === START_LONG_POLL_COMMAND_ID) {
+                    return self._decodeStartLongPollCommand(command);
                 } else if (command.id === VALUE_CHANGED_COMMAND_ID) {
                     return self._decodeValueChangedCommand(command);
+                } else {
+                    throw new UnknownCommandError(command.id);
                 }
                 return command;
             });

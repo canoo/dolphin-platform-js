@@ -1,3 +1,5 @@
+export const JS_STRING_TYPE = 'string';
+
 export const DOLPHIN_BEAN = 0;
 export const BYTE = 1;
 export const SHORT = 2;
