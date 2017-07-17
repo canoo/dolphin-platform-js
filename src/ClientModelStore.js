@@ -1,9 +1,6 @@
 import Attribute from './Attribute'
-import ChangeAttributeMetadataCommand from './commands/impl/changeAttributeMetadataCommand'
-import CreatePresentationModelCommand from './commands/impl/createPresentationModelCommand'
-import DeletedPresentationModelNotification from './commands/impl/presentationModelDeletedCommand'
 import EventBus from './EventBus'
-import ValueChangedCommand from './commands/impl/valueChangedCommand'
+import CommandFactory from './commands/commandFactory.js';
 import {ADDED_TYPE, REMOVED_TYPE} from './constants'
 
 export default class ClientModelStore {
@@ -26,8 +23,7 @@ export default class ClientModelStore {
             return;
         }
         var connector = this.clientDolphin.getClientConnector();
-        var createPMCommand = new CreatePresentationModelCommand(model);
-        connector.send(createPMCommand, null);
+        connector.send(CommandFactory.createCreatePresentationModelCommand(model), null);
         model.getAttributes().forEach(attribute => {
             this.registerAttribute(attribute);
         });
@@ -41,8 +37,7 @@ export default class ClientModelStore {
         // whenever an attribute changes its value, the server needs to be notified
         // and all other attributes with the same qualifier are given the same value
         attribute.onValueChange((evt) => {
-            var valueChangeCommand = new ValueChangedCommand(attribute.id, evt.newValue);
-            this.clientDolphin.getClientConnector().send(valueChangeCommand, null);
+            this.clientDolphin.getClientConnector().send(CommandFactory.createValueChangedCommand(attribute.id, evt.newValue), null);
             if (attribute.getQualifier()) {
                 var attrs = this.findAttributesByFilter((attr) => {
                     return attr !== attribute && attr.getQualifier() == attribute.getQualifier();
@@ -53,8 +48,7 @@ export default class ClientModelStore {
             }
         });
         attribute.onQualifierChange((evt) => {
-            var changeAttrMetadataCmd = new ChangeAttributeMetadataCommand(attribute.id, Attribute.QUALIFIER_PROPERTY, evt.newValue);
-            this.clientDolphin.getClientConnector().send(changeAttrMetadataCmd, null);
+            this.clientDolphin.getClientConnector().send(CommandFactory.createChangeAttributeMetadataCommand(attribute.id, Attribute.QUALIFIER_PROPERTY, evt.newValue), null);
         });
     }
 
@@ -184,7 +178,7 @@ export default class ClientModelStore {
             if (!notify || model.clientSideOnly) {
                 return;
             }
-            this.clientDolphin.getClientConnector().send(new DeletedPresentationModelNotification(model.id), null);
+            this.clientDolphin.getClientConnector().send(CommandFactory.createPresentationModelDeletedCommand(model.id), null);
         }
     }
 
