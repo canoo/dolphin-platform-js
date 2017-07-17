@@ -14,74 +14,63 @@ describe('encode', function() {
 
     it('should encode single CreatePresentationModelCommand', function() {
         var command = createCPMCommand();
-        var json = Codec.encode([command]);
-        expect(json).to.equal('[' + createCPMCommandString() + ']');
+        var jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + createCPMCommandString() + ']');
     });
 
     it('should encode single ValueChangedCommand with nulls', function() {
         var command = {
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
             "oldValue": null,
             "newValue": null
         };
-        var json = Codec.encode([command]);
-        expect(json).to.equal('[{"a":"3357S","id":"ValueChanged"}]');
+        var jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[{"id":"ValueChanged","a_id":"3357S"}]');
     });
 
     it('should encode single ValueChangedCommand with Strings', function() {
         var command = {
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
             "oldValue": "Hello World",
             "newValue": "Good Bye"
         };
         var json = Codec.encode([command]);
-        expect(json).to.equal('[{"a":"3357S","o":"Hello World","n":"Good Bye","id":"ValueChanged"}]');
+        expect(json).to.equal('[{"id":"ValueChanged","a_id":"3357S","v":"Good Bye"}]');
     });
 
     it('should encode single ValueChangedCommand with ints', function() {
         var command = {
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
             "oldValue": 41,
             "newValue": 42
         };
         var json = Codec.encode([command]);
-        expect(json).to.equal('[{"a":"3357S","o":41,"n":42,"id":"ValueChanged"}]');
+        expect(json).to.equal('[{"id":"ValueChanged","a_id":"3357S","v":42}]');
     });
 
     it('should encode single ValueChangedCommand with floating points', function() {
         var command = {
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
             "oldValue": 3.1415,
             "newValue": 2.7182
         };
         var json = Codec.encode([command]);
-        expect(json).to.equal('[{"a":"3357S","o":3.1415,"n":2.7182,"id":"ValueChanged"}]');
+        expect(json).to.equal('[{"id":"ValueChanged","a_id":"3357S","v":2.7182}]');
     });
 
     it('should encode single ValueChangedCommand with booleans', function() {
         var command = {
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
             "oldValue": true,
             "newValue": false
         };
         var json = Codec.encode([command]);
-        expect(json).to.equal('[{"a":"3357S","o":true,"n":false,"id":"ValueChanged"}]');
-    });
-
-    it('should encode single NamedCommand', function() {
-        var command = createNamedCommand();
-        var json = Codec.encode([command]);
-        expect(json).to.equal('[' + createNamedCommandString() + ']');
+        expect(json).to.equal('[{"id":"ValueChanged","a_id":"3357S","v":false}]');
     });
 
     it('should encode two custom codec commands', function() {
@@ -89,31 +78,6 @@ describe('encode', function() {
         var json = Codec.encode([command, command]);
         var expected = createCPMCommandString();
         expect(json).to.equal('[' + expected + ',' + expected + ']');
-    });
-
-    it('should encode two standard codec commands', function() {
-        var command = createNamedCommand();
-        var json = Codec.encode([command, command]);
-        var expected = createNamedCommandString();
-        expect(json).to.equal('[' + expected + ',' + expected + ']');
-    });
-
-    it('should encode custom codec command and standard codec command', function() {
-        var customCodecCommand = createCPMCommand();
-        var standardCodecCommand = createNamedCommand();
-        var json = Codec.encode([customCodecCommand, standardCodecCommand]);
-        var customCodecCommandString = createCPMCommandString();
-        var standardCodecCommandString = createNamedCommandString();
-        expect(json).to.equal('[' + customCodecCommandString + ',' + standardCodecCommandString + ']');
-    });
-
-    it('should encode custom codec command and standard codec command', function() {
-        var standardCodecCommand = createNamedCommand();
-        var customCodecCommand = createCPMCommand();
-        var json = Codec.encode([standardCodecCommand, customCodecCommand]);
-        var standardCodecCommandString = createNamedCommandString();
-        var customCodecCommandString = createCPMCommandString();
-        expect(json).to.equal('[' + standardCodecCommandString + ',' + customCodecCommandString + ']');
     });
 });
 
@@ -134,7 +98,7 @@ describe('decode', function() {
     });
 
     it('should decode single ValueChangedCommand with nulls', function() {
-        var commands = Codec.decode('[{"a":"3357S","id":"ValueChanged"}]');
+        var commands = Codec.decode('[{"a_id":"3357S","id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
@@ -146,19 +110,18 @@ describe('decode', function() {
     });
 
     it('should decode single ValueChangedCommand with Strings', function() {
-        var commands = Codec.decode('[{"a":"3357S","o":"Hello World","n":"Good Bye","id":"ValueChanged"}]');
+        var commands = Codec.decode('[{"a_id":"3357S","v":"Good Bye","id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
             "oldValue": "Hello World",
             "newValue": "Good Bye"
         }]);
     });
 
     it('should decode single ValueChangedCommand with ints', function() {
-        var commands = Codec.decode('[{"a":"3357S","o":41,"n":42,"id":"ValueChanged"}]');
+        var commands = Codec.decode('[{"a_id":"3357S","v":42,"id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
@@ -170,7 +133,7 @@ describe('decode', function() {
     });
 
     it('should decode single ValueChangedCommand with floating points', function() {
-        var commands = Codec.decode('[{"a":"3357S","o":3.1415,"n":2.7182,"id":"ValueChanged"}]');
+        var commands = Codec.decode('[{"a_id":"3357S","v":2.7182,"id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
@@ -182,7 +145,7 @@ describe('decode', function() {
     });
 
     it('should decode single ValueChangedCommand with booleans', function() {
-        var commands = Codec.decode('[{"a":"3357S","o":true,"n":false,"id":"ValueChanged"}]');
+        var commands = Codec.decode('[{"a_id":"3357S","v":false,"id":"ValueChanged"}]');
 
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
@@ -193,11 +156,6 @@ describe('decode', function() {
         }]);
     });
 
-    it('should decode single NamedCommand', function() {
-        var commands = Codec.decode('[' + createNamedCommandString() + ']');
-
-        expect(commands).to.deep.equal([createNamedCommand()]);
-    });
 
     it('should decode two custom codec commands', function() {
         var customCodecCommandString = createCPMCommandString();
@@ -207,46 +165,14 @@ describe('decode', function() {
         var customCodecCommand = createCPMCommand();
         expect(commands).to.deep.equal([customCodecCommand, customCodecCommand]);
     });
-
-    it('should decode two standard codec commands', function() {
-        var standardCodecCommandString = createNamedCommandString();
-
-        var commands = Codec.decode('[' + standardCodecCommandString + ',' + standardCodecCommandString + ']');
-
-        var standardCodecCommand = createNamedCommand();
-        expect(commands).to.deep.equal([standardCodecCommand, standardCodecCommand]);
-    });
-
-    it('should decode custom codec command and standard codec command', function() {
-        var customCodecCommandString = createCPMCommandString();
-        var standardCodecCommandString = createNamedCommandString();
-
-        var commands = Codec.decode('[' + customCodecCommandString + ',' + standardCodecCommandString + ']');
-
-        var customCodecCommand = createCPMCommand();
-        var standardCodecCommand = createNamedCommand();
-        expect(commands).to.deep.equal([customCodecCommand, standardCodecCommand]);
-    });
-
-    it('should decode standard codec command and custom codec command', function() {
-        var standardCodecCommandString = createNamedCommandString();
-        var customCodecCommandString = createCPMCommandString();
-
-        var commands = Codec.decode('[' + standardCodecCommandString + ',' + customCodecCommandString + ']');
-
-        var standardCodecCommand = createNamedCommand();
-        var customCodecCommand = createCPMCommand();
-        expect(commands).to.deep.equal([standardCodecCommand, customCodecCommand]);
-    });
 });
 
 
 
 function createCPMCommand() {
     return {
-        "pmId": "05ee43b7-a884-4d42-9fc5-00b083664eed",
-        "clientSideOnly": false,
         "id": "CreatePresentationModel",
+        "pmId": "05ee43b7-a884-4d42-9fc5-00b083664eed",
         "attributes": [
             {
                 "propertyName": "@@@ SOURCE_SYSTEM @@@",
@@ -279,47 +205,10 @@ function createCPMCommand() {
                 "value": null
             }
         ],
-        "pmType": "com.canoo.icos.casemanager.model.casedetails.CaseInfoBean",
-        "className": "org.opendolphin.core.comm.CreatePresentationModelCommand"
+        "pmType": "com.canoo.icos.casemanager.model.casedetails.CaseInfoBean"
     };
 }
 
 function createCPMCommandString() {
-    return '{' +
-        '"p":"05ee43b7-a884-4d42-9fc5-00b083664eed",' +
-        '"t":"com.canoo.icos.casemanager.model.casedetails.CaseInfoBean",' +
-        '"a":[' +
-        '{' +
-        '"n":"@@@ SOURCE_SYSTEM @@@",' +
-        '"i":"3204S",' +
-        '"v":"server"' +
-        '},{' +
-        '"n":"caseDetailsLabel",' +
-        '"i":"3205S"' +
-        '},{' +
-        '"n":"caseIdLabel",' +
-        '"i":"3206S"' +
-        '},{' +
-        '"n":"statusLabel",' +
-        '"i":"3207S"' +
-        '},{' +
-        '"n":"status",' +
-        '"i":"3208S"' +
-        '}' +
-        '],' +
-        '"id":"CreatePresentationModel"' +
-        '}';
-}
-
-
-
-function createNamedCommand() {
-    return {
-        "id": "dolphin_platform_intern_registerController",
-        "className": "org.opendolphin.core.comm.NamedCommand"
-    };
-}
-
-function createNamedCommandString() {
-    return '{"id":"dolphin_platform_intern_registerController","className":"org.opendolphin.core.comm.NamedCommand"}';
+    return '{"id":"CreatePresentationModel","p_id":"05ee43b7-a884-4d42-9fc5-00b083664eed","t":"com.canoo.icos.casemanager.model.casedetails.CaseInfoBean","a":[{"n":"@@@ SOURCE_SYSTEM @@@","a_id":"3204S","v":"server"},{"n":"caseDetailsLabel","a_id":"3205S"},{"n":"caseIdLabel","a_id":"3206S"},{"n":"statusLabel","a_id":"3207S"},{"n":"status","a_id":"3208S"}]}'
 }

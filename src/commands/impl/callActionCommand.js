@@ -2,7 +2,7 @@ import {CALL_ACTION_COMMAND_ID} from '../commandConstants';
 import {checkMethod, checkParam} from '../../utils';
 
 export default class CallActionCommand {
-
+    
     constructor() {
         this.id = CALL_ACTION_COMMAND_ID;
     }
