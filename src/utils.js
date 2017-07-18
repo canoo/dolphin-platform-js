@@ -12,11 +12,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/*jslint browserify: true */
 "use strict";
 
-var checkMethodName;
+var _checkMethodName;
 
 var exists = function(object) {
     return typeof object !== 'undefined' && object !== null;
@@ -25,11 +23,11 @@ var exists = function(object) {
 module.exports.exists = exists;
 
 module.exports.checkMethod = function(name) {
-    checkMethodName = name;
+    _checkMethodName = name;
 };
 
 module.exports.checkParam = function(param, parameterName) {
     if (!exists(param)) {
-        throw new Error('The parameter ' + parameterName + ' is mandatory in ' + checkMethodName);
+        throw new Error('The parameter ' + parameterName + ' is mandatory in ' + _checkMethodName);
     }
 };

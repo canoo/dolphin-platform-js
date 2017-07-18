@@ -19,19 +19,19 @@ export default class CommandFactory {
     }
 
     static createCreateControllerCommand(controllerName, parentControllerId) {
-        let command = new CreateControllerCommand();
+        const command = new CreateControllerCommand();
         command.init(controllerName, parentControllerId);
         return command;
     }
 
     static createCallActionCommand(controllerid, actionName, params) {
-        let command = new CallActionCommand();
+        const command = new CallActionCommand();
         command.init(controllerid, actionName, params);
         return command;
     }
 
     static createDestroyControllerCommand(controllerId) {
-        let command = new DestroyControllerCommand();
+        const command = new DestroyControllerCommand();
         command.init(controllerId);
         return command;
     }
@@ -49,13 +49,13 @@ export default class CommandFactory {
     }
 
     static createCreatePresentationModelCommand(presentationModel) {
-        let command = new CreatePresentationModelCommand();
+        const command = new CreatePresentationModelCommand();
         command.init(presentationModel);
         return command;
     }
 
     static createDeletePresentationModelCommand(pmId) {
-        let command = new DeletePresentationModelCommand();
+        const command = new DeletePresentationModelCommand();
         command.init(pmId);
         return command;
     }

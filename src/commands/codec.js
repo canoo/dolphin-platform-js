@@ -16,20 +16,20 @@ import {
     START_LONG_POLL_COMMAND_ID
 } from './commandConstants';
 import {ID, PM_ID, PM_TYPE, PM_ATTRIBUTES, NAME, ATTRIBUTE_ID, VALUE, CONTROLLER_ID, PARAMS} from './commandConstants';
-import {ValueChangedCommand} from './impl/valueChangedCommand';
-import {AttributeMetadataChangedCommand} from './impl/attributeMetadataChangedCommand';
-import {CallActionCommand} from './impl/callActionCommand';
-import {ChangeAttributeMetadataCommand} from './impl/changeAttributeMetadataCommand';
-import {CreateContextCommand} from './impl/createContextCommand';
-import {CreateControllerCommand} from './impl/createControllerCommand';
-import {CreatePresentationModelCommand} from './impl/createPresentationModelCommand';
-import {DeletePresentationModelCommand} from './impl/deletePresentationModelCommand';
-import {DestroyContextCommand} from './impl/destroyContextCommand';
-import {DestroyControllerCommand} from './impl/destroyControllerCommand';
-import {InterruptLongPollCommand} from './impl/interruptLongPollCommand';
-import {PresentationModelDeletedCommand} from './impl/presentationModelDeletedCommand';
-import {StartLongPollCommand} from './impl/startLongPollCommand';
-import {CodecError} from './codecError';
+import ValueChangedCommand from './impl/valueChangedCommand';
+import AttributeMetadataChangedCommand from './impl/attributeMetadataChangedCommand';
+import CallActionCommand from './impl/callActionCommand';
+import ChangeAttributeMetadataCommand from './impl/changeAttributeMetadataCommand';
+import CreateContextCommand from './impl/createContextCommand';
+import CreateControllerCommand from './impl/createControllerCommand';
+import CreatePresentationModelCommand from './impl/createPresentationModelCommand';
+import DeletePresentationModelCommand from './impl/deletePresentationModelCommand';
+import DestroyContextCommand from './impl/destroyContextCommand';
+import DestroyControllerCommand from './impl/destroyControllerCommand';
+import InterruptLongPollCommand from './impl/interruptLongPollCommand';
+import PresentationModelDeletedCommand from './impl/presentationModelDeletedCommand';
+import StartLongPollCommand from './impl/startLongPollCommand';
+import CodecError from './codecError';
 
 
 export default class Codec {
