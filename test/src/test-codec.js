@@ -103,8 +103,6 @@ describe('decode', function() {
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
-            "oldValue": null,
             "newValue": null
         }]);
     });
@@ -115,7 +113,6 @@ describe('decode', function() {
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "oldValue": "Hello World",
             "newValue": "Good Bye"
         }]);
     });
@@ -126,8 +123,6 @@ describe('decode', function() {
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
-            "oldValue": 41,
             "newValue": 42
         }]);
     });
@@ -138,8 +133,6 @@ describe('decode', function() {
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
-            "oldValue": 3.1415,
             "newValue": 2.7182
         }]);
     });
@@ -150,8 +143,6 @@ describe('decode', function() {
         expect(commands).to.deep.equal([{
             "id": "ValueChanged",
             "attributeId": "3357S",
-            "className": "org.opendolphin.core.comm.ValueChangedCommand",
-            "oldValue": true,
             "newValue": false
         }]);
     });
@@ -177,31 +168,26 @@ function createCPMCommand() {
             {
                 "propertyName": "@@@ SOURCE_SYSTEM @@@",
                 "id": "3204S",
-                "qualifier": null,
                 "value": "server"
             },
             {
                 "propertyName": "caseDetailsLabel",
                 "id": "3205S",
-                "qualifier": null,
                 "value": null
             },
             {
                 "propertyName": "caseIdLabel",
                 "id": "3206S",
-                "qualifier": null,
                 "value": null
             },
             {
                 "propertyName": "statusLabel",
                 "id": "3207S",
-                "qualifier": null,
                 "value": null
             },
             {
                 "propertyName": "status",
                 "id": "3208S",
-                "qualifier": null,
                 "value": null
             }
         ],

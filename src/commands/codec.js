@@ -353,6 +353,8 @@ export default class Codec {
         command.attributeId = jsonCommand[ATTRIBUTE_ID];
         if (exists(jsonCommand[VALUE])) {
             command.newValue = jsonCommand[VALUE];
+        } else {
+            command.newValue = null;
         }
         return command;
     }
