@@ -1,6 +1,6 @@
 {
   "name": "dolphin-platform-js",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "JavaScript client of the Dolphin Platform",
   "main": "./dist/dolphin-platform.min.js",
   "repository": {
@@ -51,7 +51,7 @@
     "mocha": "2.4.x",
     "sinon": "1.17.x",
     "tsify": "^3.0.1",
-    "typescript": "^2.2.1",
+    "typescript": "^2.4.2",
     "vinyl-buffer": "1.0.x",
     "vinyl-source-stream": "1.1.x",
     "watchify": "3.7.x"
