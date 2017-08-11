@@ -1,3 +1,4 @@
+"use strict";
 import Codec from './commands/codec'
 
 export default class HttpTransmitter {

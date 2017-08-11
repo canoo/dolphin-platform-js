@@ -1,3 +1,4 @@
+"use strict";
 export default class NoTransmitter {
 
     transmit(commands, onDone) {

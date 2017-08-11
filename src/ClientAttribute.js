@@ -1,6 +1,6 @@
 import EventBus from './EventBus';
 
-class ClientAttribute {
+export default class ClientAttribute {
     constructor(propertyName, qualifier, value) {
         this.propertyName = propertyName;
         this.id = "" + (ClientAttribute.clientAttributeInstanceCount++) + "C";
