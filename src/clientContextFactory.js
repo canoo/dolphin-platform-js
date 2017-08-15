@@ -17,7 +17,7 @@
 /* global console */
 /* global exports */
 "use strict";
-import OpenDolphin from './OpenDolphin.js';
+import {makeDolphin} from './OpenDolphin.js';
 import {exists} from './utils';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
@@ -28,14 +28,14 @@ import ControllerManager from './controllermanager.js';
 import ClientContext from './clientcontext.js';
 import PlatformHttpTransmitter from './platformHttpTransmitter.js';
 
-export default class ClientContextFactory{
+export default class ClientContextFactory {
 
     create(url, config){
         checkMethod('connect(url, config)');
         checkParam(url, 'url');
         console.log('Creating client context '+ url +'    '+ JSON.stringify(config));
 
-        let builder = OpenDolphin.makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
+        let builder = makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
         if (exists(config)) {
             if (exists(config.errorHandler)) {
                 builder.errorHandler(config.errorHandler);
@@ -64,4 +64,3 @@ export default class ClientContextFactory{
 }
 
 exports.ClientContextFactory = ClientContextFactory;
-

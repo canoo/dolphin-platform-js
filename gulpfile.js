@@ -111,7 +111,11 @@ gulp.task('lint', function () {
         .pipe($.eslint.failAfterError());
 });
 
-gulp.task('build-test', function () {
+gulp.task('build_impl', function () {
+    return rebundle(mainBundler);
+});
+
+gulp.task('build-test', ['build_impl'], function () {
     return rebundleTest(testBundler);
 });
 
@@ -139,7 +143,7 @@ gulp.task('test', ['build-test'], function (done) {
 
 gulp.task('verify', ['lint', 'test']);
 
-gulp.task('build', ['verify'], function () {
+gulp.task('build', ['verify', 'build_impl'], function () {
     return rebundle(mainBundler);
 });
 

@@ -1,7 +1,8 @@
-"use strict";
-const EventBus_1 = require('./EventBus');
+import EventBus from './EventBus'
+
 var presentationModelInstanceCount = 0; // todo dk: consider making this static in class
-class ClientPresentationModel {
+
+export default class ClientPresentationModel {
     constructor(id, presentationModelType) {
         this.id = id;
         this.presentationModelType = presentationModelType;
@@ -14,8 +15,8 @@ class ClientPresentationModel {
         else {
             this.id = (presentationModelInstanceCount++).toString();
         }
-        this.invalidBus = new EventBus_1.default();
-        this.dirtyValueChangeBus = new EventBus_1.default();
+        this.invalidBus = new EventBus();
+        this.dirtyValueChangeBus = new EventBus();
     }
     // todo dk: align with Java version: move to ClientDolphin and auto-add to model store
     /** a copy constructor for anything but IDs. Per default, copies are client side only, no automatic update applies. */
@@ -114,6 +115,3 @@ class ClientPresentationModel {
         });
     }
 }
-exports.ClientPresentationModel = ClientPresentationModel;
-
-//# sourceMappingURL=ClientPresentationModel.js.map

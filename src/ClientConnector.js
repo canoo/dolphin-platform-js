@@ -1,8 +1,9 @@
-"use strict";
-const ClientPresentationModel_1 = require("./ClientPresentationModel");
-const Codec_1 = require("./Codec");
-const CommandBatcher_1 = require("./CommandBatcher");
-class ClientConnector {
+import {BlindCommandBatcher} from './CommandBatcher';
+import Codec from './commands/codec';
+import ClientPresentationModel from './ClientPresentationModel'
+
+export default class ClientConnector {
+
     constructor(transmitter, clientDolphin, slackMS = 0, maxBatchSize = 50) {
         this.commandQueue = [];
         this.currentlySending = false;
@@ -11,21 +12,26 @@ class ClientConnector {
         this.transmitter = transmitter;
         this.clientDolphin = clientDolphin;
         this.slackMS = slackMS;
-        this.codec = new Codec_1.default();
-        this.commandBatcher = new CommandBatcher_1.BlindCommandBatcher(true, maxBatchSize);
+        this.codec = new Codec();
+        this.commandBatcher = new BlindCommandBatcher(true, maxBatchSize);
     }
+
     setCommandBatcher(newBatcher) {
         this.commandBatcher = newBatcher;
     }
+
     setPushEnabled(enabled) {
         this.pushEnabled = enabled;
     }
+
     setPushListener(newListener) {
         this.pushListener = newListener;
     }
+
     setReleaseCommand(newCommand) {
         this.releaseCommand = newCommand;
     }
+
     send(command, onFinished) {
         this.commandQueue.push({ command: command, handler: onFinished });
         if (this.currentlySending) {
@@ -34,6 +40,7 @@ class ClientConnector {
         }
         this.doSendNext();
     }
+
     doSendNext() {
         if (this.commandQueue.length < 1) {
             if (this.pushEnabled) {
@@ -64,6 +71,7 @@ class ClientConnector {
             setTimeout(() => this.doSendNext(), this.slackMS);
         });
     }
+
     handle(command) {
         if (command.id == "DeletePresentationModel") {
             return this.handleDeletePresentationModelCommand(command);
@@ -82,6 +90,7 @@ class ClientConnector {
         }
         return null;
     }
+
     handleDeletePresentationModelCommand(serverCommand) {
         var model = this.clientDolphin.findPresentationModelById(serverCommand.pmId);
         if (!model)
@@ -89,6 +98,7 @@ class ClientConnector {
         this.clientDolphin.getClientModelStore().deletePresentationModel(model, true);
         return model;
     }
+
     handleCreatePresentationModelCommand(serverCommand) {
         if (this.clientDolphin.getClientModelStore().containsPresentationModel(serverCommand.pmId)) {
             throw new Error("There already is a presentation model with id " + serverCommand.pmId + "  known to the client.");
@@ -101,7 +111,7 @@ class ClientConnector {
             }
             attributes.push(clientAttribute);
         });
-        var clientPm = new ClientPresentationModel_1.ClientPresentationModel(serverCommand.pmId, serverCommand.pmType);
+        var clientPm = new ClientPresentationModel(serverCommand.pmId, serverCommand.pmType);
         clientPm.addAttributes(attributes);
         if (serverCommand.clientSideOnly) {
             clientPm.clientSideOnly = true;
@@ -110,6 +120,7 @@ class ClientConnector {
         this.clientDolphin.updatePresentationModelQualifier(clientPm);
         return clientPm;
     }
+
     handleValueChangedCommand(serverCommand) {
         var clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
         if (!clientAttribute) {
@@ -123,6 +134,7 @@ class ClientConnector {
         clientAttribute.setValue(serverCommand.newValue);
         return null;
     }
+
     handleAttributeMetadataChangedCommand(serverCommand) {
         var clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
         if (!clientAttribute)
@@ -130,7 +142,7 @@ class ClientConnector {
         clientAttribute[serverCommand.metadataName] = serverCommand.value;
         return null;
     }
-    ///////////// push support ///////////////
+
     listen() {
         if (!this.pushEnabled)
             return;
@@ -141,6 +153,7 @@ class ClientConnector {
             this.doSendNext();
         }
     }
+
     enqueuePushCommand() {
         var me = this;
         this.waiting = true;
@@ -152,6 +165,7 @@ class ClientConnector {
             }
         });
     }
+
     release() {
         if (!this.waiting)
             return;
@@ -160,6 +174,3 @@ class ClientConnector {
         this.transmitter.signal(this.releaseCommand);
     }
 }
-exports.ClientConnector = ClientConnector;
-
-//# sourceMappingURL=ClientConnector.js.map

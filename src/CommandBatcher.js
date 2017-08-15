@@ -1,14 +1,12 @@
-"use strict";
-const ValueChangedCommand_1 = require('./ValueChangedCommand');
-/** A Batcher that does no batching but merely takes the first element of the queue as the single item in the batch */
-class NoCommandBatcher {
+import ValueChangedCommand from './commands/impl/valueChangedCommand'
+
+export class NoCommandBatcher {
     batch(queue) {
         return [queue.shift()];
     }
 }
-exports.NoCommandBatcher = NoCommandBatcher;
-/** A batcher that batches the blinds (commands with no callback) and optionally also folds value changes */
-class BlindCommandBatcher {
+
+export class BlindCommandBatcher {
     /** folding: whether we should try folding ValueChangedCommands */
     constructor(folding = true, maxBatchSize = 50) {
         this.folding = folding;
@@ -19,9 +17,9 @@ class BlindCommandBatcher {
         const n = Math.min(queue.length, this.maxBatchSize);
         for (let counter = 0; counter < n; counter++) {
             const candidate = queue.shift();
-            if (this.folding && candidate.command instanceof ValueChangedCommand_1.default && (!candidate.handler)) {
+            if (this.folding && candidate.command instanceof ValueChangedCommand && (!candidate.handler)) {
                 const canCmd = candidate.command;
-                if (batch.length > 0 && batch[batch.length - 1].command instanceof ValueChangedCommand_1.default) {
+                if (batch.length > 0 && batch[batch.length - 1].command instanceof ValueChangedCommand) {
                     const batchCmd = batch[batch.length - 1].command;
                     if (canCmd.attributeId == batchCmd.attributeId) {
                         batchCmd.newValue = canCmd.newValue;
@@ -46,6 +44,3 @@ class BlindCommandBatcher {
         return batch;
     }
 }
-exports.BlindCommandBatcher = BlindCommandBatcher;
-
-//# sourceMappingURL=CommandBatcher.js.map

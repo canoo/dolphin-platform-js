@@ -25,7 +25,7 @@ import {checkParam} from './utils';
 
 import ControllerProxy from './controllerproxy.js';
 
-import CommandFactory from './commandFactory.js';
+import CommandFactory from './commands/commandFactory.js';
 
 
 import { SOURCE_SYSTEM } from './connector.js';
@@ -94,7 +94,7 @@ export default class ControllerManager{
                 for (var param in params) {
                     if (params.hasOwnProperty(param)) {
                         let value = self.classRepository.mapParamToDolphin(params[param]);
-                        actionParams.push({n: param, v: value});
+                        actionParams.push({name: param, value: value});
                     }
                 }
             }
