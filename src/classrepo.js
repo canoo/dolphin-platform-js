@@ -1,7 +1,7 @@
 import  Map from '../bower_components/core.js/library/fn/map';
 import * as consts from './constants';
 
-import {exists} from './utils.js';
+import {exists} from './utils';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
 

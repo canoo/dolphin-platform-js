@@ -1,5 +1,5 @@
 import Promise from '../bower_components/core.js/library/fn/promise';
-import {exists} from './utils.js';
+import {exists} from './utils';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
 import CommandFactory from './commands/commandFactory';

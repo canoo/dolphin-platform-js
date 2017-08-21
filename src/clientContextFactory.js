@@ -17,12 +17,12 @@ import {makeDolphin} from './openDolphin.js';
 import {exists} from './utils';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
-import Connector from './connector.js';
-import BeanManager from './beanmanager.js';
-import ClassRepository from './classrepo.js';
-import ControllerManager from './controllermanager.js';
-import ClientContext from './clientcontext.js';
-import PlatformHttpTransmitter from './platformHttpTransmitter.js';
+import Connector from './connector';
+import BeanManager from './beanmanager';
+import ClassRepository from './classrepo';
+import ControllerManager from './controllermanager';
+import ClientContext from './clientcontext';
+import PlatformHttpTransmitter from './platformHttpTransmitter';
 
 export default class ClientContextFactory {
 

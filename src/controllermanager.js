@@ -1,6 +1,3 @@
-
-"use strict";
-
 import Promise from '../bower_components/core.js/library/fn/promise';
 import Set from'../bower_components/core.js/library/fn/set';
 import {exists} from './utils';

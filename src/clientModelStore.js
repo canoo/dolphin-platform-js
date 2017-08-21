@@ -1,6 +1,6 @@
 import Attribute from './attribute'
 import EventBus from './eventBus'
-import CommandFactory from './commands/commandFactory.js';
+import CommandFactory from './commands/commandFactory';
 import {ADDED_TYPE, REMOVED_TYPE} from './constants'
 
 export default class ClientModelStore {
