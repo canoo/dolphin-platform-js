@@ -1,4 +1,4 @@
-import EventBus from './EventBus';
+import EventBus from './eventBus';
 
 export default class ClientAttribute {
     constructor(propertyName, qualifier, value) {

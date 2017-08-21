@@ -1,4 +1,4 @@
-import EventBus from './EventBus'
+import EventBus from './eventBus'
 
 var presentationModelInstanceCount = 0; // todo dk: consider making this static in class
 

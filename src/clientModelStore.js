@@ -1,5 +1,5 @@
-import Attribute from './Attribute'
-import EventBus from './EventBus'
+import Attribute from './attribute'
+import EventBus from './eventBus'
 import CommandFactory from './commands/commandFactory.js';
 import {ADDED_TYPE, REMOVED_TYPE} from './constants'
 

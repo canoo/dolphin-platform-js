@@ -13,11 +13,7 @@
  * limitations under the License.
  */
 
-/*jslint browserify: true */
-/* global console */
-/* global exports */
-"use strict";
-import {makeDolphin} from './OpenDolphin.js';
+import {makeDolphin} from './openDolphin.js';
 import {exists} from './utils';
 import {checkMethod} from './utils';
 import {checkParam} from './utils';
