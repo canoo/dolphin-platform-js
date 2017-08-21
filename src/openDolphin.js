@@ -1,4 +1,3 @@
-"use strict";
 import DolphinBuilder from './dolphinBuilder'
 
 export function dolphin(url, reset, slackMS = 300) {

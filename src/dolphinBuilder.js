@@ -1,4 +1,3 @@
-"use strict";
 import ClientConnector from './clientConnector'
 import ClientDolphin from './clientDolphin'
 import ClientModelStore from './clientModelStore'
