@@ -13,9 +13,9 @@ export default class BlindCommandBatcher {
             const element = queue[batchLenght];
             batchLenght++;
             if(this.folding) {
-                if(element.command.id == VALUE_CHANGED_COMMAND_ID ||
-                    batch.length > 0 ||
-                    batch[batch.length - 1].command.id == VALUE_CHANGED_COMMAND_ID ||
+                if(element.command.id == VALUE_CHANGED_COMMAND_ID &&
+                    batch.length > 0 &&
+                    batch[batch.length - 1].command.id == VALUE_CHANGED_COMMAND_ID &&
                     element.command.attributeId == batch[batch.length - 1].command.attributeId) {
                     //merge ValueChange for same value
                     batch[batch.length - 1].command.newValue = element.command.newValue;
