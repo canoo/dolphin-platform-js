@@ -1,9 +1,8 @@
-"use strict";
-import ClientConnector from './ClientConnector'
-import ClientDolphin from './ClientDolphin'
-import ClientModelStore from './ClientModelStore'
-import HttpTransmitter from './HttpTransmitter'
-import NoTransmitter from './NoTransmitter'
+import ClientConnector from './clientConnector'
+import ClientDolphin from './clientDolphin'
+import ClientModelStore from './clientModelStore'
+import HttpTransmitter from './httpTransmitter'
+import NoTransmitter from './noTransmitter'
 
 
 export default class DolphinBuilder {

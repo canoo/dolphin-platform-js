@@ -1,7 +1,5 @@
 import  Map from '../bower_components/core.js/library/fn/map';
-import {exists} from './utils.js';
-import {checkMethod} from './utils';
-import {checkParam} from './utils';
+import {exists, checkMethod, checkParam} from './utils';
 
 export default class BeanManager {
     constructor(classRepository) {

@@ -1,4 +1,4 @@
-import {exists, checkMethod, checkParam} from '../utils.js';
+import {exists, checkMethod, checkParam} from '../utils';
 import {JS_STRING_TYPE} from '../constants';
 import {
     CREATE_PRESENTATION_MODEL_COMMAND_ID,

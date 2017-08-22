@@ -1,16 +1,16 @@
-import CreateContextCommand from './impl/createContextCommand.js';
-import CreateControllerCommand from './impl/createControllerCommand.js';
-import CallActionCommand from './impl/callActionCommand.js';
-import DestroyControllerCommand from './impl/destroyControllerCommand.js';
-import DestroyContextCommand from './impl/destroyContextCommand.js';
-import StartLongPollCommand from './impl/startLongPollCommand.js';
-import InterruptLongPollCommand from './impl/interruptLongPollCommand.js';
-import CreatePresentationModelCommand from './impl/createPresentationModelCommand.js';
-import DeletePresentationModelCommand from './impl/deletePresentationModelCommand.js';
-import PresentationModelDeletedCommand from './impl/presentationModelDeletedCommand.js';
-import ValueChangedCommand from './impl/valueChangedCommand.js';
-import ChangeAttributeMetadataCommand from './impl/changeAttributeMetadataCommand.js';
-import AttributeMetadataChangedCommand from './impl/attributeMetadataChangedCommand.js';
+import CreateContextCommand from './impl/createContextCommand';
+import CreateControllerCommand from './impl/createControllerCommand';
+import CallActionCommand from './impl/callActionCommand';
+import DestroyControllerCommand from './impl/destroyControllerCommand';
+import DestroyContextCommand from './impl/destroyContextCommand';
+import StartLongPollCommand from './impl/startLongPollCommand';
+import InterruptLongPollCommand from './impl/interruptLongPollCommand';
+import CreatePresentationModelCommand from './impl/createPresentationModelCommand';
+import DeletePresentationModelCommand from './impl/deletePresentationModelCommand';
+import PresentationModelDeletedCommand from './impl/presentationModelDeletedCommand';
+import ValueChangedCommand from './impl/valueChangedCommand';
+import ChangeAttributeMetadataCommand from './impl/changeAttributeMetadataCommand';
+import AttributeMetadataChangedCommand from './impl/attributeMetadataChangedCommand';
 
 export default class CommandFactory {
 

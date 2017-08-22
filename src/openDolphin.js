@@ -1,5 +1,4 @@
-"use strict";
-import DolphinBuilder from './DolphinBuilder'
+import DolphinBuilder from './dolphinBuilder'
 
 export function dolphin(url, reset, slackMS = 300) {
     return makeDolphin().url(url).reset(reset).slackMS(slackMS).build();

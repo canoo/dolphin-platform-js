@@ -1,9 +1,7 @@
 import Emitter from 'emitter-component';
 import Promise from '../bower_components/core.js/library/fn/promise';
 import CommandFactory from './commands/commandFactory';
-import {exists} from './utils.js';
-import {checkMethod} from './utils';
-import {checkParam} from './utils';
+import {exists, checkMethod, checkParam} from './utils';
 
 export default class ClientContext{
 

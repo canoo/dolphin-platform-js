@@ -1,5 +1,5 @@
-import ClientAttribute from './ClientAttribute'
-import ClientPresentationModel from './ClientPresentationModel'
+import ClientAttribute from './clientAttribute'
+import ClientPresentationModel from './clientPresentationModel'
 
 export default class ClientDolphin {
 
