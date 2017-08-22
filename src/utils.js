@@ -1,5 +1,3 @@
-"use strict";
-
 var _checkMethodName;
 
 export function exists(object) {

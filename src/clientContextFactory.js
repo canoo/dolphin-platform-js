@@ -14,9 +14,7 @@
  */
 
 import {makeDolphin} from './openDolphin.js';
-import {exists} from './utils';
-import {checkMethod} from './utils';
-import {checkParam} from './utils';
+import {exists, checkMethod, checkParam} from './utils';
 import Connector from './connector';
 import BeanManager from './beanmanager';
 import ClassRepository from './classrepo';

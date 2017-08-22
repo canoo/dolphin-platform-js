@@ -1,8 +1,6 @@
 import Promise from '../bower_components/core.js/library/fn/promise';
 import Set from'../bower_components/core.js/library/fn/set';
-import {exists} from './utils';
-import {checkMethod} from './utils';
-import {checkParam} from './utils';
+import {exists, checkMethod, checkParam} from './utils';
 
 import ControllerProxy from './controllerproxy.js';
 
