@@ -1,6 +1,5 @@
 import {VALUE_CHANGED_COMMAND_ID, PRESENTATION_MODEL_DELETED_COMMAND_ID} from './commands/commandConstants';
 
-
 export default class BlindCommandBatcher {
     constructor(folding = true, maxBatchSize = 50) {
         this.folding = folding;

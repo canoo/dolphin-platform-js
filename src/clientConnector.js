@@ -1,4 +1,4 @@
-import {BlindCommandBatcher} from './commandBatcher';
+import BlindCommandBatcher from './commandBatcher';
 import Codec from './commands/codec';
 import ClientPresentationModel from './clientPresentationModel'
 
