@@ -7,10 +7,10 @@ export default class BlindCommandBatcher {
     }
     batch(queue) {
         let batch = [];
-        let batchLenght = 0;
-        while(queue[batchLenght] && batchLenght <= this.maxBatchSize) {
-            const element = queue[batchLenght];
-            batchLenght++;
+        let batchLength = 0;
+        while(queue[batchLength] && batchLength <= this.maxBatchSize) {
+            const element = queue[batchLength];
+            batchLength++;
             if(this.folding) {
                 if(element.command.id == VALUE_CHANGED_COMMAND_ID &&
                     batch.length > 0 &&
@@ -30,7 +30,7 @@ export default class BlindCommandBatcher {
                 break;
             }
         }
-        queue.splice(0, batchLenght);
+        queue.splice(0, batchLength);
         return batch;
     }
 }
