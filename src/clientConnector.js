@@ -54,7 +54,7 @@ export default class ClientConnector {
         this.currentlySending = true;
         var cmdsAndHandlers = this.commandBatcher.batch(this.commandQueue);
 
-        if(cmdsAndHandlers.lenght > 0) {
+        if(cmdsAndHandlers.length > 0) {
             var callback = cmdsAndHandlers[cmdsAndHandlers.length - 1].handler;
             var commands = cmdsAndHandlers.map(cah => { return cah.command; });
             this.transmitter.transmit(commands, (response) => {
