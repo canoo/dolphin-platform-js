@@ -53,23 +53,25 @@ export default class ClientConnector {
         }
         this.currentlySending = true;
         var cmdsAndHandlers = this.commandBatcher.batch(this.commandQueue);
-        var callback = cmdsAndHandlers[cmdsAndHandlers.length - 1].handler;
-        var commands = cmdsAndHandlers.map(cah => { return cah.command; });
-        this.transmitter.transmit(commands, (response) => {
-            //console.log("server response: [" + response.map(it => it.id).join(", ") + "] ");
-            var touchedPMs = [];
-            response.forEach((command) => {
-                var touched = this.handle(command);
-                if (touched)
-                    touchedPMs.push(touched);
+
+        if(cmdsAndHandlers.lenght > 0) {
+            var callback = cmdsAndHandlers[cmdsAndHandlers.length - 1].handler;
+            var commands = cmdsAndHandlers.map(cah => { return cah.command; });
+            this.transmitter.transmit(commands, (response) => {
+                var touchedPMs = [];
+                response.forEach((command) => {
+                    var touched = this.handle(command);
+                    if (touched)
+                        touchedPMs.push(touched);
+                });
+                if (callback) {
+                    callback.onFinished(touchedPMs); // todo: make them unique?
+                }
+                setTimeout(() => this.doSendNext(), this.slackMS);
             });
-            if (callback) {
-                callback.onFinished(touchedPMs); // todo: make them unique?
-            }
-            // recursive call: fetch the next in line but allow a bit of slack such that
-            // document events can fire, rendering is done and commands can batch up
+        } else {
             setTimeout(() => this.doSendNext(), this.slackMS);
-        });
+        }
     }
 
     handle(command) {
@@ -116,7 +118,7 @@ export default class ClientConnector {
         if (serverCommand.clientSideOnly) {
             clientPm.clientSideOnly = true;
         }
-        this.clientDolphin.getClientModelStore().add(clientPm);
+        this.clientDolphin.getClientModelStore().add(clientPm, false);
         this.clientDolphin.updatePresentationModelQualifier(clientPm);
         return clientPm;
     }
@@ -131,7 +133,7 @@ export default class ClientConnector {
             //console.log("nothing to do. new value == old value");
             return null;
         }
-        clientAttribute.setValue(serverCommand.newValue);
+        clientAttribute.setValueFromServer(serverCommand.newValue);
         return null;
     }
 

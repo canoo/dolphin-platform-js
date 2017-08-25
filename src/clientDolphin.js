@@ -29,7 +29,7 @@ export default class ClientDolphin {
                 model.addAttribute(attribute);
             });
         }
-        this.getClientModelStore().add(model);
+        this.getClientModelStore().add(model, true);
         return model;
     }
 
@@ -84,7 +84,10 @@ export default class ClientDolphin {
         this.clientConnector.setPushListener(pushCommand);
         this.clientConnector.setReleaseCommand(releaseCommand);
         this.clientConnector.setPushEnabled(true);
-        this.clientConnector.listen();
+
+        setTimeout(() => {
+            this.clientConnector.listen();
+        }, 0);
     }
 
     stopPushListening() {

@@ -43,9 +43,7 @@ export default class Connector{
     }
     connect() {
         let that = this;
-        setTimeout(() => {
             that.dolphin.startPushListening(CommandFactory.createStartLongPollCommand(), CommandFactory.createInterruptLongPollCommand());
-        }, 0);
     }
 
     onModelAdded(model) {

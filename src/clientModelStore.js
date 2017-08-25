@@ -18,17 +18,6 @@ export default class ClientModelStore {
         return this.clientDolphin;
     }
 
-    registerModel(model) {
-        if (model.clientSideOnly) {
-            return;
-        }
-        var connector = this.clientDolphin.getClientConnector();
-        connector.send(CommandFactory.createCreatePresentationModelCommand(model), null);
-        model.getAttributes().forEach(attribute => {
-            this.registerAttribute(attribute);
-        });
-    }
-
     registerAttribute(attribute) {
         this.addAttributeById(attribute);
         if (attribute.getQualifier()) {
@@ -37,7 +26,11 @@ export default class ClientModelStore {
         // whenever an attribute changes its value, the server needs to be notified
         // and all other attributes with the same qualifier are given the same value
         attribute.onValueChange((evt) => {
-            this.clientDolphin.getClientConnector().send(CommandFactory.createValueChangedCommand(attribute.id, evt.newValue), null);
+            if(evt.newValue != evt.oldValue && evt.sendToServer == true) {
+                const command = CommandFactory.createValueChangedCommand(attribute.id, evt.newValue);
+                this.clientDolphin.getClientConnector().send(command, null);
+            }
+
             if (attribute.getQualifier()) {
                 var attrs = this.findAttributesByFilter((attr) => {
                     return attr !== attribute && attr.getQualifier() == attribute.getQualifier();
@@ -46,13 +39,14 @@ export default class ClientModelStore {
                     attr.setValue(attribute.getValue());
                 });
             }
+
         });
         attribute.onQualifierChange((evt) => {
             this.clientDolphin.getClientConnector().send(CommandFactory.createChangeAttributeMetadataCommand(attribute.id, Attribute.QUALIFIER_PROPERTY, evt.newValue), null);
         });
     }
 
-    add(model) {
+    add(model, sendToServer = true) {
         if (!model) {
             return false;
         }
@@ -63,7 +57,15 @@ export default class ClientModelStore {
         if (!this.presentationModels.has(model.id)) {
             this.presentationModels.set(model.id, model);
             this.addPresentationModelByType(model);
-            this.registerModel(model);
+
+            if(sendToServer) {
+                var connector = this.clientDolphin.getClientConnector();
+                connector.send(CommandFactory.createCreatePresentationModelCommand(model), null);
+            }
+
+            model.getAttributes().forEach(attribute => {
+                this.registerAttribute(attribute);
+            });
             this.modelStoreChangeBus.trigger({ 'eventType': ADDED_TYPE, 'clientPresentationModel': model });
             added = true;
         }

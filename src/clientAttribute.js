@@ -17,7 +17,7 @@ export default class ClientAttribute {
 
     setPresentationModel(presentationModel) {
         if (this.presentationModel) {
-            alert("You can not set a presentation model for an attribute that is already bound.");
+            throw new Error("You can not set a presentation model for an attribute that is already bound.");
         }
         this.presentationModel = presentationModel;
     }
@@ -30,13 +30,22 @@ export default class ClientAttribute {
         return this.value;
     }
 
+    setValueFromServer(newValue) {
+        var verifiedValue = ClientAttribute.checkValue(newValue);
+        if (this.value == verifiedValue)
+            return;
+        var oldValue = this.value;
+        this.value = verifiedValue;
+        this.valueChangeBus.trigger({ 'oldValue': oldValue, 'newValue': verifiedValue, 'sendToServer': false });
+    }
+
     setValue(newValue) {
         var verifiedValue = ClientAttribute.checkValue(newValue);
         if (this.value == verifiedValue)
             return;
         var oldValue = this.value;
         this.value = verifiedValue;
-        this.valueChangeBus.trigger({ 'oldValue': oldValue, 'newValue': verifiedValue });
+        this.valueChangeBus.trigger({ 'oldValue': oldValue, 'newValue': verifiedValue, 'sendToServer': true });
     }
 
     setQualifier(newQualifier) {
@@ -45,6 +54,7 @@ export default class ClientAttribute {
         var oldQualifier = this.qualifier;
         this.qualifier = newQualifier;
         this.qualifierChangeBus.trigger({ 'oldValue': oldQualifier, 'newValue': newQualifier });
+        this.valueChangeBus.trigger({ "oldValue": this.value, "newValue": this.value, 'sendToServer': false });
     }
 
     getQualifier() {
@@ -53,7 +63,7 @@ export default class ClientAttribute {
 
     onValueChange(eventHandler) {
         this.valueChangeBus.onEvent(eventHandler);
-        eventHandler({ "oldValue": this.value, "newValue": this.value });
+        eventHandler({ "oldValue": this.value, "newValue": this.value, 'sendToServer': false });
     }
 
     onQualifierChange(eventHandler) {
