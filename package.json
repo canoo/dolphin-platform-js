@@ -1,6 +1,6 @@
 {
   "name": "dolphin-platform-js",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "JavaScript client of the Dolphin Platform",
   "main": "./dist/dolphin-platform.min.js",
   "repository": {
@@ -14,7 +14,7 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@types/chai": "^3.4.35",
-    "@types/mocha": "^2.2.39",
+    "@types/mocha": "^2.2.44",
     "babel": "^6.5.2",
     "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.9.0",
@@ -50,8 +50,8 @@
     "lodash.assign": "4.0.x",
     "mocha": "2.4.x",
     "sinon": "1.17.x",
-    "tsify": "^3.0.1",
-    "typescript": "^2.2.1",
+    "tsify": "^3.0.3",
+    "typescript": "^2.5.3",
     "vinyl-buffer": "1.0.x",
     "vinyl-source-stream": "1.1.x",
     "watchify": "3.7.x"
