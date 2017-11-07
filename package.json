@@ -1,6 +1,6 @@
 {
   "name": "dolphin-platform-js",
-  "version": "1.0.0.CR1",
+  "version": "1.0.0-CR.1",
   "description": "JavaScript client of the Dolphin Platform",
   "main": "./dist/dolphin-platform.min.js",
   "repository": {
