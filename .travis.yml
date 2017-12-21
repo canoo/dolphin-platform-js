@@ -10,6 +10,7 @@ addons:
         - master
 
 before_script:
+  - npm install --global gulp-cli
   - npm install -g bower
   - echo -e "Host github.com\n\tStrictHostKeyChecking no\n" >> ~/.ssh/config
   - npm install
