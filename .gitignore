@@ -1,13 +1,6 @@
 .idea
+.nyc_output/
 .bower.json
 node_modules/
 bower_components/
-test/build/
 coverage/
-sauce.json
-opendolphin/build
-opendolphin/js/dolphin/*.js
-opendolphin/test/build
-NamedCommandTests.js
-CodecTest.js
-ClientConnectorTests.js
