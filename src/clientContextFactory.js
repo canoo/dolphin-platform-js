@@ -22,7 +22,7 @@ import ControllerManager from './controllermanager';
 import ClientContext from './clientcontext';
 import PlatformHttpTransmitter from './platformHttpTransmitter';
 
-export default class ClientContextFactory {
+class ClientContextFactory {
 
     create(url, config){
         checkMethod('connect(url, config)');
@@ -39,22 +39,24 @@ export default class ClientContextFactory {
             }
         }
 
-        var dolphin = builder.build();
+        let dolphin = builder.build();
 
-        var transmitter = new PlatformHttpTransmitter(url, config);
+        let transmitter = new PlatformHttpTransmitter(url, config);
         transmitter.on('error', function (error) {
             clientContext.emit('error', error);
         });
         dolphin.clientConnector.transmitter = transmitter;
 
-        var classRepository = new ClassRepository(dolphin);
-        var beanManager = new BeanManager(classRepository);
-        var connector = new Connector(url, dolphin, classRepository, config);
-        var controllerManager = new ControllerManager(dolphin, classRepository, connector);
+        let classRepository = new ClassRepository(dolphin);
+        let beanManager = new BeanManager(classRepository);
+        let connector = new Connector(url, dolphin, classRepository, config);
+        let controllerManager = new ControllerManager(dolphin, classRepository, connector);
 
-        var clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
+        let clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
         return clientContext;
     }
 }
 
-exports.ClientContextFactory = ClientContextFactory;
+let createClientContext = new ClientContextFactory().create;
+
+export { createClientContext, ClientContextFactory };
