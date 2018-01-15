@@ -9,7 +9,8 @@
   },
   "scripts": {
     "clean": "node ./node_modules/rimraf/bin.js dist/",
-    "build": "npm install && node ./node_modules/bower/bin/bower update && node ./node_modules/webpack/bin/webpack.js",
+    "build": "node ./node_modules/webpack/bin/webpack.js",
+    "build:install": "npm install && node ./node_modules/bower/bin/bower install && npm run build",
     "test": "npm run test:mocha",
     "test:mocha": "node ./node_modules/mocha/bin/mocha test/src --require babel-register",
     "test:nyc": "node ./node_modules/nyc/bin/nyc.js --require babel-register --reporter=html --reporter=text mocha test/src"
