@@ -1,8 +1,8 @@
 /*jslint browserify: true, mocha: true, expr: true */
 "use strict";
 
-var expect = require('chai').expect;
-import {exists} from '../../src/utils.js';
+import { expect } from 'chai';
+import { exists } from '../../src/utils.js';
 
 describe('utils.exists()', function() {
     it('undefined', function() {
