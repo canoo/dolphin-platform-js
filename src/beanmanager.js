@@ -1,4 +1,4 @@
-import  Map from '../bower_components/core.js/library/fn/map';
+import  Map from 'core-js/library/fn/map';
 import {exists, checkMethod, checkParam} from './utils';
 
 export default class BeanManager {

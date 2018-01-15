@@ -1,6 +1,5 @@
+.DS_Store
 .idea
 .nyc_output/
-.bower.json
 node_modules/
-bower_components/
 coverage/

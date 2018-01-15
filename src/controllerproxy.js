@@ -1,4 +1,4 @@
-import Set from '../bower_components/core.js/library/fn/set';
+import Set from 'core-js/library/fn/set';
 import {checkMethod, checkParam} from './utils';
 
 export default class ControllerProxy{

@@ -1,5 +1,5 @@
 import Emitter from 'emitter-component';
-import Promise from '../bower_components/core.js/library/fn/promise';
+import Promise from 'core-js/library/fn/promise';
 import CommandFactory from './commands/commandFactory';
 import {exists, checkMethod, checkParam} from './utils';
 
