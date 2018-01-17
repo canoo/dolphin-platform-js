@@ -2883,7 +2883,8 @@ class ClientContextFactory {
     create(url, config){
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* checkMethod */])('connect(url, config)');
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* checkParam */])(url, 'url');
-        console.log('Creating client context '+ url +'    '+ JSON.stringify(config));
+        console.log('Dolphin Platform Version:' , "0.18.0");
+        console.log('Creating client context', url, JSON.stringify(config));
 
         let builder = Object(__WEBPACK_IMPORTED_MODULE_0__openDolphin_js__["a" /* makeDolphin */])().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
         if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(config)) {

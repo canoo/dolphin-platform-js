@@ -1,5 +1,6 @@
 const path = require('path');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const webpack = require('webpack');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -18,6 +19,9 @@ module.exports = {
         new UglifyJsPlugin({
             include: /\.min\.js$/,
             sourceMap: true
+        }),
+        new webpack.DefinePlugin({
+            DOLPHIN_PLATFORM_VERSION: JSON.stringify(require("./package.json").version)
         })
     ]
 };

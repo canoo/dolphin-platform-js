@@ -27,7 +27,8 @@ class ClientContextFactory {
     create(url, config){
         checkMethod('connect(url, config)');
         checkParam(url, 'url');
-        console.log('Creating client context '+ url +'    '+ JSON.stringify(config));
+        console.log('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
+        console.log('Creating client context', url, JSON.stringify(config));
 
         let builder = makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
         if (exists(config)) {
