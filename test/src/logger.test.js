@@ -1,0 +1,170 @@
+/*jslint browserify: true, mocha: true, expr: true */
+"use strict";
+
+import { expect } from 'chai';
+import sinon from 'sinon';
+
+import { LoggerFactory, LogLevel }  from '../../src/logger';
+
+describe('Logger', function() {
+
+    beforeEach(function() {
+
+    });
+
+    it('Logger is an object', function() {
+        let logger = LoggerFactory.getLogger();
+        expect(logger).to.be.an('object');
+    });
+
+    it('Logger has trace function', function() {
+        let logger = LoggerFactory.getLogger();
+        expect(logger.trace).to.be.an('function');
+    });
+
+    it('Logger has debug function', function() {
+        let logger = LoggerFactory.getLogger();
+        expect(logger.debug).to.be.an('function');
+    });
+
+    it('Logger has info function', function() {
+        let logger = LoggerFactory.getLogger();
+        expect(logger.info).to.be.an('function');
+    });
+
+    it('Logger has warn function', function() {
+        let logger = LoggerFactory.getLogger();
+        expect(logger.warn).to.be.an('function');
+    });
+
+    it('Logger has error function', function() {
+        let logger = LoggerFactory.getLogger();
+        expect(logger.error).to.be.an('function');
+    });
+
+    it('Log debug message', sinon.test(function() {
+            this.stub(console, 'debug');
+            let logger = LoggerFactory.getLogger();
+            logger.setLogLevel(LogLevel.DEBUG);
+            logger.debug('test');
+            expect(console.debug.calledOnce).to.be.true;
+            expect(console.debug.calledWith('DP', LogLevel.DEBUG.text, 'test')).to.be.true;
+        })
+    );
+
+    it('Log info message', sinon.test(function() {
+            this.stub(console, 'log');
+            let logger = LoggerFactory.getLogger();
+            logger.info('test');
+            expect(console.log.calledOnce).to.be.true;
+            expect(console.log.calledWith('DP', LogLevel.INFO.text, 'test')).to.be.true;
+        })
+    );
+
+    it('Log trace message', sinon.test(function() {
+            this.stub(console, 'log');
+            let logger = LoggerFactory.getLogger();
+            logger.setLogLevel(LogLevel.TRACE);
+            logger.trace('test');
+            expect(console.log.calledOnce).to.be.true;
+            expect(console.log.calledWith('DP', LogLevel.TRACE.text, 'test')).to.be.true;
+        })
+    );
+
+    it('Log error message', sinon.test(function() {
+            this.stub(console, 'error');
+            let logger = LoggerFactory.getLogger();
+            logger.error('test');
+            expect(console.error.calledOnce).to.be.true;
+            expect(console.error.calledWith('DP', LogLevel.ERROR.text, 'test')).to.be.true;
+        })
+    );
+
+    it('Log warn message', sinon.test(function() {
+            this.stub(console, 'warn');
+            let logger = LoggerFactory.getLogger();
+            logger.warn('test');
+            expect(console.warn.calledOnce).to.be.true;
+            expect(console.warn.calledWith('DP', LogLevel.WARN.text, 'test')).to.be.true;
+        })
+    );
+
+
+    ///
+    it('Do not log debug message', sinon.test(function() {
+            this.stub(console, 'debug');
+            let logger = LoggerFactory.getLogger();
+            logger.setLogLevel(LogLevel.INFO);
+            logger.debug('test');
+            expect(console.debug.calledOnce).to.be.false;
+        })
+    );
+
+    it('Do not log info message', sinon.test(function() {
+            this.stub(console, 'log');
+            let logger = LoggerFactory.getLogger();
+            logger.setLogLevel(LogLevel.WARN)
+            logger.info('test');
+            expect(console.log.calledOnce).to.be.false;
+        })
+    );
+
+    it('Do not log trace message', sinon.test(function() {
+            this.stub(console, 'log');
+            let logger = LoggerFactory.getLogger();
+            logger.setLogLevel(LogLevel.DEBUG);
+            logger.trace('test');
+            expect(console.log.calledOnce).to.be.false;
+        })
+    );
+
+    it('Do not log error message', sinon.test(function() {
+            this.stub(console, 'error');
+            let logger = LoggerFactory.getLogger();
+            logger.setLogLevel(LogLevel.NONE);
+            logger.error('test');
+            expect(console.error.calledOnce).to.be.false;
+        })
+    );
+
+    it('Do not log warn message', sinon.test(function() {
+            this.stub(console, 'warn');
+            let logger = LoggerFactory.getLogger();
+            logger.setLogLevel(LogLevel.ERROR);
+            logger.warn('test');
+            expect(console.warn.calledOnce).to.be.false;
+        })
+    );
+
+    it('Do not log', sinon.test(function() {
+            this.stub(console, 'warn');
+            this.stub(console, 'error');
+            this.stub(console, 'debug');
+            this.stub(console, 'log');
+            let logger = LoggerFactory.getLogger();
+            logger.setLogLevel(LogLevel.NONE);
+            logger.error('test');
+            expect(console.error.calledOnce).to.be.false;
+            logger.warn('test');
+            expect(console.warn.calledOnce).to.be.false;
+            logger.info('test');
+            expect(console.log.calledOnce).to.be.false;
+            logger.debug('test');
+            expect(console.debug.calledOnce).to.be.false;
+            logger.debug('trace');
+            expect(console.log.calledOnce).to.be.false;
+        })
+    );
+
+    it('Equal logger', function() {
+        let loggerA = LoggerFactory.getLogger('one');
+        let loggerB = LoggerFactory.getLogger('one');
+        expect(loggerA).to.be.equals(loggerB);
+    });
+
+    it('Not equal logger', function() {
+        let loggerA = LoggerFactory.getLogger('one');
+        let loggerB = LoggerFactory.getLogger('two');
+        expect(loggerA).not.to.be.equals(loggerB);
+    });
+});
