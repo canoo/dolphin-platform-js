@@ -4,8 +4,8 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
-        'dolphin-platform': './src/clientContextFactory.js',
-        'dolphin-platform.min': './src/clientContextFactory.js'
+        'dolphin-platform': './src/dolphinPlatform.js',
+        'dolphin-platform.min': './src/dolphinPlatform.js'
     },
     devtool: 'source-map',
     output: {
