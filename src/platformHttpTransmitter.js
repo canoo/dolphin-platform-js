@@ -6,7 +6,7 @@ import { DolphinRemotingError, HttpNetworkError, DolphinSessionError, HttpRespon
 import Codec from './commands/codec';
 import RemotingErrorHandler from './remotingErrorHandler';
 import {LoggerFactory, LogLevel} from './logger';
-import {VALUE_CHANGED_COMMAND_ID} from '../commandConstants';
+import {VALUE_CHANGED_COMMAND_ID} from './commands/commandConstants';
 
 const FINISHED = 4;
 const SUCCESS = 200;
