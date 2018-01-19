@@ -65,13 +65,6 @@ class Logger {
             case 'ERROR':
                 this.logLevel = LogLevel.ERROR;
                 break;
-            default:
-                if (exists(this.rootLogger)) {
-                    this.logLevel = this.rootLogger.getLogLevel();
-                } else {
-                    this.logLevel = LogLevel.INFO;
-                }
-                break;
         }
 
     }
@@ -107,37 +100,39 @@ class Logger {
     }
 
     getLogLevel() {
-        return this.logLevel;
+        if (exists(this.logLevel)) {
+            return this.logLevel;
+        } else if (exists(this.rootLogger)) {
+            return this.rootLogger.getLogLevel();
+        } else {
+            return LogLevel.INFO;
+        }
     }
 
     setLogLevel(level) {
-        if (exists(level)) {
-            this.logLevel = level;
-        } else {
-            this.logLevel = this.rootLogger.getLogLevel();
-        }
+        this.logLevel = level;
     }
 
     isLogLevel(level) {
-        if (this.logLevel === LogLevel.NONE) {
+        if (this.getLogLevel() === LogLevel.NONE) {
             return false;
         }
-        if (this.logLevel === LogLevel.ALL) {
+        if (this.getLogLevel() === LogLevel.ALL) {
             return true;
         }
-        if (this.logLevel === LogLevel.TRACE) {
+        if (this.getLogLevel() === LogLevel.TRACE) {
             return true;
         }
-        if (this.logLevel === LogLevel.DEBUG && level !== LogLevel.TRACE) {
+        if (this.getLogLevel() === LogLevel.DEBUG && level !== LogLevel.TRACE) {
             return true;
         }
-        if (this.logLevel === LogLevel.INFO && level !== LogLevel.TRACE && level !== LogLevel.DEBUG) {
+        if (this.getLogLevel() === LogLevel.INFO && level !== LogLevel.TRACE && level !== LogLevel.DEBUG) {
             return true;
         }
-        if (this.logLevel === LogLevel.WARN && level !== LogLevel.TRACE && level !== LogLevel.DEBUG && level !== LogLevel.INFO) {
+        if (this.getLogLevel() === LogLevel.WARN && level !== LogLevel.TRACE && level !== LogLevel.DEBUG && level !== LogLevel.INFO) {
             return true;
         }
-        if (this.logLevel === LogLevel.ERROR && level !== LogLevel.TRACE && level !== LogLevel.DEBUG && level !== LogLevel.INFO && level !== LogLevel.WARN) {
+        if (this.getLogLevel() === LogLevel.ERROR && level !== LogLevel.TRACE && level !== LogLevel.DEBUG && level !== LogLevel.INFO && level !== LogLevel.WARN) {
             return true;
         }
         return false;
@@ -145,13 +140,12 @@ class Logger {
 }
 
 const ROOT_LOGGER = new Logger('ROOT');
-ROOT_LOGGER.setLogLevel(LogLevel.INFO);
 
 class LoggerFactory {
 
 
     static getLogger(context) {
-        if (!exists(context)) {
+        if (!exists(context) || context === 'ROOT') {
             return ROOT_LOGGER;
         }
         let existingLogger = LOCALS.loggers.get(context);

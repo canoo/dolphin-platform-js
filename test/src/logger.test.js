@@ -138,6 +138,40 @@ describe('Logger', function() {
         })
     );
 
+    it('Do not log warn message, level set by ROOT Logger', sinon.test(function() {
+            this.stub(console, 'warn');
+            let rootLogger = LoggerFactory.getLogger();
+            rootLogger.setLogLevel(LogLevel.ERROR);
+            let logger = LoggerFactory.getLogger('someLogger');
+            logger.warn('test');
+            expect(console.warn.calledOnce).to.be.false;
+        })
+    );
+
+    it('Log trace message set by ROOT Logger', sinon.test(function() {
+            this.stub(console, 'log');
+            let rootLogger = LoggerFactory.getLogger();
+            rootLogger.setLogLevel(LogLevel.TRACE);
+            let logger = LoggerFactory.getLogger('someLogger');
+            logger.trace('test');
+            expect(console.log.calledOnce).to.be.true;
+            rootLogger.setLogLevel(LogLevel.INFO);
+            logger.trace('test');
+            expect(console.log.calledOnce).to.be.true;
+        })
+    );
+
+    it('Do not log trace message set by ROOT Logger', sinon.test(function() {
+            this.stub(console, 'log');
+            let rootLogger = LoggerFactory.getLogger();
+            rootLogger.setLogLevel(LogLevel.TRACE);
+            let logger = LoggerFactory.getLogger('someLogger');
+            logger.setLogLevel(LogLevel.INFO);
+            logger.trace('test');
+            expect(console.log.calledOnce).to.be.false;
+        })
+    );
+
     it('Do not log', sinon.test(function() {
             this.stub(console, 'warn');
             this.stub(console, 'error');
