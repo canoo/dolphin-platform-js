@@ -5,7 +5,8 @@ import { exists } from './utils';
 import { DolphinRemotingError, HttpNetworkError, DolphinSessionError, HttpResponseError } from './errors';
 import Codec from './commands/codec';
 import RemotingErrorHandler from './remotingErrorHandler';
-import {LoggerFactory} from './logger';
+import {LoggerFactory, LogLevel} from './logger';
+import {VALUE_CHANGED_COMMAND_ID} from '../commandConstants';
 
 const FINISHED = 4;
 const SUCCESS = 200;
@@ -92,7 +93,18 @@ export default class PlatformHttpTransmitter {
                     }
                 }
             }
+
             let encodedCommands = Codec.encode(commands);
+
+            if (this.logger.isLogLevelUseable(LogLevel.DEBUG) && !this.logger.isLogLevelUseable(LogLevel.TRACE)) {
+                for (let i = 0; i < commands.length; i++) {
+                    let command = commands[i];
+                    if (command.id === VALUE_CHANGED_COMMAND_ID) {
+                        this.logger.debug('_send', command, encodedCommands);
+                    }
+                }
+            }
+
             if (this.failed_attempt > this.maxRetry) {
                 setTimeout(function() {
                     this.logger.trace('_send', commands, encodedCommands);
