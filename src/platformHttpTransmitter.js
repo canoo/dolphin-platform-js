@@ -5,7 +5,7 @@ import { exists } from './utils';
 import { DolphinRemotingError, HttpNetworkError, DolphinSessionError, HttpResponseError } from './errors';
 import Codec from './commands/codec';
 import RemotingErrorHandler from './remotingErrorHandler';
-
+import {LoggerFactory} from './logger';
 
 const FINISHED = 4;
 const SUCCESS = 200;
@@ -17,6 +17,8 @@ const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
 export default class PlatformHttpTransmitter {
 
     constructor(url, config) {
+        this.logger = LoggerFactory.getLogger('PlatformHttpTransmitter');
+
         this.url = url;
         this.config = config;
         this.headersInfo = exists(config) ? config.headersInfo : null;
@@ -45,6 +47,7 @@ export default class PlatformHttpTransmitter {
 
             http.onreadystatechange = () => {
                 if (http.readyState === FINISHED){
+                    this.logger.trace('onreadystatechange', http);
                     switch (http.status) {
 
                         case SUCCESS:
@@ -89,12 +92,15 @@ export default class PlatformHttpTransmitter {
                     }
                 }
             }
+            let encodedCommands = Codec.encode(commands);
             if (this.failed_attempt > this.maxRetry) {
                 setTimeout(function() {
-                    http.send(Codec.encode(commands));
+                    this.logger.trace('_send', encodedCommands);
+                    http.send(encodedCommands);
                 }, this.timeout);
             }else{
-                http.send(Codec.encode(commands));
+                this.logger.trace('_send', encodedCommands);
+                http.send(encodedCommands);
             }
 
         });

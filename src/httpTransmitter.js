@@ -67,7 +67,9 @@ export default class HttpTransmitter {
         if ("overrideMimeType" in this.http) {
             this.http.overrideMimeType("application/json; charset=" + this.charset); // todo make injectable
         }
-        this.http.send(this.codec.encode(commands));
+        let encodedCommands = this.codec.encode([commands]);
+        this.logger.trace('transmit', encodedCommands);
+        this.http.send(encodedCommands);
     }
 
     setHeaders(httpReq) {
