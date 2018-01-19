@@ -2031,6 +2031,8 @@ class ClientPresentationModel {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LogLevel; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_core_js_library_fn_map__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_core_js_library_fn_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_core_js_library_fn_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__utils__ = __webpack_require__(0);
+
 
 
 // private methods
@@ -2040,60 +2042,102 @@ const LOCALS = {
         let func = args.shift();
         let name = args.shift();
         let logLevel = args.shift();
-        func(name, logLevel.text, ...args);
+        let date = new Date();
+        let dateString =  date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds();
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(name)) {
+            func(logLevel.text, dateString, name, ...args);
+        } else {
+            func(logLevel.text, dateString, ...args);
+        }
+
     },
-    loggers: new __WEBPACK_IMPORTED_MODULE_0_core_js_library_fn_map___default.a()
+    loggers: new __WEBPACK_IMPORTED_MODULE_0_core_js_library_fn_map___default.a(),
+    getCookie (name) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(window) && Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(window.document) && Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(window.document.cookie)) {
+            let value = '; ' + document.cookie;
+            let parts = value.split('; ' + name + '=');
+            if ( parts.length === 2 ) {
+                return parts.pop().split(';').shift();
+            }
+        }
+    }
 };
 
 
 // public
 const LogLevel = {
-    NONE: { name: 'NONE', text: 'NONE ' },
-    ALL: { name: 'ALL', text: 'ALL  ' },
-    TRACE: { name: 'TRACE', text: 'TRACE' },
-    DEBUG: { name: 'DEBUG', text: 'DEBUG' },
-    INFO: { name: 'INFO', text: 'INFO ' },
-    WARN: { name: 'WARN', text: 'WARN ' },
-    ERROR: { name: 'ERROR', text: 'ERROR ' },
+    NONE: { name: 'NONE', text: '[NONE ]' },
+    ALL: { name: 'ALL', text: '[ALL  ]' },
+    TRACE: { name: 'TRACE', text: '[TRACE]' },
+    DEBUG: { name: 'DEBUG', text: '[DEBUG]' },
+    INFO: { name: 'INFO', text: '[INFO ]' },
+    WARN: { name: 'WARN', text: '[WARN ]' },
+    ERROR: { name: 'ERROR', text: '[ERROR]' },
 };
 
 class Logger {
 
-    constructor(name) {
-        if (name) {
-            this.name = 'DP.' + name;
-        } else {
-            this.name = 'DP';
+    constructor(context, name) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(name)) {
+            this.name = name;
         }
-        this.logLevel = LogLevel.INFO;
+        this.context = context;
+        let cookieLogLevel = LOCALS.getCookie('DOLPHIN_PLATFORM_' + this.context);
+        switch (cookieLogLevel) {
+            case 'NONE':
+                this.logLevel = LogLevel.NONE;
+                break;
+            case 'ALL':
+                this.logLevel = LogLevel.ALL;
+                break;
+            case 'TRACE':
+                this.logLevel = LogLevel.TRACE;
+                break;
+            case 'DEBUG':
+                this.logLevel = LogLevel.DEBUG;
+                break;
+            case 'INFO':
+                this.logLevel = LogLevel.INFO;
+                break;
+            case 'WARN':
+                this.logLevel = LogLevel.WARN;
+                break;
+            case 'ERROR':
+                this.logLevel = LogLevel.ERROR;
+                break;
+            default:
+                this.logLevel = LogLevel.INFO;
+                break;
+        }
+
     }
 
     trace() {
-        if (this.isLogLevel(LogLevel.TRACE)) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(console) && this.isLogLevel(LogLevel.TRACE)) {
             LOCALS.internalLog(console.log, this.name, LogLevel.TRACE, ...arguments);
         }
     };
 
     debug() {
-        if (this.isLogLevel(LogLevel.DEBUG)) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(console) && this.isLogLevel(LogLevel.DEBUG)) {
             LOCALS.internalLog(console.debug, this.name, LogLevel.DEBUG, ...arguments);
         }
     };
 
     info() {
-        if (this.isLogLevel(LogLevel.INFO)) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(console) && this.isLogLevel(LogLevel.INFO)) {
             LOCALS.internalLog(console.log, this.name, LogLevel.INFO, ...arguments);
         }
     };
 
     warn() {
-        if (this.isLogLevel(LogLevel.WARN)) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(console) && this.isLogLevel(LogLevel.WARN)) {
             LOCALS.internalLog(console.warn, this.name, LogLevel.WARN, ...arguments);
         }
     };
 
     error() {
-        if (this.isLogLevel(LogLevel.ERROR)) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(console) && this.isLogLevel(LogLevel.ERROR)) {
             LOCALS.internalLog(console.error, this.name, LogLevel.ERROR, ...arguments);
         }
     }
@@ -2136,15 +2180,15 @@ class LoggerFactory {
 
 
     static getLogger(context, name) {
-        if (!context) {
-            return new Logger(name);
+        if (!Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(context)) {
+            return new Logger('ROOT', name);
         }
         let existingLogger = LOCALS.loggers.get(context);
         if (existingLogger) {
             return existingLogger;
         }
 
-        let logger = new Logger(name);
+        let logger = new Logger(context, name);
         LOCALS.loggers.set(context, logger);
         return logger;
     }
@@ -3038,7 +3082,7 @@ class ClientContextFactory {
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["a" /* checkMethod */])('connect(url, config)');
         Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* checkParam */])(url, 'url');
         this.logger.info('Dolphin Platform Version:' , "0.18.0");
-        this.logger.info('Creating client context', url, JSON.stringify(config));
+        this.logger.info('Creating client context', url, config);
 
         let builder = Object(__WEBPACK_IMPORTED_MODULE_0__openDolphin_js__["a" /* makeDolphin */])().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
         if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(config)) {
@@ -3064,6 +3108,9 @@ class ClientContextFactory {
         let controllerManager = new __WEBPACK_IMPORTED_MODULE_6__controllermanager__["a" /* default */](dolphin, classRepository, connector);
 
         let clientContext = new __WEBPACK_IMPORTED_MODULE_7__clientcontext__["a" /* default */](dolphin, beanManager, controllerManager, connector);
+
+        this.logger.debug('clientContext created with', clientContext);
+
         return clientContext;
     }
 }

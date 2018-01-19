@@ -33,7 +33,7 @@ class ClientContextFactory {
         checkMethod('connect(url, config)');
         checkParam(url, 'url');
         this.logger.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
-        this.logger.info('Creating client context', url, JSON.stringify(config));
+        this.logger.info('Creating client context', url, config);
 
         let builder = makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
         if (exists(config)) {
@@ -59,6 +59,9 @@ class ClientContextFactory {
         let controllerManager = new ControllerManager(dolphin, classRepository, connector);
 
         let clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
+
+        this.logger.debug('clientContext created with', clientContext);
+
         return clientContext;
     }
 }
