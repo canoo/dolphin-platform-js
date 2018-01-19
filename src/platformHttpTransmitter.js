@@ -95,11 +95,11 @@ export default class PlatformHttpTransmitter {
             let encodedCommands = Codec.encode(commands);
             if (this.failed_attempt > this.maxRetry) {
                 setTimeout(function() {
-                    this.logger.trace('_send', encodedCommands);
+                    this.logger.trace('_send', commands, encodedCommands);
                     http.send(encodedCommands);
                 }, this.timeout);
             }else{
-                this.logger.trace('_send', encodedCommands);
+                this.logger.trace('_send', commands, encodedCommands);
                 http.send(encodedCommands);
             }
 

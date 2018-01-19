@@ -68,7 +68,7 @@ export default class HttpTransmitter {
             this.http.overrideMimeType("application/json; charset=" + this.charset); // todo make injectable
         }
         let encodedCommands = this.codec.encode([commands]);
-        this.logger.trace('transmit', encodedCommands);
+        this.logger.trace('transmit', commands, encodedCommands);
         this.http.send(encodedCommands);
     }
 
@@ -96,7 +96,7 @@ export default class HttpTransmitter {
         this.sig.open('POST', this.url, true);
         this.setHeaders(this.sig);
         let encodedCommand = this.codec.encode([command]);
-        this.logger.trace('signal', encodedCommand);
+        this.logger.trace('signal', command, encodedCommand);
         this.sig.send(encodedCommand);
     }
 
