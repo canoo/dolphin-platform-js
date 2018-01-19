@@ -6264,13 +6264,12 @@ class PlatformHttpTransmitter {
                 }
             }
 
+            this.logger.trace('_send', commands, encodedCommands);
             if (this.failed_attempt > this.maxRetry) {
                 setTimeout(function() {
-                    this.logger.trace('_send', commands, encodedCommands);
                     http.send(encodedCommands);
                 }, this.timeout);
             }else{
-                this.logger.trace('_send', commands, encodedCommands);
                 http.send(encodedCommands);
             }
 
