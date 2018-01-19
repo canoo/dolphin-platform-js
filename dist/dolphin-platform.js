@@ -185,13 +185,20 @@ const PM_ATTRIBUTES = "a";
 
 // private methods
 const LOCALS = {
+    pad (text, size) {
+        let result = '' + text;
+        while (result.length < size) {
+            result = '0' + result;
+        }
+        return result;
+    },
     internalLog () {
         let args = Array.from(arguments);
         let func = args.shift();
         let context = args.shift();
         let logLevel = args.shift();
         let date = new Date();
-        let dateString =  date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds();
+        let dateString =  date.getFullYear() + '-' + LOCALS.pad(date.getMonth(), 2) + '-' + LOCALS.pad(date.getDate(), 2) + ' ' + LOCALS.pad(date.getHours(), 2) + ':' + LOCALS.pad(date.getMinutes(), 2) + ':' + LOCALS.pad(date.getSeconds(), 2) + '.' + LOCALS.pad(date.getMilliseconds(), 3);
         func(dateString, logLevel.text, context, ...args);
 
     },
@@ -4512,7 +4519,7 @@ class HttpTransmitter {
             this.http.overrideMimeType("application/json; charset=" + this.charset); // todo make injectable
         }
         let encodedCommands = this.codec.encode([commands]);
-        this.logger.trace('transmit', encodedCommands);
+        this.logger.trace('transmit', commands, encodedCommands);
         this.http.send(encodedCommands);
     }
 
@@ -4540,7 +4547,7 @@ class HttpTransmitter {
         this.sig.open('POST', this.url, true);
         this.setHeaders(this.sig);
         let encodedCommand = this.codec.encode([command]);
-        this.logger.trace('signal', encodedCommand);
+        this.logger.trace('signal', command, encodedCommand);
         this.sig.send(encodedCommand);
     }
 
@@ -6222,11 +6229,11 @@ class PlatformHttpTransmitter {
             let encodedCommands = __WEBPACK_IMPORTED_MODULE_3__commands_codec__["a" /* default */].encode(commands);
             if (this.failed_attempt > this.maxRetry) {
                 setTimeout(function() {
-                    this.logger.trace('_send', encodedCommands);
+                    this.logger.trace('_send', commands, encodedCommands);
                     http.send(encodedCommands);
                 }, this.timeout);
             }else{
-                this.logger.trace('_send', encodedCommands);
+                this.logger.trace('_send', commands, encodedCommands);
                 http.send(encodedCommands);
             }
 
