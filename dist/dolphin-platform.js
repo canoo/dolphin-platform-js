@@ -6187,12 +6187,12 @@ class PlatformHttpTransmitter {
             const http = new XMLHttpRequest();
             http.withCredentials = true;
             http.onerror = (errorContent) => {
+                this.logger.error('HTTP network error', errorContent);
                 this._handleError(reject, new __WEBPACK_IMPORTED_MODULE_2__errors__["c" /* HttpNetworkError */]('PlatformHttpTransmitter: Network error', errorContent));
             };
 
             http.onreadystatechange = () => {
                 if (http.readyState === FINISHED){
-                    this.logger.trace('onreadystatechange', http);
                     switch (http.status) {
 
                         case SUCCESS:
@@ -6207,11 +6207,13 @@ class PlatformHttpTransmitter {
                             } else {
                                 this._handleError(reject, new __WEBPACK_IMPORTED_MODULE_2__errors__["b" /* DolphinSessionError */]('PlatformHttpTransmitter: Server did not send a clientId'));
                             }
+                            this.logger.trace('HTTP response with SUCCESS', currentClientId, http.responseText);
                             resolve(http.responseText);
                             break;
                         }
 
                         case REQUEST_TIMEOUT:
+                            this.logger.error('HTTP request timeout');
                             this._handleError(reject, new __WEBPACK_IMPORTED_MODULE_2__errors__["b" /* DolphinSessionError */]('PlatformHttpTransmitter: Session Timeout'));
                             break;
 
@@ -6219,6 +6221,7 @@ class PlatformHttpTransmitter {
                             if(this.failed_attempt <= this.maxRetry){
                                 this.failed_attempt = this.failed_attempt + 1;
                             }
+                            this.logger.error('HTTP unsupported status, with HTTP status', http.status);
                             this._handleError(reject, new __WEBPACK_IMPORTED_MODULE_2__errors__["d" /* HttpResponseError */]('PlatformHttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
                             break;
                     }
