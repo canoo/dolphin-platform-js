@@ -44,6 +44,36 @@ describe('Logger', function() {
         expect(logger.error).to.be.an('function');
     });
 
+    it('Is correct LogLevel useable', function() {
+        let logger = LoggerFactory.getLogger();
+        logger.setLogLevel(LogLevel.DEBUG);
+        expect(logger.isLogLevelUseable(LogLevel.ERROR)).to.be.true;
+        expect(logger.isLogLevelUseable(LogLevel.WARN)).to.be.true;
+        expect(logger.isLogLevelUseable(LogLevel.INFO)).to.be.true;
+        expect(logger.isLogLevelUseable(LogLevel.DEBUG)).to.be.true;
+        expect(logger.isLogLevelUseable(LogLevel.TRACE)).to.be.false;
+    });
+
+    it('Is correct LogLevel useable', function() {
+        let logger = LoggerFactory.getLogger();
+        logger.setLogLevel(LogLevel.ERROR);
+        expect(logger.isLogLevelUseable(LogLevel.ERROR)).to.be.true;
+        expect(logger.isLogLevelUseable(LogLevel.WARN)).to.be.false;
+        expect(logger.isLogLevelUseable(LogLevel.INFO)).to.be.false;
+        expect(logger.isLogLevelUseable(LogLevel.DEBUG)).to.be.false;
+        expect(logger.isLogLevelUseable(LogLevel.TRACE)).to.be.false;
+    });
+
+    it('Is correct LogLevel useable', function() {
+        let logger = LoggerFactory.getLogger();
+        logger.setLogLevel(LogLevel.ALL);
+        expect(logger.isLogLevelUseable(LogLevel.ERROR)).to.be.true;
+        expect(logger.isLogLevelUseable(LogLevel.WARN)).to.be.true;
+        expect(logger.isLogLevelUseable(LogLevel.INFO)).to.be.true;
+        expect(logger.isLogLevelUseable(LogLevel.DEBUG)).to.be.true;
+        expect(logger.isLogLevelUseable(LogLevel.TRACE)).to.be.true;
+    });
+
     it('Log debug message', sinon.test(function() {
             this.stub(console, 'log');
             let logger = LoggerFactory.getLogger();

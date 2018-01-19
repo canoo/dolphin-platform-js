@@ -1,5 +1,5 @@
 import  Map from 'core-js/library/fn/map';
-import { exists } from './utils'
+import {checkParam, exists} from './utils'
 
 // private methods
 const LOCALS = {
@@ -35,13 +35,13 @@ const LOCALS = {
 
 // public
 const LogLevel = {
-    NONE: { name: 'NONE', text: '[NONE ]' },
-    ALL: { name: 'ALL', text: '[ALL  ]' },
-    TRACE: { name: 'TRACE', text: '[TRACE]' },
-    DEBUG: { name: 'DEBUG', text: '[DEBUG]' },
-    INFO: { name: 'INFO', text: '[INFO ]' },
-    WARN: { name: 'WARN', text: '[WARN ]' },
-    ERROR: { name: 'ERROR', text: '[ERROR]' },
+    NONE: { name: 'NONE', text: '[NONE ]', level: 0 },
+    ALL: { name: 'ALL', text: '[ALL  ]', level: 100 },
+    TRACE: { name: 'TRACE', text: '[TRACE]', level: 5 },
+    DEBUG: { name: 'DEBUG', text: '[DEBUG]', level: 4 },
+    INFO: { name: 'INFO', text: '[INFO ]', level: 3 },
+    WARN: { name: 'WARN', text: '[WARN ]', level: 2 },
+    ERROR: { name: 'ERROR', text: '[ERROR]', level: 1 },
 };
 
 class Logger {
@@ -143,6 +143,15 @@ class Logger {
             return true;
         }
         return false;
+    }
+
+    isLogLevelUseable(level) {
+        checkParam(level, 'level');
+        if (level.level) {
+            return this.getLogLevel().level >= level.level;
+        } else {
+            return false;
+        }
     }
 }
 
