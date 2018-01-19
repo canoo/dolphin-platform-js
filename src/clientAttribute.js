@@ -1,11 +1,9 @@
 import EventBus from './eventBus';
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 
 export default class ClientAttribute {
 
     constructor(propertyName, qualifier, value) {
-
-        this.logger = LoggerFactory.getLogger('ClientAttribute');
 
         this.propertyName = propertyName;
         this.id = "" + (ClientAttribute.clientAttributeInstanceCount++) + "C";
@@ -91,7 +89,7 @@ export default class ClientAttribute {
             result = value.valueOf();
         }
         if (result instanceof ClientAttribute) {
-            this.logger.warn("An Attribute may not itself contain an attribute as a value. Assuming you forgot to call value.");
+            ClientAttribute.LOGGER.warn("An Attribute may not itself contain an attribute as a value. Assuming you forgot to call value.");
             result = this.checkValue(value.value);
         }
         let ok = false;
@@ -106,5 +104,6 @@ export default class ClientAttribute {
 
 }
 
+ClientAttribute.LOGGER = LoggerFactory.getLogger('ClientAttribute');
 ClientAttribute.SUPPORTED_VALUE_TYPES = ["string", "number", "boolean"];
 ClientAttribute.clientAttributeInstanceCount = 0;

@@ -1,13 +1,11 @@
 import BlindCommandBatcher from './commandBatcher';
 import Codec from './commands/codec';
 import ClientPresentationModel from './clientPresentationModel'
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 
 export default class ClientConnector {
 
     constructor(transmitter, clientDolphin, slackMS = 0, maxBatchSize = 50) {
-
-        this.logger = LoggerFactory.getLogger('ClientConnector');
 
         this.commandQueue = [];
         this.currentlySending = false;
@@ -92,7 +90,7 @@ export default class ClientConnector {
             return this.handleAttributeMetadataChangedCommand(command);
         }
         else {
-            this.logger.error("Cannot handle, unknown command " + command);
+            ClientConnector.LOGGER.error("Cannot handle, unknown command " + command);
         }
         return null;
     }
@@ -130,7 +128,7 @@ export default class ClientConnector {
     handleValueChangedCommand(serverCommand) {
         let clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
         if (!clientAttribute) {
-            this.logger.warn("attribute with id " + serverCommand.attributeId + " not found, cannot update to new value " + serverCommand.newValue);
+            ClientConnector.LOGGER.error("attribute with id " + serverCommand.attributeId + " not found, cannot update to new value " + serverCommand.newValue);
             return null;
         }
         if (clientAttribute.getValue() === serverCommand.newValue) {
@@ -179,3 +177,5 @@ export default class ClientConnector {
         this.transmitter.signal(this.releaseCommand);
     }
 }
+
+ClientConnector.LOGGER = LoggerFactory.getLogger('ClientConnector');

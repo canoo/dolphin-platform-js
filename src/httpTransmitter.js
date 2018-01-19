@@ -1,10 +1,9 @@
 import Codec from './commands/codec'
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 
 export default class HttpTransmitter {
 
     constructor(url, reset = true, charset = "UTF-8", errorHandler = null, supportCORS = false, headersInfo = null) {
-        this.logger = LoggerFactory.getLogger('HttpTransmitter');
 
         this.url = url;
         this.charset = charset;
@@ -25,7 +24,7 @@ export default class HttpTransmitter {
         }
         this.codec = new Codec();
         if (reset) {
-            this.logger.warn('HttpTransmitter.invalidate() is deprecated. Use ClientDolphin.reset(OnSuccessHandler) instead');
+            HttpTransmitter.LOGGER.error('HttpTransmitter.invalidate() is deprecated. Use ClientDolphin.reset(OnSuccessHandler) instead');
             this.invalidate();
         }
     }
@@ -45,8 +44,7 @@ export default class HttpTransmitter {
                             onDone(responseCommands);
                         }
                         catch (err) {
-                            this.logger.error("Error occurred parsing responseText: ", err);
-                            this.logger.error("Incorrect responseText: ", responseText);
+                            HttpTransmitter.LOGGER.error("Error occurred parsing responseText: ", err, responseText);
                             this.handleError('application', "HttpTransmitter: Incorrect responseText: " + responseText);
                             onDone([]);
                         }
@@ -68,7 +66,7 @@ export default class HttpTransmitter {
             this.http.overrideMimeType("application/json; charset=" + this.charset); // todo make injectable
         }
         let encodedCommands = this.codec.encode([commands]);
-        this.logger.trace('transmit', commands, encodedCommands);
+        HttpTransmitter.LOGGER.trace('transmitting', commands, encodedCommands);
         this.http.send(encodedCommands);
     }
 
@@ -88,7 +86,7 @@ export default class HttpTransmitter {
             this.errorHandler(errorEvent);
         }
         else {
-            this.logger.error("Error occurred: ", errorEvent);
+            HttpTransmitter.LOGGER.error("Error occurred: ", errorEvent);
         }
     }
 
@@ -96,7 +94,7 @@ export default class HttpTransmitter {
         this.sig.open('POST', this.url, true);
         this.setHeaders(this.sig);
         let encodedCommand = this.codec.encode([command]);
-        this.logger.trace('signal', command, encodedCommand);
+        HttpTransmitter.LOGGER.trace('signal', command, encodedCommand);
         this.sig.send(encodedCommand);
     }
 
@@ -105,3 +103,5 @@ export default class HttpTransmitter {
         this.http.send();
     }
 }
+
+HttpTransmitter.LOGGER = LoggerFactory.getLogger('HttpTransmitter');

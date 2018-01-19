@@ -3,7 +3,7 @@ import ClientDolphin from './clientDolphin'
 import ClientModelStore from './clientModelStore'
 import HttpTransmitter from './httpTransmitter'
 import NoTransmitter from './noTransmitter'
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 
 
 export default class DolphinBuilder {
@@ -13,7 +13,6 @@ export default class DolphinBuilder {
         this.slackMS_ = 300;
         this.maxBatchSize_ = 50;
         this.supportCORS_ = false;
-        this.logger = LoggerFactory.getLogger('DolphinBuilder');
     }
 
     url(url) {
@@ -52,7 +51,6 @@ export default class DolphinBuilder {
     }
 
     build() {
-        this.logger.info("OpenDolphin js found");
         let clientDolphin = new ClientDolphin();
         let transmitter;
         if (this.url_ != null && this.url_.length > 0) {
@@ -63,8 +61,10 @@ export default class DolphinBuilder {
         }
         clientDolphin.setClientConnector(new ClientConnector(transmitter, clientDolphin, this.slackMS_, this.maxBatchSize_));
         clientDolphin.setClientModelStore(new ClientModelStore(clientDolphin));
-        this.logger.info("ClientDolphin initialized");
-        this.logger.debug("clientDolphin", clientDolphin);
+        DolphinBuilder.LOGGER.debug("ClientDolphin initialized");
+        DolphinBuilder.LOGGER.debug("clientDolphin", clientDolphin);
         return clientDolphin;
     }
 }
+
+DolphinBuilder.LOGGER = LoggerFactory.getLogger('DolphinBuilder');

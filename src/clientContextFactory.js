@@ -15,7 +15,7 @@
 
 import {makeDolphin} from './openDolphin.js';
 import {exists, checkMethod, checkParam} from './utils';
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 import Connector from './connector';
 import BeanManager from './beanmanager';
 import ClassRepository from './classrepo';
@@ -25,15 +25,11 @@ import PlatformHttpTransmitter from './platformHttpTransmitter';
 
 class ClientContextFactory {
 
-    constructor() {
-        this.logger = LoggerFactory.getLogger('ClientContextFactory');
-    }
-
     create(url, config){
         checkMethod('connect(url, config)');
         checkParam(url, 'url');
-        this.logger.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
-        this.logger.info('Creating client context', url, config);
+        ClientContextFactory.LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
+        ClientContextFactory.LOGGER.debug('Creating client context', url, config);
 
         let builder = makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
         if (exists(config)) {
@@ -60,11 +56,13 @@ class ClientContextFactory {
 
         let clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
 
-        this.logger.debug('clientContext created with', clientContext);
+        ClientContextFactory.LOGGER.debug('clientContext created with', clientContext);
 
         return clientContext;
     }
 }
+
+ClientContextFactory.LOGGER = LoggerFactory.getLogger('ClientContextFactory');
 
 let createClientContext = new ClientContextFactory().create;
 

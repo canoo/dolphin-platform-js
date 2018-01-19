@@ -1,7 +1,7 @@
 import  Map from 'core-js/library/fn/map';
 import * as consts from './constants';
 import {exists, checkMethod, checkParam} from './utils';
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 
 let blocked = null;
 
@@ -10,8 +10,6 @@ export default class ClassRepository {
     constructor(dolphin) {
         checkMethod('ClassRepository(dolphin)');
         checkParam(dolphin, 'dolphin');
-
-        this.logger = LoggerFactory.getLogger('ClassRepository');
 
         this.dolphin = dolphin;
         this.classes = new Map();
@@ -120,7 +118,7 @@ export default class ClassRepository {
                 try {
                     handler(type, bean, propertyName, [], undefined);
                 } catch (e) {
-                    this.logger.warn('An exception occurred while calling an onBeanUpdate-handler', e);
+                    ClassRepository.LOGGER.error('An exception occurred while calling an onBeanUpdate-handler', e);
                 }
             });
         }
@@ -250,7 +248,7 @@ export default class ClassRepository {
                         try {
                             handler(model.presentationModelType, bean, attribute.propertyName, newValue, oldValue);
                         } catch (e) {
-                            this.logger.warn('An exception occurred while calling an onBeanUpdate-handler', e);
+                            ClassRepository.LOGGER.error('An exception occurred while calling an onBeanUpdate-handler', e);
                         }
                     });
                 }
@@ -263,7 +261,7 @@ export default class ClassRepository {
             try {
                 handler(model.presentationModelType, bean);
             } catch (e) {
-                this.logger.warn('An exception occurred while calling an onBeanAdded-handler', e);
+                ClassRepository.LOGGER.error('An exception occurred while calling an onBeanAdded-handler', e);
             }
         });
         return bean;
@@ -282,7 +280,7 @@ export default class ClassRepository {
                 try {
                     handler(model.presentationModelType, bean);
                 } catch (e) {
-                    this.logger.warn('An exception occurred while calling an onBeanRemoved-handler', e);
+                    ClassRepository.LOGGER.error('An exception occurred while calling an onBeanRemoved-handler', e);
                 }
             });
         }
@@ -321,7 +319,7 @@ export default class ClassRepository {
                         try {
                             handler(type, bean, attribute.value, from.value, to.value - from.value, newElements);
                         } catch (e) {
-                            this.logger.warn('An exception occurred while calling an onArrayUpdate-handler', e);
+                            ClassRepository.LOGGER.error('An exception occurred while calling an onArrayUpdate-handler', e);
                         }
                     });
                 } finally {
@@ -361,3 +359,5 @@ export default class ClassRepository {
         return this.fromDolphin(this, consts.DOLPHIN_BEAN, value);
     }
 }
+
+ClassRepository.LOGGER = LoggerFactory.getLogger('ClassRepository');

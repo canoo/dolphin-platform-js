@@ -1,5 +1,5 @@
-import  Map from 'core-js/library/fn/map';
-import {checkParam, exists} from './utils'
+import {checkParam, exists} from '../utils'
+import { LogLevel } from "./constants";
 
 // private methods
 const LOCALS = {
@@ -20,7 +20,6 @@ const LOCALS = {
         func(dateString, logLevel.text, context, ...args);
 
     },
-    loggers: new Map(),
     getCookie (name) {
         if (exists(window) && exists(window.document) && exists(window.document.cookie)) {
             let value = '; ' + document.cookie;
@@ -34,16 +33,6 @@ const LOCALS = {
 
 
 // public
-const LogLevel = {
-    NONE: { name: 'NONE', text: '[NONE ]', level: 0 },
-    ALL: { name: 'ALL', text: '[ALL  ]', level: 100 },
-    TRACE: { name: 'TRACE', text: '[TRACE]', level: 5 },
-    DEBUG: { name: 'DEBUG', text: '[DEBUG]', level: 4 },
-    INFO: { name: 'INFO', text: '[INFO ]', level: 3 },
-    WARN: { name: 'WARN', text: '[WARN ]', level: 2 },
-    ERROR: { name: 'ERROR', text: '[ERROR]', level: 1 },
-};
-
 class Logger {
 
     constructor(context, rootLogger) {
@@ -161,26 +150,4 @@ class Logger {
     }
 }
 
-const ROOT_LOGGER = new Logger('ROOT');
-
-class LoggerFactory {
-
-
-    static getLogger(context) {
-        if (!exists(context) || context === 'ROOT') {
-            return ROOT_LOGGER;
-        }
-        let existingLogger = LOCALS.loggers.get(context);
-        if (existingLogger) {
-            return existingLogger;
-        }
-
-        let logger = new Logger(context, ROOT_LOGGER);
-        LOCALS.loggers.set(context, logger);
-        return logger;
-    }
-}
-
-
-
-export { LoggerFactory, LogLevel };
+export { Logger };

@@ -1,6 +1,6 @@
 import Set from 'core-js/library/fn/set';
 import {checkMethod, checkParam} from './utils';
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 
 export default class ControllerProxy {
 
@@ -9,8 +9,6 @@ export default class ControllerProxy {
         checkParam(controllerId, 'controllerId');
         checkParam(model, 'model');
         checkParam(manager, 'manager');
-
-        this.logger = LoggerFactory.getLogger('ControllerProxy');
 
         this.controllerId = controllerId;
         this.model = model;
@@ -50,7 +48,7 @@ export default class ControllerProxy {
             try {
                 handler(this);
             } catch(e) {
-                this.logger.warn('An exception occurred while calling an onDestroyed-handler', e);
+                ControllerProxy.LOGGER.error('An exception occurred while calling an onDestroyed-handler', e);
             }
         }, this);
         return this.manager.destroyController(this);
@@ -69,3 +67,5 @@ export default class ControllerProxy {
         };
     }
 }
+
+ControllerProxy.LOGGER = LoggerFactory.getLogger('ControllerProxy');

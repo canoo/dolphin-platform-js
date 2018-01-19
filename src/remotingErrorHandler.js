@@ -1,13 +1,11 @@
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 
 export default class RemotingErrorHandler {
 
-    constructor() {
-        this.logger = LoggerFactory.getLogger('RemotingErrorHandler');
-    }
-
     onError(error) {
-        this.logger.error(error);
+        RemotingErrorHandler.LOGGER.error(error);
     }
 
 }
+
+RemotingErrorHandler.LOGGER = LoggerFactory.getLogger('RemotingErrorHandler');

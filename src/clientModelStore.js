@@ -2,12 +2,11 @@ import Attribute from './attribute'
 import EventBus from './eventBus'
 import CommandFactory from './commands/commandFactory';
 import {ADDED_TYPE, REMOVED_TYPE} from './constants'
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 
 export default class ClientModelStore {
 
     constructor(clientDolphin) {
-        this.logger = LoggerFactory.getLogger('ClientModelStore');
 
         this.clientDolphin = clientDolphin;
         this.presentationModels = new Map();
@@ -54,7 +53,7 @@ export default class ClientModelStore {
             return false;
         }
         if (this.presentationModels.has(model.id)) {
-            this.logger.warn("There already is a PM with id " + model.id);
+            ClientModelStore.LOGGER.error("There already is a PM with id " + model.id);
         }
         let added = false;
         if (!this.presentationModels.has(model.id)) {
@@ -258,4 +257,6 @@ export default class ClientModelStore {
         });
     }
 }
+
+ClientModelStore.LOGGER = LoggerFactory.getLogger('ClientModelStore');
 

@@ -1,14 +1,12 @@
 import  Map from 'core-js/library/fn/map';
 import {exists, checkMethod, checkParam} from './utils';
-import {LoggerFactory} from './logger';
+import { LoggerFactory } from './logging';
 
 export default class BeanManager {
 
     constructor(classRepository) {
         checkMethod('BeanManager(classRepository)');
         checkParam(classRepository, 'classRepository');
-
-        this.logger = LoggerFactory.getLogger('BeanManager');
 
         this.classRepository = classRepository;
         this.addedHandlers = new Map();
@@ -28,7 +26,7 @@ export default class BeanManager {
                     try {
                         handler(bean);
                     } catch (e) {
-                        this.logger.warn('An exception occurred while calling an onBeanAdded-handler for type', type, e);
+                        BeanManager.LOGGER.error('An exception occurred while calling an onBeanAdded-handler for type', type, e);
                     }
                 });
             }
@@ -36,7 +34,7 @@ export default class BeanManager {
                 try {
                     handler(bean);
                 } catch (e) {
-                    this.logger.warn('An exception occurred while calling a general onBeanAdded-handler', e);
+                    BeanManager.LOGGER.error('An exception occurred while calling a general onBeanAdded-handler', e);
                 }
             });
         });
@@ -47,7 +45,7 @@ export default class BeanManager {
                     try {
                         handler(bean);
                     } catch (e) {
-                        this.logger.warn('An exception occurred while calling an onBeanRemoved-handler for type', type, e);
+                        BeanManager.LOGGER.error('An exception occurred while calling an onBeanRemoved-handler for type', type, e);
                     }
                 });
             }
@@ -55,7 +53,7 @@ export default class BeanManager {
                 try {
                     handler(bean);
                 } catch (e) {
-                    this.logger.warn('An exception occurred while calling a general onBeanRemoved-handler', e);
+                    BeanManager.LOGGER.error('An exception occurred while calling a general onBeanRemoved-handler', e);
                 }
             });
         });
@@ -66,7 +64,7 @@ export default class BeanManager {
                     try {
                         handler(bean, propertyName, newValue, oldValue);
                     } catch (e) {
-                        this.logger.warn('An exception occurred while calling an onBeanUpdate-handler for type', type, e);
+                        BeanManager.LOGGER.error('An exception occurred while calling an onBeanUpdate-handler for type', type, e);
                     }
                 });
             }
@@ -74,7 +72,7 @@ export default class BeanManager {
                 try {
                     handler(bean, propertyName, newValue, oldValue);
                 } catch (e) {
-                    this.logger.warn('An exception occurred while calling a general onBeanUpdate-handler', e);
+                    BeanManager.LOGGER.error('An exception occurred while calling a general onBeanUpdate-handler', e);
                 }
             });
         });
@@ -85,7 +83,7 @@ export default class BeanManager {
                     try {
                         handler(bean, propertyName, index, count, newElements);
                     } catch (e) {
-                        this.logger.warn('An exception occurred while calling an onArrayUpdate-handler for type', type, e);
+                        BeanManager.LOGGER.error('An exception occurred while calling an onArrayUpdate-handler for type', type, e);
                     }
                 });
             }
@@ -93,7 +91,7 @@ export default class BeanManager {
                 try {
                     handler(bean, propertyName, index, count, newElements);
                 } catch (e) {
-                    this.logger.warn('An exception occurred while calling a general onArrayUpdate-handler', e);
+                    BeanManager.LOGGER.error('An exception occurred while calling a general onArrayUpdate-handler', e);
                 }
             });
         });
@@ -342,3 +340,5 @@ export default class BeanManager {
         }
     }
 }
+
+BeanManager.LOGGER = LoggerFactory.getLogger('BeanManager');
