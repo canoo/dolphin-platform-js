@@ -6,6 +6,8 @@ import sinon from 'sinon';
 
 import { LoggerFactory, LogLevel }  from '../../src/logger';
 
+const dateMatch = /[0-9]{4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}.[0-9]{1,4}/;
+
 describe('Logger', function() {
 
     beforeEach(function() {
@@ -48,7 +50,7 @@ describe('Logger', function() {
             logger.setLogLevel(LogLevel.DEBUG);
             logger.debug('test');
             expect(console.debug.calledOnce).to.be.true;
-            expect(console.debug.calledWith('DP', LogLevel.DEBUG.text, 'test')).to.be.true;
+            expect(console.debug.calledWithMatch(LogLevel.DEBUG.text, dateMatch, 'test')).to.be.true;
         })
     );
 
@@ -57,7 +59,7 @@ describe('Logger', function() {
             let logger = LoggerFactory.getLogger();
             logger.info('test');
             expect(console.log.calledOnce).to.be.true;
-            expect(console.log.calledWith('DP', LogLevel.INFO.text, 'test')).to.be.true;
+            expect(console.log.calledWithMatch(LogLevel.INFO.text, dateMatch, 'test')).to.be.true;
         })
     );
 
@@ -67,7 +69,7 @@ describe('Logger', function() {
             logger.setLogLevel(LogLevel.TRACE);
             logger.trace('test');
             expect(console.log.calledOnce).to.be.true;
-            expect(console.log.calledWith('DP', LogLevel.TRACE.text, 'test')).to.be.true;
+            expect(console.log.calledWithMatch(LogLevel.TRACE.text, dateMatch, 'test')).to.be.true;
         })
     );
 
@@ -76,7 +78,7 @@ describe('Logger', function() {
             let logger = LoggerFactory.getLogger();
             logger.error('test');
             expect(console.error.calledOnce).to.be.true;
-            expect(console.error.calledWith('DP', LogLevel.ERROR.text, 'test')).to.be.true;
+            expect(console.error.calledWithMatch(LogLevel.ERROR.text, dateMatch, 'test')).to.be.true;
         })
     );
 
@@ -85,7 +87,7 @@ describe('Logger', function() {
             let logger = LoggerFactory.getLogger();
             logger.warn('test');
             expect(console.warn.calledOnce).to.be.true;
-            expect(console.warn.calledWith('DP', LogLevel.WARN.text, 'test')).to.be.true;
+            expect(console.warn.calledWithMatch(LogLevel.WARN.text, dateMatch, 'test')).to.be.true;
         })
     );
 
