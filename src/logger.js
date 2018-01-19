@@ -6,15 +6,11 @@ const LOCALS = {
     internalLog () {
         let args = Array.from(arguments);
         let func = args.shift();
-        let name = args.shift();
+        let context = args.shift();
         let logLevel = args.shift();
         let date = new Date();
         let dateString =  date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds();
-        if (exists(name)) {
-            func(logLevel.text, dateString, name, ...args);
-        } else {
-            func(logLevel.text, dateString, ...args);
-        }
+        func(dateString, logLevel.text, context, ...args);
 
     },
     loggers: new Map(),
@@ -43,11 +39,9 @@ const LogLevel = {
 
 class Logger {
 
-    constructor(context, name) {
-        if (exists(name)) {
-            this.name = name;
-        }
+    constructor(context, rootLogger) {
         this.context = context;
+        this.rootLogger = rootLogger;
         let cookieLogLevel = LOCALS.getCookie('DOLPHIN_PLATFORM_' + this.context);
         switch (cookieLogLevel) {
             case 'NONE':
@@ -72,7 +66,11 @@ class Logger {
                 this.logLevel = LogLevel.ERROR;
                 break;
             default:
-                this.logLevel = LogLevel.INFO;
+                if (exists(this.rootLogger)) {
+                    this.logLevel = this.rootLogger.getLogLevel();
+                } else {
+                    this.logLevel = LogLevel.INFO;
+                }
                 break;
         }
 
@@ -80,31 +78,31 @@ class Logger {
 
     trace() {
         if (exists(console) && this.isLogLevel(LogLevel.TRACE)) {
-            LOCALS.internalLog(console.log, this.name, LogLevel.TRACE, ...arguments);
+            LOCALS.internalLog(console.log, this.context, LogLevel.TRACE, ...arguments);
         }
     };
 
     debug() {
         if (exists(console) && this.isLogLevel(LogLevel.DEBUG)) {
-            LOCALS.internalLog(console.debug, this.name, LogLevel.DEBUG, ...arguments);
+            LOCALS.internalLog(console.log, this.context, LogLevel.DEBUG, ...arguments);
         }
     };
 
     info() {
         if (exists(console) && this.isLogLevel(LogLevel.INFO)) {
-            LOCALS.internalLog(console.log, this.name, LogLevel.INFO, ...arguments);
+            LOCALS.internalLog(console.log, this.context, LogLevel.INFO, ...arguments);
         }
     };
 
     warn() {
         if (exists(console) && this.isLogLevel(LogLevel.WARN)) {
-            LOCALS.internalLog(console.warn, this.name, LogLevel.WARN, ...arguments);
+            LOCALS.internalLog(console.warn, this.context, LogLevel.WARN, ...arguments);
         }
     };
 
     error() {
         if (exists(console) && this.isLogLevel(LogLevel.ERROR)) {
-            LOCALS.internalLog(console.error, this.name, LogLevel.ERROR, ...arguments);
+            LOCALS.internalLog(console.error, this.context, LogLevel.ERROR, ...arguments);
         }
     }
 
@@ -113,7 +111,11 @@ class Logger {
     }
 
     setLogLevel(level) {
-        this.logLevel = level;
+        if (exists(level)) {
+            this.logLevel = level;
+        } else {
+            this.logLevel = this.rootLogger.getLogLevel();
+        }
     }
 
     isLogLevel(level) {
@@ -142,13 +144,13 @@ class Logger {
     }
 }
 
-const ROOT_LOGGER = new Logger('ROOT', null);
+const ROOT_LOGGER = new Logger('ROOT');
 ROOT_LOGGER.setLogLevel(LogLevel.INFO);
 
 class LoggerFactory {
 
 
-    static getLogger(context, name) {
+    static getLogger(context) {
         if (!exists(context)) {
             return ROOT_LOGGER;
         }
@@ -157,7 +159,7 @@ class LoggerFactory {
             return existingLogger;
         }
 
-        let logger = new Logger(context, name);
+        let logger = new Logger(context, ROOT_LOGGER);
         LOCALS.loggers.set(context, logger);
         return logger;
     }
