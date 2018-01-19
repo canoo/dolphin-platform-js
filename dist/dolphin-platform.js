@@ -217,13 +217,13 @@ const LOCALS = {
 
 // public
 const LogLevel = {
-    NONE: { name: 'NONE', text: '[NONE ]' },
-    ALL: { name: 'ALL', text: '[ALL  ]' },
-    TRACE: { name: 'TRACE', text: '[TRACE]' },
-    DEBUG: { name: 'DEBUG', text: '[DEBUG]' },
-    INFO: { name: 'INFO', text: '[INFO ]' },
-    WARN: { name: 'WARN', text: '[WARN ]' },
-    ERROR: { name: 'ERROR', text: '[ERROR]' },
+    NONE: { name: 'NONE', text: '[NONE ]', level: 0 },
+    ALL: { name: 'ALL', text: '[ALL  ]', level: 100 },
+    TRACE: { name: 'TRACE', text: '[TRACE]', level: 5 },
+    DEBUG: { name: 'DEBUG', text: '[DEBUG]', level: 4 },
+    INFO: { name: 'INFO', text: '[INFO ]', level: 3 },
+    WARN: { name: 'WARN', text: '[WARN ]', level: 2 },
+    ERROR: { name: 'ERROR', text: '[ERROR]', level: 1 },
 };
 
 class Logger {
@@ -325,6 +325,15 @@ class Logger {
             return true;
         }
         return false;
+    }
+
+    isLogLevelUseable(level) {
+        Object(__WEBPACK_IMPORTED_MODULE_1__utils__["b" /* checkParam */])(level, 'level');
+        if (level.level) {
+            return this.getLogLevel().level >= level.level;
+        } else {
+            return false;
+        }
     }
 }
 
@@ -6132,6 +6141,8 @@ __WEBPACK_IMPORTED_MODULE_0_emitter_component___default()(ClientContext.prototyp
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__commands_codec__ = __webpack_require__(23);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__remotingErrorHandler__ = __webpack_require__(134);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__logger__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__commands_commandConstants__ = __webpack_require__(1);
+
 
 
 
@@ -6226,7 +6237,18 @@ class PlatformHttpTransmitter {
                     }
                 }
             }
+
             let encodedCommands = __WEBPACK_IMPORTED_MODULE_3__commands_codec__["a" /* default */].encode(commands);
+
+            if (this.logger.isLogLevelUseable(__WEBPACK_IMPORTED_MODULE_5__logger__["a" /* LogLevel */].DEBUG) && !this.logger.isLogLevelUseable(__WEBPACK_IMPORTED_MODULE_5__logger__["a" /* LogLevel */].TRACE)) {
+                for (let i = 0; i < commands.length; i++) {
+                    let command = commands[i];
+                    if (command.id === __WEBPACK_IMPORTED_MODULE_6__commands_commandConstants__["v" /* VALUE_CHANGED_COMMAND_ID */]) {
+                        this.logger.debug('_send', command, encodedCommands);
+                    }
+                }
+            }
+
             if (this.failed_attempt > this.maxRetry) {
                 setTimeout(function() {
                     this.logger.trace('_send', commands, encodedCommands);
