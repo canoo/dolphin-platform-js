@@ -120,6 +120,12 @@ class Logger {
         this.logLevel = level;
     }
 
+    setLogLevelByName(levelName) {
+        if (exists(LogLevel[levelName])) {
+            this.logLevel = LogLevel[levelName];
+        }
+    }
+
     isLogLevel(level) {
         if (this.getLogLevel() === LogLevel.NONE) {
             return false;

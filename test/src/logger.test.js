@@ -44,6 +44,12 @@ describe('Logger', function() {
         expect(logger.error).to.be.an('function');
     });
 
+    it('Set log level by name', function() {
+        let logger = LoggerFactory.getLogger();
+        logger.setLogLevelByName('DEBUG');
+        expect(logger.getLogLevel()).to.be.equal(LogLevel.DEBUG);
+    });
+
     it('Is correct LogLevel useable', function() {
         let logger = LoggerFactory.getLogger();
         logger.setLogLevel(LogLevel.DEBUG);
