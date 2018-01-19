@@ -6,7 +6,7 @@ import sinon from 'sinon';
 
 import { LoggerFactory, LogLevel }  from '../../src/logger';
 
-const dateMatch = /[0-9]{4}-[0-9]{1,2}-[0-9]{1,2} [0-9]{1,2}:[0-9]{1,2}:[0-9]{1,2}.[0-9]{1,4}/;
+const dateMatch = /[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}/;
 
 describe('Logger', function() {
 

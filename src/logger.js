@@ -3,13 +3,20 @@ import { exists } from './utils'
 
 // private methods
 const LOCALS = {
+    pad (text, size) {
+        let result = '' + text;
+        while (result.length < size) {
+            result = '0' + result;
+        }
+        return result;
+    },
     internalLog () {
         let args = Array.from(arguments);
         let func = args.shift();
         let context = args.shift();
         let logLevel = args.shift();
         let date = new Date();
-        let dateString =  date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds() + '.' + date.getMilliseconds();
+        let dateString =  date.getFullYear() + '-' + LOCALS.pad(date.getMonth(), 2) + '-' + LOCALS.pad(date.getDate(), 2) + ' ' + LOCALS.pad(date.getHours(), 2) + ':' + LOCALS.pad(date.getMinutes(), 2) + ':' + LOCALS.pad(date.getSeconds(), 2) + '.' + LOCALS.pad(date.getMilliseconds(), 3);
         func(dateString, logLevel.text, context, ...args);
 
     },
