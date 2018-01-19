@@ -302,6 +302,12 @@ class Logger {
         this.logLevel = level;
     }
 
+    setLogLevelByName(levelName) {
+        if (Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(LogLevel[levelName])) {
+            this.logLevel = LogLevel[levelName];
+        }
+    }
+
     isLogLevel(level) {
         if (this.getLogLevel() === LogLevel.NONE) {
             return false;
