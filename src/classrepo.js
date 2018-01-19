@@ -1,14 +1,17 @@
 import  Map from 'core-js/library/fn/map';
 import * as consts from './constants';
 import {exists, checkMethod, checkParam} from './utils';
+import {LoggerFactory} from './logger';
 
-var blocked = null;
+let blocked = null;
 
 export default class ClassRepository {
 
     constructor(dolphin) {
         checkMethod('ClassRepository(dolphin)');
         checkParam(dolphin, 'dolphin');
+
+        this.logger = LoggerFactory.getLogger('ClassRepository');
 
         this.dolphin = dolphin;
         this.classes = new Map();
@@ -117,7 +120,7 @@ export default class ClassRepository {
                 try {
                     handler(type, bean, propertyName, [], undefined);
                 } catch (e) {
-                    console.warn('An exception occurred while calling an onBeanUpdate-handler', e);
+                    this.logger.warn('An exception occurred while calling an onBeanUpdate-handler', e);
                 }
             });
         }
@@ -232,9 +235,9 @@ export default class ClassRepository {
         checkMethod('ClassRepository.load(model)');
         checkParam(model, 'model');
 
-        var self = this;
-        var classInfo = this.classes.get(model.presentationModelType);
-        var bean = {};
+        let self = this;
+        let classInfo = this.classes.get(model.presentationModelType);
+        let bean = {};
         model.attributes.filter(function (attribute) {
             return (attribute.propertyName.search(/^@/) < 0);
         }).forEach(function (attribute) {
@@ -247,7 +250,7 @@ export default class ClassRepository {
                         try {
                             handler(model.presentationModelType, bean, attribute.propertyName, newValue, oldValue);
                         } catch (e) {
-                            console.warn('An exception occurred while calling an onBeanUpdate-handler', e);
+                            this.logger.warn('An exception occurred while calling an onBeanUpdate-handler', e);
                         }
                     });
                 }
@@ -260,7 +263,7 @@ export default class ClassRepository {
             try {
                 handler(model.presentationModelType, bean);
             } catch (e) {
-                console.warn('An exception occurred while calling an onBeanAdded-handler', e);
+                this.logger.warn('An exception occurred while calling an onBeanAdded-handler', e);
             }
         });
         return bean;
@@ -279,7 +282,7 @@ export default class ClassRepository {
                 try {
                     handler(model.presentationModelType, bean);
                 } catch (e) {
-                    console.warn('An exception occurred while calling an onBeanRemoved-handler', e);
+                    this.logger.warn('An exception occurred while calling an onBeanRemoved-handler', e);
                 }
             });
         }
@@ -297,15 +300,15 @@ export default class ClassRepository {
         let count = model.findAttributeByPropertyName('count');
 
         if (exists(source) && exists(attribute) && exists(from) && exists(to) && exists(count)) {
-            var classInfo = this.classInfos.get(source.value);
-            var bean = this.beanFromDolphin.get(source.value);
+            let classInfo = this.classInfos.get(source.value);
+            let bean = this.beanFromDolphin.get(source.value);
             if (exists(bean) && exists(classInfo)) {
                 let type = model.presentationModelType;
                 //var entry = fromDolphin(this, classInfo[attribute.value], element.value);
                 this.validateList(this, type, bean, attribute.value);
-                var newElements = [],
+                let newElements = [],
                     element = null;
-                for (var i = 0; i < count.value; i++) {
+                for (let i = 0; i < count.value; i++) {
                     element = model.findAttributeByPropertyName(i.toString());
                     if (!exists(element)) {
                         throw new Error("Invalid list modification update received");
@@ -318,7 +321,7 @@ export default class ClassRepository {
                         try {
                             handler(type, bean, attribute.value, from.value, to.value - from.value, newElements);
                         } catch (e) {
-                            console.warn('An exception occurred while calling an onArrayUpdate-handler', e);
+                            this.logger.warn('An exception occurred while calling an onArrayUpdate-handler', e);
                         }
                     });
                 } finally {

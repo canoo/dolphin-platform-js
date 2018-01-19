@@ -1,7 +1,13 @@
+import {LoggerFactory} from './logger';
+
 export default class RemotingErrorHandler {
 
+    constructor() {
+        this.logger = LoggerFactory.getLogger('RemotingErrorHandler');
+    }
+
     onError(error) {
-        window.console.error(error);
+        this.logger.error(error);
     }
 
 }

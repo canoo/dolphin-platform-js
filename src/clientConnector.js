@@ -1,10 +1,14 @@
 import BlindCommandBatcher from './commandBatcher';
 import Codec from './commands/codec';
 import ClientPresentationModel from './clientPresentationModel'
+import {LoggerFactory} from './logger';
 
 export default class ClientConnector {
 
     constructor(transmitter, clientDolphin, slackMS = 0, maxBatchSize = 50) {
+
+        this.logger = LoggerFactory.getLogger('ClientConnector');
+
         this.commandQueue = [];
         this.currentlySending = false;
         this.pushEnabled = false;
@@ -52,15 +56,15 @@ export default class ClientConnector {
             }
         }
         this.currentlySending = true;
-        var cmdsAndHandlers = this.commandBatcher.batch(this.commandQueue);
+        let cmdsAndHandlers = this.commandBatcher.batch(this.commandQueue);
 
         if(cmdsAndHandlers.length > 0) {
-            var callback = cmdsAndHandlers[cmdsAndHandlers.length - 1].handler;
-            var commands = cmdsAndHandlers.map(cah => { return cah.command; });
+            let callback = cmdsAndHandlers[cmdsAndHandlers.length - 1].handler;
+            let commands = cmdsAndHandlers.map(cah => { return cah.command; });
             this.transmitter.transmit(commands, (response) => {
-                var touchedPMs = [];
+                let touchedPMs = [];
                 response.forEach((command) => {
-                    var touched = this.handle(command);
+                    let touched = this.handle(command);
                     if (touched)
                         touchedPMs.push(touched);
                 });
@@ -75,26 +79,26 @@ export default class ClientConnector {
     }
 
     handle(command) {
-        if (command.id == "DeletePresentationModel") {
+        if (command.id === "DeletePresentationModel") {
             return this.handleDeletePresentationModelCommand(command);
         }
-        else if (command.id == "CreatePresentationModel") {
+        else if (command.id === "CreatePresentationModel") {
             return this.handleCreatePresentationModelCommand(command);
         }
-        else if (command.id == "ValueChanged") {
+        else if (command.id === "ValueChanged") {
             return this.handleValueChangedCommand(command);
         }
-        else if (command.id == "AttributeMetadataChanged") {
+        else if (command.id === "AttributeMetadataChanged") {
             return this.handleAttributeMetadataChangedCommand(command);
         }
         else {
-            console.log("Cannot handle, unknown command " + command);
+            this.logger.error("Cannot handle, unknown command " + command);
         }
         return null;
     }
 
     handleDeletePresentationModelCommand(serverCommand) {
-        var model = this.clientDolphin.findPresentationModelById(serverCommand.pmId);
+        let model = this.clientDolphin.findPresentationModelById(serverCommand.pmId);
         if (!model)
             return null;
         this.clientDolphin.getClientModelStore().deletePresentationModel(model, true);
@@ -105,15 +109,15 @@ export default class ClientConnector {
         if (this.clientDolphin.getClientModelStore().containsPresentationModel(serverCommand.pmId)) {
             throw new Error("There already is a presentation model with id " + serverCommand.pmId + "  known to the client.");
         }
-        var attributes = [];
+        let attributes = [];
         serverCommand.attributes.forEach((attr) => {
-            var clientAttribute = this.clientDolphin.attribute(attr.propertyName, attr.qualifier, attr.value);
+            let clientAttribute = this.clientDolphin.attribute(attr.propertyName, attr.qualifier, attr.value);
             if (attr.id && attr.id.match(".*S$")) {
                 clientAttribute.id = attr.id;
             }
             attributes.push(clientAttribute);
         });
-        var clientPm = new ClientPresentationModel(serverCommand.pmId, serverCommand.pmType);
+        let clientPm = new ClientPresentationModel(serverCommand.pmId, serverCommand.pmType);
         clientPm.addAttributes(attributes);
         if (serverCommand.clientSideOnly) {
             clientPm.clientSideOnly = true;
@@ -124,13 +128,12 @@ export default class ClientConnector {
     }
 
     handleValueChangedCommand(serverCommand) {
-        var clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
+        let clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
         if (!clientAttribute) {
-            console.log("attribute with id " + serverCommand.attributeId + " not found, cannot update to new value " + serverCommand.newValue);
+            this.logger.warn("attribute with id " + serverCommand.attributeId + " not found, cannot update to new value " + serverCommand.newValue);
             return null;
         }
-        if (clientAttribute.getValue() == serverCommand.newValue) {
-            //console.log("nothing to do. new value == old value");
+        if (clientAttribute.getValue() === serverCommand.newValue) {
             return null;
         }
         clientAttribute.setValueFromServer(serverCommand.newValue);
@@ -138,7 +141,7 @@ export default class ClientConnector {
     }
 
     handleAttributeMetadataChangedCommand(serverCommand) {
-        var clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
+        let clientAttribute = this.clientDolphin.getClientModelStore().findAttributeById(serverCommand.attributeId);
         if (!clientAttribute)
             return null;
         clientAttribute[serverCommand.metadataName] = serverCommand.value;
@@ -157,7 +160,7 @@ export default class ClientConnector {
     }
 
     enqueuePushCommand() {
-        var me = this;
+        let me = this;
         this.waiting = true;
         this.commandQueue.push({
             command: this.pushListener,

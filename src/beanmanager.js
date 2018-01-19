@@ -1,10 +1,14 @@
 import  Map from 'core-js/library/fn/map';
 import {exists, checkMethod, checkParam} from './utils';
+import {LoggerFactory} from './logger';
 
 export default class BeanManager {
+
     constructor(classRepository) {
         checkMethod('BeanManager(classRepository)');
         checkParam(classRepository, 'classRepository');
+
+        this.logger = LoggerFactory.getLogger('BeanManager');
 
         this.classRepository = classRepository;
         this.addedHandlers = new Map();
@@ -24,7 +28,7 @@ export default class BeanManager {
                     try {
                         handler(bean);
                     } catch (e) {
-                        console.warn('An exception occurred while calling an onBeanAdded-handler for type', type, e);
+                        this.logger.warn('An exception occurred while calling an onBeanAdded-handler for type', type, e);
                     }
                 });
             }
@@ -32,7 +36,7 @@ export default class BeanManager {
                 try {
                     handler(bean);
                 } catch (e) {
-                    console.warn('An exception occurred while calling a general onBeanAdded-handler', e);
+                    this.logger.warn('An exception occurred while calling a general onBeanAdded-handler', e);
                 }
             });
         });
@@ -43,7 +47,7 @@ export default class BeanManager {
                     try {
                         handler(bean);
                     } catch (e) {
-                        console.warn('An exception occurred while calling an onBeanRemoved-handler for type', type, e);
+                        this.logger.warn('An exception occurred while calling an onBeanRemoved-handler for type', type, e);
                     }
                 });
             }
@@ -51,7 +55,7 @@ export default class BeanManager {
                 try {
                     handler(bean);
                 } catch (e) {
-                    console.warn('An exception occurred while calling a general onBeanRemoved-handler', e);
+                    this.logger.warn('An exception occurred while calling a general onBeanRemoved-handler', e);
                 }
             });
         });
@@ -62,7 +66,7 @@ export default class BeanManager {
                     try {
                         handler(bean, propertyName, newValue, oldValue);
                     } catch (e) {
-                        console.warn('An exception occurred while calling an onBeanUpdate-handler for type', type, e);
+                        this.logger.warn('An exception occurred while calling an onBeanUpdate-handler for type', type, e);
                     }
                 });
             }
@@ -70,7 +74,7 @@ export default class BeanManager {
                 try {
                     handler(bean, propertyName, newValue, oldValue);
                 } catch (e) {
-                    console.warn('An exception occurred while calling a general onBeanUpdate-handler', e);
+                    this.logger.warn('An exception occurred while calling a general onBeanUpdate-handler', e);
                 }
             });
         });
@@ -81,7 +85,7 @@ export default class BeanManager {
                     try {
                         handler(bean, propertyName, index, count, newElements);
                     } catch (e) {
-                        console.warn('An exception occurred while calling an onArrayUpdate-handler for type', type, e);
+                        this.logger.warn('An exception occurred while calling an onArrayUpdate-handler for type', type, e);
                     }
                 });
             }
@@ -89,7 +93,7 @@ export default class BeanManager {
                 try {
                     handler(bean, propertyName, index, count, newElements);
                 } catch (e) {
-                    console.warn('An exception occurred while calling a general onArrayUpdate-handler', e);
+                    this.logger.warn('An exception occurred while calling a general onArrayUpdate-handler', e);
                 }
             });
         });
@@ -204,14 +208,14 @@ export default class BeanManager {
             checkParam(type, 'type');
             checkParam(eventHandler, 'eventHandler');
 
-            var handlerList = self.addedHandlers.get(type);
+            let handlerList = self.addedHandlers.get(type);
             if (!exists(handlerList)) {
                 handlerList = [];
             }
             self.addedHandlers.set(type, handlerList.concat(eventHandler));
             return {
                 unsubscribe: () => {
-                    var handlerList = self.addedHandlers.get(type);
+                    let handlerList = self.addedHandlers.get(type);
                     if (exists(handlerList)) {
                         self.addedHandlers.set(type, handlerList.filter(function (value) {
                             return value !== eventHandler;
@@ -243,14 +247,14 @@ export default class BeanManager {
             checkParam(type, 'type');
             checkParam(eventHandler, 'eventHandler');
 
-            var handlerList = self.removedHandlers.get(type);
+            let handlerList = self.removedHandlers.get(type);
             if (!exists(handlerList)) {
                 handlerList = [];
             }
             self.removedHandlers.set(type, handlerList.concat(eventHandler));
             return {
                 unsubscribe: () => {
-                    var handlerList = self.removedHandlers.get(type);
+                    let handlerList = self.removedHandlers.get(type);
                     if (exists(handlerList)) {
                         self.removedHandlers.set(type, handlerList.filter((value) => {
                             return value !== eventHandler;
@@ -282,14 +286,14 @@ export default class BeanManager {
             checkParam(type, 'type');
             checkParam(eventHandler, 'eventHandler');
 
-            var handlerList = self.updatedHandlers.get(type);
+            let handlerList = self.updatedHandlers.get(type);
             if (!exists(handlerList)) {
                 handlerList = [];
             }
             self.updatedHandlers.set(type, handlerList.concat(eventHandler));
             return {
                 unsubscribe: () => {
-                    var handlerList = self.updatedHandlers.get(type);
+                    let handlerList = self.updatedHandlers.get(type);
                     if (exists(handlerList)) {
                         self.updatedHandlers.set(type, handlerList.filter((value) => {
                             return value !== eventHandler;
@@ -320,14 +324,14 @@ export default class BeanManager {
             checkParam(type, 'type');
             checkParam(eventHandler, 'eventHandler');
 
-            var handlerList = self.arrayUpdatedHandlers.get(type);
+            let handlerList = self.arrayUpdatedHandlers.get(type);
             if (!exists(handlerList)) {
                 handlerList = [];
             }
             self.arrayUpdatedHandlers.set(type, handlerList.concat(eventHandler));
             return {
                 unsubscribe: () => {
-                    var handlerList = self.arrayUpdatedHandlers.get(type);
+                    let handlerList = self.arrayUpdatedHandlers.get(type);
                     if (exists(handlerList)) {
                         self.arrayUpdatedHandlers.set(type, handlerList.filter((value) => {
                             return value !== eventHandler;

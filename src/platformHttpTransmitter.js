@@ -41,7 +41,7 @@ export default class PlatformHttpTransmitter {
             http.withCredentials = true;
             http.onerror = (errorContent) => {
                 this._handleError(reject, new HttpNetworkError('PlatformHttpTransmitter: Network error', errorContent));
-            }
+            };
 
             http.onreadystatechange = () => {
                 if (http.readyState === FINISHED){
@@ -83,7 +83,7 @@ export default class PlatformHttpTransmitter {
             }
 
             if (exists(this.headersInfo)) {
-                for (var i in this.headersInfo) {
+                for (let i in this.headersInfo) {
                     if (this.headersInfo.hasOwnProperty(i)) {
                         http.setRequestHeader(i, this.headersInfo[i]);
                     }
