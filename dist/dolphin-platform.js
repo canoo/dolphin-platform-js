@@ -6207,6 +6207,18 @@ class PlatformHttpTransmitter {
                             } else {
                                 this._handleError(reject, new __WEBPACK_IMPORTED_MODULE_2__errors__["b" /* DolphinSessionError */]('PlatformHttpTransmitter: Server did not send a clientId'));
                             }
+
+                            if (this.logger.isLogLevelUseable(__WEBPACK_IMPORTED_MODULE_5__logger__["a" /* LogLevel */].DEBUG) && !this.logger.isLogLevelUseable(__WEBPACK_IMPORTED_MODULE_5__logger__["a" /* LogLevel */].TRACE)) {
+                                try {
+                                    let json = JSON.parse(http.responseText);
+                                    if (json.length > 0) {
+                                        this.logger.debug('HTTP response with SUCCESS', currentClientId, json);
+                                    }
+                                } catch (error) {
+                                    this.logger.error('Response could not be parsed to JSON for logging');
+                                }
+                            }
+
                             this.logger.trace('HTTP response with SUCCESS', currentClientId, http.responseText);
                             resolve(http.responseText);
                             break;
