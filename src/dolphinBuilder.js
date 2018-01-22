@@ -61,8 +61,7 @@ export default class DolphinBuilder {
         }
         clientDolphin.setClientConnector(new ClientConnector(transmitter, clientDolphin, this.slackMS_, this.maxBatchSize_));
         clientDolphin.setClientModelStore(new ClientModelStore(clientDolphin));
-        DolphinBuilder.LOGGER.debug("ClientDolphin initialized");
-        DolphinBuilder.LOGGER.debug("clientDolphin", clientDolphin);
+        DolphinBuilder.LOGGER.debug("ClientDolphin initialized", clientDolphin, transmitter);
         return clientDolphin;
     }
 }
