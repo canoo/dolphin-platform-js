@@ -2,10 +2,12 @@ import Attribute from './attribute'
 import EventBus from './eventBus'
 import CommandFactory from './commands/commandFactory';
 import {ADDED_TYPE, REMOVED_TYPE} from './constants'
+import { LoggerFactory } from './logging';
 
 export default class ClientModelStore {
 
     constructor(clientDolphin) {
+
         this.clientDolphin = clientDolphin;
         this.presentationModels = new Map();
         this.presentationModelsPerType = new Map();
@@ -26,14 +28,14 @@ export default class ClientModelStore {
         // whenever an attribute changes its value, the server needs to be notified
         // and all other attributes with the same qualifier are given the same value
         attribute.onValueChange((evt) => {
-            if(evt.newValue != evt.oldValue && evt.sendToServer == true) {
+            if(evt.newValue !== evt.oldValue && evt.sendToServer === true) {
                 const command = CommandFactory.createValueChangedCommand(attribute.id, evt.newValue);
                 this.clientDolphin.getClientConnector().send(command, null);
             }
 
             if (attribute.getQualifier()) {
-                var attrs = this.findAttributesByFilter((attr) => {
-                    return attr !== attribute && attr.getQualifier() == attribute.getQualifier();
+                let attrs = this.findAttributesByFilter((attr) => {
+                    return attr !== attribute && attr.getQualifier() === attribute.getQualifier();
                 });
                 attrs.forEach((attr) => {
                     attr.setValue(attribute.getValue());
@@ -51,15 +53,15 @@ export default class ClientModelStore {
             return false;
         }
         if (this.presentationModels.has(model.id)) {
-            console.log("There already is a PM with id " + model.id);
+            ClientModelStore.LOGGER.error("There already is a PM with id " + model.id);
         }
-        var added = false;
+        let added = false;
         if (!this.presentationModels.has(model.id)) {
             this.presentationModels.set(model.id, model);
             this.addPresentationModelByType(model);
 
             if(sendToServer) {
-                var connector = this.clientDolphin.getClientConnector();
+                let connector = this.clientDolphin.getClientConnector();
                 connector.send(CommandFactory.createCreatePresentationModelCommand(model), null);
             }
 
@@ -76,7 +78,7 @@ export default class ClientModelStore {
         if (!model) {
             return false;
         }
-        var removed = false;
+        let removed = false;
         if (this.presentationModels.has(model.id)) {
             this.removePresentationModelByType(model);
             this.presentationModels.delete(model.id);
@@ -93,7 +95,7 @@ export default class ClientModelStore {
     }
 
     findAttributesByFilter(filter) {
-        var matches = [];
+        let matches = [];
         this.presentationModels.forEach((model) => {
             model.getAttributes().forEach((attr) => {
                 if (filter(attr)) {
@@ -108,11 +110,11 @@ export default class ClientModelStore {
         if (!model) {
             return;
         }
-        var type = model.presentationModelType;
+        let type = model.presentationModelType;
         if (!type) {
             return;
         }
-        var presentationModels = this.presentationModelsPerType.get(type);
+        let presentationModels = this.presentationModelsPerType.get(type);
         if (!presentationModels) {
             presentationModels = [];
             this.presentationModelsPerType.set(type, presentationModels);
@@ -126,7 +128,7 @@ export default class ClientModelStore {
         if (!model || !(model.presentationModelType)) {
             return;
         }
-        var presentationModels = this.presentationModelsPerType.get(model.presentationModelType);
+        let presentationModels = this.presentationModelsPerType.get(model.presentationModelType);
         if (!presentationModels) {
             return;
         }
@@ -139,9 +141,9 @@ export default class ClientModelStore {
     }
 
     listPresentationModelIds() {
-        var result = [];
-        var iter = this.presentationModels.keys();
-        var next = iter.next();
+        let result = [];
+        let iter = this.presentationModels.keys();
+        let next = iter.next();
         while (!next.done) {
             result.push(next.value);
             next = iter.next();
@@ -150,9 +152,9 @@ export default class ClientModelStore {
     }
 
     listPresentationModels() {
-        var result = [];
-        var iter = this.presentationModels.values();
-        var next = iter.next();
+        let result = [];
+        let iter = this.presentationModels.values();
+        let next = iter.next();
         while (!next.done) {
             result.push(next.value);
             next = iter.next();
@@ -210,7 +212,7 @@ export default class ClientModelStore {
         if (!attribute || !attribute.getQualifier()) {
             return;
         }
-        var attributes = this.attributesPerQualifier.get(attribute.getQualifier());
+        let attributes = this.attributesPerQualifier.get(attribute.getQualifier());
         if (!attributes) {
             attributes = [];
             this.attributesPerQualifier.set(attribute.getQualifier(), attributes);
@@ -224,7 +226,7 @@ export default class ClientModelStore {
         if (!attribute || !attribute.getQualifier()) {
             return;
         }
-        var attributes = this.attributesPerQualifier.get(attribute.getQualifier());
+        let attributes = this.attributesPerQualifier.get(attribute.getQualifier());
         if (!attributes) {
             return;
         }
@@ -255,4 +257,6 @@ export default class ClientModelStore {
         });
     }
 }
+
+ClientModelStore.LOGGER = LoggerFactory.getLogger('ClientModelStore');
 

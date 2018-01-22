@@ -15,6 +15,7 @@
 
 import {makeDolphin} from './openDolphin.js';
 import {exists, checkMethod, checkParam} from './utils';
+import { LoggerFactory } from './logging';
 import Connector from './connector';
 import BeanManager from './beanmanager';
 import ClassRepository from './classrepo';
@@ -22,12 +23,13 @@ import ControllerManager from './controllermanager';
 import ClientContext from './clientcontext';
 import PlatformHttpTransmitter from './platformHttpTransmitter';
 
-export default class ClientContextFactory {
+class ClientContextFactory {
 
     create(url, config){
         checkMethod('connect(url, config)');
         checkParam(url, 'url');
-        console.log('Creating client context '+ url +'    '+ JSON.stringify(config));
+        ClientContextFactory.LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
+        ClientContextFactory.LOGGER.debug('Creating client context', url, config);
 
         let builder = makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
         if (exists(config)) {
@@ -39,22 +41,29 @@ export default class ClientContextFactory {
             }
         }
 
-        var dolphin = builder.build();
+        let dolphin = builder.build();
 
-        var transmitter = new PlatformHttpTransmitter(url, config);
+        let transmitter = new PlatformHttpTransmitter(url, config);
         transmitter.on('error', function (error) {
             clientContext.emit('error', error);
         });
         dolphin.clientConnector.transmitter = transmitter;
 
-        var classRepository = new ClassRepository(dolphin);
-        var beanManager = new BeanManager(classRepository);
-        var connector = new Connector(url, dolphin, classRepository, config);
-        var controllerManager = new ControllerManager(dolphin, classRepository, connector);
+        let classRepository = new ClassRepository(dolphin);
+        let beanManager = new BeanManager(classRepository);
+        let connector = new Connector(url, dolphin, classRepository, config);
+        let controllerManager = new ControllerManager(dolphin, classRepository, connector);
 
-        var clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
+        let clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
+
+        ClientContextFactory.LOGGER.debug('clientContext created with', clientContext);
+
         return clientContext;
     }
 }
 
-exports.ClientContextFactory = ClientContextFactory;
+ClientContextFactory.LOGGER = LoggerFactory.getLogger('ClientContextFactory');
+
+let createClientContext = new ClientContextFactory().create;
+
+export { createClientContext, ClientContextFactory };

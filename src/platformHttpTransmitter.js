@@ -5,7 +5,8 @@ import { exists } from './utils';
 import { DolphinRemotingError, HttpNetworkError, DolphinSessionError, HttpResponseError } from './errors';
 import Codec from './commands/codec';
 import RemotingErrorHandler from './remotingErrorHandler';
-
+import { LoggerFactory, LogLevel } from './logging';
+import {VALUE_CHANGED_COMMAND_ID} from './commands/commandConstants';
 
 const FINISHED = 4;
 const SUCCESS = 200;
@@ -40,8 +41,9 @@ export default class PlatformHttpTransmitter {
             const http = new XMLHttpRequest();
             http.withCredentials = true;
             http.onerror = (errorContent) => {
+                PlatformHttpTransmitter.LOGGER.error('HTTP network error', errorContent);
                 this._handleError(reject, new HttpNetworkError('PlatformHttpTransmitter: Network error', errorContent));
-            }
+            };
 
             http.onreadystatechange = () => {
                 if (http.readyState === FINISHED){
@@ -59,11 +61,25 @@ export default class PlatformHttpTransmitter {
                             } else {
                                 this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: Server did not send a clientId'));
                             }
+
+                            if (PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.DEBUG) && !PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.TRACE)) {
+                                try {
+                                    let json = JSON.parse(http.responseText);
+                                    if (json.length > 0) {
+                                        PlatformHttpTransmitter.LOGGER.debug('HTTP response with SUCCESS', currentClientId, json);
+                                    }
+                                } catch (error) {
+                                    PlatformHttpTransmitter.LOGGER.error('Response could not be parsed to JSON for logging');
+                                }
+                            }
+
+                            PlatformHttpTransmitter.LOGGER.trace('HTTP response with SUCCESS', currentClientId, http.responseText);
                             resolve(http.responseText);
                             break;
                         }
 
                         case REQUEST_TIMEOUT:
+                            PlatformHttpTransmitter.LOGGER.error('HTTP request timeout');
                             this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: Session Timeout'));
                             break;
 
@@ -71,6 +87,7 @@ export default class PlatformHttpTransmitter {
                             if(this.failed_attempt <= this.maxRetry){
                                 this.failed_attempt = this.failed_attempt + 1;
                             }
+                            PlatformHttpTransmitter.LOGGER.error('HTTP unsupported status, with HTTP status', http.status);
                             this._handleError(reject, new HttpResponseError('PlatformHttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
                             break;
                     }
@@ -83,18 +100,31 @@ export default class PlatformHttpTransmitter {
             }
 
             if (exists(this.headersInfo)) {
-                for (var i in this.headersInfo) {
+                for (let i in this.headersInfo) {
                     if (this.headersInfo.hasOwnProperty(i)) {
                         http.setRequestHeader(i, this.headersInfo[i]);
                     }
                 }
             }
+
+            let encodedCommands = Codec.encode(commands);
+
+            if (PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.DEBUG) && !PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.TRACE)) {
+                for (let i = 0; i < commands.length; i++) {
+                    let command = commands[i];
+                    if (command.id === VALUE_CHANGED_COMMAND_ID) {
+                        PlatformHttpTransmitter.LOGGER.debug('send', command, encodedCommands);
+                    }
+                }
+            }
+
+            PlatformHttpTransmitter.LOGGER.trace('send', commands, encodedCommands);
             if (this.failed_attempt > this.maxRetry) {
                 setTimeout(function() {
-                    http.send(Codec.encode(commands));
+                    http.send(encodedCommands);
                 }, this.timeout);
             }else{
-                http.send(Codec.encode(commands));
+                http.send(encodedCommands);
             }
 
         });
@@ -127,5 +157,7 @@ export default class PlatformHttpTransmitter {
             .catch(error => this.emit('error', error));
     }
 }
+
+PlatformHttpTransmitter.LOGGER = LoggerFactory.getLogger('PlatformHttpTransmitter');
 
 Emitter(PlatformHttpTransmitter.prototype);

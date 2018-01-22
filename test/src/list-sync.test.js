@@ -1,19 +1,18 @@
 /*jslint browserify: true, mocha: true, expr: true */
 "use strict";
 
-var sinon = require('sinon');
+import sinon from 'sinon';
 import ClassRepository from '../../src/classrepo.js';
 import BeanManager from '../../src/beanmanager.js';
+import * as consts from '../../src/constants';
 
-var consts = require('../../src/constants');
-
-var DP_LS = '@DP:LS@';
+let DP_LS = '@DP:LS@';
 
 describe('List Sync (adding primitive elements as User)', function() {
 
-    var dolphin = null;
-    var beanManager = null;
-    var bean = null;
+    let dolphin = null;
+    let beanManager = null;
+    let bean = null;
 
     beforeEach(function () {
         dolphin = {
@@ -23,10 +22,10 @@ describe('List Sync (adding primitive elements as User)', function() {
                 return id === 'source_id' ? sourceModel : null;
             }
         };
-        var classRepository = new ClassRepository(dolphin);
+        let classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var classModel = {
+        let classModel = {
             id: 'SourceClass',
             attributes: [
                 { propertyName: 'primitiveList', value: consts.STRING }
@@ -34,7 +33,7 @@ describe('List Sync (adding primitive elements as User)', function() {
         };
         classRepository.registerClass(classModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
@@ -49,7 +48,7 @@ describe('List Sync (adding primitive elements as User)', function() {
 
 
     it('should add single entry in empty list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -73,7 +72,7 @@ describe('List Sync (adding primitive elements as User)', function() {
     }));
 
     it('should add null in empty list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -97,7 +96,7 @@ describe('List Sync (adding primitive elements as User)', function() {
     }));
 
     it('should add multiple entries in empty list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -126,7 +125,7 @@ describe('List Sync (adding primitive elements as User)', function() {
 
 
     it('should add single entry in beginning', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -150,7 +149,7 @@ describe('List Sync (adding primitive elements as User)', function() {
     }));
 
     it('should add multiple entries in beginning', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -179,7 +178,7 @@ describe('List Sync (adding primitive elements as User)', function() {
 
 
     it('should add single entry in middle', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -203,7 +202,7 @@ describe('List Sync (adding primitive elements as User)', function() {
     }));
 
     it('should add multiple entries in middle', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -232,7 +231,7 @@ describe('List Sync (adding primitive elements as User)', function() {
 
 
     it('should add single entry at end', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -256,7 +255,7 @@ describe('List Sync (adding primitive elements as User)', function() {
     }));
 
     it('should add multiple entries at end', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -290,9 +289,9 @@ describe('List Sync (adding primitive elements as User)', function() {
 
 describe('List Sync (deleting primitive elements as User)', function() {
 
-    var dolphin = null;
-    var beanManager = null;
-    var bean = null;
+    let dolphin = null;
+    let beanManager = null;
+    let bean = null;
 
     beforeEach(function() {
         dolphin = {
@@ -302,10 +301,10 @@ describe('List Sync (deleting primitive elements as User)', function() {
                 return id === 'source_id' ? sourceModel : null;
             }
         };
-        var classRepository = new ClassRepository(dolphin);
+        let classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var classModel = {
+        let classModel = {
             id: 'SourceClass',
             attributes: [
                 { propertyName: 'primitiveList', value: consts.STRING }
@@ -313,7 +312,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
         };
         classRepository.registerClass(classModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
@@ -327,7 +326,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
 
 
     it('should delete single entry from single element list', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -349,7 +348,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
     }));
 
     it('should delete null from single element list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -371,7 +370,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
     }));
 
     it('should delete all entries from multiple entry list', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -395,7 +394,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
 
 
     it('should delete single entry in beginning', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -417,7 +416,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
     }));
 
     it('should delete multiple entries in beginning', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -439,7 +438,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
     }));
 
     it('should delete single entry in middle', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -461,7 +460,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
     }));
 
     it('should delete multiple entries in middle', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -483,7 +482,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
     }));
 
     it('should delete single entry at end', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -505,7 +504,7 @@ describe('List Sync (deleting primitive elements as User)', function() {
     }));
 
     it('should delete multiple entries at end', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -533,9 +532,9 @@ describe('List Sync (deleting primitive elements as User)', function() {
 
 describe('List Sync (replacing primitive elements as User)', function() {
 
-    var dolphin = null;
-    var beanManager = null;
-    var bean = null;
+    let dolphin = null;
+    let beanManager = null;
+    let bean = null;
 
     beforeEach(function () {
         dolphin = {
@@ -545,10 +544,10 @@ describe('List Sync (replacing primitive elements as User)', function() {
                 return id === 'source_id' ? sourceModel : null;
             }
         };
-        var classRepository = new ClassRepository(dolphin);
+        let classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var classModel = {
+        let classModel = {
             id: 'SourceClass',
             attributes: [
                 { propertyName: 'primitiveList', value: consts.STRING }
@@ -556,7 +555,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
         };
         classRepository.registerClass(classModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
@@ -571,7 +570,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
 
 
     it('should replace single entry in single entry list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -595,7 +594,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace element with null', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -619,7 +618,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace null with element', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -643,7 +642,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace all entries in multiple element list with more elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -671,7 +670,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace all entries in multiple element list with less elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -698,7 +697,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
 
 
     it('should replace single entry in beginning', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -722,7 +721,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace multiple entries in beginning with more elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -750,7 +749,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace multiple entries in beginning with less elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -777,7 +776,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
 
 
     it('should replace single entry in middle', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -801,7 +800,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace multiple entries in middle with more elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -829,7 +828,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace multiple entries in middle with less elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -857,7 +856,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
 
 
     it('should replace single entry at end', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -881,7 +880,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace multiple entries at end with more elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -909,7 +908,7 @@ describe('List Sync (replacing primitive elements as User)', function() {
     }));
 
     it('should replace multiple entries at end with less elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -942,12 +941,12 @@ describe('List Sync (replacing primitive elements as User)', function() {
 
 describe('List Sync (adding objects as User)', function() {
 
-    var dolphin = null;
-    var beanManager = null;
-    var sourceBean = null;
-    var bean1 = null;
-    var bean2 = null;
-    var bean3 = null;
+    let dolphin = null;
+    let beanManager = null;
+    let sourceBean = null;
+    let bean1 = null;
+    let bean2 = null;
+    let bean3 = null;
 
     beforeEach(function() {
         dolphin = {
@@ -958,17 +957,17 @@ describe('List Sync (adding objects as User)', function() {
             }
         };
 
-        var classRepository = new ClassRepository(dolphin);
+        let classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var simpleClassModel = {
+        let simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
                 { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
-        var complexClassModel = {
+        let complexClassModel = {
             id: 'ComplexClass',
             attributes: [
                 { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
@@ -976,7 +975,7 @@ describe('List Sync (adding objects as User)', function() {
         };
         classRepository.registerClass(complexClassModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
@@ -986,7 +985,7 @@ describe('List Sync (adding objects as User)', function() {
         };
         sourceBean = classRepository.load(sourceModel);
 
-        var bean1Model = {
+        let bean1Model = {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -994,7 +993,7 @@ describe('List Sync (adding objects as User)', function() {
             ]
         };
         bean1 = classRepository.load(bean1Model);
-        var bean2Model = {
+        let bean2Model = {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -1002,7 +1001,7 @@ describe('List Sync (adding objects as User)', function() {
             ]
         };
         bean2 = classRepository.load(bean2Model);
-        var bean3Model = {
+        let bean3Model = {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -1014,7 +1013,7 @@ describe('List Sync (adding objects as User)', function() {
 
 
     it('should add single entry in empty list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1038,7 +1037,7 @@ describe('List Sync (adding objects as User)', function() {
     }));
 
     it('should add null in empty list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1062,7 +1061,7 @@ describe('List Sync (adding objects as User)', function() {
     }));
 
     it('should add multiple entries in empty list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1091,7 +1090,7 @@ describe('List Sync (adding objects as User)', function() {
 
 
     it('should add single entry in beginning', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1115,7 +1114,7 @@ describe('List Sync (adding objects as User)', function() {
     }));
 
     it('should add multiple entries in beginning', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1144,7 +1143,7 @@ describe('List Sync (adding objects as User)', function() {
 
 
     it('should add single entry in middle', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1168,7 +1167,7 @@ describe('List Sync (adding objects as User)', function() {
     }));
 
     it('should add multiple entries in middle', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1197,7 +1196,7 @@ describe('List Sync (adding objects as User)', function() {
 
 
     it('should add single entry at end', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1221,7 +1220,7 @@ describe('List Sync (adding objects as User)', function() {
     }));
 
     it('should add multiple entries at end', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1255,12 +1254,12 @@ describe('List Sync (adding objects as User)', function() {
 
 describe('List Sync (deleting objects as User)', function() {
 
-    var dolphin = null;
-    var beanManager = null;
-    var sourceBean = null;
-    var bean1 = null;
-    var bean2 = null;
-    var bean3 = null;
+    let dolphin = null;
+    let beanManager = null;
+    let sourceBean = null;
+    let bean1 = null;
+    let bean2 = null;
+    let bean3 = null;
 
     beforeEach(function() {
         dolphin = {
@@ -1271,17 +1270,17 @@ describe('List Sync (deleting objects as User)', function() {
             }
         };
 
-        var classRepository = new ClassRepository(dolphin);
+        let classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var simpleClassModel = {
+        let simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
                 { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
-        var complexClassModel = {
+        let complexClassModel = {
             id: 'ComplexClass',
             attributes: [
                 { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
@@ -1289,7 +1288,7 @@ describe('List Sync (deleting objects as User)', function() {
         };
         classRepository.registerClass(complexClassModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
@@ -1299,7 +1298,7 @@ describe('List Sync (deleting objects as User)', function() {
         };
         sourceBean = classRepository.load(sourceModel);
 
-        var bean1Model = {
+        let bean1Model = {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -1307,7 +1306,7 @@ describe('List Sync (deleting objects as User)', function() {
             ]
         };
         bean1 = classRepository.load(bean1Model);
-        var bean2Model = {
+        let bean2Model = {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -1315,7 +1314,7 @@ describe('List Sync (deleting objects as User)', function() {
             ]
         };
         bean2 = classRepository.load(bean2Model);
-        var bean3Model = {
+        let bean3Model = {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -1327,7 +1326,7 @@ describe('List Sync (deleting objects as User)', function() {
 
 
     it('should delete single entry from single element list', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -1349,7 +1348,7 @@ describe('List Sync (deleting objects as User)', function() {
     }));
 
     it('should delete null from single element list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1371,7 +1370,7 @@ describe('List Sync (deleting objects as User)', function() {
     }));
 
     it('should delete all entries from multiple entry list', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -1395,7 +1394,7 @@ describe('List Sync (deleting objects as User)', function() {
 
 
     it('should delete single entry in beginning', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -1417,7 +1416,7 @@ describe('List Sync (deleting objects as User)', function() {
     }));
 
     it('should delete multiple entries in beginning', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -1439,7 +1438,7 @@ describe('List Sync (deleting objects as User)', function() {
     }));
 
     it('should delete single entry in middle', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -1461,7 +1460,7 @@ describe('List Sync (deleting objects as User)', function() {
     }));
 
     it('should delete multiple entries in middle', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -1483,7 +1482,7 @@ describe('List Sync (deleting objects as User)', function() {
     }));
 
     it('should delete single entry at end', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -1505,7 +1504,7 @@ describe('List Sync (deleting objects as User)', function() {
     }));
 
     it('should delete multiple entries at end', sinon.test(function() {
-        var sender = { id: 'sender' },
+        let sender = { id: 'sender' },
             source = { id: 'source' },
             attribute = { id: 'attribute'},
             from = { id: 'from' },
@@ -1533,12 +1532,12 @@ describe('List Sync (deleting objects as User)', function() {
 
 describe('List Sync (replacing objects as User)', function() {
 
-    var dolphin = null;
-    var beanManager = null;
-    var sourceBean = null;
-    var bean1 = null;
-    var bean2 = null;
-    var bean3 = null;
+    let dolphin = null;
+    let beanManager = null;
+    let sourceBean = null;
+    let bean1 = null;
+    let bean2 = null;
+    let bean3 = null;
 
     beforeEach(function() {
         dolphin = {
@@ -1549,17 +1548,17 @@ describe('List Sync (replacing objects as User)', function() {
             }
         };
 
-        var classRepository = new ClassRepository(dolphin);
+        let classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var simpleClassModel = {
+        let simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
                 { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
-        var complexClassModel = {
+        let complexClassModel = {
             id: 'ComplexClass',
             attributes: [
                 { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
@@ -1567,7 +1566,7 @@ describe('List Sync (replacing objects as User)', function() {
         };
         classRepository.registerClass(complexClassModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
@@ -1577,7 +1576,7 @@ describe('List Sync (replacing objects as User)', function() {
         };
         sourceBean = classRepository.load(sourceModel);
 
-        var bean1Model = {
+        let bean1Model = {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -1585,7 +1584,7 @@ describe('List Sync (replacing objects as User)', function() {
             ]
         };
         bean1 = classRepository.load(bean1Model);
-        var bean2Model = {
+        let bean2Model = {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -1593,7 +1592,7 @@ describe('List Sync (replacing objects as User)', function() {
             ]
         };
         bean2 = classRepository.load(bean2Model);
-        var bean3Model = {
+        let bean3Model = {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -1605,7 +1604,7 @@ describe('List Sync (replacing objects as User)', function() {
 
 
     it('should replace single entry in single entry list', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1629,7 +1628,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace element with null', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1653,7 +1652,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace null with element', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1677,7 +1676,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace all entries in multiple element list with more elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1705,7 +1704,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace all entries in multiple element list with less elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1732,7 +1731,7 @@ describe('List Sync (replacing objects as User)', function() {
 
 
     it('should replace single entry in beginning', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1756,7 +1755,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace multiple entries in beginning with more elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1784,7 +1783,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace multiple entries in beginning with less elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1811,7 +1810,7 @@ describe('List Sync (replacing objects as User)', function() {
 
 
     it('should replace single entry in middle', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1835,7 +1834,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace multiple entries in middle with more elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1863,7 +1862,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace multiple entries in middle with less elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1891,7 +1890,7 @@ describe('List Sync (replacing objects as User)', function() {
 
 
     it('should replace single entry at end', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1915,7 +1914,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace multiple entries at end with more elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1943,7 +1942,7 @@ describe('List Sync (replacing objects as User)', function() {
     }));
 
     it('should replace multiple entries at end with less elements', sinon.test(function () {
-        var sender = {id: 'sender'},
+        let sender = {id: 'sender'},
             source = {id: 'source'},
             attribute = {id: 'attribute'},
             from = {id: 'from'},
@@ -1976,17 +1975,17 @@ describe('List Sync (replacing objects as User)', function() {
 
 describe('List Sync (adding primitive elements from OpenDolphin)', function() {
 
-    var classRepository = null;
-    var beanManager = null;
-    var bean = null;
+    let classRepository = null;
+    let beanManager = null;
+    let bean = null;
 
     beforeEach(function() {
-        var dolphin = {};
+        let dolphin = {};
 
         classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var classModel = {
+        let classModel = {
             id: 'SourceClass',
             attributes: [
                 { propertyName: 'primitiveList', value: consts.STRING }
@@ -1994,7 +1993,7 @@ describe('List Sync (adding primitive elements from OpenDolphin)', function() {
         };
         classRepository.registerClass(classModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
@@ -2007,18 +2006,18 @@ describe('List Sync (adding primitive elements from OpenDolphin)', function() {
 
 
     it('should add single entry in beginning / empty list', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 0 };
-        var to        = { value: 0 };
-        var count     = { value: 1 };
-        var element   = { value: '1' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 0 };
+        let to        = { value: 0 };
+        let count     = { value: 1 };
+        let element   = { value: '1' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2031,18 +2030,18 @@ describe('List Sync (adding primitive elements from OpenDolphin)', function() {
     }));
 
     it('should add null in beginning / empty list', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 0 };
-        var to        = { value: 0 };
-        var count     = { value: 1 };
-        var element   = { value: null };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 0 };
+        let to        = { value: 0 };
+        let count     = { value: 1 };
+        let element   = { value: null };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2055,20 +2054,20 @@ describe('List Sync (adding primitive elements from OpenDolphin)', function() {
     }));
 
     it('should add multiple entries in beginning / empty list', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 0 };
-        var to        = { value: 0 };
-        var count     = { value: 3 };
-        var element1  = { value: '1' };
-        var element2  = { value: '2' };
-        var element3  = { value: '3' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 0 };
+        let to        = { value: 0 };
+        let count     = { value: 3 };
+        let element1  = { value: '1' };
+        let element2  = { value: '2' };
+        let element3  = { value: '3' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2084,18 +2083,18 @@ describe('List Sync (adding primitive elements from OpenDolphin)', function() {
 
 
     it('should add single entry in middle / at end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 1 };
-        var to        = { value: 1 };
-        var count     = { value: 1 };
-        var element   = { value: '1' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 1 };
+        let to        = { value: 1 };
+        let count     = { value: 1 };
+        let element   = { value: '1' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2108,20 +2107,20 @@ describe('List Sync (adding primitive elements from OpenDolphin)', function() {
     }));
 
     it('should add multiple entries in middle / at end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 1 };
-        var to        = { value: 1 };
-        var count     = { value: 3 };
-        var element1  = { value: '1' };
-        var element2  = { value: '2' };
-        var element3  = { value: '3' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 1 };
+        let to        = { value: 1 };
+        let count     = { value: 3 };
+        let element1  = { value: '1' };
+        let element2  = { value: '2' };
+        let element3  = { value: '3' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2142,17 +2141,17 @@ describe('List Sync (adding primitive elements from OpenDolphin)', function() {
 
 describe('List Sync (deleting primitive elements from OpenDolphin)', function() {
 
-    var classRepository = null;
-    var beanManager = null;
-    var bean = null;
+    let classRepository = null;
+    let beanManager = null;
+    let bean = null;
 
     beforeEach(function() {
-        var dolphin = {};
+        let dolphin = {};
 
         classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var classModel = {
+        let classModel = {
             id: 'SourceClass',
             attributes: [
                 { propertyName: 'primitiveList', value: consts.STRING }
@@ -2160,7 +2159,7 @@ describe('List Sync (deleting primitive elements from OpenDolphin)', function() 
         };
         classRepository.registerClass(classModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
@@ -2173,17 +2172,17 @@ describe('List Sync (deleting primitive elements from OpenDolphin)', function() 
 
 
     it('should delete single entry from beginning', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 0 };
-        var to        = { value: 1 };
-        var count     = { value: 0 };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 0 };
+        let to        = { value: 1 };
+        let count     = { value: 0 };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2195,17 +2194,17 @@ describe('List Sync (deleting primitive elements from OpenDolphin)', function() 
     }));
 
     it('should delete multiple entries from beginning', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 0 };
-        var to        = { value: 3 };
-        var count     = { value: 0 };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 0 };
+        let to        = { value: 3 };
+        let count     = { value: 0 };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2218,17 +2217,17 @@ describe('List Sync (deleting primitive elements from OpenDolphin)', function() 
 
 
     it('should delete single entry from middle / end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 1 };
-        var to        = { value: 2 };
-        var count     = { value: 0 };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 1 };
+        let to        = { value: 2 };
+        let count     = { value: 0 };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2240,17 +2239,17 @@ describe('List Sync (deleting primitive elements from OpenDolphin)', function() 
     }));
 
     it('should delete multiple entries from middle / end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 1 };
-        var to        = { value: 4 };
-        var count     = { value: 0 };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 1 };
+        let to        = { value: 4 };
+        let count     = { value: 0 };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2268,17 +2267,17 @@ describe('List Sync (deleting primitive elements from OpenDolphin)', function() 
 
 describe('List Sync (replacing primitive elements from OpenDolphin)', function() {
 
-    var classRepository = null;
-    var beanManager = null;
-    var bean = null;
+    let classRepository = null;
+    let beanManager = null;
+    let bean = null;
 
     beforeEach(function() {
-        var dolphin = {};
+        let dolphin = {};
 
         classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var classModel = {
+        let classModel = {
             id: 'SourceClass',
             attributes: [
                 { propertyName: 'primitiveList', value: consts.STRING }
@@ -2286,7 +2285,7 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
         };
         classRepository.registerClass(classModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'SourceClass',
             attributes: [
@@ -2299,18 +2298,18 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
 
 
     it('should replace single entry in beginning', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 0 };
-        var to        = { value: 1 };
-        var count     = { value: 1 };
-        var element   = { value: '42' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 0 };
+        let to        = { value: 1 };
+        let count     = { value: 1 };
+        let element   = { value: '42' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2323,18 +2322,18 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
     }));
 
     it('should replace element with null in beginning', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 0 };
-        var to        = { value: 1 };
-        var count     = { value: 1 };
-        var element   = { value: null };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 0 };
+        let to        = { value: 1 };
+        let count     = { value: 1 };
+        let element   = { value: null };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2347,20 +2346,20 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
     }));
 
     it('should replace multiple entries in beginning with more elements', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 0 };
-        var to        = { value: 2 };
-        var count     = { value: 3 };
-        var element1  = { value: '42' };
-        var element2  = { value: '4711' };
-        var element3  = { value: 'Hello World' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 0 };
+        let to        = { value: 2 };
+        let count     = { value: 3 };
+        let element1  = { value: '42' };
+        let element2  = { value: '4711' };
+        let element3  = { value: 'Hello World' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2375,19 +2374,19 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
     }));
 
     it('should replace multiple entries in beginning with less elements', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 0 };
-        var to        = { value: 3 };
-        var count     = { value: 2 };
-        var element1  = { value: '42' };
-        var element2  = { value: '4711' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 0 };
+        let to        = { value: 3 };
+        let count     = { value: 2 };
+        let element1  = { value: '42' };
+        let element2  = { value: '4711' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2402,18 +2401,18 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
 
 
     it('should replace single entry in middle / at end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 1 };
-        var to        = { value: 2 };
-        var count     = { value: 1 };
-        var element   = { value: '42' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 1 };
+        let to        = { value: 2 };
+        let count     = { value: 1 };
+        let element   = { value: '42' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2426,18 +2425,18 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
     }));
 
     it('should replace element with null in middle / at end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 1 };
-        var to        = { value: 2 };
-        var count     = { value: 1 };
-        var element   = { value: null };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 1 };
+        let to        = { value: 2 };
+        let count     = { value: 1 };
+        let element   = { value: null };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2450,20 +2449,20 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
     }));
 
     it('should replace multiple entries in middle / at end with more elements', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 1 };
-        var to        = { value: 3 };
-        var count     = { value: 3 };
-        var element1  = { value: '42' };
-        var element2  = { value: '4711' };
-        var element3  = { value: 'Hello World' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 1 };
+        let to        = { value: 3 };
+        let count     = { value: 3 };
+        let element1  = { value: '42' };
+        let element2  = { value: '4711' };
+        let element3  = { value: 'Hello World' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2478,19 +2477,19 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
     }));
 
     it('should replace multiple entries in middle / at end with less elements', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'primitiveList' };
-        var from      = { value: 1 };
-        var to        = { value: 4 };
-        var count     = { value: 2 };
-        var element1  = { value: '42' };
-        var element2  = { value: '4711' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'primitiveList' };
+        let from      = { value: 1 };
+        let to        = { value: 4 };
+        let count     = { value: 2 };
+        let element1  = { value: '42' };
+        let element2  = { value: '4711' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2510,27 +2509,27 @@ describe('List Sync (replacing primitive elements from OpenDolphin)', function()
 
 describe('List Sync (adding objects from OpenDolphin)', function() {
 
-    var beanManager = null;
-    var classRepository = null;
-    var sourceBean = null;
-    var bean1 = null;
-    var bean2 = null;
-    var bean3 = null;
+    let beanManager = null;
+    let classRepository = null;
+    let sourceBean = null;
+    let bean1 = null;
+    let bean2 = null;
+    let bean3 = null;
 
     beforeEach(function() {
-        var dolphin = {};
+        let dolphin = {};
 
         classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var simpleClassModel = {
+        let simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
                 { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
-        var complexClassModel = {
+        let complexClassModel = {
             id: 'ComplexClass',
             attributes: [
                 { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
@@ -2538,7 +2537,7 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
         };
         classRepository.registerClass(complexClassModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
@@ -2548,7 +2547,7 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
         };
         sourceBean = classRepository.load(sourceModel);
 
-        var bean1Model = {
+        let bean1Model = {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -2556,7 +2555,7 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
             ]
         };
         bean1 = classRepository.load(bean1Model);
-        var bean2Model = {
+        let bean2Model = {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -2564,7 +2563,7 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
             ]
         };
         bean2 = classRepository.load(bean2Model);
-        var bean3Model = {
+        let bean3Model = {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -2576,18 +2575,18 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
 
 
     it('should add single entry in beginning / empty list', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 0 };
-        var to        = { value: 0 };
-        var count     = { value: 1 };
-        var element   = { value: 'id1' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 0 };
+        let to        = { value: 0 };
+        let count     = { value: 1 };
+        let element   = { value: 'id1' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2600,18 +2599,18 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
     }));
 
     it('should add null in beginning / empty list', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 0 };
-        var to        = { value: 0 };
-        var count     = { value: 1 };
-        var element   = { value: null };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 0 };
+        let to        = { value: 0 };
+        let count     = { value: 1 };
+        let element   = { value: null };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2624,20 +2623,20 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
     }));
 
     it('should add multiple entries in beginning / empty list', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 0 };
-        var to        = { value: 0 };
-        var count     = { value: 3 };
-        var element1  = { value: 'id1' };
-        var element2  = { value: 'id2' };
-        var element3  = { value: 'id3' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 0 };
+        let to        = { value: 0 };
+        let count     = { value: 3 };
+        let element1  = { value: 'id1' };
+        let element2  = { value: 'id2' };
+        let element3  = { value: 'id3' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2653,18 +2652,18 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
 
 
     it('should add single entry in middle / at end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 1 };
-        var to        = { value: 1 };
-        var count     = { value: 1 };
-        var element   = { value: 'id1' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 1 };
+        let to        = { value: 1 };
+        let count     = { value: 1 };
+        let element   = { value: 'id1' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2677,20 +2676,20 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
     }));
 
     it('should add multiple entries in middle / at end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 1 };
-        var to        = { value: 1 };
-        var count     = { value: 3 };
-        var element1  = { value: 'id1' };
-        var element2  = { value: 'id2' };
-        var element3  = { value: 'id3' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 1 };
+        let to        = { value: 1 };
+        let count     = { value: 3 };
+        let element1  = { value: 'id1' };
+        let element2  = { value: 'id2' };
+        let element3  = { value: 'id3' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2711,27 +2710,27 @@ describe('List Sync (adding objects from OpenDolphin)', function() {
 
 describe('List Sync (replacing objects from OpenDolphin)', function() {
 
-    var beanManager = null;
-    var classRepository = null;
-    var sourceBean = null;
-    var bean1 = null;
-    var bean2 = null;
-    var bean3 = null;
+    let beanManager = null;
+    let classRepository = null;
+    let sourceBean = null;
+    let bean1 = null;
+    let bean2 = null;
+    let bean3 = null;
 
     beforeEach(function() {
-        var dolphin = {};
+        let dolphin = {};
 
         classRepository = new ClassRepository(dolphin);
         beanManager = new BeanManager(classRepository);
 
-        var simpleClassModel = {
+        let simpleClassModel = {
             id: 'SimpleClass',
             attributes: [
                 { propertyName: 'text', value: consts.STRING }
             ]
         };
         classRepository.registerClass(simpleClassModel);
-        var complexClassModel = {
+        let complexClassModel = {
             id: 'ComplexClass',
             attributes: [
                 { propertyName: 'referenceList', value: consts.DOLPHIN_BEAN }
@@ -2739,7 +2738,7 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
         };
         classRepository.registerClass(complexClassModel);
 
-        var sourceModel = {
+        let sourceModel = {
             id: 'source_id',
             presentationModelType: 'ComplexClass',
             attributes: [
@@ -2749,7 +2748,7 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
         };
         sourceBean = classRepository.load(sourceModel);
 
-        var bean1Model = {
+        let bean1Model = {
             id: 'id1',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -2757,7 +2756,7 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
             ]
         };
         bean1 = classRepository.load(bean1Model);
-        var bean2Model = {
+        let bean2Model = {
             id: 'id2',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -2765,7 +2764,7 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
             ]
         };
         bean2 = classRepository.load(bean2Model);
-        var bean3Model = {
+        let bean3Model = {
             id: 'id3',
             presentationModelType: 'SimpleClass',
             attributes: [
@@ -2777,18 +2776,18 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
 
 
     it('should replace single entry in beginning', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 0 };
-        var to        = { value: 1 };
-        var count     = { value: 1 };
-        var element   = { value: 'id1' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 0 };
+        let to        = { value: 1 };
+        let count     = { value: 1 };
+        let element   = { value: 'id1' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2801,18 +2800,18 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
     }));
 
     it('should replace element with null in beginning', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 0 };
-        var to        = { value: 1 };
-        var count     = { value: 1 };
-        var element   = { value: null };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 0 };
+        let to        = { value: 1 };
+        let count     = { value: 1 };
+        let element   = { value: null };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2825,20 +2824,20 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
     }));
 
     it('should replace multiple entries in beginning with more elements', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 0 };
-        var to        = { value: 2 };
-        var count     = { value: 3 };
-        var element1  = { value: 'id1' };
-        var element2  = { value: 'id2' };
-        var element3  = { value: 'id3' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 0 };
+        let to        = { value: 2 };
+        let count     = { value: 3 };
+        let element1  = { value: 'id1' };
+        let element2  = { value: 'id2' };
+        let element3  = { value: 'id3' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2853,19 +2852,19 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
     }));
 
     it('should replace multiple entries in beginning with less elements', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 0 };
-        var to        = { value: 3 };
-        var count     = { value: 2 };
-        var element1  = { value: 'id1' };
-        var element2  = { value: 'id2' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 0 };
+        let to        = { value: 3 };
+        let count     = { value: 2 };
+        let element1  = { value: 'id1' };
+        let element2  = { value: 'id2' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2880,18 +2879,18 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
 
 
     it('should replace single entry in middle / at end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 1 };
-        var to        = { value: 2 };
-        var count     = { value: 1 };
-        var element   = { value: 'id1' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 1 };
+        let to        = { value: 2 };
+        let count     = { value: 1 };
+        let element   = { value: 'id1' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2904,18 +2903,18 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
     }));
 
     it('should replace element with null in middle / at end', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 1 };
-        var to        = { value: 2 };
-        var count     = { value: 1 };
-        var element   = { value: null };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 1 };
+        let to        = { value: 2 };
+        let count     = { value: 1 };
+        let element   = { value: null };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2928,20 +2927,20 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
     }));
 
     it('should replace multiple entries in middle / at end with more elements', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 1 };
-        var to        = { value: 3 };
-        var count     = { value: 3 };
-        var element1  = { value: 'id1' };
-        var element2  = { value: 'id2' };
-        var element3  = { value: 'id3' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 1 };
+        let to        = { value: 3 };
+        let count     = { value: 3 };
+        let element1  = { value: 'id1' };
+        let element2  = { value: 'id2' };
+        let element3  = { value: 'id3' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
@@ -2956,19 +2955,19 @@ describe('List Sync (replacing objects from OpenDolphin)', function() {
     }));
 
     it('should replace multiple entries in middle / at end with less elements', sinon.test(function() {
-        var onArrayUpdateHandler = this.spy();
+        let onArrayUpdateHandler = this.spy();
         beanManager.onArrayUpdate(onArrayUpdateHandler);
 
-        var model = {
+        let model = {
             findAttributeByPropertyName: this.stub()
         };
-        var source    = { value: 'source_id' };
-        var attribute = { value: 'referenceList' };
-        var from      = { value: 1 };
-        var to        = { value: 4 };
-        var count     = { value: 2 };
-        var element1  = { value: 'id1' };
-        var element2  = { value: 'id2' };
+        let source    = { value: 'source_id' };
+        let attribute = { value: 'referenceList' };
+        let from      = { value: 1 };
+        let to        = { value: 4 };
+        let count     = { value: 2 };
+        let element1  = { value: 'id1' };
+        let element2  = { value: 'id2' };
         model.findAttributeByPropertyName.withArgs('source').returns(source);
         model.findAttributeByPropertyName.withArgs('attribute').returns(attribute);
         model.findAttributeByPropertyName.withArgs('from').returns(from);
