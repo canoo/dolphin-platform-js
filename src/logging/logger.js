@@ -101,7 +101,7 @@ class Logger {
         } else if (exists(this.rootLogger)) {
             return this.rootLogger.getLogLevel();
         } else {
-            return LogLevel.INFO;
+            return LogLevel.TRACE;
         }
     }
 
