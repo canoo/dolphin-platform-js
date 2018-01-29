@@ -1,7 +1,10 @@
 import EventBus from './eventBus';
+import { LoggerFactory } from './logging';
 
 export default class ClientAttribute {
+
     constructor(propertyName, qualifier, value) {
+
         this.propertyName = propertyName;
         this.id = "" + (ClientAttribute.clientAttributeInstanceCount++) + "C";
         this.valueChangeBus = new EventBus();
@@ -11,7 +14,7 @@ export default class ClientAttribute {
     }
 
     copy() {
-        var result = new ClientAttribute(this.propertyName, this.getQualifier(), this.getValue());
+        let result = new ClientAttribute(this.propertyName, this.getQualifier(), this.getValue());
         return result;
     }
 
@@ -31,27 +34,27 @@ export default class ClientAttribute {
     }
 
     setValueFromServer(newValue) {
-        var verifiedValue = ClientAttribute.checkValue(newValue);
-        if (this.value == verifiedValue)
+        let verifiedValue = ClientAttribute.checkValue(newValue);
+        if (this.value === verifiedValue)
             return;
-        var oldValue = this.value;
+        let oldValue = this.value;
         this.value = verifiedValue;
         this.valueChangeBus.trigger({ 'oldValue': oldValue, 'newValue': verifiedValue, 'sendToServer': false });
     }
 
     setValue(newValue) {
-        var verifiedValue = ClientAttribute.checkValue(newValue);
-        if (this.value == verifiedValue)
+        let verifiedValue = ClientAttribute.checkValue(newValue);
+        if (this.value === verifiedValue)
             return;
-        var oldValue = this.value;
+        let oldValue = this.value;
         this.value = verifiedValue;
         this.valueChangeBus.trigger({ 'oldValue': oldValue, 'newValue': verifiedValue, 'sendToServer': true });
     }
 
     setQualifier(newQualifier) {
-        if (this.qualifier == newQualifier)
+        if (this.qualifier === newQualifier)
             return;
-        var oldQualifier = this.qualifier;
+        let oldQualifier = this.qualifier;
         this.qualifier = newQualifier;
         this.qualifierChangeBus.trigger({ 'oldValue': oldQualifier, 'newValue': newQualifier });
         this.valueChangeBus.trigger({ "oldValue": this.value, "newValue": this.value, 'sendToServer': false });
@@ -78,18 +81,18 @@ export default class ClientAttribute {
     }
 
     static checkValue(value) {
-        if (value == null || value == undefined) {
+        if (value == null || typeof value === 'undefined') {
             return null;
         }
-        var result = value;
+        let result = value;
         if (result instanceof String || result instanceof Boolean || result instanceof Number) {
             result = value.valueOf();
         }
         if (result instanceof ClientAttribute) {
-            console.log("An Attribute may not itself contain an attribute as a value. Assuming you forgot to call value.");
+            ClientAttribute.LOGGER.warn("An Attribute may not itself contain an attribute as a value. Assuming you forgot to call value.");
             result = this.checkValue(value.value);
         }
-        var ok = false;
+        let ok = false;
         if (this.SUPPORTED_VALUE_TYPES.indexOf(typeof result) > -1 || result instanceof Date) {
             ok = true;
         }
@@ -101,5 +104,6 @@ export default class ClientAttribute {
 
 }
 
+ClientAttribute.LOGGER = LoggerFactory.getLogger('ClientAttribute');
 ClientAttribute.SUPPORTED_VALUE_TYPES = ["string", "number", "boolean"];
 ClientAttribute.clientAttributeInstanceCount = 0;

@@ -1,7 +1,8 @@
-import Set from '../bower_components/core.js/library/fn/set';
+import Set from 'core-js/library/fn/set';
 import {checkMethod, checkParam} from './utils';
+import { LoggerFactory } from './logging';
 
-export default class ControllerProxy{
+export default class ControllerProxy {
 
     constructor(controllerId, model, manager){
         checkMethod('ControllerProxy(controllerId, model, manager)');
@@ -47,7 +48,7 @@ export default class ControllerProxy{
             try {
                 handler(this);
             } catch(e) {
-                console.warn('An exception occurred while calling an onDestroyed-handler', e);
+                ControllerProxy.LOGGER.error('An exception occurred while calling an onDestroyed-handler', e);
             }
         }, this);
         return this.manager.destroyController(this);
@@ -57,7 +58,7 @@ export default class ControllerProxy{
         checkMethod('ControllerProxy.onDestroyed(handler)');
         checkParam(handler, 'handler');
 
-        var self = this;
+        let self = this;
         this.onDestroyedHandlers.add(handler);
         return {
             unsubscribe: () => {
@@ -66,3 +67,5 @@ export default class ControllerProxy{
         };
     }
 }
+
+ControllerProxy.LOGGER = LoggerFactory.getLogger('ControllerProxy');

@@ -1,4 +1,4 @@
-import Promise from '../bower_components/core.js/library/fn/promise';
+import Promise from 'core-js/library/fn/promise';
 import {exists, checkMethod, checkParam} from './utils';
 import CommandFactory from './commands/commandFactory';
 import {ADDED_TYPE, REMOVED_TYPE} from './constants';
@@ -107,7 +107,4 @@ export default class Connector{
     }
 }
 
-exports.SOURCE_SYSTEM = SOURCE_SYSTEM;
-exports.SOURCE_SYSTEM_CLIENT = SOURCE_SYSTEM_CLIENT;
-exports.SOURCE_SYSTEM_SERVER = SOURCE_SYSTEM_SERVER;
-exports.ACTION_CALL_BEAN = ACTION_CALL_BEAN;
+export { SOURCE_SYSTEM, SOURCE_SYSTEM_CLIENT, SOURCE_SYSTEM_SERVER, ACTION_CALL_BEAN };
