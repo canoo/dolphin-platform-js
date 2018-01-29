@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import { DOLPHIN_PLATFORM_VERSION } from './constants';
 import {makeDolphin} from './openDolphin.js';
 import {exists, checkMethod, checkParam} from './utils';
 import { LoggerFactory } from './logging';

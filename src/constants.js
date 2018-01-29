@@ -1,3 +1,5 @@
+export const DOLPHIN_PLATFORM_VERSION = "1.0.0-dolfix"
+
 export const JS_STRING_TYPE = 'string';
 
 export const DOLPHIN_BEAN = 0;
