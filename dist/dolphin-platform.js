@@ -3065,8 +3065,7 @@ class DolphinBuilder {
         }
         clientDolphin.setClientConnector(new __WEBPACK_IMPORTED_MODULE_0__clientConnector__["a" /* default */](transmitter, clientDolphin, this.slackMS_, this.maxBatchSize_));
         clientDolphin.setClientModelStore(new __WEBPACK_IMPORTED_MODULE_2__clientModelStore__["a" /* default */](clientDolphin));
-        DolphinBuilder.LOGGER.debug("ClientDolphin initialized");
-        DolphinBuilder.LOGGER.debug("clientDolphin", clientDolphin);
+        DolphinBuilder.LOGGER.debug("ClientDolphin initialized", clientDolphin, transmitter);
         return clientDolphin;
     }
 }
@@ -3355,12 +3354,12 @@ class LoggerFactory {
         if (!Object(__WEBPACK_IMPORTED_MODULE_1__utils__["c" /* exists */])(context) || context === 'ROOT') {
             return ROOT_LOGGER;
         }
-        let existingLogger = LOCALS.loggers.get(context);
+        const existingLogger = LOCALS.loggers.get(context);
         if (existingLogger) {
             return existingLogger;
         }
 
-        let logger = new __WEBPACK_IMPORTED_MODULE_2__logger__["a" /* Logger */](context, ROOT_LOGGER);
+        const logger = new __WEBPACK_IMPORTED_MODULE_2__logger__["a" /* Logger */](context, ROOT_LOGGER);
         LOCALS.loggers.set(context, logger);
         return logger;
     }
@@ -3836,19 +3835,19 @@ const LOCALS = {
         return result;
     },
     internalLog () {
-        let args = Array.from(arguments);
-        let func = args.shift();
-        let context = args.shift();
-        let logLevel = args.shift();
-        let date = new Date();
-        let dateString =  date.getFullYear() + '-' + LOCALS.pad(date.getMonth(), 2) + '-' + LOCALS.pad(date.getDate(), 2) + ' ' + LOCALS.pad(date.getHours(), 2) + ':' + LOCALS.pad(date.getMinutes(), 2) + ':' + LOCALS.pad(date.getSeconds(), 2) + '.' + LOCALS.pad(date.getMilliseconds(), 3);
+        const args = Array.from(arguments);
+        const func = args.shift();
+        const context = args.shift();
+        const logLevel = args.shift();
+        const date = new Date();
+        const dateString =  date.getFullYear() + '-' + LOCALS.pad(date.getMonth() + 1, 2) + '-' + LOCALS.pad(date.getDate(), 2) + ' ' + LOCALS.pad(date.getHours(), 2) + ':' + LOCALS.pad(date.getMinutes(), 2) + ':' + LOCALS.pad(date.getSeconds(), 2) + '.' + LOCALS.pad(date.getMilliseconds(), 3);
         func(dateString, logLevel.text, context, ...args);
 
     },
     getCookie (name) {
         if (Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* exists */])(window) && Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* exists */])(window.document) && Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* exists */])(window.document.cookie)) {
-            let value = '; ' + document.cookie;
-            let parts = value.split('; ' + name + '=');
+            const value = '; ' + document.cookie;
+            const parts = value.split('; ' + name + '=');
             if ( parts.length === 2 ) {
                 return parts.pop().split(';').shift();
             }
@@ -3863,7 +3862,7 @@ class Logger {
     constructor(context, rootLogger) {
         this.context = context;
         this.rootLogger = rootLogger;
-        let cookieLogLevel = LOCALS.getCookie('DOLPHIN_PLATFORM_' + this.context);
+        const cookieLogLevel = LOCALS.getCookie('DOLPHIN_PLATFORM_LOGGER_' + this.context);
         switch (cookieLogLevel) {
             case 'NONE':
                 this.logLevel = __WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].NONE;
@@ -3894,25 +3893,25 @@ class Logger {
         if (Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* exists */])(console) && this.isLogLevel(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].TRACE)) {
             LOCALS.internalLog(console.log, this.context, __WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].TRACE, ...arguments);
         }
-    };
+    }
 
     debug() {
         if (Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* exists */])(console) && this.isLogLevel(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].DEBUG)) {
             LOCALS.internalLog(console.log, this.context, __WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].DEBUG, ...arguments);
         }
-    };
+    }
 
     info() {
         if (Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* exists */])(console) && this.isLogLevel(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].INFO)) {
             LOCALS.internalLog(console.log, this.context, __WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].INFO, ...arguments);
         }
-    };
+    }
 
     warn() {
         if (Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* exists */])(console) && this.isLogLevel(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].WARN)) {
             LOCALS.internalLog(console.warn, this.context, __WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].WARN, ...arguments);
         }
-    };
+    }
 
     error() {
         if (Object(__WEBPACK_IMPORTED_MODULE_0__utils__["c" /* exists */])(console) && this.isLogLevel(__WEBPACK_IMPORTED_MODULE_1__constants__["a" /* LogLevel */].ERROR)) {

@@ -17,7 +17,11 @@
   },
   "author": "Michael Heinrichs <michael.heinrichs@canoo.com>",
   "contributors": [
-    {"name": "Simon Skoczylas", "url": "http://twitter.com/giftkugel", "email": "simon.skoczylas@canoo.com"}
+    {
+      "name": "Simon Skoczylas",
+      "url": "http://twitter.com/giftkugel",
+      "email": "simon.skoczylas@canoo.com"
+    }
   ],
   "license": "Apache-2.0",
   "devDependencies": {
