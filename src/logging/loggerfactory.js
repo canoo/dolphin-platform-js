@@ -17,12 +17,12 @@ class LoggerFactory {
         if (!exists(context) || context === 'ROOT') {
             return ROOT_LOGGER;
         }
-        let existingLogger = LOCALS.loggers.get(context);
+        const existingLogger = LOCALS.loggers.get(context);
         if (existingLogger) {
             return existingLogger;
         }
 
-        let logger = new Logger(context, ROOT_LOGGER);
+        const logger = new Logger(context, ROOT_LOGGER);
         LOCALS.loggers.set(context, logger);
         return logger;
     }

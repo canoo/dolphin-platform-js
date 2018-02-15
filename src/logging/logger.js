@@ -11,19 +11,19 @@ const LOCALS = {
         return result;
     },
     internalLog () {
-        let args = Array.from(arguments);
-        let func = args.shift();
-        let context = args.shift();
-        let logLevel = args.shift();
-        let date = new Date();
-        let dateString =  date.getFullYear() + '-' + LOCALS.pad(date.getMonth(), 2) + '-' + LOCALS.pad(date.getDate(), 2) + ' ' + LOCALS.pad(date.getHours(), 2) + ':' + LOCALS.pad(date.getMinutes(), 2) + ':' + LOCALS.pad(date.getSeconds(), 2) + '.' + LOCALS.pad(date.getMilliseconds(), 3);
+        const args = Array.from(arguments);
+        const func = args.shift();
+        const context = args.shift();
+        const logLevel = args.shift();
+        const date = new Date();
+        const dateString =  date.getFullYear() + '-' + LOCALS.pad(date.getMonth() + 1, 2) + '-' + LOCALS.pad(date.getDate(), 2) + ' ' + LOCALS.pad(date.getHours(), 2) + ':' + LOCALS.pad(date.getMinutes(), 2) + ':' + LOCALS.pad(date.getSeconds(), 2) + '.' + LOCALS.pad(date.getMilliseconds(), 3);
         func(dateString, logLevel.text, context, ...args);
 
     },
     getCookie (name) {
         if (exists(window) && exists(window.document) && exists(window.document.cookie)) {
-            let value = '; ' + document.cookie;
-            let parts = value.split('; ' + name + '=');
+            const value = '; ' + document.cookie;
+            const parts = value.split('; ' + name + '=');
             if ( parts.length === 2 ) {
                 return parts.pop().split(';').shift();
             }
@@ -38,7 +38,7 @@ class Logger {
     constructor(context, rootLogger) {
         this.context = context;
         this.rootLogger = rootLogger;
-        let cookieLogLevel = LOCALS.getCookie('DOLPHIN_PLATFORM_' + this.context);
+        const cookieLogLevel = LOCALS.getCookie('DOLPHIN_PLATFORM_LOGGER_' + this.context);
         switch (cookieLogLevel) {
             case 'NONE':
                 this.logLevel = LogLevel.NONE;
@@ -69,25 +69,25 @@ class Logger {
         if (exists(console) && this.isLogLevel(LogLevel.TRACE)) {
             LOCALS.internalLog(console.log, this.context, LogLevel.TRACE, ...arguments);
         }
-    };
+    }
 
     debug() {
         if (exists(console) && this.isLogLevel(LogLevel.DEBUG)) {
             LOCALS.internalLog(console.log, this.context, LogLevel.DEBUG, ...arguments);
         }
-    };
+    }
 
     info() {
         if (exists(console) && this.isLogLevel(LogLevel.INFO)) {
             LOCALS.internalLog(console.log, this.context, LogLevel.INFO, ...arguments);
         }
-    };
+    }
 
     warn() {
         if (exists(console) && this.isLogLevel(LogLevel.WARN)) {
             LOCALS.internalLog(console.warn, this.context, LogLevel.WARN, ...arguments);
         }
-    };
+    }
 
     error() {
         if (exists(console) && this.isLogLevel(LogLevel.ERROR)) {
