@@ -13,7 +13,6 @@ class ClientContextFactory {
     create(url, config){
         checkMethod('connect(url, config)');
         checkParam(url, 'url');
-        ClientContextFactory.LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
         ClientContextFactory.LOGGER.debug('Creating client context', url, config);
 
         let builder = makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);

@@ -14,7 +14,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: '[name].js',
-        library: 'dolphin',
+        library: 'platformClient',
         libraryTarget: 'umd',
         //umdNamedDefine: true
     },
