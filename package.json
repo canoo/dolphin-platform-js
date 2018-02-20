@@ -13,7 +13,8 @@
     "build": "node ./node_modules/webpack/bin/webpack.js",
     "build:install": "npm install && npm run build",
     "test": "npm run test:mocha",
-    "test:mocha": "node ./node_modules/mocha/bin/_mocha test/src --recursive --require babel-register --require jsdom-global/register"
+    "test:mocha": "node ./node_modules/mocha/bin/_mocha test/src --recursive --require babel-register --require jsdom-global/register",
+    "test:serve": "node ./node_modules/live-server/live-server.js --no-browser --ignore=src/** --entry-file=test/index.html"
   },
   "author": "Michael Heinrichs <michael.heinrichs@canoo.com>",
   "contributors": [
@@ -37,6 +38,7 @@
     "eslint": "4.15.0",
     "jsdom": "11.5.1",
     "jsdom-global": "3.0.2",
+    "live-server": "^1.2.0",
     "mocha": "4.1.0",
     "rimraf": "2.6.2",
     "sinon": "1.17.7",
