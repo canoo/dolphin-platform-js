@@ -4,8 +4,8 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
-        'dolphin-platform': './src/dolphinPlatform.js',
-        'dolphin-platform.min': './src/dolphinPlatform.js'
+        'dolphin-platform': './src/index.js',
+        'dolphin-platform.min': './src/index.js'
     },
     devtool: 'source-map',
     output: {
@@ -14,6 +14,17 @@ module.exports = {
         library: 'dolphin',
         libraryTarget: 'umd',
         //umdNamedDefine: true
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader'
+                }
+            }
+        ]
     },
     plugins: [
         new UglifyJsPlugin({
