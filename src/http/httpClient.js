@@ -1,4 +1,5 @@
 import { RequestBuilder } from './requestBuilder';
+import { HTTP_GET, HTTP_POST, HTTP_PUT, HTTP_DELETE } from './constants';
 class HttpClient {
 
     request(url, method) {
@@ -10,19 +11,19 @@ class HttpClient {
     }
 
     get(url) {
-        return this.request(url, 'GET');
+        return this.request(url, HTTP_GET);
     }
 
     post(url) {
-        return this.request(url, 'POST');
+        return this.request(url, HTTP_POST);
     }
 
     put(url) {
-        return this.request(url, 'PUT');
+        return this.request(url, HTTP_PUT);
     }
 
     delete(url) {
-        return this.request(url, 'DELETE');
+        return this.request(url, HTTP_DELETE);
     }
 }
 
