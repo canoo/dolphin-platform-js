@@ -59,6 +59,8 @@ const registerServiceProvider = function(serviceProvider) {
     }
 };
 
+/* eslint-disable */
 LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
+/* eslint-enable */
 
 export { getService, hasService, getAllServiceTypes, registerServiceProvider }
