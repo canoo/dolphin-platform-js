@@ -13,7 +13,8 @@ class RequestBuilder {
         return this;
     }
 
-    withContent() {
+    withContent(data) {
+        this.configuration.requestBody = data;
         return this.reponseBuilder;
     }
 
