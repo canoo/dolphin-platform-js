@@ -1,4 +1,5 @@
 /*jslint browserify: true, mocha: true, expr: true */
+/*eslint-env browser, mocha */
 "use strict";
 
 import sinon from 'sinon';

@@ -1,4 +1,5 @@
 /*jslint browserify: true, mocha: true, expr: true */
+/*eslint-env browser, mocha */
 "use strict";
 
 import sinon from 'sinon';
@@ -478,7 +479,7 @@ describe('Dolphin Command', function() {
     let classRepository = null;
 
     beforeEach(sinon.test(function() {
-        let clientModelStore = { onModelStoreChange: function(cb) {} };
+        let clientModelStore = { onModelStoreChange: function() {} };
         dolphin = {
             getClientModelStore: function() { return clientModelStore; },
             attribute: function() {},
