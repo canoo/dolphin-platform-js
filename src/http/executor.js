@@ -4,13 +4,18 @@ class Executor {
         this.configuration = configuration;
     }
 
+    onDone(handler) {
+        this._onDone = handler;
+        return this;
+    }
+
+    onError(handler) {
+        this._onError = handler;
+        return this;
+    }
+
     execute() {
         console.log(this.configuration);
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                resolve();
-            }, 2000);
-        });
     }
 
 }
