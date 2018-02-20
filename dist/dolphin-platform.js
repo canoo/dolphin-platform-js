@@ -1,3 +1,17 @@
+/*!
+ * Copyright 2015-2018 Canoo Engineering AG.
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -1160,7 +1174,7 @@ var Codec = function () {
             var command = new _callActionCommand2.default();
             command.controllerid = jsonCommand[_commandConstants.CONTROLLER_ID];
             command.actionName = jsonCommand[_commandConstants.NAME];
-            //TODO: Für die Params sollten wir eine Klasse bereitstellen
+
             command.params = jsonCommand[_commandConstants.PARAMS].map(function (param) {
                 return {
                     'name': param[_commandConstants.NAME],
@@ -1278,7 +1292,6 @@ var Codec = function () {
             command.pmId = jsonCommand[_commandConstants.PM_ID];
             command.pmType = jsonCommand[_commandConstants.PM_TYPE];
 
-            //TODO: Für die Attribute sollten wir eine Klasse bereitstellen
             command.attributes = jsonCommand[_commandConstants.PM_ATTRIBUTES].map(function (attribute) {
                 return {
                     'propertyName': attribute[_commandConstants.NAME],
@@ -2626,8 +2639,7 @@ var _eventBus2 = _interopRequireDefault(_eventBus);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var presentationModelInstanceCount = 0; // todo dk: consider making this static in class
-
+var presentationModelInstanceCount = 0;
 var ClientPresentationModel = function () {
     function ClientPresentationModel(id, presentationModelType) {
         (0, _classCallCheck3.default)(this, ClientPresentationModel);
@@ -2645,9 +2657,6 @@ var ClientPresentationModel = function () {
         this.invalidBus = new _eventBus2.default();
         this.dirtyValueChangeBus = new _eventBus2.default();
     }
-    // todo dk: align with Java version: move to ClientDolphin and auto-add to model store
-    /** a copy constructor for anything but IDs. Per default, copies are client side only, no automatic update applies. */
-
 
     (0, _createClass3.default)(ClientPresentationModel, [{
         key: 'copy',
@@ -2660,8 +2669,6 @@ var ClientPresentationModel = function () {
             });
             return result;
         }
-        //add array of attributes
-
     }, {
         key: 'addAttributes',
         value: function addAttributes(attributes) {
@@ -2697,8 +2704,6 @@ var ClientPresentationModel = function () {
         value: function onInvalidated(handleInvalidate) {
             this.invalidBus.onEvent(handleInvalidate);
         }
-        /** returns a copy of the internal state */
-
     }, {
         key: 'getAttributes',
         value: function getAttributes() {
@@ -3267,7 +3272,6 @@ var Connector = function () {
             var type = model.presentationModelType;
             switch (type) {
                 case ACTION_CALL_BEAN:
-                    // ignore
                     break;
                 case DOLPHIN_BEAN:
                     this.classRepository.registerClass(model);
@@ -3295,7 +3299,6 @@ var Connector = function () {
                     this.classRepository.unregisterClass(model);
                     break;
                 case DOLPHIN_LIST_SPLICE:
-                    // do nothing
                     break;
                 default:
                     this.classRepository.unload(model);
@@ -3769,20 +3772,7 @@ var ClientContextFactory = function () {
         }
     }]);
     return ClientContextFactory;
-}(); /* Copyright 2015 Canoo Engineering AG.
-      *
-      * Licensed under the Apache License, Version 2.0 (the "License");
-      * you may not use this file except in compliance with the License.
-      * You may obtain a copy of the License at
-      *
-      *     http://www.apache.org/licenses/LICENSE-2.0
-      *
-      * Unless required by applicable law or agreed to in writing, software
-      * distributed under the License is distributed on an "AS IS" BASIS,
-      * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-      * See the License for the specific language governing permissions and
-      * limitations under the License.
-      */
+}();
 
 ClientContextFactory.LOGGER = _logging.LoggerFactory.getLogger('ClientContextFactory');
 
@@ -4138,7 +4128,7 @@ var ClientConnector = function () {
         value: function send(command, onFinished) {
             this.commandQueue.push({ command: command, handler: onFinished });
             if (this.currentlySending) {
-                this.release(); // there is not point in releasing if we do not send atm
+                this.release();
                 return;
             }
             this.doSendNext();
@@ -4171,7 +4161,7 @@ var ClientConnector = function () {
                         if (touched) touchedPMs.push(touched);
                     });
                     if (callback) {
-                        callback.onFinished(touchedPMs); // todo: make them unique?
+                        callback.onFinished(touchedPMs);
                     }
                     setTimeout(function () {
                         return _this.doSendNext();
@@ -4259,7 +4249,7 @@ var ClientConnector = function () {
         value: function listen() {
             if (!this.pushEnabled) return;
             if (this.waiting) return;
-            // todo: how to issue a warning if no pushListener is set?
+
             if (!this.currentlySending) {
                 this.doSendNext();
             }
@@ -4284,7 +4274,7 @@ var ClientConnector = function () {
         value: function release() {
             if (!this.waiting) return;
             this.waiting = false;
-            // todo: how to issue a warning if no releaseCommand is set?
+
             this.transmitter.signal(this.releaseCommand);
         }
     }]);
@@ -4339,11 +4329,8 @@ var BlindCommandBatcher = function () {
                 batchLength++;
                 if (this.folding) {
                     if (element.command.id == _commandConstants.VALUE_CHANGED_COMMAND_ID && batch.length > 0 && batch[batch.length - 1].command.id == _commandConstants.VALUE_CHANGED_COMMAND_ID && element.command.attributeId == batch[batch.length - 1].command.attributeId) {
-                        //merge ValueChange for same value
                         batch[batch.length - 1].command.newValue = element.command.newValue;
-                    } else if (element.command.id == _commandConstants.PRESENTATION_MODEL_DELETED_COMMAND_ID) {
-                        //We do not need it...
-                    } else {
+                    } else if (element.command.id == _commandConstants.PRESENTATION_MODEL_DELETED_COMMAND_ID) {} else {
                         batch.push(element);
                     }
                 } else {
@@ -4999,12 +4986,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var ROOT_LOGGER = new _logger.Logger('ROOT');
 
-// private methods
 var LOCALS = {
     loggers: new _map2.default()
 };
-
-// public
 
 var LoggerFactory = function () {
     function LoggerFactory() {
@@ -5229,7 +5213,6 @@ var _constants = __webpack_require__(86);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// private methods
 var LOCALS = {
     pad: function pad(text, size) {
         var result = '' + text;
@@ -5257,8 +5240,6 @@ var LOCALS = {
         }
     }
 };
-
-// public
 
 var Logger = function () {
     function Logger(context, rootLogger) {
@@ -5613,7 +5594,7 @@ var ClientDolphin = function () {
             if (!sourceAttribute.getQualifier()) return;
             var attributes = this.getClientModelStore().findAllAttributesByQualifier(sourceAttribute.getQualifier());
             attributes.forEach(function (targetAttribute) {
-                targetAttribute.setValue(sourceAttribute.getValue()); // should always have the same value
+                targetAttribute.setValue(sourceAttribute.getValue());
             });
         }
     }, {
@@ -5755,7 +5736,7 @@ var ClientAttribute = function () {
         key: 'syncWith',
         value: function syncWith(sourceAttribute) {
             if (sourceAttribute) {
-                this.setQualifier(sourceAttribute.getQualifier()); // sequence is important
+                this.setQualifier(sourceAttribute.getQualifier());
                 this.setValue(sourceAttribute.value);
             }
         }
@@ -5861,8 +5842,7 @@ var ClientModelStore = function () {
             if (attribute.getQualifier()) {
                 this.addAttributeByQualifier(attribute);
             }
-            // whenever an attribute changes its value, the server needs to be notified
-            // and all other attributes with the same qualifier are given the same value
+
             attribute.onValueChange(function (evt) {
                 if (evt.newValue !== evt.oldValue && evt.sendToServer === true) {
                     var command = _commandFactory2.default.createValueChangedCommand(attribute.id, evt.newValue);
@@ -6020,7 +6000,7 @@ var ClientModelStore = function () {
             if (!type || !this.presentationModelsPerType.has(type)) {
                 return [];
             }
-            return this.presentationModelsPerType.get(type).slice(0); // slice is used to clone the array
+            return this.presentationModelsPerType.get(type).slice(0);
         }
     }, {
         key: 'deletePresentationModel',
@@ -6100,7 +6080,7 @@ var ClientModelStore = function () {
             if (!qualifier || !this.attributesPerQualifier.has(qualifier)) {
                 return [];
             }
-            return this.attributesPerQualifier.get(qualifier).slice(0); // slice is used to clone the array
+            return this.attributesPerQualifier.get(qualifier).slice(0);
         }
     }, {
         key: 'onModelStoreChange',
@@ -6202,7 +6182,7 @@ var HttpTransmitter = function () {
         this.sig = new XMLHttpRequest();
         if (this.supportCORS) {
             if ("withCredentials" in this.http) {
-                this.http.withCredentials = true; // NOTE: doing this for non CORS requests has no impact
+                this.http.withCredentials = true;
                 this.sig.withCredentials = true;
             }
         }
@@ -6248,7 +6228,7 @@ var HttpTransmitter = function () {
             this.http.open('POST', this.url, true);
             this.setHeaders(this.http);
             if ("overrideMimeType" in this.http) {
-                this.http.overrideMimeType("application/json; charset=" + this.charset); // todo make injectable
+                this.http.overrideMimeType("application/json; charset=" + this.charset);
             }
             var encodedCommands = this.codec.encode([commands]);
             HttpTransmitter.LOGGER.trace('transmitting', commands, encodedCommands);
@@ -6328,19 +6308,14 @@ var NoTransmitter = function () {
     (0, _createClass3.default)(NoTransmitter, [{
         key: "transmit",
         value: function transmit(commands, onDone) {
-            // do nothing special
             onDone([]);
         }
     }, {
         key: "signal",
-        value: function signal() {
-            // do nothing
-        }
+        value: function signal() {}
     }, {
         key: "reset",
-        value: function reset() {
-            // do nothing
-        }
+        value: function reset() {}
     }]);
     return NoTransmitter;
 }();
@@ -6934,7 +6909,6 @@ var BeanManager = function () {
             (0, _utils.checkMethod)('BeanManager.isManaged(bean)');
             (0, _utils.checkParam)(bean, 'bean');
 
-            // TODO: Implement dolphin.isManaged() [DP-7]
             throw new Error("Not implemented yet");
         }
     }, {
@@ -6943,7 +6917,6 @@ var BeanManager = function () {
             (0, _utils.checkMethod)('BeanManager.create(type)');
             (0, _utils.checkParam)(type, 'type');
 
-            // TODO: Implement dolphin.create() [DP-7]
             throw new Error("Not implemented yet");
         }
     }, {
@@ -6953,7 +6926,6 @@ var BeanManager = function () {
             (0, _utils.checkParam)(type, 'type');
             (0, _utils.checkParam)(bean, 'bean');
 
-            // TODO: Implement dolphin.add() [DP-7]
             throw new Error("Not implemented yet");
         }
     }, {
@@ -6963,7 +6935,6 @@ var BeanManager = function () {
             (0, _utils.checkParam)(type, 'type');
             (0, _utils.checkParam)(collection, 'collection');
 
-            // TODO: Implement dolphin.addAll() [DP-7]
             throw new Error("Not implemented yet");
         }
     }, {
@@ -6972,7 +6943,6 @@ var BeanManager = function () {
             (0, _utils.checkMethod)('BeanManager.remove(bean)');
             (0, _utils.checkParam)(bean, 'bean');
 
-            // TODO: Implement dolphin.remove() [DP-7]
             throw new Error("Not implemented yet");
         }
     }, {
@@ -6981,7 +6951,6 @@ var BeanManager = function () {
             (0, _utils.checkMethod)('BeanManager.removeAll(collection)');
             (0, _utils.checkParam)(collection, 'collection');
 
-            // TODO: Implement dolphin.removeAll() [DP-7]
             throw new Error("Not implemented yet");
         }
     }, {
@@ -6990,7 +6959,6 @@ var BeanManager = function () {
             (0, _utils.checkMethod)('BeanManager.removeIf(predicate)');
             (0, _utils.checkParam)(predicate, 'predicate');
 
-            // TODO: Implement dolphin.removeIf() [DP-7]
             throw new Error("Not implemented yet");
         }
     }, {
@@ -7510,7 +7478,7 @@ var ClassRepository = function () {
                 var bean = this.beanFromDolphin.get(source.value);
                 if ((0, _utils.exists)(bean) && (0, _utils.exists)(classInfo)) {
                     var type = model.presentationModelType;
-                    //var entry = fromDolphin(this, classInfo[attribute.value], element.value);
+
                     this.validateList(this, type, bean, attribute.value);
                     var newElements = [],
                         element = null;
@@ -7725,9 +7693,7 @@ var ControllerManager = function () {
             controllersCopy.forEach(function (controller) {
                 try {
                     promises.push(controller.destroy());
-                } catch (e) {
-                    // ignore
-                }
+                } catch (e) {}
             });
             return _promise2.default.all(promises);
         }

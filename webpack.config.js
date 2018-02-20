@@ -1,6 +1,9 @@
+const fs = require("fs");
 const path = require('path');
 const webpack = require('webpack');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+let banner = fs.readFileSync('./banner.txt', "utf8");
 
 module.exports = {
     entry: {
@@ -33,6 +36,7 @@ module.exports = {
         }),
         new webpack.DefinePlugin({
             DOLPHIN_PLATFORM_VERSION: JSON.stringify(require("./package.json").version)
-        })
+        }),
+        new webpack.BannerPlugin(banner)
     ]
 };
