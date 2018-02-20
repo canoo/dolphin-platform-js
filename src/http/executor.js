@@ -1,3 +1,4 @@
+import { LoggerFactory } from '../logging'
 class Executor {
 
     constructor(configuration) {
@@ -15,9 +16,40 @@ class Executor {
     }
 
     execute() {
-        console.log(this.configuration);
+        let self = this;
+
+        let httpRequest = new XMLHttpRequest();
+        
+        httpRequest.open(this.configuration.method, this.configuration.url);
+
+        if (this.configuration.headers && this.configuration.headers.length > 0) {
+            for (let i = 0; i < this.configuration.headers.length; i++) {
+                const header = this.configuration.headers[i];
+                httpRequest.setRequestHeader(header.name, header.value);
+            }
+            
+        }
+
+        if (this.configuration.responseType) {
+            httpRequest.responseType = this.configuration.responseType;
+
+            httpRequest.onreadystatechange = function () {
+                if (this.readyState === 4) {
+                    Executor.LOGGER.debug('Request to ', self.configuration.url, 'finished');
+                }
+                if (this.readyState === 4 && this.status === 200 && typeof self._onDone === 'function') {
+                    self._onDone(httpRequest.response);
+                } else if (this.readyState === 4 && this.status !== 200 && typeof self._onError === 'function') {
+                    self._onError('error');
+                }
+            };
+        }
+        
+        httpRequest.send();
     }
 
 }
+
+Executor.LOGGER = LoggerFactory.getLogger('Executor');
 
 export { Executor }

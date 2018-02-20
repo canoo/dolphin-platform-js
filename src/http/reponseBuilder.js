@@ -7,14 +7,17 @@ class ResponseBuilder {
     }
 
     readBytes() {
+        this.configuration.responseType = 'arraybuffer';
         return this.executor;
     }
 
     readString() {
+        this.configuration.responseType = 'text';
         return this.executor;
     }
 
     readObject() {
+        this.configuration.responseType = 'json';
         return this.executor;
     }
 
