@@ -1,8 +1,12 @@
-import { provider as remotingServiceProvider } from './remoting';
 import { LoggerFactory, LogLevel } from './logging';
 import { getService, hasService, registerServiceProvider } from './platform/platformClient';
 
+import { provider as httpClientProvider } from './http';
+import { provider as remotingServiceProvider } from './remoting';
+
+registerServiceProvider(httpClientProvider);
 registerServiceProvider(remotingServiceProvider);
+
 
 export { LoggerFactory, LogLevel, getService, hasService, registerServiceProvider }
 
