@@ -21,8 +21,6 @@ class Executor {
         const self = this;
         const httpRequest = new XMLHttpRequest();
         const async = true;
-        const startTime = new Date().getTime();
-        let endTime = -1;
         
         httpRequest.open(this.configuration.method, this.configuration.url, async);
 
@@ -40,12 +38,23 @@ class Executor {
             httpRequest.responseType = this.configuration.responseType;
         }
 
+        httpRequest.ontimeout = function () {
+            let message = this.statusText || 'Timeout occurred';
+            const httpException = new HttpException(message);
+            self._onError(httpException);
+        }
+
+        httpRequest.onerror = function () {
+            let message = this.statusText || 'Unspecified error occured';
+            const httpException = new HttpException(message);
+            self._onError(httpException);
+        }
+
         httpRequest.onreadystatechange = function () {
             if (this.readyState === 4) {
                 Executor.LOGGER.debug('Request to ', self.configuration.url, 'finished with', this.status);
-                endTime = new Date().getTime();
             }
-            if (this.readyState === 4 && this.status === 200 && typeof self._onDone === 'function') {
+            if (this.readyState === 4 && this.status >= 200 && this.status < 300 && typeof self._onDone === 'function') {
                 // https://www.w3.org/TR/cors/#simple-response-header
                 const httpResponse = new HttpResponse(this.status, this.response, this.getAllResponseHeaders());
                 if (self.configuration.responseType) {
@@ -53,16 +62,8 @@ class Executor {
                 } else {
                     self._onDone(httpResponse);
                 }
-            } else if (this.readyState === 4 && this.status !== 200 && typeof self._onError === 'function') {
-                let unknownError = 'Unspecified error occured';
-                if (endTime !== -1) {
-                    const duration = endTime - startTime;
-                    if (duration > self.configuration.timeout) {
-                        unknownError = 'Timeout occurred';
-                    }
-                }
-                let message = this.statusText || unknownError;
-                const httpException = new HttpException(message);
+            } else if (this.readyState === 4 && this.status >= 300 && typeof self._onError === 'function') {
+                const httpException = new HttpException(this.statusText);
                 self._onError(httpException);
             }
         }
