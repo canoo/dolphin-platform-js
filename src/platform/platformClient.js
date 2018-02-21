@@ -37,9 +37,7 @@ const hasService = function(name) {
 
 const getAllServiceTypes = function() {
     let result = [];
-    serviceProviders.forEach(function(val){
-        result.push(val);
-    });
+    serviceProviders.forEach((val) => result.push(val));
     return result;
 };
 
