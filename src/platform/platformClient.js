@@ -1,30 +1,34 @@
 import {exists} from '../utils';
 import { LoggerFactory } from '../logging';
 
-const services = new Map();
-const serviceProviders = new Map();
-const configuration = {};
+class PlatformClient {
 
-const LOGGER = LoggerFactory.getLogger('PlatformClient');
+}
 
-const getService = function(name) {
-    let service = services.get(name);
+PlatformClient.LOGGER = LoggerFactory.getLogger('PlatformClient');
+
+PlatformClient.services = new Map();
+PlatformClient.serviceProviders = new Map();
+PlatformClient.configuration = {};
+
+PlatformClient.getService = function(name) {
+    let service = PlatformClient.services.get(name);
     if (!exists(service)) {
-        let provider = serviceProviders.get(name);
+        let provider = PlatformClient.serviceProviders.get(name);
         if (!exists(provider)) {
             throw new Error('No service provider found for ' + name);
         } else {
-            service = provider.getService(configuration);
-            services.set(name, service);
+            service = provider.getService(PlatformClient.configuration);
+            PlatformClient.services.set(name, service);
         }
     }
     return service;
 };
 
-const hasService = function(name) {
-    const service = services.get(name);
+PlatformClient.hasService = function(name) {
+    const service = PlatformClient.services.get(name);
     if (!exists(service)) {
-        const provider = serviceProviders.get(name);
+        const provider = PlatformClient.serviceProviders.get(name);
         if (!exists(provider)) {
             return false;
         } else {
@@ -35,30 +39,45 @@ const hasService = function(name) {
     }
 };
 
-const getAllServiceTypes = function() {
+PlatformClient.getAllServiceTypes = function() {
     let result = [];
-    serviceProviders.forEach((val) => result.push(val));
+    PlatformClient.serviceProviders.forEach((serviceProvider) => result.push(serviceProvider));
     return result;
 };
 
 
-const registerServiceProvider = function(serviceProvider) {
+PlatformClient.registerServiceProvider = function(serviceProvider) {
     if (serviceProvider === null || typeof serviceProvider === 'undefined') {
-        LOGGER.error('Cannot register service provider');
+        PlatformClient.LOGGER.error('Cannot register service provider');
         throw new Error('Cannot register service provider');
     }
     
     if (typeof serviceProvider.getName === 'function' && typeof serviceProvider.getService === 'function') {
-        serviceProviders.set(serviceProvider.getName(), serviceProvider);
-        LOGGER.debug('Service provider registered with name', serviceProvider.getName());
+        const current = PlatformClient.serviceProviders.get(serviceProvider.getName());
+        if (!current) {
+            PlatformClient.serviceProviders.set(serviceProvider.getName(), serviceProvider);
+            PlatformClient.LOGGER.debug('Service provider registered with name', serviceProvider.getName());
+        } else {
+            PlatformClient.LOGGER.error('Cannot register another service provider. Name already in use.', serviceProvider.getName());
+            throw new Error('Cannot register another service provider. Name already in use.');
+        }
     } else {
-        LOGGER.error('Cannot register service provider without getName() and getService() methods');
+        PlatformClient.LOGGER.error('Cannot register service provider without getName() and getService() methods');
         throw new Error('Cannot register service provider without getName() and getService() methods');
     }
 };
 
+PlatformClient.init = function() {
+    PlatformClient.serviceProviders.forEach((serviceProvider) => {
+        const service = serviceProvider.getService();
+        if (typeof service.initServiceProvider === 'function') {
+            service.initServiceProvider(PlatformClient);
+        }
+    });
+}
+
 /* eslint-disable */
-LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
+PlatformClient.LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
 /* eslint-enable */
 
-export { getService, hasService, getAllServiceTypes, registerServiceProvider }
+export { PlatformClient }

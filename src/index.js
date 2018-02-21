@@ -1,12 +1,17 @@
 import { LoggerFactory, LogLevel } from './logging';
-import { getService, hasService, registerServiceProvider } from './platform/platformClient';
+import { PlatformClient } from './platform/platformClient';
+import { register as registerHttp } from './http';
+import { register as registerClientScope } from './platform/clientScope';
+import { register as registerRemotingScope } from './remoting'
 
-import { provider as httpClientProvider } from './http';
-import { provider as remotingServiceProvider } from './remoting';
+registerHttp(PlatformClient);
+registerClientScope(PlatformClient);
+registerRemotingScope(PlatformClient);
+PlatformClient.init();
 
-registerServiceProvider(httpClientProvider);
-registerServiceProvider(remotingServiceProvider);
-
+const getService = PlatformClient.getService;
+const hasService = PlatformClient.hasService;
+const registerServiceProvider = PlatformClient.registerServiceProvider;
 
 export { LoggerFactory, LogLevel, getService, hasService, registerServiceProvider }
 

@@ -1,6 +1,12 @@
 import { ClientContextFactory } from './clientContextFactory'
 import { ServiceProvider } from '../platform/serviceProvider'
 
-const provider = new ServiceProvider(ClientContextFactory, 'ClientContextFactory');
+function register(platformClient) {
+    if (platformClient) {
+        const clientContextFactoryProvider = new ServiceProvider(ClientContextFactory, 'ClientContextFactory');
 
-export { provider };
+        platformClient.registerServiceProvider(clientContextFactoryProvider);
+    }
+}
+
+export { register };
