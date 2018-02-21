@@ -5,31 +5,11 @@ const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 let banner = fs.readFileSync('./banner.txt', "utf8");
 
-module.exports = {
-    entry: {
-        'dolphin-platform': './src/index.js',
-        'dolphin-platform.min': './src/index.js'
-    },
-    devtool: 'source-map',
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js',
-        library: 'platformClient',
-        libraryTarget: 'umd',
-        //umdNamedDefine: true
-    },
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
-                use: {
-                    loader: 'babel-loader'
-                }
-            }
-        ]
-    },
-    plugins: [
+function config(env) {
+    const confEnv = env || { dev: false }
+    console.log('Build configuration', confEnv);
+
+    const confPlugins = [
         new UglifyJsPlugin({
             include: /\.min\.js$/,
             sourceMap: true
@@ -39,4 +19,44 @@ module.exports = {
         }),
         new webpack.BannerPlugin(banner)
     ]
-};
+
+    if (confEnv.dev) {
+        confPlugins.push(new webpack.HotModuleReplacementPlugin());
+    }
+
+    return {
+        entry: {
+            'dolphin-platform': './src/index.js',
+            'dolphin-platform.min': './src/index.js'
+        },
+        devtool: 'source-map',
+        output: {
+            path: path.resolve(__dirname, 'dist'),
+            filename: '[name].js',
+            library: 'platformClient',
+            libraryTarget: 'umd',
+            //umdNamedDefine: true
+        },
+        devServer: {
+            contentBase: path.join(__dirname, "./test"),
+            index: 'index.html',
+            port: 8080,
+            publicPath: "/dist/",
+            hot: true
+        },
+        module: {
+            rules: [
+                {
+                    test: /\.js$/,
+                    exclude: /(node_modules|bower_components)/,
+                    use: {
+                        loader: 'babel-loader'
+                    }
+                }
+            ]
+        },
+        plugins: confPlugins
+    };
+}
+
+module.exports = config;
