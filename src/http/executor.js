@@ -52,7 +52,7 @@ class Executor {
 
         httpRequest.onreadystatechange = function () {
             if (this.readyState === 4) {
-                Executor.LOGGER.debug('Request to ', self.configuration.url, 'finished with', this.status);
+                Executor.LOGGER.trace('Request to ', self.configuration.url, 'finished with', this.status);
             }
             if (this.readyState === 4 && this.status >= 200 && this.status < 300 && typeof self._onDone === 'function') {
                 // https://www.w3.org/TR/cors/#simple-response-header
