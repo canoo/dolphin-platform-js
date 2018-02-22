@@ -16,6 +16,7 @@ class Executor {
             const async = true;
             
             httpRequest.open(this.configuration.method, this.configuration.url, async);
+            httpRequest.url = this.configuration.url;
 
             if (window.platformClient) {
                 const requestInterceptors = window.platformClient.getService('HttpClientInterceptor').getRequestInterceptors();
