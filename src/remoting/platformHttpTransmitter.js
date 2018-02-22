@@ -21,14 +21,19 @@ export default class PlatformHttpTransmitter {
         this.url = url;
         this.config = config;
         this.headersInfo = exists(config) ? config.headersInfo : null;
-        let connectionConfig = exists(config) ? config.connection : null;
+        this.failed_attempt = 0;
+
+        const connectionConfig =  this._connectionConfig();
         this.maxRetry = exists(connectionConfig) && exists(connectionConfig.maxRetry)?connectionConfig.maxRetry: 3;
         this.timeout = exists(connectionConfig) && exists(connectionConfig.timeout)?connectionConfig.timeout: 5000;
-        this.failed_attempt = 0;
+    }
+
+    _connectionConfig() {
+        return exists(this.config) ? this.config.connection : null;
     }
 
     _handleError(reject, error) {
-        let connectionConfig = exists(this.config) ? this.config.connection : null;
+        const connectionConfig =  this._connectionConfig();
         let errorHandlers = exists(connectionConfig) && exists(connectionConfig.errorHandlers)?connectionConfig.errorHandlers: [new RemotingErrorHandler()];
         errorHandlers.forEach(function(handler) {
             handler.onError(error);

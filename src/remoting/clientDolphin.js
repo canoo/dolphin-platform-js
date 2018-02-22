@@ -23,7 +23,7 @@ export default class ClientDolphin {
     }
 
     presentationModel(id, type, ...attributes) {
-        var model = new ClientPresentationModel(id, type);
+        const model = new ClientPresentationModel(id, type);
         if (attributes && attributes.length > 0) {
             attributes.forEach((attribute) => {
                 model.addAttribute(attribute);
@@ -74,7 +74,7 @@ export default class ClientDolphin {
     updateAttributeQualifier(sourceAttribute) {
         if (!sourceAttribute.getQualifier())
             return;
-        var attributes = this.getClientModelStore().findAllAttributesByQualifier(sourceAttribute.getQualifier());
+        const attributes = this.getClientModelStore().findAllAttributesByQualifier(sourceAttribute.getQualifier());
         attributes.forEach(targetAttribute => {
             targetAttribute.setValue(sourceAttribute.getValue()); // should always have the same value
         });

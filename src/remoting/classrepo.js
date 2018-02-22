@@ -2,9 +2,7 @@ import * as consts from './constants';
 import {exists, checkMethod, checkParam} from '../utils';
 import { LoggerFactory } from '../logging';
 
-let blocked = null;
-
-export default class ClassRepository {
+class ClassRepository {
 
     constructor(dolphin) {
         checkMethod('ClassRepository(dolphin)');
@@ -19,76 +17,12 @@ export default class ClassRepository {
         this.beanRemovedHandlers = [];
         this.propertyUpdateHandlers = [];
         this.arrayUpdateHandlers = [];
-    }
-
-    fixType(type, value) {
-        switch (type) {
-            case consts.BYTE:
-            case consts.SHORT:
-            case consts.INT:
-            case consts.LONG:
-                return parseInt(value);
-            case consts.FLOAT:
-            case consts.DOUBLE:
-                return parseFloat(value);
-            case consts.BOOLEAN:
-                return 'true' === String(value).toLowerCase();
-            case consts.STRING:
-            case consts.ENUM:
-                return String(value);
-            default:
-                return value;
-        }
-    }
-
-    fromDolphin(classRepository, type, value) {
-        if (!exists(value)) {
-            return null;
-        }
-        switch (type) {
-            case consts.DOLPHIN_BEAN:
-                return classRepository.beanFromDolphin.get(String(value));
-            case consts.DATE:
-                return new Date(String(value));
-            case consts.CALENDAR:
-                return new Date(String(value));
-            case consts.LOCAL_DATE_FIELD_TYPE:
-                return new Date(String(value));
-            case consts.LOCAL_DATE_TIME_FIELD_TYPE:
-                return new Date(String(value));
-            case consts.ZONED_DATE_TIME_FIELD_TYPE:
-                return new Date(String(value));
-            default:
-                return this.fixType(type, value);
-        }
-    }
-
-    toDolphin(classRepository, type, value) {
-        if (!exists(value)) {
-            return null;
-        }
-        switch (type) {
-            case consts.DOLPHIN_BEAN:
-                return classRepository.beanToDolphin.get(value);
-            case consts.DATE:
-                return value instanceof Date ? value.toISOString() : value;
-            case consts.CALENDAR:
-                return value instanceof Date ? value.toISOString() : value;
-            case consts.LOCAL_DATE_FIELD_TYPE:
-                return value instanceof Date ? value.toISOString() : value;
-            case consts.LOCAL_DATE_TIME_FIELD_TYPE:
-                return value instanceof Date ? value.toISOString() : value;
-            case consts.ZONED_DATE_TIME_FIELD_TYPE:
-                return value instanceof Date ? value.toISOString() : value;
-            default:
-                return this.fixType(type, value);
-        }
+        this.blocked = null;
     }
 
     sendListSplice(classRepository, modelId, propertyName, from, to, newElements) {
         let dolphin = classRepository.dolphin;
         let model = dolphin.findPresentationModelById(modelId);
-        let self = this;
         if (exists(model)) {
             let classInfo = classRepository.classes.get(model.presentationModelType);
             let type = classInfo[propertyName];
@@ -103,7 +37,7 @@ export default class ClassRepository {
                     dolphin.attribute('count', null, newElements.length)
                 ];
                 newElements.forEach(function (element, index) {
-                    attributes.push(dolphin.attribute(index.toString(), null, self.toDolphin(classRepository, type, element)));
+                    attributes.push(dolphin.attribute(index.toString(), null, ClassRepository.toDolphin(classRepository, type, element)));
                 });
                 dolphin.presentationModel.apply(dolphin, [null, '@DP:LS@'].concat(attributes));
             }
@@ -124,21 +58,21 @@ export default class ClassRepository {
     }
 
     block(bean, propertyName) {
-        if (exists(blocked)) {
+        if (exists(this.blocked)) {
             throw new Error('Trying to create a block while another block exists');
         }
-        blocked = {
+        this.blocked = {
             bean: bean,
             propertyName: propertyName
         };
     }
 
     isBlocked(bean, propertyName) {
-        return exists(blocked) && blocked.bean === bean && blocked.propertyName === propertyName;
+        return exists(this.blocked) && this.blocked.bean === bean && this.blocked.propertyName === propertyName;
     }
 
     unblock() {
-        blocked = null;
+        this.blocked = null;
     }
 
     notifyBeanChange(bean, propertyName, newValue) {
@@ -155,8 +89,8 @@ export default class ClassRepository {
                 let attribute = model.findAttributeByPropertyName(propertyName);
                 if (exists(type) && exists(attribute)) {
                     let oldValue = attribute.getValue();
-                    attribute.setValue(this.toDolphin(this, type, newValue));
-                    return this.fromDolphin(this, type, oldValue);
+                    attribute.setValue(ClassRepository.toDolphin(this, type, newValue));
+                    return ClassRepository.fromDolphin(this, type, oldValue);
                 }
             }
         }
@@ -241,8 +175,8 @@ export default class ClassRepository {
             bean[attribute.propertyName] = null;
             attribute.onValueChange(function (event) {
                 if (event.oldValue !== event.newValue) {
-                    let oldValue = self.fromDolphin(self, classInfo[attribute.propertyName], event.oldValue);
-                    let newValue = self.fromDolphin(self, classInfo[attribute.propertyName], event.newValue);
+                    let oldValue = ClassRepository.fromDolphin(self, classInfo[attribute.propertyName], event.oldValue);
+                    let newValue = ClassRepository.fromDolphin(self, classInfo[attribute.propertyName], event.newValue);
                     self.propertyUpdateHandlers.forEach((handler) => {
                         try {
                             handler(model.presentationModelType, bean, attribute.propertyName, newValue, oldValue);
@@ -310,7 +244,7 @@ export default class ClassRepository {
                     if (!exists(element)) {
                         throw new Error("Invalid list modification update received");
                     }
-                    newElements.push(this.fromDolphin(this, classInfo[attribute.value], element.value));
+                    newElements.push(ClassRepository.fromDolphin(this, classInfo[attribute.value], element.value));
                 }
                 try {
                     this.block(bean, attribute.value);
@@ -355,8 +289,74 @@ export default class ClassRepository {
     }
 
     mapDolphinToBean(value) {
-        return this.fromDolphin(this, consts.DOLPHIN_BEAN, value);
+        return ClassRepository.fromDolphin(this, consts.DOLPHIN_BEAN, value);
     }
 }
 
+ClassRepository.fixType = function(type, value) {
+    switch (type) {
+        case consts.BYTE:
+        case consts.SHORT:
+        case consts.INT:
+        case consts.LONG:
+            return parseInt(value);
+        case consts.FLOAT:
+        case consts.DOUBLE:
+            return parseFloat(value);
+        case consts.BOOLEAN:
+            return 'true' === String(value).toLowerCase();
+        case consts.STRING:
+        case consts.ENUM:
+            return String(value);
+        default:
+            return value;
+    }
+};
+
+ClassRepository.fromDolphin = function(classRepository, type, value) {
+    if (!exists(value)) {
+        return null;
+    }
+    switch (type) {
+        case consts.DOLPHIN_BEAN:
+            return classRepository.beanFromDolphin.get(String(value));
+        case consts.DATE:
+            return new Date(String(value));
+        case consts.CALENDAR:
+            return new Date(String(value));
+        case consts.LOCAL_DATE_FIELD_TYPE:
+            return new Date(String(value));
+        case consts.LOCAL_DATE_TIME_FIELD_TYPE:
+            return new Date(String(value));
+        case consts.ZONED_DATE_TIME_FIELD_TYPE:
+            return new Date(String(value));
+        default:
+            return ClassRepository.fixType(type, value);
+    }
+};
+
+ClassRepository.toDolphin = function(classRepository, type, value) {
+    if (!exists(value)) {
+        return null;
+    }
+    switch (type) {
+        case consts.DOLPHIN_BEAN:
+            return classRepository.beanToDolphin.get(value);
+        case consts.DATE:
+            return value instanceof Date ? value.toISOString() : value;
+        case consts.CALENDAR:
+            return value instanceof Date ? value.toISOString() : value;
+        case consts.LOCAL_DATE_FIELD_TYPE:
+            return value instanceof Date ? value.toISOString() : value;
+        case consts.LOCAL_DATE_TIME_FIELD_TYPE:
+            return value instanceof Date ? value.toISOString() : value;
+        case consts.ZONED_DATE_TIME_FIELD_TYPE:
+            return value instanceof Date ? value.toISOString() : value;
+        default:
+            return ClassRepository.fixType(type, value);
+    }
+};
+
 ClassRepository.LOGGER = LoggerFactory.getLogger('ClassRepository');
+
+export default ClassRepository;

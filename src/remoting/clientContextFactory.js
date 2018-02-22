@@ -1,5 +1,5 @@
-import {makeDolphin} from './openDolphin.js';
-import {exists, checkMethod, checkParam} from '../utils';
+import { dolphinBuilder } from './dolphinBuilder';
+import { checkMethod, checkParam } from '../utils';
 import { LoggerFactory } from '../logging';
 import Connector from './connector';
 import BeanManager from './beanmanager';
@@ -15,30 +15,24 @@ class ClientContextFactory {
         checkParam(url, 'url');
         ClientContextFactory.LOGGER.debug('Creating client context', url, config);
 
-        let builder = makeDolphin().url(url).reset(false).slackMS(4).supportCORS(true).maxBatchSize(Number.MAX_SAFE_INTEGER);
-        if (exists(config)) {
-            if (exists(config.errorHandler)) {
-                builder.errorHandler(config.errorHandler);
-            }
-            if (exists(config.headersInfo) && Object.keys(config.headersInfo).length > 0) {
-                builder.headersInfo(config.headersInfo);
-            }
-        }
-
-        let dolphin = builder.build();
-
-        let transmitter = new PlatformHttpTransmitter(url, config);
+        const transmitter = new PlatformHttpTransmitter(url, config);
         transmitter.on('error', function (error) {
             clientContext.emit('error', error);
         });
-        dolphin.clientConnector.transmitter = transmitter;
 
-        let classRepository = new ClassRepository(dolphin);
-        let beanManager = new BeanManager(classRepository);
-        let connector = new Connector(url, dolphin, classRepository, config);
-        let controllerManager = new ControllerManager(dolphin, classRepository, connector);
+        const dolphin = dolphinBuilder
+            .withTransmitter(transmitter)
+            .withSlackMS(4)
+            .withMaxBatchSize(Number.MAX_SAFE_INTEGER)
+            .build();
 
-        let clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
+
+        const classRepository = new ClassRepository(dolphin);
+        const beanManager = new BeanManager(classRepository);
+        const connector = new Connector(url, dolphin, classRepository, config);
+        const controllerManager = new ControllerManager(dolphin, classRepository, connector);
+
+        const clientContext = new ClientContext(dolphin, beanManager, controllerManager, connector);
 
         ClientContextFactory.LOGGER.debug('clientContext created with', clientContext);
 

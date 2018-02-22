@@ -1,65 +1,42 @@
 import ClientConnector from './clientConnector'
 import ClientDolphin from './clientDolphin'
 import ClientModelStore from './clientModelStore'
-import HttpTransmitter from './httpTransmitter'
 import NoTransmitter from './noTransmitter'
 import { LoggerFactory } from '../logging';
 
 
-export default class DolphinBuilder {
+class DolphinBuilder {
 
     constructor() {
-        this.reset_ = false;
-        this.slackMS_ = 300;
-        this.maxBatchSize_ = 50;
-        this.supportCORS_ = false;
+        this.slackMS = 300;
+        this.maxBatchSize = 50;
+        this.transmitter = null;
     }
 
-    url(url) {
-        this.url_ = url;
+    withSlackMS(slackMS) {
+        this.slackMS = slackMS;
         return this;
     }
 
-    reset(reset) {
-        this.reset_ = reset;
+    withMaxBatchSize(maxBatchSize) {
+        this.maxBatchSize = maxBatchSize;
         return this;
     }
 
-    slackMS(slackMS) {
-        this.slackMS_ = slackMS;
-        return this;
-    }
-
-    maxBatchSize(maxBatchSize) {
-        this.maxBatchSize_ = maxBatchSize;
-        return this;
-    }
-
-    supportCORS(supportCORS) {
-        this.supportCORS_ = supportCORS;
-        return this;
-    }
-
-    errorHandler(errorHandler) {
-        this.errorHandler_ = errorHandler;
-        return this;
-    }
-
-    headersInfo(headersInfo) {
-        this.headersInfo_ = headersInfo;
+    withTransmitter(transmitter) {
+        this.transmitter = transmitter;
         return this;
     }
 
     build() {
-        let clientDolphin = new ClientDolphin();
+        const clientDolphin = new ClientDolphin();
         let transmitter;
-        if (this.url_ != null && this.url_.length > 0) {
-            transmitter = new HttpTransmitter(this.url_, this.reset_, "UTF-8", this.errorHandler_, this.supportCORS_, this.headersInfo_);
-        }
-        else {
+        if (this.transmitter) {
+            transmitter = this.transmitter;
+        } else {
             transmitter = new NoTransmitter();
         }
-        clientDolphin.setClientConnector(new ClientConnector(transmitter, clientDolphin, this.slackMS_, this.maxBatchSize_));
+        clientDolphin.setClientConnector(new ClientConnector(transmitter, clientDolphin, this.slackMS, this.maxBatchSize));
         clientDolphin.setClientModelStore(new ClientModelStore(clientDolphin));
         DolphinBuilder.LOGGER.debug("ClientDolphin initialized", clientDolphin, transmitter);
         return clientDolphin;
@@ -67,3 +44,7 @@ export default class DolphinBuilder {
 }
 
 DolphinBuilder.LOGGER = LoggerFactory.getLogger('DolphinBuilder');
+
+const dolphinBuilder = new DolphinBuilder();
+
+export { dolphinBuilder }
