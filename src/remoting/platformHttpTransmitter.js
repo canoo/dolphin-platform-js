@@ -2,18 +2,13 @@ import Emitter from 'emitter-component';
 
 
 import { exists } from '../utils';
-import { DolphinRemotingError, HttpNetworkError, DolphinSessionError, HttpResponseError } from './errors';
+import { DolphinRemotingError, DolphinSessionError } from './errors';
 import Codec from './commands/codec';
 import RemotingErrorHandler from './remotingErrorHandler';
 import { LoggerFactory, LogLevel } from '../logging';
 import {VALUE_CHANGED_COMMAND_ID} from './commands/commandConstants';
 
-const FINISHED = 4;
-const SUCCESS = 200;
-const REQUEST_TIMEOUT = 408;
-
-const DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
-const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
+const DOLPHIN_SESSION_TIMEOUT = 408;
 
 export default class PlatformHttpTransmitter {
 
@@ -68,8 +63,13 @@ export default class PlatformHttpTransmitter {
                         resolve(response.content);
                     })
                     .catch(function(exception) {
+                        const status = exception.getStatus();
                         self.failed_attempt += 1;
-                        self._handleError(reject, exception);
+                        if (status === DOLPHIN_SESSION_TIMEOUT) {
+                            self._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: Session Timeout'));
+                        } else {
+                            self._handleError(reject, exception);
+                        }
                     });
                 } else {
                     //TODO handle failure
