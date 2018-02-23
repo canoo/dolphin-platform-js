@@ -3,7 +3,7 @@ import { HTTP_GET, HTTP_POST, HTTP_PUT, HTTP_DELETE } from './constants';
 class HttpClient {
 
     request(url, method, timeoutValue) {
-        const timeout = timeoutValue || 5000;
+        const timeout = timeoutValue || 0;
         const configuration = {
             url, method, timeout
         }
