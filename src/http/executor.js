@@ -44,14 +44,14 @@ class Executor {
             }
 
             httpRequest.ontimeout = function () {
-                let message = this.statusText || 'Timeout occurred';
-                const httpException = new HttpException(message);
+                const message = this.statusText || 'Timeout occurred';
+                const httpException = new HttpException(message, this.status, true);
                 reject(httpException);
             }
 
             httpRequest.onerror = function () {
                 let message = this.statusText || 'Unspecified error occured';
-                const httpException = new HttpException(message);
+                const httpException = new HttpException(message, this.status);
                 reject(httpException);
             }
 
@@ -79,7 +79,7 @@ class Executor {
                         resolve(httpResponse);
                     }
                 } else if (this.readyState === 4 && this.status >= 300) {
-                    const httpException = new HttpException(this.statusText);
+                    const httpException = new HttpException(this.statusText, this.status);
                     reject(httpException);
                 }
             }
