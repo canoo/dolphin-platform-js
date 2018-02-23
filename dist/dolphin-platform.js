@@ -254,7 +254,7 @@ if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var core = __webpack_require__(3);
 var ctx = __webpack_require__(13);
 var hide = __webpack_require__(14);
@@ -357,7 +357,7 @@ var PM_ATTRIBUTES = exports.PM_ATTRIBUTES = "a";
 
 var store = __webpack_require__(47)('wks');
 var uid = __webpack_require__(35);
-var Symbol = __webpack_require__(7).Symbol;
+var Symbol = __webpack_require__(8).Symbol;
 var USE_SYMBOL = typeof Symbol == 'function';
 
 var $exports = module.exports = function (name) {
@@ -370,18 +370,6 @@ $exports.store = store;
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports) {
-
-// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
-var global = module.exports = typeof window != 'undefined' && window.Math == Math
-  ? window : typeof self != 'undefined' && self.Math == Math ? self
-  // eslint-disable-next-line no-new-func
-  : Function('return this')();
-if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
-
-
-/***/ }),
-/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -398,6 +386,18 @@ var _loggerfactory = __webpack_require__(108);
 
 exports.LogLevel = _constants.LogLevel;
 exports.LoggerFactory = _loggerfactory.LoggerFactory;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+var global = module.exports = typeof window != 'undefined' && window.Math == Math
+  ? window : typeof self != 'undefined' && self.Math == Math ? self
+  // eslint-disable-next-line no-new-func
+  : Function('return this')();
+if (typeof __g == 'number') __g = global; // eslint-disable-line no-undef
+
 
 /***/ }),
 /* 9 */
@@ -568,7 +568,7 @@ module.exports = function (it) {
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(117);
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var hide = __webpack_require__(14);
 var Iterators = __webpack_require__(19);
 var TO_STRING_TAG = __webpack_require__(6)('toStringTag');
@@ -1046,7 +1046,7 @@ exports.default = CommandFactory;
 /***/ (function(module, exports, __webpack_require__) {
 
 var isObject = __webpack_require__(10);
-var document = __webpack_require__(7).document;
+var document = __webpack_require__(8).document;
 // typeof document.createElement is 'object' in old IE
 var is = isObject(document) && isObject(document.createElement);
 module.exports = function (it) {
@@ -1199,7 +1199,7 @@ module.exports = function (key) {
 /* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var SHARED = '__core-js_shared__';
 var store = global[SHARED] || (global[SHARED] = {});
 module.exports = function (key) {
@@ -1420,7 +1420,7 @@ exports.f = __webpack_require__(6);
 /* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var core = __webpack_require__(3);
 var LIBRARY = __webpack_require__(31);
 var wksExt = __webpack_require__(58);
@@ -1548,7 +1548,7 @@ module.exports = function (object, names) {
 /* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var document = __webpack_require__(7).document;
+var document = __webpack_require__(8).document;
 module.exports = document && document.documentElement;
 
 
@@ -1769,7 +1769,7 @@ module.exports = function (it) {
 
 "use strict";
 
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var core = __webpack_require__(3);
 var dP = __webpack_require__(9);
 var DESCRIPTORS = __webpack_require__(12);
@@ -1790,7 +1790,7 @@ module.exports = function (KEY) {
 
 "use strict";
 
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var $export = __webpack_require__(4);
 var meta = __webpack_require__(52);
 var fails = __webpack_require__(15);
@@ -1987,7 +1987,7 @@ var ctx = __webpack_require__(13);
 var invoke = __webpack_require__(152);
 var html = __webpack_require__(66);
 var cel = __webpack_require__(40);
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var process = global.process;
 var setTask = global.setImmediate;
 var clearTask = global.clearImmediate;
@@ -2128,7 +2128,7 @@ var _dolphinBuilder = __webpack_require__(170);
 
 var _utils = __webpack_require__(2);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 var _connector = __webpack_require__(105);
 
@@ -3870,7 +3870,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.registerServiceProvider = exports.hasService = exports.getService = exports.LogLevel = exports.LoggerFactory = undefined;
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 var _platformClient = __webpack_require__(144);
 
@@ -4847,7 +4847,7 @@ var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
 var _utils = __webpack_require__(2);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4996,7 +4996,7 @@ var HttpClient = function () {
     (0, _createClass3.default)(HttpClient, [{
         key: 'request',
         value: function request(url, method, timeoutValue) {
-            var timeout = timeoutValue || 5000;
+            var timeout = timeoutValue || 0;
             var configuration = {
                 url: url, method: method, timeout: timeout
             };
@@ -5051,6 +5051,8 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _reponseBuilder = __webpack_require__(148);
 
+var _utils = __webpack_require__(2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var RequestBuilder = function () {
@@ -5068,6 +5070,19 @@ var RequestBuilder = function () {
                 this.configuration.headers = [];
             }
             this.configuration.headers.push({ name: name, value: value });
+            return this;
+        }
+    }, {
+        key: 'withHeadersInfo',
+        value: function withHeadersInfo(headersInfo) {
+            if ((0, _utils.exists)(headersInfo)) {
+                for (var name in headersInfo) {
+                    if (headersInfo.hasOwnProperty(name)) {
+                        var value = headersInfo[name];
+                        this.configuration.headers.push({ name: name, value: value });
+                    }
+                }
+            }
             return this;
         }
     }, {
@@ -5172,7 +5187,7 @@ var _createClass2 = __webpack_require__(1);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 var _httpResponse = __webpack_require__(156);
 
@@ -5200,6 +5215,8 @@ var Executor = function () {
 
                 httpRequest.open(_this.configuration.method, _this.configuration.url, async);
                 httpRequest.url = _this.configuration.url;
+                httpRequest.method = _this.configuration.method;
+                httpRequest.withCredentials = true;
 
                 if (window.platformClient) {
                     var requestInterceptors = window.platformClient.getService('HttpClientInterceptor').getRequestInterceptors();
@@ -5296,7 +5313,7 @@ module.exports = __webpack_require__(3).Promise;
 "use strict";
 
 var LIBRARY = __webpack_require__(31);
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var ctx = __webpack_require__(13);
 var classof = __webpack_require__(36);
 var $export = __webpack_require__(4);
@@ -5595,7 +5612,7 @@ module.exports = function (fn, args, that) {
 /* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var macrotask = __webpack_require__(81).set;
 var Observer = global.MutationObserver || global.WebKitMutationObserver;
 var process = global.process;
@@ -5674,7 +5691,7 @@ module.exports = function () {
 
 var $export = __webpack_require__(4);
 var core = __webpack_require__(3);
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var speciesConstructor = __webpack_require__(80);
 var promiseResolve = __webpack_require__(83);
 
@@ -5988,6 +6005,8 @@ var _serviceProvider = __webpack_require__(57);
 
 var _utils = __webpack_require__(2);
 
+var _logging = __webpack_require__(7);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
@@ -6007,6 +6026,7 @@ var ClientScope = function () {
             var key = result.hostname + result.port;
             var clientId = this.clientIds.get(key);
             if ((0, _utils.exists)(clientId)) {
+                ClientScope.LOGGER.trace('Using ClientId', key, clientId);
                 httpRequest.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, clientId);
             }
         }
@@ -6021,6 +6041,7 @@ var ClientScope = function () {
                 throw new Error('Client Id does not match!');
             }
             if ((0, _utils.exists)(newClientId)) {
+                ClientScope.LOGGER.debug('ClientId found', key, newClientId);
                 this.clientIds.set(key, newClientId);
             }
         }
@@ -6033,6 +6054,8 @@ var ClientScope = function () {
     }]);
     return ClientScope;
 }();
+
+ClientScope.LOGGER = _logging.LoggerFactory.getLogger('ClientScope');
 
 function register(platformClient) {
     if ((0, _utils.exists)(platformClient)) {
@@ -6132,7 +6155,7 @@ var _noTransmitter = __webpack_require__(199);
 
 var _noTransmitter2 = _interopRequireDefault(_noTransmitter);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6219,7 +6242,7 @@ var _clientPresentationModel = __webpack_require__(104);
 
 var _clientPresentationModel2 = _interopRequireDefault(_clientPresentationModel);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6526,7 +6549,7 @@ module.exports = __webpack_require__(3).Symbol;
 "use strict";
 
 // ECMAScript 6 symbols shim
-var global = __webpack_require__(7);
+var global = __webpack_require__(8);
 var has = __webpack_require__(17);
 var DESCRIPTORS = __webpack_require__(12);
 var $export = __webpack_require__(4);
@@ -7178,7 +7201,7 @@ var _eventBus = __webpack_require__(60);
 
 var _eventBus2 = _interopRequireDefault(_eventBus);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7341,7 +7364,7 @@ var _commandFactory2 = _interopRequireDefault(_commandFactory);
 
 var _constants = __webpack_require__(38);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7730,7 +7753,7 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _utils = __webpack_require__(2);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8107,7 +8130,7 @@ var consts = _interopRequireWildcard(_constants);
 
 var _utils = __webpack_require__(2);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -8670,7 +8693,7 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _utils = __webpack_require__(2);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8910,7 +8933,7 @@ var _remotingErrorHandler = __webpack_require__(207);
 
 var _remotingErrorHandler2 = _interopRequireDefault(_remotingErrorHandler);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 var _commandConstants = __webpack_require__(5);
 
@@ -8957,94 +8980,32 @@ var PlatformHttpTransmitter = function () {
         value: function _send(commands) {
             var _this = this;
 
+            var self = this;
             return new _promise2.default(function (resolve, reject) {
-                var http = new XMLHttpRequest();
-                http.withCredentials = true;
-                http.onerror = function (errorContent) {
-                    PlatformHttpTransmitter.LOGGER.error('HTTP network error', errorContent);
-                    _this._handleError(reject, new _errors.HttpNetworkError('PlatformHttpTransmitter: Network error', errorContent));
-                };
 
-                http.onreadystatechange = function () {
-                    if (http.readyState === FINISHED) {
-                        switch (http.status) {
+                if (window.platformClient) {
+                    var encodedCommands = _codec2.default.encode(commands);
 
-                            case SUCCESS:
-                                {
-                                    _this.failed_attempt = 0;
-                                    var currentClientId = http.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
-                                    if ((0, _utils.exists)(currentClientId)) {
-                                        if ((0, _utils.exists)(_this.clientId) && _this.clientId !== currentClientId) {
-                                            _this._handleError(reject, new _errors.DolphinSessionError('PlatformHttpTransmitter: ClientId of the response did not match'));
-                                        }
-                                        _this.clientId = currentClientId;
-                                    } else {
-                                        _this._handleError(reject, new _errors.DolphinSessionError('PlatformHttpTransmitter: Server did not send a clientId'));
-                                    }
-
-                                    if (PlatformHttpTransmitter.LOGGER.isLogLevelUseable(_logging.LogLevel.DEBUG) && !PlatformHttpTransmitter.LOGGER.isLogLevelUseable(_logging.LogLevel.TRACE)) {
-                                        try {
-                                            var json = JSON.parse(http.responseText);
-                                            if (json.length > 0) {
-                                                PlatformHttpTransmitter.LOGGER.debug('HTTP response with SUCCESS', currentClientId, json);
-                                            }
-                                        } catch (error) {
-                                            PlatformHttpTransmitter.LOGGER.error('Response could not be parsed to JSON for logging');
-                                        }
-                                    }
-
-                                    PlatformHttpTransmitter.LOGGER.trace('HTTP response with SUCCESS', currentClientId, http.responseText);
-                                    resolve(http.responseText);
-                                    break;
-                                }
-
-                            case REQUEST_TIMEOUT:
-                                PlatformHttpTransmitter.LOGGER.error('HTTP request timeout');
-                                _this._handleError(reject, new _errors.DolphinSessionError('PlatformHttpTransmitter: Session Timeout'));
-                                break;
-
-                            default:
-                                if (_this.failed_attempt <= _this.maxRetry) {
-                                    _this.failed_attempt = _this.failed_attempt + 1;
-                                }
-                                PlatformHttpTransmitter.LOGGER.error('HTTP unsupported status, with HTTP status', http.status);
-                                _this._handleError(reject, new _errors.HttpResponseError('PlatformHttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
-                                break;
+                    if (PlatformHttpTransmitter.LOGGER.isLogLevelUseable(_logging.LogLevel.DEBUG) && !PlatformHttpTransmitter.LOGGER.isLogLevelUseable(_logging.LogLevel.TRACE)) {
+                        for (var i = 0; i < commands.length; i++) {
+                            var command = commands[i];
+                            if (command.id === _commandConstants.VALUE_CHANGED_COMMAND_ID) {
+                                PlatformHttpTransmitter.LOGGER.debug('send', command, encodedCommands);
+                            }
                         }
                     }
-                };
 
-                http.open('POST', _this.url);
-                if ((0, _utils.exists)(_this.clientId)) {
-                    http.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, _this.clientId);
-                }
-
-                if ((0, _utils.exists)(_this.headersInfo)) {
-                    for (var i in _this.headersInfo) {
-                        if (_this.headersInfo.hasOwnProperty(i)) {
-                            http.setRequestHeader(i, _this.headersInfo[i]);
-                        }
+                    var httpClient = window.platformClient.getService('HttpClient');
+                    if (httpClient && self.failed_attempt <= self.maxRetry) {
+                        httpClient.post(self.url).withHeadersInfo(_this.headersInfo).withContent(encodedCommands).readString().execute().then(function (response) {
+                            resolve(response.content);
+                        }).catch(function (exception) {
+                            self.failed_attempt += 1;
+                            self._handleError(reject, exception);
+                        });
+                    } else {
+                        PlatformHttpTransmitter.LOGGER.error('Cannot reach the sever');
                     }
-                }
-
-                var encodedCommands = _codec2.default.encode(commands);
-
-                if (PlatformHttpTransmitter.LOGGER.isLogLevelUseable(_logging.LogLevel.DEBUG) && !PlatformHttpTransmitter.LOGGER.isLogLevelUseable(_logging.LogLevel.TRACE)) {
-                    for (var _i = 0; _i < commands.length; _i++) {
-                        var command = commands[_i];
-                        if (command.id === _commandConstants.VALUE_CHANGED_COMMAND_ID) {
-                            PlatformHttpTransmitter.LOGGER.debug('send', command, encodedCommands);
-                        }
-                    }
-                }
-
-                PlatformHttpTransmitter.LOGGER.trace('send', commands, encodedCommands);
-                if (_this.failed_attempt > _this.maxRetry) {
-                    setTimeout(function () {
-                        http.send(encodedCommands);
-                    }, _this.timeout);
-                } else {
-                    http.send(encodedCommands);
                 }
             });
         }
@@ -9193,7 +9154,7 @@ var _createClass2 = __webpack_require__(1);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
-var _logging = __webpack_require__(8);
+var _logging = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
