@@ -7,7 +7,7 @@ class Executor {
         this.configuration = configuration;
     }
 
-    execute() {
+    execute(timeout) {
 
         return new Promise((resolve, reject) => {
         
@@ -37,7 +37,7 @@ class Executor {
                 
             }
 
-            httpRequest.timeout = this.configuration.timeout;
+            httpRequest.timeout = timeout || 0;
 
             if (this.configuration.responseType) {
                 httpRequest.responseType = this.configuration.responseType;
