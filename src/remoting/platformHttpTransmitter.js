@@ -42,96 +42,40 @@ export default class PlatformHttpTransmitter {
     }
 
     _send(commands) {
+        const self = this;
         return new Promise((resolve, reject) => {
-            const http = new XMLHttpRequest();
-            http.withCredentials = true;
-            http.onerror = (errorContent) => {
-                PlatformHttpTransmitter.LOGGER.error('HTTP network error', errorContent);
-                this._handleError(reject, new HttpNetworkError('PlatformHttpTransmitter: Network error', errorContent));
-            };
 
-            http.onreadystatechange = () => {
-                if (http.readyState === FINISHED){
-                    switch (http.status) {
+            if (window.platformClient) {
+                const encodedCommands = Codec.encode(commands);
 
-                        case SUCCESS:
-                        {
-                            this.failed_attempt = 0;
-                            const currentClientId = http.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
-                            if (exists(currentClientId)) {
-                                if (exists(this.clientId) && this.clientId !== currentClientId) {
-                                    this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: ClientId of the response did not match'));
-                                }
-                                this.clientId = currentClientId;
-                            } else {
-                                this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: Server did not send a clientId'));
-                            }
-
-                            if (PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.DEBUG) && !PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.TRACE)) {
-                                try {
-                                    let json = JSON.parse(http.responseText);
-                                    if (json.length > 0) {
-                                        PlatformHttpTransmitter.LOGGER.debug('HTTP response with SUCCESS', currentClientId, json);
-                                    }
-                                } catch (error) {
-                                    PlatformHttpTransmitter.LOGGER.error('Response could not be parsed to JSON for logging');
-                                }
-                            }
-
-                            PlatformHttpTransmitter.LOGGER.trace('HTTP response with SUCCESS', currentClientId, http.responseText);
-                            resolve(http.responseText);
-                            break;
+                if (PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.DEBUG) && !PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.TRACE)) {
+                    for (let i = 0; i < commands.length; i++) {
+                        let command = commands[i];
+                        if (command.id === VALUE_CHANGED_COMMAND_ID) {
+                            PlatformHttpTransmitter.LOGGER.debug('send', command, encodedCommands);
                         }
-
-                        case REQUEST_TIMEOUT:
-                            PlatformHttpTransmitter.LOGGER.error('HTTP request timeout');
-                            this._handleError(reject, new DolphinSessionError('PlatformHttpTransmitter: Session Timeout'));
-                            break;
-
-                        default:
-                            if(this.failed_attempt <= this.maxRetry){
-                                this.failed_attempt = this.failed_attempt + 1;
-                            }
-                            PlatformHttpTransmitter.LOGGER.error('HTTP unsupported status, with HTTP status', http.status);
-                            this._handleError(reject, new HttpResponseError('PlatformHttpTransmitter: HTTP Status != 200 (' + http.status + ')'));
-                            break;
                     }
                 }
-            };
 
-            http.open('POST', this.url);
-            if (exists(this.clientId)) {
-                http.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, this.clientId);
-            }
-
-            if (exists(this.headersInfo)) {
-                for (let i in this.headersInfo) {
-                    if (this.headersInfo.hasOwnProperty(i)) {
-                        http.setRequestHeader(i, this.headersInfo[i]);
-                    }
+                const httpClient = window.platformClient.getService('HttpClient');
+                if (httpClient && self.failed_attempt <= self.maxRetry) {
+                    httpClient.post(self.url)
+                    .withHeadersInfo(this.headersInfo)
+                    .withContent(encodedCommands)
+                    .readString()
+                    .execute()
+                    .then(function(response) {
+                        resolve(response.content);
+                    })
+                    .catch(function(exception) {
+                        self.failed_attempt += 1;
+                        self._handleError(reject, exception);
+                    });
+                } else {
+                    //TODO handle failure
+                    PlatformHttpTransmitter.LOGGER.error('Cannot reach the sever');
                 }
             }
-
-            let encodedCommands = Codec.encode(commands);
-
-            if (PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.DEBUG) && !PlatformHttpTransmitter.LOGGER.isLogLevelUseable(LogLevel.TRACE)) {
-                for (let i = 0; i < commands.length; i++) {
-                    let command = commands[i];
-                    if (command.id === VALUE_CHANGED_COMMAND_ID) {
-                        PlatformHttpTransmitter.LOGGER.debug('send', command, encodedCommands);
-                    }
-                }
-            }
-
-            PlatformHttpTransmitter.LOGGER.trace('send', commands, encodedCommands);
-            if (this.failed_attempt > this.maxRetry) {
-                setTimeout(function() {
-                    http.send(encodedCommands);
-                }, this.timeout);
-            }else{
-                http.send(encodedCommands);
-            }
-
         });
     }
 
