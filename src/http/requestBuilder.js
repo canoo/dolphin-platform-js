@@ -24,6 +24,7 @@ class RequestBuilder {
                 }
             }
         }
+        return this;
     }
 
     withContent(data) {
