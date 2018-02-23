@@ -5240,13 +5240,13 @@ var Executor = function () {
 
                 httpRequest.ontimeout = function () {
                     var message = this.statusText || 'Timeout occurred';
-                    var httpException = new _httpException.HttpException(message);
+                    var httpException = new _httpException.HttpException(message, this.status, true);
                     reject(httpException);
                 };
 
                 httpRequest.onerror = function () {
                     var message = this.statusText || 'Unspecified error occured';
-                    var httpException = new _httpException.HttpException(message);
+                    var httpException = new _httpException.HttpException(message, this.status);
                     reject(httpException);
                 };
 
@@ -5272,7 +5272,7 @@ var Executor = function () {
                             resolve(httpResponse);
                         }
                     } else if (this.readyState === 4 && this.status >= 300) {
-                        var httpException = new _httpException.HttpException(this.statusText);
+                        var httpException = new _httpException.HttpException(this.statusText, this.status);
                         reject(httpException);
                     }
                 };
@@ -5815,16 +5815,28 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var HttpException = function () {
-    function HttpException(message) {
+    function HttpException(message, status, timedout) {
         (0, _classCallCheck3.default)(this, HttpException);
 
         this.message = message;
+        this.status = status || 0;
+        this.timedout = timedout || false;
     }
 
     (0, _createClass3.default)(HttpException, [{
         key: "getMessage",
         value: function getMessage() {
             return this.message;
+        }
+    }, {
+        key: "getStatus",
+        value: function getStatus() {
+            return this.status;
+        }
+    }, {
+        key: "isTimedout",
+        value: function isTimedout() {
+            return this.timedout;
         }
     }]);
     return HttpException;
@@ -8938,12 +8950,7 @@ var _commandConstants = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var FINISHED = 4;
-var SUCCESS = 200;
-var REQUEST_TIMEOUT = 408;
-
-var DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
-var CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
+var DOLPHIN_SESSION_TIMEOUT = 408;
 
 var PlatformHttpTransmitter = function () {
     function PlatformHttpTransmitter(url, config) {
@@ -8999,8 +9006,13 @@ var PlatformHttpTransmitter = function () {
                         httpClient.post(self.url).withHeadersInfo(_this.headersInfo).withContent(encodedCommands).readString().execute().then(function (response) {
                             resolve(response.content);
                         }).catch(function (exception) {
+                            var status = exception.getStatus();
                             self.failed_attempt += 1;
-                            self._handleError(reject, exception);
+                            if (status === DOLPHIN_SESSION_TIMEOUT) {
+                                self._handleError(reject, new _errors.DolphinSessionError('PlatformHttpTransmitter: Session Timeout'));
+                            } else {
+                                self._handleError(reject, exception);
+                            }
                         });
                     } else {
                         PlatformHttpTransmitter.LOGGER.error('Cannot reach the sever');
