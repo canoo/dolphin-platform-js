@@ -4995,33 +4995,32 @@ var HttpClient = function () {
 
     (0, _createClass3.default)(HttpClient, [{
         key: 'request',
-        value: function request(url, method, timeoutValue) {
-            var timeout = timeoutValue || 0;
+        value: function request(url, method) {
             var configuration = {
-                url: url, method: method, timeout: timeout
+                url: url, method: method
             };
             this.requestBuilder = new _requestBuilder.RequestBuilder(configuration);
             return this.requestBuilder;
         }
     }, {
         key: 'get',
-        value: function get(url, timeout) {
-            return this.request(url, _constants.HTTP_GET, timeout);
+        value: function get(url) {
+            return this.request(url, _constants.HTTP_GET);
         }
     }, {
         key: 'post',
-        value: function post(url, timeout) {
-            return this.request(url, _constants.HTTP_POST, timeout);
+        value: function post(url) {
+            return this.request(url, _constants.HTTP_POST);
         }
     }, {
         key: 'put',
-        value: function put(url, timeout) {
-            return this.request(url, _constants.HTTP_PUT), timeout;
+        value: function put(url) {
+            return this.request(url, _constants.HTTP_PUT);
         }
     }, {
         key: 'delete',
-        value: function _delete(url, timeout) {
-            return this.request(url, _constants.HTTP_DELETE, timeout);
+        value: function _delete(url) {
+            return this.request(url, _constants.HTTP_DELETE);
         }
     }]);
     return HttpClient;
@@ -5204,7 +5203,7 @@ var Executor = function () {
 
     (0, _createClass3.default)(Executor, [{
         key: 'execute',
-        value: function execute() {
+        value: function execute(timeout) {
             var _this = this;
 
             return new _promise2.default(function (resolve, reject) {
@@ -5233,7 +5232,7 @@ var Executor = function () {
                     }
                 }
 
-                httpRequest.timeout = _this.configuration.timeout;
+                httpRequest.timeout = timeout || 0;
 
                 if (_this.configuration.responseType) {
                     httpRequest.responseType = _this.configuration.responseType;
