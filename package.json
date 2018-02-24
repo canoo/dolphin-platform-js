@@ -8,13 +8,13 @@
     "url": "https://github.com/canoo/dolphin-platform-js.git"
   },
   "scripts": {
-    "clean": "node ./node_modules/rimraf/bin.js dist/",
-    "clean:all": "node ./node_modules/rimraf/bin.js node_modules/ dist/",
-    "build": "node ./node_modules/webpack/bin/webpack.js",
+    "clean": "node ./node_modules/.bin/rimraf dist/",
+    "clean:all": "node ./node_modules/.bin/rimraf node_modules/ dist/",
+    "build": "node ./node_modules/.bin/webpack",
     "build:install": "npm install && npm run build",
     "test": "npm run test:mocha",
-    "test:mocha": "node ./node_modules/mocha/bin/_mocha test/src --recursive --require babel-register --require jsdom-global/register",
-    "test:serve": "set NODE_ENV=DEV && node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js --env.dev"
+    "test:mocha": "node ./node_modules/.bin/mocha test/src --recursive --require babel-register --require jsdom-global/register",
+    "test:serve": "set NODE_ENV=DEV && node ./node_modules/.bin/webpack-dev-server --env.dev"
   },
   "author": "Michael Heinrichs <michael.heinrichs@canoo.com>",
   "contributors": [
