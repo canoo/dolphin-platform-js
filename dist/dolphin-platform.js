@@ -3899,6 +3899,7 @@ var getService = _platformClient.PlatformClient.getService;
 var hasService = _platformClient.PlatformClient.hasService;
 var registerServiceProvider = _platformClient.PlatformClient.registerServiceProvider;
 
+_platformClient.PlatformClient.LOGGER.info('Dolphin Platform Version:', "1.0.0-CR.4");
 exports.LoggerFactory = _logging.LoggerFactory;
 exports.LogLevel = _logging.LogLevel;
 exports.getService = getService;
@@ -4597,7 +4598,7 @@ var LOCALS = {
     },
     getCookie: function getCookie(name) {
         if ((0, _utils.exists)(window) && (0, _utils.exists)(window.document) && (0, _utils.exists)(window.document.cookie)) {
-            var value = '; ' + document.cookie;
+            var value = '; ' + window.document.cookie;
             var parts = value.split('; ' + name + '=');
             if (parts.length === 2) {
                 return parts.pop().split(';').shift();
@@ -4935,7 +4936,6 @@ PlatformClient.init = function () {
     });
 };
 
-PlatformClient.LOGGER.info('Dolphin Platform Version:', "1.0.0-CR.4");
 exports.PlatformClient = PlatformClient;
 
 /***/ }),
