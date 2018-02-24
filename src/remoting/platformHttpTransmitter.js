@@ -59,10 +59,10 @@ export default class PlatformHttpTransmitter {
                     .withContent(encodedCommands)
                     .readString()
                     .execute()
-                    .then(function(response) {
+                    .then((response) => {
                         resolve(response.content);
                     })
-                    .catch(function(exception) {
+                    .catch((exception) => {
                         const status = exception.getStatus();
                         self.failed_attempt += 1;
                         if (status === DOLPHIN_SESSION_TIMEOUT) {
