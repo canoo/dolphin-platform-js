@@ -9,6 +9,11 @@ import sinon from "sinon";
 
 describe('LoggerFactory', function() {
 
+    after(function() {
+        // Set NONE for later tests
+        LoggerFactory.getLogger().setLogLevel(LogLevel.NONE);
+    });
+
     it('Do not log warn message, level set by ROOT Logger', sinon.test(function() {
             // given:
             this.stub(console, 'warn');
@@ -75,4 +80,5 @@ describe('LoggerFactory', function() {
         // then:
         expect(loggerA).not.to.be.equals(loggerB);
     });
+
 });

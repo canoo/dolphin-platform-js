@@ -21,8 +21,8 @@ const LOCALS = {
 
     },
     getCookie (name) {
-        if (exists(window) && exists(window.document) && exists(window.document.cookie)) {
-            const value = '; ' + document.cookie;
+        if (exists(window) && exists(window.document) && exists(window.document.cookie)) {       
+            const value = '; ' + window.document.cookie;
             const parts = value.split('; ' + name + '=');
             if ( parts.length === 2 ) {
                 return parts.pop().split(';').shift();
