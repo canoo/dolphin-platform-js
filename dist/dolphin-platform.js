@@ -190,6 +190,8 @@ function parseUrl(url) {
         scheme = matches[4].substring(0, matches[4].length - 1);
     }
 
+    var path = matches[13];
+
     var query = void 0;
     if (matches[16] && matches[16].length > 1) {
         query = matches[16].substring(1, matches[16].length);
@@ -228,7 +230,13 @@ function parseUrl(url) {
         if (window && window.location && window.location.protocol) {
             scheme = window.location.protocol.substring(0, window.location.protocol.length - 1);
         }
+
+        if (path.indexOf('.') === 0) {
+            path = path.substring(1, path.length);
+        }
     }
+
+    port = parseInt(port);
 
     return {
         scheme: scheme,
@@ -236,7 +244,7 @@ function parseUrl(url) {
         password: matches[9],
         hostname: hostname,
         port: port,
-        path: matches[13],
+        path: path,
         query: query,
         fragment: fragment
     };
