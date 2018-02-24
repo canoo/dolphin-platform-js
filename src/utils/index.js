@@ -24,6 +24,8 @@ export function parseUrl(url) {
         scheme = matches[4].substring(0, matches[4].length-1);
     }
 
+    let path = matches[13];
+
     let query;
     if (matches[16] && matches[16].length > 1) {
         query = matches[16].substring(1, matches[16].length);
@@ -59,7 +61,14 @@ export function parseUrl(url) {
         if (window && window.location && window.location.protocol) {
             scheme = window.location.protocol.substring(0, window.location.protocol.length-1) ;
         }
+        // strip '.' from relative path
+        if (path.indexOf('.') === 0) {
+            path = path.substring(1, path.length);
+        }
     }
+
+    // port should be a number, always
+    port = parseInt(port);
 
     return {
         scheme: scheme,
@@ -67,7 +76,7 @@ export function parseUrl(url) {
         password: matches[9],
         hostname: hostname,
         port: port,
-        path: matches[13],
+        path: path,
         query: query,
         fragment: fragment
     };
