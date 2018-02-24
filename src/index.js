@@ -13,6 +13,10 @@ const getService = PlatformClient.getService;
 const hasService = PlatformClient.hasService;
 const registerServiceProvider = PlatformClient.registerServiceProvider;
 
+/* eslint-disable */
+PlatformClient.LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
+/* eslint-enable */
+
 export { LoggerFactory, LogLevel, getService, hasService, registerServiceProvider }
 
 // Provide dependencies as global dolphin object for backward compatibility

@@ -76,8 +76,4 @@ PlatformClient.init = function() {
     });
 }
 
-/* eslint-disable */
-PlatformClient.LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
-/* eslint-enable */
-
 export { PlatformClient }
