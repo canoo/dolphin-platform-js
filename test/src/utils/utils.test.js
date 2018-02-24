@@ -3,7 +3,7 @@
 "use strict";
 
 import { expect } from 'chai';
-import { exists } from '../../src/utils';
+import { exists } from '../../../src/utils';
 
 describe('utils.exists()', function() {
     it('undefined', function() {
