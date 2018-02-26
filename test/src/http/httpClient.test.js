@@ -199,6 +199,25 @@ describe('HttpClient', function() {
         expect(server.requests.length).to.be.equal(1);
     });
 
+    it('HTTP GET, without content, without result, network error with text', function(done) {
+        server.respondWith('GET', 'https://www.google.de', function(request) {
+            request.statusText = 'Hola!';
+            request.error();
+        });
+
+        const httpClient = new HttpClient();
+        httpClient.get('https://www.google.de').withoutContent().withoutResult().execute().catch((exception) => {
+            expect(exception).to.be.instanceOf(HttpException);
+            expect(exception.status).to.be.equal(0);
+            expect(exception.timedout).to.be.equal(false);
+            expect(exception.message).to.be.equal('Hola!');
+            done();
+        });
+        server.respond();
+
+        expect(server.requests.length).to.be.equal(1);
+    });
+
     it('HTTP GET, without content, without result, timeout error', function(done) {
         const clock = sinon.useFakeTimers();
         server.respondWith('GET', 'https://www.google.de', 'Hallo Google!');
