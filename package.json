@@ -11,8 +11,8 @@
     "sourceMap": false
   },
   "scripts": {
-    "clean": "node ./node_modules/.bin/rimraf dist/ coverage/",
-    "clean:all": "node ./node_modules/.bin/rimraf node_modules/ dist/ coverage/",
+    "clean": "node ./node_modules/.bin/rimraf dist/ coverage/ .nyc_output/",
+    "clean:all": "node ./node_modules/.bin/rimraf node_modules/ dist/ coverage/ .nyc_output/",
     "build": "node ./node_modules/.bin/webpack",
     "build:install": "npm install && npm run build",
     "test": "npm run test:mocha",
