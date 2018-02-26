@@ -19,7 +19,8 @@
     "test:mocha": "node ./node_modules/.bin/mocha test/src --recursive --require babel-register --require jsdom-global/register",
     "test:serve": "set NODE_ENV=DEV && node ./node_modules/.bin/webpack-dev-server --env.dev",
     "test:coverage": "node ./node_modules/.bin/nyc --reporter=lcov --reporter=html --reporter=text npm test",
-    "coverage": "node ./node_modules/.bin/nyc report --reporter=lcov --reporter=html --reporter=text"
+    "coverage": "node ./node_modules/.bin/nyc report --reporter=lcov --reporter=html --reporter=text",
+    "coveralls": "node ./node_modules/.bin/nyc report --reporter=text-lcov || coveralls"
   },
   "author": "Michael Heinrichs <michael.heinrichs@canoo.com>",
   "contributors": [
@@ -40,6 +41,7 @@
     "babel-preset-es2015": "6.24.1",
     "babel-register": "6.26.0",
     "chai": "4.1.2",
+    "coveralls": "3.0.0",
     "eslint": "4.15.0",
     "jsdom": "11.5.1",
     "jsdom-global": "3.0.2",
