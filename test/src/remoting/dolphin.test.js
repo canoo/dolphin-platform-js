@@ -217,7 +217,7 @@ describe('Dolphin Event Handling', function() {
         onModelStoreChange({clientPresentationModel: model, eventType: "ADDED"});
         outerSubscription.unsubscribe();
         sinon.assert.calledWith(innerOnAddedHandler, bean);
-        innerOnAddedHandler.reset();
+        innerOnAddedHandler.resetHistory();
 
         onModelStoreChange({clientPresentationModel: model, eventType: "ADDED"});
         sinon.assert.notCalled(innerOnAddedHandler);
@@ -294,7 +294,7 @@ describe('Dolphin Event Handling', function() {
         onModelStoreChange({clientPresentationModel: model, eventType: "ADDED"});
         outerSubscription.unsubscribe();
         sinon.assert.calledWith(innerOnAddedHandler, bean);
-        innerOnAddedHandler.reset();
+        innerOnAddedHandler.resetHistory();
 
         onModelStoreChange({clientPresentationModel: model, eventType: "ADDED"});
         sinon.assert.notCalled(innerOnAddedHandler);
@@ -388,7 +388,7 @@ describe('Dolphin Event Handling', function() {
         onModelStoreChange({clientPresentationModel: model, eventType: "REMOVED"});
         outerSubscription.unsubscribe();
         sinon.assert.calledWith(innerOnRemovedHandler, bean);
-        innerOnRemovedHandler.reset();
+        innerOnRemovedHandler.resetHistory();
 
         onModelStoreChange({clientPresentationModel: model, eventType: "REMOVED"});
         sinon.assert.notCalled(innerOnRemovedHandler);
@@ -466,7 +466,7 @@ describe('Dolphin Event Handling', function() {
         onModelStoreChange({clientPresentationModel: model, eventType: "REMOVED"});
         outerSubscription.unsubscribe();
         sinon.assert.calledWith(innerOnRemovedHandler, bean);
-        innerOnRemovedHandler.reset();
+        innerOnRemovedHandler.resetHistory();
 
         onModelStoreChange({clientPresentationModel: model, eventType: "REMOVED"});
         sinon.assert.notCalled(innerOnRemovedHandler);
