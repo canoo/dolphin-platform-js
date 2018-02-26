@@ -4,45 +4,7 @@
 
 import { expect } from 'chai';
 import Codec from '../../../src/remoting/commands/codec.js';
-
-function createCPMCommand() {
-    return {
-        "id": "CreatePresentationModel",
-        "pmId": "05ee43b7-a884-4d42-9fc5-00b083664eed",
-        "attributes": [
-            {
-                "propertyName": "@@@ SOURCE_SYSTEM @@@",
-                "id": "3204S",
-                "value": "server"
-            },
-            {
-                "propertyName": "caseDetailsLabel",
-                "id": "3205S",
-                "value": null
-            },
-            {
-                "propertyName": "caseIdLabel",
-                "id": "3206S",
-                "value": null
-            },
-            {
-                "propertyName": "statusLabel",
-                "id": "3207S",
-                "value": null
-            },
-            {
-                "propertyName": "status",
-                "id": "3208S",
-                "value": null
-            }
-        ],
-        "pmType": "com.canoo.icos.casemanager.model.casedetails.CaseInfoBean"
-    };
-}
-
-function createCPMCommandString() {
-    return '{"id":"CreatePresentationModel","p_id":"05ee43b7-a884-4d42-9fc5-00b083664eed","t":"com.canoo.icos.casemanager.model.casedetails.CaseInfoBean","a":[{"n":"@@@ SOURCE_SYSTEM @@@","a_id":"3204S","v":"server"},{"n":"caseDetailsLabel","a_id":"3205S"},{"n":"caseIdLabel","a_id":"3206S"},{"n":"statusLabel","a_id":"3207S"},{"n":"status","a_id":"3208S"}]}'
-}
+import { commandDef, resultDef } from './codec.def';
 
 describe('encode', function() {
 
@@ -52,70 +14,69 @@ describe('encode', function() {
     });
 
     it('should encode single CreatePresentationModelCommand', function() {
-        let command = createCPMCommand();
+        let command = commandDef.CreatePresentationModel;
         let jsonString = Codec.encode([command]);
-        expect(jsonString).to.equal('[' + createCPMCommandString() + ']');
+        expect(jsonString).to.equal('[' + resultDef.CreatePresentationModel + ']');
+    });
+
+    it('should encode single CreateContextCommand', function() {
+        let command = commandDef.CreateContext;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.CreateContext + ']');
+    });
+
+    it('should encode single CreateControllerCommand', function() {
+        let command = commandDef.CreateController;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.CreateController + ']');
+    });
+
+    it('should encode single LongPollCommand', function() {
+        let command = commandDef.LongPoll;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.LongPoll + ']');
+    });
+
+    it('should encode single InterruptLongPollCommand', function() {
+        let command = commandDef.InterruptLongPoll;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.InterruptLongPoll + ']');
     });
 
     it('should encode single ValueChangedCommand with nulls', function() {
-        let command = {
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "oldValue": null,
-            "newValue": null
-        };
+        let command = commandDef.ValueChanged(null, null);
         let jsonString = Codec.encode([command]);
-        expect(jsonString).to.equal('[{"id":"ValueChanged","a_id":"3357S"}]');
+        expect(jsonString).to.equal(resultDef.ValueChanged(null, null));
     });
 
     it('should encode single ValueChangedCommand with Strings', function() {
-        let command = {
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "oldValue": "Hello World",
-            "newValue": "Good Bye"
-        };
+        let command = commandDef.ValueChanged("Hello World", "Good Bye");
         let json = Codec.encode([command]);
-        expect(json).to.equal('[{"id":"ValueChanged","a_id":"3357S","v":"Good Bye"}]');
+        expect(json).to.equal(resultDef.ValueChanged("Hello World", "Good Bye"));
     });
 
     it('should encode single ValueChangedCommand with ints', function() {
-        let command = {
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "oldValue": 41,
-            "newValue": 42
-        };
+        let command = commandDef.ValueChanged(41, 42);
         let json = Codec.encode([command]);
-        expect(json).to.equal('[{"id":"ValueChanged","a_id":"3357S","v":42}]');
+        expect(json).to.equal(resultDef.ValueChanged(41, 42));
     });
 
     it('should encode single ValueChangedCommand with floating points', function() {
-        let command = {
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "oldValue": 3.1415,
-            "newValue": 2.7182
-        };
+        let command = commandDef.ValueChanged(3.1415, 2.7182);
         let json = Codec.encode([command]);
-        expect(json).to.equal('[{"id":"ValueChanged","a_id":"3357S","v":2.7182}]');
+        expect(json).to.equal(resultDef.ValueChanged(3.1415, 2.7182));
     });
 
     it('should encode single ValueChangedCommand with booleans', function() {
-        let command = {
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "oldValue": true,
-            "newValue": false
-        };
+        let command = commandDef.ValueChanged(true, false);
         let json = Codec.encode([command]);
-        expect(json).to.equal('[{"id":"ValueChanged","a_id":"3357S","v":false}]');
+        expect(json).to.equal(resultDef.ValueChanged(true, false));
     });
 
     it('should encode two custom codec commands', function() {
-        let command = createCPMCommand();
+        let command = commandDef.CreatePresentationModel;
         let json = Codec.encode([command, command]);
-        let expected = createCPMCommandString();
+        let expected = resultDef.CreatePresentationModel;
         expect(json).to.equal('[' + expected + ',' + expected + ']');
     });
 });
@@ -131,68 +92,73 @@ describe('decode', function() {
     });
 
     it('should decode single CreatePresentationModelCommand', function() {
-        let commands = Codec.decode('[' + createCPMCommandString() + ']');
+        let commands = Codec.decode('[' + resultDef.CreatePresentationModel + ']');
 
-        expect(commands).to.deep.equal([createCPMCommand()]);
+        expect(commands).to.deep.equal([commandDef.CreatePresentationModel]);
+    });
+
+    it('should decode single CreateContextCommand', function() {
+        let commands = Codec.decode('[' + resultDef.CreateContext + ']');
+
+        expect(commands).to.deep.equal([commandDef.CreateContext]);
+    });
+
+    it('should decode single CreateControllerCommand', function() {
+        let commands = Codec.decode('[' + resultDef.CreateController + ']');
+
+        expect(commands).to.deep.equal([commandDef.CreateController]);
+    });
+
+    it('should decode single LongPollCommand', function() {
+        let commands = Codec.decode('[' + resultDef.LongPoll + ']');
+
+        expect(commands).to.deep.equal([commandDef.LongPoll]);
+    });
+
+    it('should decode single InterruptLongPollCommand', function() {
+        let commands = Codec.decode('[' + resultDef.InterruptLongPoll + ']');
+
+        expect(commands).to.deep.equal([commandDef.InterruptLongPoll]);
     });
 
     it('should decode single ValueChangedCommand with nulls', function() {
-        let commands = Codec.decode('[{"a_id":"3357S","id":"ValueChanged"}]');
+        let commands = Codec.decode(resultDef.ValueChanged(null, null));
+        console.log(commands);
 
-        expect(commands).to.deep.equal([{
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "newValue": null
-        }]);
+        expect(commands).to.deep.equal([commandDef.ValueChanged(null, null)]);
     });
 
     it('should decode single ValueChangedCommand with Strings', function() {
-        let commands = Codec.decode('[{"a_id":"3357S","v":"Good Bye","id":"ValueChanged"}]');
+        let commands = Codec.decode(resultDef.ValueChanged(null, "Good Bye"));
 
-        expect(commands).to.deep.equal([{
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "newValue": "Good Bye"
-        }]);
+        expect(commands).to.deep.equal([commandDef.ValueChanged(null, "Good Bye")]);
     });
 
     it('should decode single ValueChangedCommand with ints', function() {
-        let commands = Codec.decode('[{"a_id":"3357S","v":42,"id":"ValueChanged"}]');
+        let commands = Codec.decode(resultDef.ValueChanged(null, 42));
 
-        expect(commands).to.deep.equal([{
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "newValue": 42
-        }]);
+        expect(commands).to.deep.equal([commandDef.ValueChanged(null, 42)]);
     });
 
     it('should decode single ValueChangedCommand with floating points', function() {
-        let commands = Codec.decode('[{"a_id":"3357S","v":2.7182,"id":"ValueChanged"}]');
+        let commands = Codec.decode(resultDef.ValueChanged(null, 2.7182));
 
-        expect(commands).to.deep.equal([{
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "newValue": 2.7182
-        }]);
+        expect(commands).to.deep.equal([commandDef.ValueChanged(null, 2.7182)]);
     });
 
     it('should decode single ValueChangedCommand with booleans', function() {
-        let commands = Codec.decode('[{"a_id":"3357S","v":false,"id":"ValueChanged"}]');
+        let commands = Codec.decode(resultDef.ValueChanged(null, false));
 
-        expect(commands).to.deep.equal([{
-            "id": "ValueChanged",
-            "attributeId": "3357S",
-            "newValue": false
-        }]);
+        expect(commands).to.deep.equal([commandDef.ValueChanged(null, false)]);
     });
 
 
     it('should decode two custom codec commands', function() {
-        let customCodecCommandString = createCPMCommandString();
+        let customCodecCommandString = resultDef.CreatePresentationModel;
 
         let commands = Codec.decode('[' + customCodecCommandString + ',' + customCodecCommandString + ']');
 
-        let customCodecCommand = createCPMCommand();
+        let customCodecCommand = commandDef.CreatePresentationModel;
         expect(commands).to.deep.equal([customCodecCommand, customCodecCommand]);
     });
 });
