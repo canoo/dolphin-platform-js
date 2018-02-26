@@ -6,18 +6,14 @@
 
 This repository contains all JavaScript related sources of the Dolphin Platform JS client library. Clients for specific JS frameworks like [Polymer](https://github.com/canoo/dolphin-platform-polymer) can be found in seperate repositories. The Java server and client sourceas can be found [here](https://github.com/canoo/dolphin-platform).
 
-![Dolphin Platform Logo](http://www.guigarage.com/wordpress/wp-content/uploads/2015/10/logo.png)
+![Dolphin Platform Logo](https://raw.githubusercontent.com/canoo/dolphin-platform/master/doc/logo.png)
 
 The Dolphin Platform is a framework that implements the presentation model pattern and provides a modern way to create enterprise applications. The Platform provides several client implementations that all can be used in combination with a general sever API.
-
-<p align="center">
-<img src="http://www.dolphin-platform.io/assets/img/features/clients.png"/>
-</p>
 
 By doing so you can create enterprise application with a single server and several desktop, web and mobile client implementations. Here the Dolphin Platforms define a mechanism to automatically snchronize models between the server and the client.
 
 <p align="center">
-<img src="http://www.dolphin-platform.io/assets/img/features/pm1.png"/>
+<img src="https://raw.githubusercontent.com/canoo/dolphin-platform/master/documentation/src/docs/asciidoc/images/rpm-overview.png"/>
 </p>
 
 The Server sources of the Dolphin Platform can be found [here](https://github.com/canoo/dolphin-platform). 
