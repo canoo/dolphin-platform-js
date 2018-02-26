@@ -20,7 +20,7 @@
     "test:serve": "set NODE_ENV=DEV && node ./node_modules/.bin/webpack-dev-server --env.dev",
     "test:coverage": "node ./node_modules/.bin/nyc --reporter=lcov --reporter=html --reporter=text npm test",
     "coverage": "node ./node_modules/.bin/nyc report --reporter=lcov --reporter=html --reporter=text",
-    "coveralls": "node ./node_modules/.bin/nyc report --reporter=text-lcov || coveralls"
+    "coveralls": "node ./node_modules/.bin/nyc report --reporter=text-lcov | coveralls"
   },
   "author": "Michael Heinrichs <michael.heinrichs@canoo.com>",
   "contributors": [
