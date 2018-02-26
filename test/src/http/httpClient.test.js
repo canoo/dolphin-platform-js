@@ -125,6 +125,7 @@ describe('HttpClient', function() {
         httpClient.get('https://www.google.de').withoutContent().withoutResult().execute().catch((exception) => {
             expect(exception).to.be.instanceOf(HttpException);
             expect(exception.status).to.be.equal(404);
+            expect(exception.timedout).to.be.equal(false);
             expect(exception.message).to.be.equal('Not Found');
             done();
         });
@@ -186,15 +187,34 @@ describe('HttpClient', function() {
         });
 
         const httpClient = new HttpClient();
-        httpClient.get('https://www.google.de').withoutContent().withoutResult().execute(0).catch((exception) => {
+        httpClient.get('https://www.google.de').withoutContent().withoutResult().execute().catch((exception) => {
             expect(exception).to.be.instanceOf(HttpException);
             expect(exception.status).to.be.equal(0);
+            expect(exception.timedout).to.be.equal(false);
             expect(exception.message).to.be.equal('Unspecified error occured');
             done();
         });
         server.respond();
 
         expect(server.requests.length).to.be.equal(1);
+    });
+
+    it('HTTP GET, without content, without result, timeout error', function(done) {
+        const clock = sinon.useFakeTimers();
+        server.respondWith('GET', 'https://www.google.de', 'Hallo Google!');
+
+        const httpClient = new HttpClient();
+        httpClient.get('https://www.google.de').withoutContent().withoutResult().execute(5).catch((exception) => {
+            expect(exception).to.be.instanceOf(HttpException);
+            expect(exception.status).to.be.equal(0);
+            expect(exception.timedout).to.be.equal(true);
+            expect(exception.message).to.be.equal('Timeout occurred');
+            done();
+        });
+        clock.tick(20000);
+
+        expect(server.requests.length).to.be.equal(1);
+        clock.restore();
     });
 
 });
