@@ -4,7 +4,7 @@
 
 # Dolphin Platform JS client API [![Build Status](https://travis-ci.org/canoo/dolphin-platform-js.svg?branch=master)](https://travis-ci.org/canoo/dolphin-platform-js)
 
-This repository contains all JavaScript related sources of the Dolphin Platform JS client library. Clients for specific JS frameworks like [Polymer](https://github.com/canoo/dolphin-platform-polymer) can be found in seperate repositories. The Java server and client sourceas can be found [here](https://github.com/canoo/dolphin-platform).
+This repository contains all JavaScript related sources of the Dolphin Platform JS client library. Clients for specific JS frameworks like [Polymer](https://github.com/canoo/dolphin-platform-polymer) can be found in seperate repositories. The Java server and client sources can be found [here](https://github.com/canoo/dolphin-platform).
 
 ![Dolphin Platform Logo](https://raw.githubusercontent.com/canoo/dolphin-platform/master/doc/logo.png)
 
