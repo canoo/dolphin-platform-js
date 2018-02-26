@@ -4,6 +4,8 @@
 
 import { expect } from 'chai';
 import sinon from 'sinon';
+import sinonTest from 'sinon-test'
+sinon.test = sinonTest(sinon);
 
 import { LogLevel }  from '../../../src/logging/index';
 import { Logger }  from '../../../src/logging/logger';

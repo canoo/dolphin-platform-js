@@ -6,6 +6,8 @@ import { expect } from 'chai';
 
 import {LoggerFactory, LogLevel} from '../../../src/logging/index';
 import sinon from "sinon";
+import sinonTest from 'sinon-test'
+sinon.test = sinonTest(sinon);
 
 describe('LoggerFactory', function() {
 

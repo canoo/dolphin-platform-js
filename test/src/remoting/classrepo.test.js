@@ -4,6 +4,8 @@
 
 import { expect } from 'chai';
 import sinon from 'sinon';
+import sinonTest from 'sinon-test'
+sinon.test = sinonTest(sinon);
 
 import * as consts from '../../../src/remoting/constants';
 

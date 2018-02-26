@@ -3,6 +3,9 @@
 "use strict";
 
 import sinon from 'sinon';
+import sinonTest from 'sinon-test'
+sinon.test = sinonTest(sinon);
+
 import Connector from '../../../src/remoting/connector.js';
 import BeanManager from '../../../src/remoting/beanmanager.js';
 import ClassRepository from '../../../src/remoting/classrepo.js';

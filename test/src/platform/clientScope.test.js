@@ -4,6 +4,8 @@
 
 import { expect } from 'chai';
 import sinon from 'sinon';
+import sinonTest from 'sinon-test'
+sinon.test = sinonTest(sinon);
 
 import { PlatformClient } from '../../../src/platform/platformClient';
 import { register as registerHttp } from '../../../src/http';
@@ -40,7 +42,7 @@ describe('ClientScope', function() {
             setRequestHeader: function() {}
         }
         sinon.spy(request, 'setRequestHeader');
-        sinon.stub(response, 'getResponseHeader', function() { return 'abcdefg' });
+        sinon.stub(response, 'getResponseHeader').callsFake(function() { return 'abcdefg' });
 
         clientScope.handleResponse(response);
         clientScope.handleRequest(request);
@@ -59,7 +61,7 @@ describe('ClientScope', function() {
         }
 
         let result = 'abcdefg';
-        sinon.stub(response, 'getResponseHeader', function() { return result });
+        sinon.stub(response, 'getResponseHeader').callsFake(function() { return result });
         clientScope.handleResponse(response);
         result = '12345';
         let message = null;
