@@ -5083,6 +5083,9 @@ var RequestBuilder = function () {
         key: 'withHeadersInfo',
         value: function withHeadersInfo(headersInfo) {
             if ((0, _utils.exists)(headersInfo)) {
+                if (!this.configuration.headers) {
+                    this.configuration.headers = [];
+                }
                 for (var name in headersInfo) {
                     if (headersInfo.hasOwnProperty(name)) {
                         var value = headersInfo[name];
