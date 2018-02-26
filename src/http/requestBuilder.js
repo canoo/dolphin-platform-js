@@ -17,6 +17,9 @@ class RequestBuilder {
 
     withHeadersInfo(headersInfo) {
         if (exists(headersInfo)) {
+            if (!this.configuration.headers) {
+                this.configuration.headers = [];
+            }
             for (let name in headersInfo) {
                 if (headersInfo.hasOwnProperty(name)) {
                     const value = headersInfo[name];
