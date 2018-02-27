@@ -43,6 +43,42 @@ describe('encode', function() {
         expect(jsonString).to.equal('[' + resultDef.InterruptLongPoll + ']');
     });
 
+    it('should encode single AttributeMetadataChangedCommand', function() {
+        let command = commandDef.AttributeMetadataChanged;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.AttributeMetadataChanged + ']');
+    });
+
+    it('should encode single CallActionCommand', function() {
+        let command = commandDef.CallAction;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.CallAction + ']');
+    });
+
+    it('should encode single DeletePresentationModelCommand', function() {
+        let command = commandDef.DeletePresentationModel;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.DeletePresentationModel + ']');
+    });
+
+    it('should encode single DestroyContextCommand', function() {
+        let command = commandDef.DestroyContext;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.DestroyContext + ']');
+    });
+
+    it('should encode single DestroyControllerCommand', function() {
+        let command = commandDef.DestroyController;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.DestroyController + ']');
+    });
+
+    it('should encode single PresentationModelDeletedCommand', function() {
+        let command = commandDef.PresentationModelDeleted;
+        let jsonString = Codec.encode([command]);
+        expect(jsonString).to.equal('[' + resultDef.PresentationModelDeleted + ']');
+    });
+
     it('should encode single ValueChangedCommand with nulls', function() {
         let command = commandDef.ValueChanged(null, null);
         let jsonString = Codec.encode([command]);
@@ -78,6 +114,17 @@ describe('encode', function() {
         let json = Codec.encode([command, command]);
         let expected = resultDef.CreatePresentationModel;
         expect(json).to.equal('[' + expected + ',' + expected + ']');
+    });
+
+    it('should not encode unkown', function(done) {
+        let command = {"id": "SomeFunnyId"};
+        try {
+            Codec.encode([command]);
+        } catch (error) {
+            expect(error).to.exist;
+            done();
+        }
+        
     });
 });
 
@@ -121,6 +168,42 @@ describe('decode', function() {
         expect(commands).to.deep.equal([commandDef.InterruptLongPoll]);
     });
 
+    it('should decode single AttributeMetadataChangedCommand', function() {
+        let commands = Codec.decode('[' + resultDef.AttributeMetadataChanged + ']');
+
+        expect(commands).to.deep.equal([commandDef.AttributeMetadataChanged]);
+    });
+
+    it('should decode single CallActionCommand', function() {
+        let commands = Codec.decode('[' + resultDef.CallAction + ']');
+
+        expect(commands).to.deep.equal([commandDef.CallAction]);
+    });
+
+    it('should decode single DeletePresentationModelCommand', function() {
+        let commands = Codec.decode('[' + resultDef.DeletePresentationModel + ']');
+
+        expect(commands).to.deep.equal([commandDef.DeletePresentationModel]);
+    });
+
+    it('should decode single DestroyContextCommand', function() {
+        let commands = Codec.decode('[' + resultDef.DestroyContext + ']');
+
+        expect(commands).to.deep.equal([commandDef.DestroyContext]);
+    });
+
+    it('should decode single DestroyControllerCommand', function() {
+        let commands = Codec.decode('[' + resultDef.DestroyController + ']');
+
+        expect(commands).to.deep.equal([commandDef.DestroyController]);
+    });
+
+    it('should decode single PresentationModelDeletedCommand', function() {
+        let commands = Codec.decode('[' + resultDef.PresentationModelDeleted + ']');
+
+        expect(commands).to.deep.equal([commandDef.PresentationModelDeleted]);
+    });
+
     it('should decode single ValueChangedCommand with nulls', function() {
         let commands = Codec.decode(resultDef.ValueChanged(null, null));
         console.log(commands);
@@ -152,7 +235,6 @@ describe('decode', function() {
         expect(commands).to.deep.equal([commandDef.ValueChanged(null, false)]);
     });
 
-
     it('should decode two custom codec commands', function() {
         let customCodecCommandString = resultDef.CreatePresentationModel;
 
@@ -160,5 +242,15 @@ describe('decode', function() {
 
         let customCodecCommand = commandDef.CreatePresentationModel;
         expect(commands).to.deep.equal([customCodecCommand, customCodecCommand]);
+    });
+
+    it('should not decode unkown', function(done) {
+        try {
+            Codec.decode('{"id":"SomeFunnyId"}');
+        } catch (error) {
+            expect(error).to.exist;
+            done();
+        }
+        
     });
 });

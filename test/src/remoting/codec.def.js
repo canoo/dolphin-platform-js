@@ -46,6 +46,35 @@ const commandDef = {
     InterruptLongPoll: {
         "id":"InterruptLongPoll"
     },
+    AttributeMetadataChanged: {
+        "id": "AttributeMetadataChanged",
+        "attributeId": "1234S",
+        "metadataName": "myName",
+        "value": "myValue",
+    },
+    CallAction: {
+        "id": "CallAction",
+        "controllerid": "123124",
+        "actionName": "myAction",
+        "params": [{
+            "name": "param1", "value": "value1"
+        }]
+    },
+    DeletePresentationModel: {
+        "id": "DeletePresentationModel",
+        "pmId": "12345"
+    },
+    DestroyContext: {
+        "id": "DestroyContext"
+    },
+    DestroyController: {
+        "id": "DestroyController",
+        "controllerId": "12345"
+    },
+    PresentationModelDeleted: {
+        "id": "PresentationModelDeleted",
+        "pmId": "12345"
+    },
     ValueChanged: (oldValue, newValue) => {
         if (oldValue != null) {
             return {
@@ -70,6 +99,12 @@ const resultDef = {
     CreateController: '{"id":"CreateController","n":"ToDoController","c_id":"myId"}',
     LongPoll: '{"id":"StartLongPoll"}',
     InterruptLongPoll: '{"id":"InterruptLongPoll"}',
+    AttributeMetadataChanged: '{"id":"AttributeMetadataChanged","a_id":"1234S","n":"myName","v":"myValue"}',
+    CallAction: '{"id":"CallAction","c_id":"123124","n":"myAction","p":[{"n":"param1","v":"value1"}]}',
+    DeletePresentationModel: '{"id":"DeletePresentationModel","p_id":"12345"}',
+    DestroyContext: '{"id":"DestroyContext"}',
+    DestroyController: '{"id":"DestroyController","c_id":"12345"}',
+    PresentationModelDeleted: '{"id":"PresentationModelDeleted","p_id":"12345"}',
     ValueChanged: (oldValue, newValue) => {
         if (newValue == null) {
             return '[{"id":"ValueChanged","a_id":"3357S"}]';
