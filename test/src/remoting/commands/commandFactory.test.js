@@ -15,6 +15,7 @@ import DestroyControllerCommand from '../../../../src/remoting/commands/impl/des
 import CreatePresentationModelCommand from '../../../../src/remoting/commands/impl/createPresentationModelCommand';
 import ValueChangedCommand from '../../../../src/remoting/commands/impl/valueChangedCommand';
 import DeletePresentationModelCommand from '../../../../src/remoting/commands/impl/deletePresentationModelCommand';
+import CreateControllerCommand from '../../../../src/remoting/commands/impl/createControllerCommand';
 
 describe('CommandFactory', function () {
 
@@ -95,12 +96,12 @@ describe('CommandFactory', function () {
         expect(command.controllerId).to.be.equal('1234');
     });
 
-    it('ValueChangedCommand', function () {
-        const command = CommandFactory.createValueChangedCommand('12345', 'newValue');
+    it('CreateControllerCommand', function () {
+        const command = CommandFactory.createCreateControllerCommand('MyController', null);
 
-        expect(command).to.be.instanceOf(ValueChangedCommand);
-        expect(command.attributeId).to.be.equal('12345');
-        expect(command.newValue).to.be.equal('newValue');
+        expect(command).to.be.instanceOf(CreateControllerCommand);
+        expect(command.controllerName).to.be.equal('MyController');
+        expect(command.parentControllerId).to.be.equal(null);
     });
 
     it('ValueChangedCommand', function () {
