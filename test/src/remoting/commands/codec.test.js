@@ -3,8 +3,8 @@
 "use strict";
 
 import { expect } from 'chai';
-import Codec from '../../../src/remoting/commands/codec.js';
-import { commandDef, resultDef } from './codec.def';
+import Codec from '../../../../src/remoting/commands/codec.js';
+import { commandDef, resultDef } from './helper/codec.def';
 
 describe('encode', function() {
 
