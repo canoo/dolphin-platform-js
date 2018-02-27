@@ -206,7 +206,6 @@ describe('decode', function() {
 
     it('should decode single ValueChangedCommand with nulls', function() {
         let commands = Codec.decode(resultDef.ValueChanged(null, null));
-        console.log(commands);
 
         expect(commands).to.deep.equal([commandDef.ValueChanged(null, null)]);
     });
