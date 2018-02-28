@@ -236,7 +236,9 @@ function parseUrl(url) {
         }
     }
 
-    port = parseInt(port);
+    if (port) {
+        port = parseInt(port);
+    }
 
     return {
         scheme: scheme,
@@ -4885,14 +4887,9 @@ PlatformClient.getService = function (name) {
 };
 
 PlatformClient.hasService = function (name) {
-    var service = PlatformClient.services.get(name);
-    if (!(0, _utils.exists)(service)) {
-        var provider = PlatformClient.serviceProviders.get(name);
-        if (!(0, _utils.exists)(provider)) {
-            return false;
-        } else {
-            return true;
-        }
+    var provider = PlatformClient.serviceProviders.get(name);
+    if (!(0, _utils.exists)(provider)) {
+        return false;
     } else {
         return true;
     }
@@ -5758,6 +5755,8 @@ var _createClass2 = __webpack_require__(1);
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
+var _utils = __webpack_require__(2);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var HttpResponse = function () {
@@ -5766,14 +5765,18 @@ var HttpResponse = function () {
 
         this.status = status;
         this.content = content;
-        var headerArray = headers.trim().split(/[\r\n]+/);
         this.headers = {};
-        for (var i = 0; i < headerArray.length; i++) {
-            var line = headerArray[i];
-            var parts = line.split(': ');
-            var header = parts.shift();
-            var value = parts.join(': ');
-            this.headers[header] = value;
+        if ((0, _utils.exists)(headers) && typeof headers === 'string') {
+            var headerArray = headers.trim().split(/[\r\n]+/);
+            for (var i = 0; i < headerArray.length; i++) {
+                var line = headerArray[i];
+                var parts = line.split(': ');
+                if (parts.length === 2) {
+                    var header = parts.shift();
+                    var value = parts.join(': ');
+                    this.headers[header] = value;
+                }
+            }
         }
     }
 
@@ -5790,12 +5793,12 @@ var HttpResponse = function () {
     }, {
         key: 'getHeaders',
         value: function getHeaders() {
-            return this.headerObj;
+            return this.headers;
         }
     }, {
         key: 'getHeaderByName',
         value: function getHeaderByName(name) {
-            return this.headerObj[name];
+            return this.headers[name];
         }
     }]);
     return HttpResponse;
