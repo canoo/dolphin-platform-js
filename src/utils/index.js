@@ -68,7 +68,9 @@ export function parseUrl(url) {
     }
 
     // port should be a number, always
-    port = parseInt(port);
+    if (port) {
+        port = parseInt(port);
+    }
 
     return {
         scheme: scheme,
