@@ -19,6 +19,7 @@ module.exports = function(config) {
     reporter: ["html", "progress"],
     testFramework: "mocha",
     coverageAnalysis: "off",
-    babelrcFile: ".babelrc"
+    babelrcFile: ".babelrc",
+    maxConcurrentTestRunners: 1
   });
 };
