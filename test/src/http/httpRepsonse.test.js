@@ -6,7 +6,7 @@ import { expect } from 'chai';
 
 import { HttpResponse } from '../../../src/http/httpResponse';
 
-describe('HttpResponse', function() {
+describe.only('HttpResponse', function() {
 
     it('getContent', function() {
         const httpResponse = new HttpResponse(200, 'Foo', '');
@@ -37,6 +37,7 @@ describe('HttpResponse', function() {
 
         expect(httpResponse.getHeaders()).to.be.deep.equal({'Accept': '*/*'});
         expect(httpResponse.getHeaderByName('Accept')).to.be.equal('*/*');
+        expect(Object.keys(httpResponse.getHeaders()).length).to.be.equal(1);
     });
     it('getHeaders for with more entry', function() {
         const httpResponse = new HttpResponse(200, 'Foo', 'Accept: */*\r\nContent-Type: text/html; charset=UTF-8');
@@ -44,6 +45,7 @@ describe('HttpResponse', function() {
         expect(httpResponse.getHeaders()).to.be.deep.equal({'Accept': '*/*', 'Content-Type': 'text/html; charset=UTF-8'});
         expect(httpResponse.getHeaderByName('Accept')).to.be.equal('*/*');
         expect(httpResponse.getHeaderByName('Content-Type')).to.be.equal('text/html; charset=UTF-8');
+        expect(Object.keys(httpResponse.getHeaders()).length).to.be.equal(2);
     });
 
 });
