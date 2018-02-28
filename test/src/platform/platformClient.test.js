@@ -37,7 +37,7 @@ describe('PlatformClient', function() {
             message = error.message;
         }
 
-        expect(message).to.be.equals('Cannot register service provider');
+        expect(message).to.be.equals('Cannot register empty service provider');
     });
 
     it('Register null as service throws error', function() {
@@ -48,7 +48,7 @@ describe('PlatformClient', function() {
             message = error.message;
         }
 
-        expect(message).to.be.equals('Cannot register service provider');
+        expect(message).to.be.equals('Cannot register empty service provider');
     });
 
     it('Register same name throws error', function() {

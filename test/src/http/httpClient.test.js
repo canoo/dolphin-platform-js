@@ -17,14 +17,15 @@ describe('HttpClient', function() {
     let server;
 
     before(function() {
-        if (!PlatformClient.hasService('HttpClient')) {
-            registerHttp(PlatformClient);
-        }
+        registerHttp(PlatformClient);
+        registerClientScope(PlatformClient);
+        PlatformClient.init();
+    });
 
-        if (!PlatformClient.hasService('ClientScope')) {
-            registerClientScope(PlatformClient);
-            PlatformClient.init();
-        }
+    after(function() {
+        PlatformClient.services = new Map();
+        PlatformClient.serviceProviders = new Map();
+        PlatformClient.configuration = {};
     });
 
     beforeEach(function() {
