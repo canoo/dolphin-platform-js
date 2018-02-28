@@ -1,16 +1,21 @@
+import { exists } from '../utils';
 class HttpResponse {
 
     constructor(status, content, headers) {
         this.status = status;
         this.content = content;
-        const headerArray = headers.trim().split(/[\r\n]+/);
         this.headers = {};
-        for (let i = 0; i < headerArray.length; i++) {
-            const line = headerArray[i];
-            const parts = line.split(': ');
-            const header = parts.shift();
-            const value = parts.join(': ');
-            this.headers[header] = value;
+        if (exists(headers) && typeof headers === 'string') {
+            const headerArray = headers.trim().split(/[\r\n]+/);
+            for (let i = 0; i < headerArray.length; i++) {
+                const line = headerArray[i];
+                const parts = line.split(': ');
+                if (parts.length === 2) {
+                    const header = parts.shift();
+                    const value = parts.join(': ');
+                    this.headers[header] = value;
+                }
+            }
         }
     }
 
@@ -23,11 +28,11 @@ class HttpResponse {
     }
 
     getHeaders() {
-        return this.headerObj;
+        return this.headers;
     }
 
     getHeaderByName(name) {
-        return this.headerObj[name];
+        return this.headers[name];
     }
 
 }
