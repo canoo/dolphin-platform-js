@@ -8,10 +8,24 @@ import sinon from 'sinon';
 import { HttpClient } from '../../../src/http/httpClient';
 import { HttpException } from '../../../src/http/httpException';
 import { HttpResponse } from '../../../src/http/httpResponse';
+import { PlatformClient } from '../../../src/platform/platformClient';
+import { register as registerClientScope } from '../../../src/platform/clientScope';
+import { register as registerHttp } from '../../../src/http';
 
 describe('HttpClient', function() {
 
     let server;
+
+    before(function() {
+        if (!PlatformClient.hasService('HttpClient')) {
+            registerHttp(PlatformClient);
+        }
+
+        if (!PlatformClient.hasService('ClientScope')) {
+            registerClientScope(PlatformClient);
+            PlatformClient.init();
+        }
+    });
 
     beforeEach(function() {
         server = sinon.createFakeServer();
@@ -59,6 +73,7 @@ describe('HttpClient', function() {
         server.respond();
 
         expect(server.requests.length).to.be.equal(1);
+        expect(server.requests[0].requestBody).not.to.exist;
     });
 
     it('simple HTTP GET, with content, without result', function(done) {
@@ -253,6 +268,54 @@ describe('HttpClient', function() {
 
         expect(server.requests.length).to.be.equal(1);
         clock.restore();
+    });
+
+    it('simple HTTP GET, with client scope interceptor which stores client id', function() {
+        // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+        if (global.window) {
+            const jdomWindow = global.window;
+            global.window = {platformClient: PlatformClient};
+
+            server.respondWith([200, { 'dolphin_platform_intern_dolphinClientId': 'abcd-efgh-ijkl-mopq'}, 'Hallo Google!']);
+
+            const httpClient = PlatformClient.getService('HttpClient');
+            httpClient.get('https://www.google.de').withoutContent().withoutResult().execute();
+            server.respond();
+
+            expect(server.requests.length).to.be.equal(1);
+            expect(PlatformClient.getService('ClientScope').getClientId('https://www.google.de')).to.be.equal('abcd-efgh-ijkl-mopq');
+
+            // Clean up
+            PlatformClient.getService('ClientScope').clientIds = new Map();
+            global.window = jdomWindow;
+        }
+        
+    });
+
+    it('simple HTTP GET, with client scope interceptor which uses client id', function() {
+        // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+        if (global.window) {
+            const jdomWindow = global.window;
+            global.window = {platformClient: PlatformClient};
+
+            server.respondWith([200, { 'dolphin_platform_intern_dolphinClientId': 'abcd-efgh-ijkl-mopq'}, 'Hallo Google!']);
+
+            const httpClient = PlatformClient.getService('HttpClient');
+            httpClient.get('https://www.google.de').withoutContent().withoutResult().execute();
+            server.respond();
+
+            httpClient.get('https://www.google.de').withoutContent().withoutResult().execute();
+            server.respond();
+
+            expect(server.requests.length).to.be.equal(2);
+            expect(server.requests[0].requestHeaders['dolphin_platform_intern_dolphinClientId']).to.not.exist;
+            expect(server.requests[1].requestHeaders['dolphin_platform_intern_dolphinClientId']).to.be.equal('abcd-efgh-ijkl-mopq');
+
+            // Clean up
+            PlatformClient.getService('ClientScope').clientIds = new Map();
+            global.window = jdomWindow;
+        }
+        
     });
 
 });

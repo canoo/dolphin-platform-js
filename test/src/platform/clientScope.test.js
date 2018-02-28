@@ -9,16 +9,21 @@ sinon.test = sinonTest(sinon);
 
 import { PlatformClient } from '../../../src/platform/platformClient';
 import { register as registerHttp } from '../../../src/http';
-import { register } from '../../../src/platform/clientScope';
+import { register as registerClientScope } from '../../../src/platform/clientScope';
 
 describe('ClientScope', function() {
 
     const headerName = 'dolphin_platform_intern_dolphinClientId';
 
     before(function() {
-        registerHttp(PlatformClient);
-        register(PlatformClient);
-        PlatformClient.init();
+        if (!PlatformClient.hasService('HttpClient')) {
+            registerHttp(PlatformClient);
+        }
+
+        if (!PlatformClient.hasService('ClientScope')) {
+            registerClientScope(PlatformClient);
+            PlatformClient.init();
+        }
     });
 
     it('ClientScope is an object and service', function() {
