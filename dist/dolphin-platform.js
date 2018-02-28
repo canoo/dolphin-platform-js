@@ -6044,27 +6044,23 @@ var ClientScope = function () {
     (0, _createClass3.default)(ClientScope, [{
         key: 'handleRequest',
         value: function handleRequest(httpRequest) {
-            var result = (0, _utils.parseUrl)(httpRequest.url);
-            var key = result.hostname + result.port;
-            var clientId = this.clientIds.get(key);
+            var clientId = this.getClientId(httpRequest.url);
             if ((0, _utils.exists)(clientId)) {
-                ClientScope.LOGGER.trace('Using ClientId', key, clientId);
+                ClientScope.LOGGER.trace('Using ClientId', clientId);
                 httpRequest.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, clientId);
             }
         }
     }, {
         key: 'handleResponse',
         value: function handleResponse(httpRequest) {
-            var result = (0, _utils.parseUrl)(httpRequest.url);
-            var key = result.hostname + result.port;
-            var clientId = this.clientIds.get(key);
+            var clientId = this.getClientId(httpRequest.url);
             var newClientId = httpRequest.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
             if ((0, _utils.exists)(clientId) && (0, _utils.exists)(newClientId) && clientId !== newClientId) {
                 throw new Error('Client Id does not match!');
             }
-            if ((0, _utils.exists)(newClientId)) {
-                ClientScope.LOGGER.debug('ClientId found', key, newClientId);
-                this.clientIds.set(key, newClientId);
+            if (!(0, _utils.exists)(clientId) && (0, _utils.exists)(newClientId)) {
+                ClientScope.LOGGER.debug('New ClientId found', newClientId);
+                this.setClientId(httpRequest.url, newClientId);
             }
         }
     }, {
@@ -6073,9 +6069,28 @@ var ClientScope = function () {
             platformClient.getService('HttpClientInterceptor').addRequestInterceptor(this);
             platformClient.getService('HttpClientInterceptor').addResponseInterceptor(this);
         }
+    }, {
+        key: 'getClientId',
+        value: function getClientId(url) {
+            var result = (0, _utils.parseUrl)(url);
+            var key = ClientScope.calcKey(result.hostname, result.port);
+            return this.clientIds.get(key);
+        }
+    }, {
+        key: 'setClientId',
+        value: function setClientId(url, clientId) {
+            var result = (0, _utils.parseUrl)(url);
+            var key = ClientScope.calcKey(result.hostname, result.port);
+            this.clientIds.set(key, clientId);
+            ClientScope.LOGGER.trace('Setting ClientId', clientId, 'for', url, 'with key', key);
+        }
     }]);
     return ClientScope;
 }();
+
+ClientScope.calcKey = function (hostname, port) {
+    return hostname + port;
+};
 
 ClientScope.LOGGER = _logging.LoggerFactory.getLogger('ClientScope');
 
@@ -7796,9 +7811,21 @@ var BeanManager = function () {
         this.allUpdatedHandlers = [];
         this.allArrayUpdatedHandlers = [];
 
-        var self = this;
-        this.classRepository.onBeanAdded(function (type, bean) {
-            var handlerList = self.addedHandlers.get(type);
+        this._handleBeanAdded = this._handleBeanAdded.bind(this);
+        this._handleBeanRemoved = this._handleBeanRemoved.bind(this);
+        this._handleBeanUpdate = this._handleBeanUpdate.bind(this);
+        this._handleArrayUpdate = this._handleArrayUpdate.bind(this);
+
+        this.classRepository.onBeanAdded(this._handleBeanAdded);
+        this.classRepository.onBeanRemoved(this._handleBeanRemoved);
+        this.classRepository.onBeanUpdate(this._handleBeanUpdate);
+        this.classRepository.onArrayUpdate(this._handleArrayUpdate);
+    }
+
+    (0, _createClass3.default)(BeanManager, [{
+        key: '_handleBeanAdded',
+        value: function _handleBeanAdded(type, bean) {
+            var handlerList = this.addedHandlers.get(type);
             if ((0, _utils.exists)(handlerList)) {
                 handlerList.forEach(function (handler) {
                     try {
@@ -7808,16 +7835,18 @@ var BeanManager = function () {
                     }
                 });
             }
-            self.allAddedHandlers.forEach(function (handler) {
+            this.allAddedHandlers.forEach(function (handler) {
                 try {
                     handler(bean);
                 } catch (e) {
                     BeanManager.LOGGER.error('An exception occurred while calling a general onBeanAdded-handler', e);
                 }
             });
-        });
-        this.classRepository.onBeanRemoved(function (type, bean) {
-            var handlerList = self.removedHandlers.get(type);
+        }
+    }, {
+        key: '_handleBeanRemoved',
+        value: function _handleBeanRemoved(type, bean) {
+            var handlerList = this.removedHandlers.get(type);
             if ((0, _utils.exists)(handlerList)) {
                 handlerList.forEach(function (handler) {
                     try {
@@ -7827,35 +7856,18 @@ var BeanManager = function () {
                     }
                 });
             }
-            self.allRemovedHandlers.forEach(function (handler) {
+            this.allRemovedHandlers.forEach(function (handler) {
                 try {
                     handler(bean);
                 } catch (e) {
                     BeanManager.LOGGER.error('An exception occurred while calling a general onBeanRemoved-handler', e);
                 }
             });
-        });
-        this.classRepository.onBeanUpdate(function (type, bean, propertyName, newValue, oldValue) {
-            var handlerList = self.updatedHandlers.get(type);
-            if ((0, _utils.exists)(handlerList)) {
-                handlerList.forEach(function (handler) {
-                    try {
-                        handler(bean, propertyName, newValue, oldValue);
-                    } catch (e) {
-                        BeanManager.LOGGER.error('An exception occurred while calling an onBeanUpdate-handler for type', type, e);
-                    }
-                });
-            }
-            self.allUpdatedHandlers.forEach(function (handler) {
-                try {
-                    handler(bean, propertyName, newValue, oldValue);
-                } catch (e) {
-                    BeanManager.LOGGER.error('An exception occurred while calling a general onBeanUpdate-handler', e);
-                }
-            });
-        });
-        this.classRepository.onArrayUpdate(function (type, bean, propertyName, index, count, newElements) {
-            var handlerList = self.arrayUpdatedHandlers.get(type);
+        }
+    }, {
+        key: '_handleArrayUpdate',
+        value: function _handleArrayUpdate(type, bean, propertyName, index, count, newElements) {
+            var handlerList = this.arrayUpdatedHandlers.get(type);
             if ((0, _utils.exists)(handlerList)) {
                 handlerList.forEach(function (handler) {
                     try {
@@ -7865,17 +7877,36 @@ var BeanManager = function () {
                     }
                 });
             }
-            self.allArrayUpdatedHandlers.forEach(function (handler) {
+            this.allArrayUpdatedHandlers.forEach(function (handler) {
                 try {
                     handler(bean, propertyName, index, count, newElements);
                 } catch (e) {
                     BeanManager.LOGGER.error('An exception occurred while calling a general onArrayUpdate-handler', e);
                 }
             });
-        });
-    }
-
-    (0, _createClass3.default)(BeanManager, [{
+        }
+    }, {
+        key: '_handleBeanUpdate',
+        value: function _handleBeanUpdate(type, bean, propertyName, newValue, oldValue) {
+            var handlerList = this.updatedHandlers.get(type);
+            if ((0, _utils.exists)(handlerList)) {
+                handlerList.forEach(function (handler) {
+                    try {
+                        handler(bean, propertyName, newValue, oldValue);
+                    } catch (e) {
+                        BeanManager.LOGGER.error('An exception occurred while calling an onBeanUpdate-handler for type', type, e);
+                    }
+                });
+            }
+            this.allUpdatedHandlers.forEach(function (handler) {
+                try {
+                    handler(bean, propertyName, newValue, oldValue);
+                } catch (e) {
+                    BeanManager.LOGGER.error('An exception occurred while calling a general onBeanUpdate-handler', e);
+                }
+            });
+        }
+    }, {
         key: 'notifyBeanChange',
         value: function notifyBeanChange(bean, propertyName, newValue) {
             (0, _utils.checkMethod)('BeanManager.notifyBeanChange(bean, propertyName, newValue)');
@@ -7963,7 +7994,7 @@ var BeanManager = function () {
                 (0, _utils.checkMethod)('BeanManager.onAdded(eventHandler)');
                 (0, _utils.checkParam)(eventHandler, 'eventHandler');
 
-                self.allAddedHandlers = self.allAddedHandlers.concat(eventHandler);
+                this.allAddedHandlers = this.allAddedHandlers.concat(eventHandler);
                 return {
                     unsubscribe: function unsubscribe() {
                         self.allAddedHandlers = self.allAddedHandlers.filter(function (value) {
@@ -7976,11 +8007,11 @@ var BeanManager = function () {
                 (0, _utils.checkParam)(type, 'type');
                 (0, _utils.checkParam)(eventHandler, 'eventHandler');
 
-                var handlerList = self.addedHandlers.get(type);
+                var handlerList = this.addedHandlers.get(type);
                 if (!(0, _utils.exists)(handlerList)) {
                     handlerList = [];
                 }
-                self.addedHandlers.set(type, handlerList.concat(eventHandler));
+                this.addedHandlers.set(type, handlerList.concat(eventHandler));
                 return {
                     unsubscribe: function unsubscribe() {
                         var handlerList = self.addedHandlers.get(type);
@@ -8002,7 +8033,7 @@ var BeanManager = function () {
                 (0, _utils.checkMethod)('BeanManager.onRemoved(eventHandler)');
                 (0, _utils.checkParam)(eventHandler, 'eventHandler');
 
-                self.allRemovedHandlers = self.allRemovedHandlers.concat(eventHandler);
+                this.allRemovedHandlers = this.allRemovedHandlers.concat(eventHandler);
                 return {
                     unsubscribe: function unsubscribe() {
                         self.allRemovedHandlers = self.allRemovedHandlers.filter(function (value) {
@@ -8015,11 +8046,11 @@ var BeanManager = function () {
                 (0, _utils.checkParam)(type, 'type');
                 (0, _utils.checkParam)(eventHandler, 'eventHandler');
 
-                var handlerList = self.removedHandlers.get(type);
+                var handlerList = this.removedHandlers.get(type);
                 if (!(0, _utils.exists)(handlerList)) {
                     handlerList = [];
                 }
-                self.removedHandlers.set(type, handlerList.concat(eventHandler));
+                this.removedHandlers.set(type, handlerList.concat(eventHandler));
                 return {
                     unsubscribe: function unsubscribe() {
                         var handlerList = self.removedHandlers.get(type);
@@ -8041,7 +8072,7 @@ var BeanManager = function () {
                 (0, _utils.checkMethod)('BeanManager.onBeanUpdate(eventHandler)');
                 (0, _utils.checkParam)(eventHandler, 'eventHandler');
 
-                self.allUpdatedHandlers = self.allUpdatedHandlers.concat(eventHandler);
+                this.allUpdatedHandlers = this.allUpdatedHandlers.concat(eventHandler);
                 return {
                     unsubscribe: function unsubscribe() {
                         self.allUpdatedHandlers = self.allUpdatedHandlers.filter(function (value) {
@@ -8054,11 +8085,11 @@ var BeanManager = function () {
                 (0, _utils.checkParam)(type, 'type');
                 (0, _utils.checkParam)(eventHandler, 'eventHandler');
 
-                var handlerList = self.updatedHandlers.get(type);
+                var handlerList = this.updatedHandlers.get(type);
                 if (!(0, _utils.exists)(handlerList)) {
                     handlerList = [];
                 }
-                self.updatedHandlers.set(type, handlerList.concat(eventHandler));
+                this.updatedHandlers.set(type, handlerList.concat(eventHandler));
                 return {
                     unsubscribe: function unsubscribe() {
                         var handlerList = self.updatedHandlers.get(type);
@@ -8080,7 +8111,7 @@ var BeanManager = function () {
                 (0, _utils.checkMethod)('BeanManager.onArrayUpdate(eventHandler)');
                 (0, _utils.checkParam)(eventHandler, 'eventHandler');
 
-                self.allArrayUpdatedHandlers = self.allArrayUpdatedHandlers.concat(eventHandler);
+                this.allArrayUpdatedHandlers = this.allArrayUpdatedHandlers.concat(eventHandler);
                 return {
                     unsubscribe: function unsubscribe() {
                         self.allArrayUpdatedHandlers = self.allArrayUpdatedHandlers.filter(function (value) {
@@ -8093,11 +8124,11 @@ var BeanManager = function () {
                 (0, _utils.checkParam)(type, 'type');
                 (0, _utils.checkParam)(eventHandler, 'eventHandler');
 
-                var handlerList = self.arrayUpdatedHandlers.get(type);
+                var handlerList = this.arrayUpdatedHandlers.get(type);
                 if (!(0, _utils.exists)(handlerList)) {
                     handlerList = [];
                 }
-                self.arrayUpdatedHandlers.set(type, handlerList.concat(eventHandler));
+                this.arrayUpdatedHandlers.set(type, handlerList.concat(eventHandler));
                 return {
                     unsubscribe: function unsubscribe() {
                         var handlerList = self.arrayUpdatedHandlers.get(type);
