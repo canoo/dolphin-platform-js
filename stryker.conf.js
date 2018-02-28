@@ -6,6 +6,7 @@ module.exports = function(config) {
         mutated: true,
         included: false
       },
+      '!src/index.js',
       "test/**/*.js"
     ],
     testRunner: "mocha",
@@ -15,7 +16,7 @@ module.exports = function(config) {
     },
     mutator: "javascript",
     transpilers: ["babel"],
-    reporter: ["html", "clear-text", "progress"],
+    reporter: ["html", "progress"],
     testFramework: "mocha",
     coverageAnalysis: "off",
     babelrcFile: ".babelrc"
