@@ -17,85 +17,95 @@ export default class BeanManager {
         this.allUpdatedHandlers = [];
         this.allArrayUpdatedHandlers = [];
 
-        let self = this;
-        this.classRepository.onBeanAdded((type, bean) => {
-            let handlerList = self.addedHandlers.get(type);
-            if (exists(handlerList)) {
-                handlerList.forEach((handler) => {
-                    try {
-                        handler(bean);
-                    } catch (e) {
-                        BeanManager.LOGGER.error('An exception occurred while calling an onBeanAdded-handler for type', type, e);
-                    }
-                });
-            }
-            self.allAddedHandlers.forEach((handler) => {
+        this._handleBeanAdded = this._handleBeanAdded.bind(this);
+        this._handleBeanRemoved = this._handleBeanRemoved.bind(this);
+        this._handleBeanUpdate = this._handleBeanUpdate.bind(this);
+        this._handleArrayUpdate = this._handleArrayUpdate.bind(this);
+
+        this.classRepository.onBeanAdded(this._handleBeanAdded);
+        this.classRepository.onBeanRemoved(this._handleBeanRemoved);
+        this.classRepository.onBeanUpdate(this._handleBeanUpdate);
+        this.classRepository.onArrayUpdate(this._handleArrayUpdate);
+    }
+
+    _handleBeanAdded(type, bean) {
+        const handlerList = this.addedHandlers.get(type);
+        if (exists(handlerList)) {
+            handlerList.forEach((handler) => {
                 try {
                     handler(bean);
                 } catch (e) {
-                    BeanManager.LOGGER.error('An exception occurred while calling a general onBeanAdded-handler', e);
+                    BeanManager.LOGGER.error('An exception occurred while calling an onBeanAdded-handler for type', type, e);
                 }
             });
-        });
-        this.classRepository.onBeanRemoved((type, bean) => {
-            let handlerList = self.removedHandlers.get(type);
-            if (exists(handlerList)) {
-                handlerList.forEach((handler) => {
-                    try {
-                        handler(bean);
-                    } catch (e) {
-                        BeanManager.LOGGER.error('An exception occurred while calling an onBeanRemoved-handler for type', type, e);
-                    }
-                });
+        }
+        this.allAddedHandlers.forEach((handler) => {
+            try {
+                handler(bean);
+            } catch (e) {
+                BeanManager.LOGGER.error('An exception occurred while calling a general onBeanAdded-handler', e);
             }
-            self.allRemovedHandlers.forEach((handler) => {
+        });
+    }
+
+    _handleBeanRemoved(type, bean) {
+        const handlerList = this.removedHandlers.get(type);
+        if (exists(handlerList)) {
+            handlerList.forEach((handler) => {
                 try {
                     handler(bean);
                 } catch (e) {
-                    BeanManager.LOGGER.error('An exception occurred while calling a general onBeanRemoved-handler', e);
+                    BeanManager.LOGGER.error('An exception occurred while calling an onBeanRemoved-handler for type', type, e);
                 }
             });
-        });
-        this.classRepository.onBeanUpdate((type, bean, propertyName, newValue, oldValue) => {
-            let handlerList = self.updatedHandlers.get(type);
-            if (exists(handlerList)) {
-                handlerList.forEach((handler) => {
-                    try {
-                        handler(bean, propertyName, newValue, oldValue);
-                    } catch (e) {
-                        BeanManager.LOGGER.error('An exception occurred while calling an onBeanUpdate-handler for type', type, e);
-                    }
-                });
+        }
+        this.allRemovedHandlers.forEach((handler) => {
+            try {
+                handler(bean);
+            } catch (e) {
+                BeanManager.LOGGER.error('An exception occurred while calling a general onBeanRemoved-handler', e);
             }
-            self.allUpdatedHandlers.forEach((handler) => {
-                try {
-                    handler(bean, propertyName, newValue, oldValue);
-                } catch (e) {
-                    BeanManager.LOGGER.error('An exception occurred while calling a general onBeanUpdate-handler', e);
-                }
-            });
         });
-        this.classRepository.onArrayUpdate((type, bean, propertyName, index, count, newElements) => {
-            let handlerList = self.arrayUpdatedHandlers.get(type);
-            if (exists(handlerList)) {
-                handlerList.forEach((handler) => {
-                    try {
-                        handler(bean, propertyName, index, count, newElements);
-                    } catch (e) {
-                        BeanManager.LOGGER.error('An exception occurred while calling an onArrayUpdate-handler for type', type, e);
-                    }
-                });
-            }
-            self.allArrayUpdatedHandlers.forEach((handler) => {
+    }
+
+    _handleArrayUpdate(type, bean, propertyName, index, count, newElements) {
+        const handlerList = this.arrayUpdatedHandlers.get(type);
+        if (exists(handlerList)) {
+            handlerList.forEach((handler) => {
                 try {
                     handler(bean, propertyName, index, count, newElements);
                 } catch (e) {
-                    BeanManager.LOGGER.error('An exception occurred while calling a general onArrayUpdate-handler', e);
+                    BeanManager.LOGGER.error('An exception occurred while calling an onArrayUpdate-handler for type', type, e);
                 }
             });
+        }
+        this.allArrayUpdatedHandlers.forEach((handler) => {
+            try {
+                handler(bean, propertyName, index, count, newElements);
+            } catch (e) {
+                BeanManager.LOGGER.error('An exception occurred while calling a general onArrayUpdate-handler', e);
+            }
         });
+    }
 
-
+    _handleBeanUpdate(type, bean, propertyName, newValue, oldValue) {
+        const handlerList = this.updatedHandlers.get(type);
+        if (exists(handlerList)) {
+            handlerList.forEach((handler) => {
+                try {
+                    handler(bean, propertyName, newValue, oldValue);
+                } catch (e) {
+                    BeanManager.LOGGER.error('An exception occurred while calling an onBeanUpdate-handler for type', type, e);
+                }
+            });
+        }
+        this.allUpdatedHandlers.forEach((handler) => {
+            try {
+                handler(bean, propertyName, newValue, oldValue);
+            } catch (e) {
+                BeanManager.LOGGER.error('An exception occurred while calling a general onBeanUpdate-handler', e);
+            }
+        });
     }
 
 
@@ -192,9 +202,9 @@ export default class BeanManager {
             checkMethod('BeanManager.onAdded(eventHandler)');
             checkParam(eventHandler, 'eventHandler');
 
-            self.allAddedHandlers = self.allAddedHandlers.concat(eventHandler);
+            this.allAddedHandlers = this.allAddedHandlers.concat(eventHandler);
             return {
-                unsubscribe: function () {
+                unsubscribe: () => {
                     self.allAddedHandlers = self.allAddedHandlers.filter((value) => {
                         return value !== eventHandler;
                     });
@@ -205,16 +215,16 @@ export default class BeanManager {
             checkParam(type, 'type');
             checkParam(eventHandler, 'eventHandler');
 
-            let handlerList = self.addedHandlers.get(type);
+            let handlerList = this.addedHandlers.get(type);
             if (!exists(handlerList)) {
                 handlerList = [];
             }
-            self.addedHandlers.set(type, handlerList.concat(eventHandler));
+            this.addedHandlers.set(type, handlerList.concat(eventHandler));
             return {
                 unsubscribe: () => {
-                    let handlerList = self.addedHandlers.get(type);
-                    if (exists(handlerList)) {
-                        self.addedHandlers.set(type, handlerList.filter(function (value) {
+                    const handlerList = self.addedHandlers.get(type);
+                    if (exists(handlerList)) {                   
+                        self.addedHandlers.set(type, handlerList.filter((value) => {
                             return value !== eventHandler;
                         }));
                     }
@@ -231,7 +241,7 @@ export default class BeanManager {
             checkMethod('BeanManager.onRemoved(eventHandler)');
             checkParam(eventHandler, 'eventHandler');
 
-            self.allRemovedHandlers = self.allRemovedHandlers.concat(eventHandler);
+            this.allRemovedHandlers = this.allRemovedHandlers.concat(eventHandler);
             return {
                 unsubscribe: () => {
                     self.allRemovedHandlers = self.allRemovedHandlers.filter((value) => {
@@ -244,14 +254,14 @@ export default class BeanManager {
             checkParam(type, 'type');
             checkParam(eventHandler, 'eventHandler');
 
-            let handlerList = self.removedHandlers.get(type);
+            let handlerList = this.removedHandlers.get(type);
             if (!exists(handlerList)) {
                 handlerList = [];
             }
-            self.removedHandlers.set(type, handlerList.concat(eventHandler));
+            this.removedHandlers.set(type, handlerList.concat(eventHandler));
             return {
                 unsubscribe: () => {
-                    let handlerList = self.removedHandlers.get(type);
+                    const handlerList = self.removedHandlers.get(type);
                     if (exists(handlerList)) {
                         self.removedHandlers.set(type, handlerList.filter((value) => {
                             return value !== eventHandler;
@@ -270,9 +280,9 @@ export default class BeanManager {
             checkMethod('BeanManager.onBeanUpdate(eventHandler)');
             checkParam(eventHandler, 'eventHandler');
 
-            self.allUpdatedHandlers = self.allUpdatedHandlers.concat(eventHandler);
+            this.allUpdatedHandlers = this.allUpdatedHandlers.concat(eventHandler);
             return {
-                unsubscribe: function () {
+                unsubscribe: () => {
                     self.allUpdatedHandlers = self.allUpdatedHandlers.filter((value) => {
                         return value !== eventHandler;
                     });
@@ -283,11 +293,11 @@ export default class BeanManager {
             checkParam(type, 'type');
             checkParam(eventHandler, 'eventHandler');
 
-            let handlerList = self.updatedHandlers.get(type);
+            let handlerList = this.updatedHandlers.get(type);
             if (!exists(handlerList)) {
                 handlerList = [];
             }
-            self.updatedHandlers.set(type, handlerList.concat(eventHandler));
+            this.updatedHandlers.set(type, handlerList.concat(eventHandler));
             return {
                 unsubscribe: () => {
                     let handlerList = self.updatedHandlers.get(type);
@@ -308,7 +318,7 @@ export default class BeanManager {
             checkMethod('BeanManager.onArrayUpdate(eventHandler)');
             checkParam(eventHandler, 'eventHandler');
 
-            self.allArrayUpdatedHandlers = self.allArrayUpdatedHandlers.concat(eventHandler);
+            this.allArrayUpdatedHandlers = this.allArrayUpdatedHandlers.concat(eventHandler);
             return {
                 unsubscribe: () => {
                     self.allArrayUpdatedHandlers = self.allArrayUpdatedHandlers.filter((value) => {
@@ -321,11 +331,11 @@ export default class BeanManager {
             checkParam(type, 'type');
             checkParam(eventHandler, 'eventHandler');
 
-            let handlerList = self.arrayUpdatedHandlers.get(type);
+            let handlerList = this.arrayUpdatedHandlers.get(type);
             if (!exists(handlerList)) {
                 handlerList = [];
             }
-            self.arrayUpdatedHandlers.set(type, handlerList.concat(eventHandler));
+            this.arrayUpdatedHandlers.set(type, handlerList.concat(eventHandler));
             return {
                 unsubscribe: () => {
                     let handlerList = self.arrayUpdatedHandlers.get(type);
