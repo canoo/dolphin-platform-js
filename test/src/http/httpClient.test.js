@@ -150,6 +150,25 @@ describe('HttpClient', function() {
         expect(server.requests[0].requestHeaders['X-Client-Id']).to.be.equal('12345');
     });
 
+    it('simple HTTP GET, without content, without result, with multiple custom headers', function(done) {
+        server.respondWith('GET', 'https://www.google.de', 'Hallo Google!');
+
+        const httpClient = new HttpClient();
+        httpClient.get('https://www.google.de').withHeader('X-Client-Id', '12345').withHeader('X-Dummy', 'abcd').withoutContent().withoutResult().execute().then((response) => {
+            expect(response).to.be.instanceOf(HttpResponse);
+            expect(response.content).to.be.equal('Hallo Google!');
+            expect(response.status).to.be.equal(200);
+            done();
+        });
+        server.respond();
+
+        expect(server.requests.length).to.be.equal(1);
+        expect(Object.keys(server.requests[0].requestHeaders).length).to.be.equal(3);
+        expect(server.requests[0].requestHeaders['X-Client-Id']).to.be.equal('12345');
+        expect(server.requests[0].requestHeaders['X-Dummy']).to.be.equal('abcd');
+        expect(server.requests[0].requestHeaders['Content-Type']).to.be.equal('text/plain;charset=utf-8');
+    });
+
     it('simple HTTP GET, without content, without result, with header info', function(done) {
         server.respondWith('GET', 'https://www.google.de', 'Hallo Google!');
 
