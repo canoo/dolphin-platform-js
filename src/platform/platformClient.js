@@ -26,14 +26,9 @@ PlatformClient.getService = function(name) {
 };
 
 PlatformClient.hasService = function(name) {
-    const service = PlatformClient.services.get(name);
-    if (!exists(service)) {
-        const provider = PlatformClient.serviceProviders.get(name);
-        if (!exists(provider)) {
-            return false;
-        } else {
-            return true;
-        }
+    const provider = PlatformClient.serviceProviders.get(name);
+    if (!exists(provider)) {
+        return false;
     } else {
         return true;
     }
