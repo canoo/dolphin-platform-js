@@ -62,10 +62,10 @@ class Executor {
                 if (this.readyState === 4 && this.status >= 200 && this.status < 300) {
                     // https://www.w3.org/TR/cors/#simple-response-header
                     const httpResponse = new HttpResponse(this.status, this.response, this.getAllResponseHeaders());
-
+                    
                     if (window.platformClient) {
                         const responseInterceptors = window.platformClient.getService('HttpClientInterceptor').getResponseInterceptors();
-                        
+
                         for (let i = 0; i < responseInterceptors.length; i++) {
                             const responseInterceptor = responseInterceptors[i];
                             responseInterceptor.handleResponse(httpRequest);
@@ -73,22 +73,14 @@ class Executor {
                     
                     }
 
-                    if (self.configuration.responseType) {
-                        resolve(httpResponse);
-                    } else {
-                        resolve(httpResponse);
-                    }
+                    resolve(httpResponse);
                 } else if (this.readyState === 4 && this.status >= 300) {
                     const httpException = new HttpException(this.statusText, this.status);
                     reject(httpException);
                 }
             }
 
-            if (this.configuration.requestBody) {
-                httpRequest.send(this.configuration.requestBody);
-            } else {
-                httpRequest.send();
-            }
+            httpRequest.send(this.configuration.requestBody);
         });
         
     }
