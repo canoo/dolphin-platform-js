@@ -6,7 +6,7 @@ import { expect } from 'chai';
 
 import { HttpResponse } from '../../../src/http/httpResponse';
 
-describe.only('HttpResponse', function() {
+describe('HttpResponse', function() {
 
     it('getContent', function() {
         const httpResponse = new HttpResponse(200, 'Foo', '');
