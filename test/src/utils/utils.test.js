@@ -4,7 +4,7 @@
 
 import { expect } from 'chai';
 
-import { exists, parseUrl } from '../../../src/utils';
+import { exists, parseUrl, checkMethod, checkParam } from '../../../src/utils';
 
 describe('utils.exists()', function() {
     it('undefined', function() {
@@ -37,6 +37,17 @@ describe('utils.exists()', function() {
 
     it('function', function() {
         expect(exists(function() {})).to.be.true;
+    });
+
+    it('checkParam', function() {
+        try {
+            checkMethod('dummyMethod')
+            checkParam(null, 'dummyParam');
+        } catch (error) {
+            expect(error).to.exist;
+            expect(error.message).to.be.equal('The parameter dummyParam is mandatory in dummyMethod');
+        }
+        
     });
 
 });
@@ -119,6 +130,27 @@ describe('utils.parseUrl()', function() {
             expect(result.hostname).to.be.equal('window.com');
             expect(result.port).to.be.equal(8080);
             expect(result.scheme).to.be.equal('https');
+            expect(result.path).to.be.equal('/dolphin');
+            expect(result.query.one).to.be.equal('1');
+            expect(result.query.two).to.be.equal('2');
+            expect(result.query.three).to.be.equal('3');
+            expect(result.fragment).to.be.equal('sample');
+            
+            global.window = jdomWindow;
+        }
+    });
+
+    it('relative URL missing window location', function() {
+        // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+        if (global.window) {
+            const jdomWindow = global.window;
+            global.window = {};
+
+            const result = parseUrl(relativeURL);
+
+            expect(result.hostname).to.not.exist;
+            expect(result.port).to.not.exist;
+            expect(result.scheme).to.not.exist;
             expect(result.path).to.be.equal('/dolphin');
             expect(result.query.one).to.be.equal('1');
             expect(result.query.two).to.be.equal('2');

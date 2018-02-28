@@ -73,4 +73,11 @@ describe('PlatformClient', function() {
         expect(message).to.be.equals('Cannot register service provider without getName() and getService() methods');
     });
 
+    it('Ask for unkown service', function() {
+        const found = PlatformClient.hasService('Unkown');
+
+        // then:
+        expect(found).to.be.false;
+    });
+
 });
