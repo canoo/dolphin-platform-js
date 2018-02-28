@@ -223,7 +223,121 @@ describe('BeanManager', function() {
         expect(beanManager.arrayUpdatedHandlers.get(type).length).to.be.equal(0);
     });
 
+    it('call class repository on bean change', function() {
 
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.stub(classRepositoryMock, 'notifyBeanChange');
+        beanManager.notifyBeanChange({ foo: 'bar'}, 'foo', 'moo');
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: 'bar'}, 'foo', 'moo')).to.be.true;
+    });
+
+    it('call class repository on array change', function() {
+
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.stub(classRepositoryMock, 'notifyArrayChange');
+        beanManager.notifyArrayChange({ foo: ['bar']}, 'foo', 0, 0, []);
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: ['bar']}, 'foo', 0, 0, [])).to.be.true;
+    });
+
+    it('call handler on bean added', function() {
+
+        const type = 'com.canoo.test.MyBean';
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.spy();
+        beanManager.onAdded(spy);
+        beanManager._handleBeanAdded(type, { foo: 'bar' });
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: 'bar' })).to.be.true;
+    });
+
+    it('call handler on bean added with type', function() {
+
+        const type = 'com.canoo.test.MyBean';
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.spy();
+        beanManager.onAdded(type, spy);
+        beanManager._handleBeanAdded(type, { foo: 'bar' });
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: 'bar' })).to.be.true;
+    });
+
+    it('call handler on bean removed', function() {
+
+        const type = 'com.canoo.test.MyBean';
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.spy();
+        beanManager.onRemoved(spy);
+        beanManager._handleBeanRemoved(type, { foo: 'bar' });
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: 'bar' })).to.be.true;
+    });
+
+    it('call handler on bean removed with type', function() {
+
+        const type = 'com.canoo.test.MyBean';
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.spy();
+        beanManager.onRemoved(type, spy);
+        beanManager._handleBeanRemoved(type, { foo: 'bar' });
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: 'bar' })).to.be.true;
+    });
+
+    it('call handler on bean update', function() {
+
+        const type = 'com.canoo.test.MyBean';
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.spy();
+        beanManager.onBeanUpdate(spy);
+        beanManager._handleBeanUpdate(type, { foo: 'bar' }, 'foo', 'bar', 'moo');
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: 'bar' }, 'foo', 'bar', 'moo')).to.be.true;
+    });
+
+    it('call handler on bean update with type', function() {
+
+        const type = 'com.canoo.test.MyBean';
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.spy();
+        beanManager.onBeanUpdate(type, spy);
+        beanManager._handleBeanUpdate(type, { foo: 'bar' }, 'foo', 'bar', 'moo');
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: 'bar' }, 'foo', 'bar', 'moo')).to.be.true;
+    });
+
+    it('call handler on array update', function() {
+
+        const type = 'com.canoo.test.MyBean';
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.spy();
+        beanManager.onArrayUpdate(spy);
+        beanManager._handleArrayUpdate(type, { foo: ['bar'] }, 'foo', 0, 0, []);
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: ['bar'] }, 'foo', 0, 0, [])).to.be.true;
+    });
+
+    it('call handler on array update with type', function() {
+
+        const type = 'com.canoo.test.MyBean';
+        const beanManager = new BeanManager(classRepositoryMock);
+        const spy = sinon.spy();
+        beanManager.onArrayUpdate(type, spy);
+        beanManager._handleArrayUpdate(type, { foo: ['bar'] }, 'foo', 0, 0, []);
+
+        expect(spy.calledOnce).to.be.true;
+        expect(spy.calledWith({ foo: ['bar'] }, 'foo', 0, 0, [])).to.be.true;
+    });
 
     describe('not implemented yet', function() {
 
