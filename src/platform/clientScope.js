@@ -12,26 +12,22 @@ class ClientScope {
     }
 
     handleRequest(httpRequest) {
-        const result = parseUrl(httpRequest.url);
-        const key = result.hostname + result.port;
-        const clientId = this.clientIds.get(key);
+        const clientId = this.getClientId(httpRequest.url);
         if (exists(clientId)) {
-            ClientScope.LOGGER.trace('Using ClientId', key, clientId);
+            ClientScope.LOGGER.trace('Using ClientId', clientId);
             httpRequest.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, clientId);
         }
     }
 
     handleResponse(httpRequest) {
-        const result = parseUrl(httpRequest.url);
-        const key = result.hostname + result.port;
-        const clientId = this.clientIds.get(key);
+        const clientId = this.getClientId(httpRequest.url);
         const newClientId = httpRequest.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
         if (exists(clientId) && exists(newClientId) && clientId !== newClientId) {
             throw new Error('Client Id does not match!');
         }
-        if (exists(newClientId)) {
-            ClientScope.LOGGER.debug('ClientId found', key, newClientId);
-            this.clientIds.set(key, newClientId);
+        if (!exists(clientId) && exists(newClientId)) {
+            ClientScope.LOGGER.debug('New ClientId found', newClientId);
+            this.setClientId(httpRequest.url, newClientId);
         }
     }
 
@@ -40,6 +36,23 @@ class ClientScope {
         platformClient.getService('HttpClientInterceptor').addResponseInterceptor(this);
     }
 
+    getClientId(url) {
+        const result = parseUrl(url);
+        const key = ClientScope.calcKey(result.hostname, result.port)
+        return this.clientIds.get(key);
+    }
+
+    setClientId(url, clientId) {
+        const result = parseUrl(url);
+        const key = ClientScope.calcKey(result.hostname, result.port)
+        this.clientIds.set(key, clientId);
+        ClientScope.LOGGER.trace('Setting ClientId', clientId, 'for', url, 'with key', key);
+    }
+
+}
+
+ClientScope.calcKey = function(hostname, port) {
+    return hostname + port;
 }
 
 ClientScope.LOGGER = LoggerFactory.getLogger('ClientScope');
