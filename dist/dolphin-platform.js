@@ -4905,8 +4905,7 @@ PlatformClient.getAllServiceTypes = function () {
 
 PlatformClient.registerServiceProvider = function (serviceProvider) {
     if (serviceProvider === null || typeof serviceProvider === 'undefined') {
-        PlatformClient.LOGGER.error('Cannot register service provider');
-        throw new Error('Cannot register service provider');
+        throw new Error('Cannot register empty service provider');
     }
 
     if (typeof serviceProvider.getName === 'function' && typeof serviceProvider.getService === 'function') {
@@ -4915,11 +4914,9 @@ PlatformClient.registerServiceProvider = function (serviceProvider) {
             PlatformClient.serviceProviders.set(serviceProvider.getName(), serviceProvider);
             PlatformClient.LOGGER.debug('Service provider registered with name', serviceProvider.getName());
         } else {
-            PlatformClient.LOGGER.error('Cannot register another service provider. Name already in use.', serviceProvider.getName());
             throw new Error('Cannot register another service provider. Name already in use.');
         }
     } else {
-        PlatformClient.LOGGER.error('Cannot register service provider without getName() and getService() methods');
         throw new Error('Cannot register service provider without getName() and getService() methods');
     }
 };
