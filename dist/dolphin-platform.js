@@ -5274,22 +5274,14 @@ var Executor = function () {
                             }
                         }
 
-                        if (self.configuration.responseType) {
-                            resolve(httpResponse);
-                        } else {
-                            resolve(httpResponse);
-                        }
+                        resolve(httpResponse);
                     } else if (this.readyState === 4 && this.status >= 300) {
                         var httpException = new _httpException.HttpException(this.statusText, this.status);
                         reject(httpException);
                     }
                 };
 
-                if (_this.configuration.requestBody) {
-                    httpRequest.send(_this.configuration.requestBody);
-                } else {
-                    httpRequest.send();
-                }
+                httpRequest.send(_this.configuration.requestBody);
             });
         }
     }]);
