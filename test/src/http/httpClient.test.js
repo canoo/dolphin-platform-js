@@ -23,6 +23,7 @@ describe('HttpClient', function() {
     });
 
     after(function() {
+        // Clean up PlatformClient
         PlatformClient.services = new Map();
         PlatformClient.serviceProviders = new Map();
         PlatformClient.configuration = {};
