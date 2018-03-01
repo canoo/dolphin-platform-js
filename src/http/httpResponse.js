@@ -1,7 +1,8 @@
 import { exists } from '../utils';
 class HttpResponse {
 
-    constructor(status, content, headers) {
+    constructor(url, status, content, headers) {
+        this.url = url;
         this.status = status;
         this.content = content;
         this.headers = {};
@@ -11,12 +12,16 @@ class HttpResponse {
                 const line = headerArray[i];
                 const parts = line.split(': ');
                 if (parts.length === 2) {
-                    const header = parts.shift();
+                    const header = parts.shift().toLowerCase();
                     const value = parts.join(': ');
                     this.headers[header] = value;
                 }
             }
         }
+    }
+
+    getUrl() {
+        return this.url;
     }
 
     getContent() {
@@ -32,7 +37,7 @@ class HttpResponse {
     }
 
     getHeaderByName(name) {
-        return this.headers[name];
+        return this.headers[name.toLowerCase()];
     }
 
 }

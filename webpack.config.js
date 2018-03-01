@@ -15,7 +15,8 @@ function config(env) {
             sourceMap: true
         }),
         new webpack.DefinePlugin({
-            DOLPHIN_PLATFORM_VERSION: JSON.stringify(require("./package.json").version)
+            DOLPHIN_PLATFORM_VERSION: JSON.stringify(require("./package.json").version),
+            DOLPHIN_PLATFORM_WORKER: '"' + fs.readFileSync('./src/http/worker.js', 'utf8').replace(/(\r\n|\n|\r)/gm,'') + '"'
         }),
         new webpack.BannerPlugin(banner)
     ]

@@ -6,7 +6,7 @@ import { DolphinRemotingError, DolphinSessionError } from './errors';
 import Codec from './commands/codec';
 import RemotingErrorHandler from './remotingErrorHandler';
 import { LoggerFactory, LogLevel } from '../logging';
-import {VALUE_CHANGED_COMMAND_ID} from './commands/commandConstants';
+import {VALUE_CHANGED_COMMAND_ID, START_LONG_POLL_COMMAND_ID} from './commands/commandConstants';
 
 const DOLPHIN_SESSION_TIMEOUT = 408;
 
@@ -52,13 +52,15 @@ export default class PlatformHttpTransmitter {
                     }
                 }
 
+                const useWorker = commands.length === 1 && commands[0].id === START_LONG_POLL_COMMAND_ID;
+
                 const httpClient = window.platformClient.getService('HttpClient');
                 if (httpClient && self.failed_attempt <= self.maxRetry) {
                     httpClient.post(self.url)
                     .withHeadersInfo(this.headersInfo)
                     .withContent(encodedCommands)
                     .readString()
-                    .execute()
+                    .execute(useWorker)
                     .then((response) => {
                         resolve(response.content);
                     })

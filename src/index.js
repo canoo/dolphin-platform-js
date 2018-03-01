@@ -1,5 +1,6 @@
 import { LoggerFactory, LogLevel } from './logging';
 import { PlatformClient } from './platform/platformClient';
+import { ServiceProvider } from './platform/serviceProvider';
 import { register as registerHttp } from './http';
 import { register as registerClientScope } from './platform/clientScope';
 import { register as registerRemotingScope } from './remoting'
@@ -18,6 +19,24 @@ PlatformClient.LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSIO
 /* eslint-enable */
 
 export { LoggerFactory, LogLevel, getService, hasService, registerServiceProvider }
+
+if (window.Worker && window.Blob && window.URL && URL.createObjectURL) {
+    PlatformClient.LOGGER.debug('Creating Worker');
+    class HttpWorker {
+        constructor() {
+            /* eslint-disable */
+            this.blob = new Blob([DOLPHIN_PLATFORM_WORKER], {type: "application/javascript"});
+            /* eslint-enable */
+        }
+
+        createWorker() {
+            return new Worker(URL.createObjectURL(this.blob));
+        }
+    }
+
+    const httpWorkerProvider = new ServiceProvider(HttpWorker, 'HttpWorker');
+    PlatformClient.registerServiceProvider(httpWorkerProvider);
+}
 
 // Provide dependencies as global dolphin object for backward compatibility
 import { createClientContext, ClientContextFactory } from './remoting/clientContextFactory'

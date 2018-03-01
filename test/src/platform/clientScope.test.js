@@ -42,19 +42,19 @@ describe('ClientScope', function() {
 
         const response = {
             url: 'https://www.example.com:8080/dolphin',
-            getResponseHeader: function() {}
+            getHeaderByName: function() {}
         }
         const request = {
             url: 'https://www.example.com:8080/dolphin',
             setRequestHeader: function() {}
         }
         sinon.spy(request, 'setRequestHeader');
-        sinon.stub(response, 'getResponseHeader').callsFake(function() { return 'abcdefg' });
+        sinon.stub(response, 'getHeaderByName').callsFake(function() { return 'abcdefg' });
 
         clientScope.handleResponse(response);
         clientScope.handleRequest(request);
 
-        expect(response.getResponseHeader.calledOnce).to.be.true;
+        expect(response.getHeaderByName.calledOnce).to.be.true;
         expect(request.setRequestHeader.calledWithMatch(headerName, 'abcdefg')).to.be.true;
 
     }));
@@ -64,11 +64,11 @@ describe('ClientScope', function() {
 
         const response = {
             url: 'https://www.example.com:8080/dolphin',
-            getResponseHeader: function() {}
+            getHeaderByName: function() {}
         }
 
         let result = 'abcdefg';
-        sinon.stub(response, 'getResponseHeader').callsFake(function() { return result });
+        sinon.stub(response, 'getHeaderByName').callsFake(function() { return result });
         clientScope.handleResponse(response);
         result = '12345';
         let message = null;

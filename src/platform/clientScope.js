@@ -19,15 +19,15 @@ class ClientScope {
         }
     }
 
-    handleResponse(httpRequest) {
-        const clientId = this.getClientId(httpRequest.url);
-        const newClientId = httpRequest.getResponseHeader(CLIENT_ID_HTTP_HEADER_NAME);
+    handleResponse(httpResponse) {
+        const clientId = this.getClientId(httpResponse.url);
+        const newClientId = httpResponse.getHeaderByName(CLIENT_ID_HTTP_HEADER_NAME);
         if (exists(clientId) && exists(newClientId) && clientId !== newClientId) {
             throw new Error('Client Id does not match!');
         }
         if (!exists(clientId) && exists(newClientId)) {
             ClientScope.LOGGER.debug('New ClientId found', newClientId);
-            this.setClientId(httpRequest.url, newClientId);
+            this.setClientId(httpResponse.url, newClientId);
         }
     }
 

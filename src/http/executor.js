@@ -7,10 +7,31 @@ class Executor {
         this.configuration = configuration;
     }
 
-    execute(timeout) {
+    execute(timeout, worker) {
 
-        return new Promise((resolve, reject) => {
-        
+        let httpWorker = null;
+        if (window.platformClient && window.platformClient.hasService('HttpWorker')) {
+            httpWorker = window.platformClient.getService('HttpWorker');
+        }
+
+        const useWorker = httpWorker !== null && (worker === true || timeout === true);
+        let timeoutToUse = 0;
+        if (timeout !== true && timeout !== false) {
+            timeoutToUse = timeout;
+        }
+
+        let requestInterceptors = [];
+        if (window.platformClient) {
+            requestInterceptors = window.platformClient.getService('HttpClientInterceptor').getRequestInterceptors();
+        }
+
+        let responseInterceptors = [];
+        if (window.platformClient) {
+            responseInterceptors = window.platformClient.getService('HttpClientInterceptor').getResponseInterceptors();
+        }
+
+        let directCall = (resolve, reject) => {
+
             const self = this;
             const httpRequest = new XMLHttpRequest();
             const async = true;
@@ -20,13 +41,9 @@ class Executor {
             httpRequest.method = this.configuration.method;
             httpRequest.withCredentials = true;
 
-            if (window.platformClient) {
-                const requestInterceptors = window.platformClient.getService('HttpClientInterceptor').getRequestInterceptors();
-                for (let i = 0; i < requestInterceptors.length; i++) {
-                    const requestInterceptor = requestInterceptors[i];
-                    requestInterceptor.handleRequest(httpRequest);
-                }
-            
+            for (let i = 0; i < requestInterceptors.length; i++) {
+                const requestInterceptor = requestInterceptors[i];
+                requestInterceptor.handleRequest(httpRequest);
             }
 
             if (this.configuration.headers && this.configuration.headers.length > 0) {
@@ -34,10 +51,9 @@ class Executor {
                     const header = this.configuration.headers[i];
                     httpRequest.setRequestHeader(header.name, header.value);
                 }
-                
             }
 
-            httpRequest.timeout = timeout || 0;
+            httpRequest.timeout = timeoutToUse;
 
             if (this.configuration.responseType) {
                 httpRequest.responseType = this.configuration.responseType;
@@ -61,16 +77,11 @@ class Executor {
                 }
                 if (this.readyState === 4 && this.status >= 200 && this.status < 300) {
                     // https://www.w3.org/TR/cors/#simple-response-header
-                    const httpResponse = new HttpResponse(this.status, this.response, this.getAllResponseHeaders());
+                    const httpResponse = new HttpResponse(this.url, this.status, this.response, this.getAllResponseHeaders());
                     
-                    if (window.platformClient) {
-                        const responseInterceptors = window.platformClient.getService('HttpClientInterceptor').getResponseInterceptors();
-
-                        for (let i = 0; i < responseInterceptors.length; i++) {
-                            const responseInterceptor = responseInterceptors[i];
-                            responseInterceptor.handleResponse(httpRequest);
-                        }
-                    
+                    for (let i = 0; i < responseInterceptors.length; i++) {
+                        const responseInterceptor = responseInterceptors[i];
+                        responseInterceptor.handleResponse(httpResponse);
                     }
 
                     resolve(httpResponse);
@@ -81,6 +92,65 @@ class Executor {
             }
 
             httpRequest.send(this.configuration.requestBody);
+
+        }
+        directCall = directCall.bind(this);
+
+        let workerCall = (resolve, reject) => {
+           
+            const collectedRequestHeaders = [];
+            for (let i = 0; i < requestInterceptors.length; i++) {
+                const requestInterceptor = requestInterceptors[i];
+                
+                requestInterceptor.handleRequest({
+                    url: this.configuration.url,
+                    setRequestHeader: (name, value) => {
+                        const header = {name, value};
+                        collectedRequestHeaders.push(header);
+                    }
+                });
+            }
+
+            const worker = httpWorker.createWorker();
+            try {
+                worker.onmessage = function(event) {
+                    worker.terminate();
+                    Executor.LOGGER.trace('Message form Worker', event);
+                    const msg = event.data;
+                    if (msg.error) {
+                        const httpException = new HttpException(msg.message, msg.status, msg.timedout);
+                        reject(httpException);
+                    } else {
+                        const httpResponse = new HttpResponse(msg.url, msg.status, msg.response, msg.responseHeaders);
+
+                        for (let i = 0; i < responseInterceptors.length; i++) {
+                            const responseInterceptor = responseInterceptors[i];
+                            responseInterceptor.handleResponse(httpResponse);
+                        }
+
+                        resolve(httpResponse);
+                    }
+                }
+                worker.onerror = function(event) {
+                    const httpException = new HttpException(event.data, 0, false);
+                    reject(httpException);
+                }
+                worker.postMessage({conf: this.configuration, timeout: timeoutToUse, requestHeaders: collectedRequestHeaders});
+            } catch (error) {
+                const httpException = new HttpException(error, 0, false);
+                reject(httpException);
+            }
+
+        }
+
+        workerCall = workerCall.bind(this);
+
+        return new Promise((resolve, reject) => {
+            if (useWorker && window.platformClient && window.platformClient.hasService('HttpWorker')) {
+                workerCall(resolve, reject);
+            } else {
+                directCall(resolve, reject);
+            }
         });
         
     }
