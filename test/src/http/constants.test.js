@@ -4,24 +4,24 @@
 
 import { expect } from 'chai';
 
-import { HTTP_GET, HTTP_POST, HTTP_DELETE, HTTP_PUT } from '../../../src/http/constants';
+import { HTTP } from '../../../src/http/constants';
 
 describe('HTTP Method Names', function() {
 
     it('GET', function() {
-        expect(HTTP_GET).to.be.equal('GET');
+        expect(HTTP.METHOD.GET).to.be.equal('GET');
     });
 
     it('POST', function() {
-        expect(HTTP_POST).to.be.equal('POST');
+        expect(HTTP.METHOD.POST).to.be.equal('POST');
     });
 
     it('DELETE', function() {
-        expect(HTTP_DELETE).to.be.equal('DELETE');
+        expect(HTTP.METHOD.DELETE).to.be.equal('DELETE');
     });
 
     it('PUT', function() {
-        expect(HTTP_PUT).to.be.equal('PUT');
+        expect(HTTP.METHOD.PUT).to.be.equal('PUT');
     });
 
 });

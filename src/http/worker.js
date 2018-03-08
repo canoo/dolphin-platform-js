@@ -18,9 +18,9 @@ self.handleStateChange = function () {
     }
 };
 self.addEventListener('message', function(event) {
-    const timeout = event.data.timeout;
-    const configuration = event.data.conf;
-    const requestHeaders = event.data.requestHeaders;
+    const timeout = event.data.timeout || 0;
+    const configuration = event.data.conf || {};
+    const requestHeaders = event.data.requestHeaders || [];
     
     const httpRequest = new XMLHttpRequest();
     const async = true;
@@ -42,7 +42,7 @@ self.addEventListener('message', function(event) {
         }
     }
 
-    httpRequest.timeout = timeout || 0;
+    httpRequest.timeout = timeout;
 
     if (configuration.responseType) {
         httpRequest.responseType = configuration.responseType;

@@ -1,4 +1,4 @@
-import { exists } from '../utils';
+import { exists, checkMethod, checkParam } from '../utils';
 class HttpResponse {
 
     constructor(url, status, content, headers) {
@@ -37,6 +37,9 @@ class HttpResponse {
     }
 
     getHeaderByName(name) {
+        checkMethod('getHeaderByName');
+        checkParam(name, 'name');
+        
         return this.headers[name.toLowerCase()];
     }
 

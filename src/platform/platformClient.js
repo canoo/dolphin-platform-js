@@ -62,7 +62,9 @@ PlatformClient.registerServiceProvider = function(serviceProvider) {
 PlatformClient.init = function() {
     PlatformClient.serviceProviders.forEach((serviceProvider) => {
         const service = serviceProvider.getService();
+        PlatformClient.LOGGER.trace('Initializing service for service provider', serviceProvider.getName());
         if (typeof service.initServiceProvider === 'function') {
+            PlatformClient.LOGGER.debug('Initializing service', service);
             service.initServiceProvider(PlatformClient);
         }
     });

@@ -23,11 +23,13 @@ class Executor {
         let requestInterceptors = [];
         if (window.platformClient) {
             requestInterceptors = window.platformClient.getService('HttpClientInterceptor').getRequestInterceptors();
+            Executor.LOGGER.trace('Request interceptors found:', requestInterceptors);
         }
 
         let responseInterceptors = [];
         if (window.platformClient) {
             responseInterceptors = window.platformClient.getService('HttpClientInterceptor').getResponseInterceptors();
+            Executor.LOGGER.trace('Response interceptors found:', responseInterceptors);
         }
 
         let directCall = (resolve, reject) => {
@@ -62,12 +64,14 @@ class Executor {
             httpRequest.ontimeout = function () {
                 const message = this.statusText || 'Timeout occurred';
                 const httpException = new HttpException(message, this.status, true);
+                Executor.LOGGER.error(httpException);
                 reject(httpException);
             }
 
             httpRequest.onerror = function () {
                 let message = this.statusText || 'Unspecified error occured';
                 const httpException = new HttpException(message, this.status);
+                Executor.LOGGER.error(httpException);
                 reject(httpException);
             }
 
@@ -87,6 +91,7 @@ class Executor {
                     resolve(httpResponse);
                 } else if (this.readyState === 4 && this.status >= 300) {
                     const httpException = new HttpException(this.statusText, this.status);
+                    Executor.LOGGER.error(httpException);
                     reject(httpException);
                 }
             }
@@ -119,6 +124,7 @@ class Executor {
                     const msg = event.data;
                     if (msg.error) {
                         const httpException = new HttpException(msg.message, msg.status, msg.timedout);
+                        Executor.LOGGER.error(httpException);
                         reject(httpException);
                     } else {
                         const httpResponse = new HttpResponse(msg.url, msg.status, msg.response, msg.responseHeaders);

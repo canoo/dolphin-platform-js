@@ -1,3 +1,4 @@
+import { checkMethod, checkParam } from '../utils'
 import { ServiceProvider  } from './serviceProvider';
 import { parseUrl, exists } from '../utils'
 import { LoggerFactory } from '../logging'
@@ -12,6 +13,8 @@ class ClientScope {
     }
 
     handleRequest(httpRequest) {
+        checkMethod('handleRequest');
+        checkParam(httpRequest, 'httpRequest');
         const clientId = this.getClientId(httpRequest.url);
         if (exists(clientId)) {
             ClientScope.LOGGER.trace('Using ClientId', clientId);
@@ -20,6 +23,8 @@ class ClientScope {
     }
 
     handleResponse(httpResponse) {
+        checkMethod('handleResponse');
+        checkParam(httpResponse, 'httpResponse');
         const clientId = this.getClientId(httpResponse.url);
         const newClientId = httpResponse.getHeaderByName(CLIENT_ID_HTTP_HEADER_NAME);
         if (exists(clientId) && exists(newClientId) && clientId !== newClientId) {
@@ -32,6 +37,8 @@ class ClientScope {
     }
 
     initServiceProvider(platformClient) {
+        checkMethod('initServiceProvider');
+        checkParam(platformClient, 'platformClient');
         platformClient.getService('HttpClientInterceptor').addRequestInterceptor(this);
         platformClient.getService('HttpClientInterceptor').addResponseInterceptor(this);
     }

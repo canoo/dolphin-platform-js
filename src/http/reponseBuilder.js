@@ -1,4 +1,5 @@
 import { Executor } from './executor';
+import { RESPONSE_TYPE } from './constants';
 class ResponseBuilder {
 
     constructor(configuration) {
@@ -7,17 +8,17 @@ class ResponseBuilder {
     }
 
     readBytes() {
-        this.configuration.responseType = 'arraybuffer';
+        this.configuration.responseType = RESPONSE_TYPE.ARRAY_BUFFER;
         return this.executor;
     }
 
     readString() {
-        this.configuration.responseType = 'text';
+        this.configuration.responseType = RESPONSE_TYPE.TEXT;
         return this.executor;
     }
 
     readObject() {
-        this.configuration.responseType = 'json';
+        this.configuration.responseType = RESPONSE_TYPE.JSON;
         return this.executor;
     }
 

@@ -1,6 +1,7 @@
 import { LoggerFactory, LogLevel } from './logging';
 import { PlatformClient } from './platform/platformClient';
 import { ServiceProvider } from './platform/serviceProvider';
+import { HTTP } from './http/constants';
 import { register as registerHttp } from './http';
 import { register as registerClientScope } from './platform/clientScope';
 import { register as registerRemotingScope } from './remoting'
@@ -18,7 +19,7 @@ const registerServiceProvider = PlatformClient.registerServiceProvider;
 PlatformClient.LOGGER.info('Dolphin Platform Version:' , DOLPHIN_PLATFORM_VERSION);
 /* eslint-enable */
 
-export { LoggerFactory, LogLevel, getService, hasService, registerServiceProvider }
+export { LoggerFactory, LogLevel, getService, hasService, registerServiceProvider, HTTP }
 
 if (window.Worker && window.Blob && window.URL && URL.createObjectURL) {
     PlatformClient.LOGGER.debug('Creating Worker');
@@ -38,7 +39,10 @@ if (window.Worker && window.Blob && window.URL && URL.createObjectURL) {
     PlatformClient.registerServiceProvider(httpWorkerProvider);
 }
 
-// Provide dependencies as global dolphin object for backward compatibility
+/* 
+ * Provide dependencies as global dolphin object for backward compatibility.
+ * The code below this comment is deprecated and should be removed in a feature version.
+ */
 import { createClientContext, ClientContextFactory } from './remoting/clientContextFactory'
 
 const LOGGER = LoggerFactory.getLogger('Deprecated:');
