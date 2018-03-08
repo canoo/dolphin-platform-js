@@ -48,6 +48,7 @@
     "rimraf": "2.6.2",
     "sinon": "4.4.2",
     "sinon-test": "2.1.3",
+    "ssri": "5.2.4",
     "stryker": "0.19.3",
     "stryker-api": "0.13.0",
     "stryker-babel-transpiler": "0.3.1",
