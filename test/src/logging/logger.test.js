@@ -1,8 +1,11 @@
 /*jslint browserify: true, mocha: true, expr: true */
+/*eslint-env browser, mocha */
 "use strict";
 
 import { expect } from 'chai';
 import sinon from 'sinon';
+import sinonTest from 'sinon-test'
+sinon.test = sinonTest(sinon);
 
 import { LogLevel }  from '../../../src/logging/index';
 import { Logger }  from '../../../src/logging/logger';
@@ -283,6 +286,96 @@ describe('Logger', function() {
             expect(console.log.calledOnce).to.be.false;
             expect(console.debug.calledOnce).to.be.false;
             expect(console.log.calledOnce).to.be.false;
+        })
+    );
+
+    it('Cookie Loglevel ERROR', sinon.test(function() {
+            // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+            if (global.window) {
+                const jdomWindow = global.window;
+                global.window = {document: {cookie: 'DOLPHIN_PLATFORM_LOGGER_TEST=ERROR'}};
+
+                let logger = new Logger('TEST');
+
+                expect(logger.getLogLevel()).to.be.equal(LogLevel.ERROR);
+                
+                global.window = jdomWindow;
+            }
+        })
+    );
+
+    it('Cookie Loglevel WARN', sinon.test(function() {
+            // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+            if (global.window) {
+                const jdomWindow = global.window;
+                global.window = {document: {cookie: 'DOLPHIN_PLATFORM_LOGGER_TEST=WARN'}};
+
+                let logger = new Logger('TEST');
+
+                expect(logger.getLogLevel()).to.be.equal(LogLevel.WARN);
+                
+                global.window = jdomWindow;
+            }
+        })
+    );
+
+    it('Cookie Loglevel INFO', sinon.test(function() {
+            // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+            if (global.window) {
+                const jdomWindow = global.window;
+                global.window = {document: {cookie: 'DOLPHIN_PLATFORM_LOGGER_TEST=INFO'}};
+
+                let logger = new Logger('TEST');
+
+                expect(logger.getLogLevel()).to.be.equal(LogLevel.INFO);
+                
+                global.window = jdomWindow;
+            }
+        })
+    );
+
+    it('Cookie Loglevel TRACE', sinon.test(function() {
+            // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+            if (global.window) {
+                const jdomWindow = global.window;
+                global.window = {document: {cookie: 'DOLPHIN_PLATFORM_LOGGER_TEST=TRACE'}};
+
+                let logger = new Logger('TEST');
+
+                expect(logger.getLogLevel()).to.be.equal(LogLevel.TRACE);
+                
+                global.window = jdomWindow;
+            }
+        })
+    );
+
+    it('Cookie Loglevel NONE', sinon.test(function() {
+            // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+            if (global.window) {
+                const jdomWindow = global.window;
+                global.window = {document: {cookie: 'DOLPHIN_PLATFORM_LOGGER_TEST=NONE'}};
+
+                let logger = new Logger('TEST');
+
+                expect(logger.getLogLevel()).to.be.equal(LogLevel.NONE);
+                
+                global.window = jdomWindow;
+            }
+        })
+    );
+
+    it('Cookie Loglevel ALL', sinon.test(function() {
+            // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+            if (global.window) {
+                const jdomWindow = global.window;
+                global.window = {document: {cookie: 'DOLPHIN_PLATFORM_LOGGER_TEST=ALL'}};
+
+                let logger = new Logger('TEST');
+
+                expect(logger.getLogLevel()).to.be.equal(LogLevel.ALL);
+                
+                global.window = jdomWindow;
+            }
         })
     );
 

@@ -1,12 +1,20 @@
 /*jslint browserify: true, mocha: true, expr: true */
+/*eslint-env browser, mocha */
 "use strict";
 
 import { expect } from 'chai';
 
 import {LoggerFactory, LogLevel} from '../../../src/logging/index';
 import sinon from "sinon";
+import sinonTest from 'sinon-test'
+sinon.test = sinonTest(sinon);
 
 describe('LoggerFactory', function() {
+
+    after(function() {
+        // Set NONE for later tests
+        LoggerFactory.getLogger().setLogLevel(LogLevel.NONE);
+    });
 
     it('Do not log warn message, level set by ROOT Logger', sinon.test(function() {
             // given:
@@ -74,4 +82,5 @@ describe('LoggerFactory', function() {
         // then:
         expect(loggerA).not.to.be.equals(loggerB);
     });
+
 });

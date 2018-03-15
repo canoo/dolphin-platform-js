@@ -2,22 +2,18 @@
 <a href="http://www.canoo.com"><img src="http://www.guigarage.com/wordpress/wp-content/uploads/2016/08/canoo_support.png"/></a>
 </p>
 
-# Dolphin Platform JS client API [![Build Status](https://travis-ci.org/canoo/dolphin-platform-js.svg?branch=master)](https://travis-ci.org/canoo/dolphin-platform-js)
+# Dolphin Platform JS client API [![Build Status](https://travis-ci.org/canoo/dolphin-platform-js.svg?branch=master)](https://travis-ci.org/canoo/dolphin-platform-js) [![Coverage Status](https://coveralls.io/repos/github/canoo/dolphin-platform-js/badge.svg?branch=master)](https://coveralls.io/github/canoo/dolphin-platform-js?branch=master)
 
-This repository contains all JavaScript related sources of the Dolphin Platform JS client library. Clients for specific JS frameworks like [Polymer](https://github.com/canoo/dolphin-platform-polymer) can be found in seperate repositories. The Java server and client sourceas can be found [here](https://github.com/canoo/dolphin-platform).
+This repository contains all JavaScript related sources of the Dolphin Platform JS client library. Clients for specific JS frameworks like [Polymer](https://github.com/canoo/dolphin-platform-polymer) can be found in seperate repositories. The Java server and client sources can be found [here](https://github.com/canoo/dolphin-platform).
 
-![Dolphin Platform Logo](http://www.guigarage.com/wordpress/wp-content/uploads/2015/10/logo.png)
+![Dolphin Platform Logo](https://raw.githubusercontent.com/canoo/dolphin-platform/master/doc/logo.png)
 
 The Dolphin Platform is a framework that implements the presentation model pattern and provides a modern way to create enterprise applications. The Platform provides several client implementations that all can be used in combination with a general sever API.
-
-<p align="center">
-<img src="http://www.dolphin-platform.io/assets/img/features/clients.png"/>
-</p>
 
 By doing so you can create enterprise application with a single server and several desktop, web and mobile client implementations. Here the Dolphin Platforms define a mechanism to automatically snchronize models between the server and the client.
 
 <p align="center">
-<img src="http://www.dolphin-platform.io/assets/img/features/pm1.png"/>
+<img src="https://raw.githubusercontent.com/canoo/dolphin-platform/master/documentation/src/docs/asciidoc/images/rpm-overview.png"/>
 </p>
 
 The Server sources of the Dolphin Platform can be found [here](https://github.com/canoo/dolphin-platform). 
