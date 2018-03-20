@@ -13,7 +13,7 @@ import { register as registerHttp } from '../../../src/http';
 import { register as registerSecurity } from '../../../src/security';
 import { KeycloakSecurity } from '../../../src/security/keycloakSecurity'
 
-describe('KeycloakSecurity', function() {
+describe('Security', function() {
 
     let server;
 
@@ -207,4 +207,33 @@ describe('KeycloakSecurity', function() {
         }
     });
 
+
+    it('HTTP client sends access token', function(done) {
+        // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+        if (global.window) {
+            const jdomWindow = global.window;
+            global.window = {platformClient: PlatformClient};
+            server.respondWith(HTTP.METHOD.POST, '/openid-connect', [200, { "Content-Type": "application/json" }, '{"access_token": "test"}']);
+            server.respondWith(HTTP.METHOD.GET, 'https://test-mock-server.com', 'Hallo Google!');
+
+            const keycloakSecurity = PlatformClient.getService('Security');
+            keycloakSecurity.login('user', 'password').then(() => {
+                const httpClient = PlatformClient.getService('HttpClient');
+                httpClient.get('https://test-mock-server.com').withoutContent().withoutResult().execute().then(() => { 
+                    expect(server.requests.length).to.be.equal(2);
+                    expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.AUTHORIZATION]).to.be.equal('Bearer test');
+                    expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_BEARER_ONLY]).to.be.equal('true');
+
+                    done();
+                });
+                server.respond();
+
+                global.window = jdomWindow;
+
+            });
+
+            server.respond();        
+        }
+    });
+    
 });
