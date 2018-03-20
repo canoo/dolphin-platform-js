@@ -9535,7 +9535,8 @@ var KeycloakSecurity = function () {
         this.interceptor = new _securityHttpClientInterceptor.SecurityHttpClientInterceptor();
         this.directConnection = false;
         this.authEndpoint = '/openid-connect';
-        this.appName = '';
+        this.appName = null;
+        this.realmName = null;
     }
 
     (0, _createClass3.default)(KeycloakSecurity, [{
@@ -9557,6 +9558,12 @@ var KeycloakSecurity = function () {
             return this;
         }
     }, {
+        key: 'withRealm',
+        value: function withRealm(realmName) {
+            this.realmName = realmName;
+            return this;
+        }
+    }, {
         key: 'login',
         value: function login(user, password) {
             var _this = this;
@@ -9565,18 +9572,26 @@ var KeycloakSecurity = function () {
             var content = void 0;
 
             if (this.directConnection) {
-                connection = this.connection.createDirectConnection(this.authEndpoint);
-                content = 'client_id=' + this.appName + '&username=' + user + '&password=' + password + '&grant_type=password';
+                if ((0, _utils.exists)(this.appName)) {
+                    connection = this.connection.createDirectConnection(this.authEndpoint, this.realmName);
+                    content = 'client_id=' + this.appName + '&username=' + user + '&password=' + password + '&grant_type=password';
+                } else {
+                    throw Error('No app name set!');
+                }
             } else {
-                connection = this.connection.createServerProxyConnection(this.authEndpoint);
+                connection = this.connection.createServerProxyConnection(this.authEndpoint, this.realmName);
                 content = 'username=' + user + '&password=' + password + '&grant_type=password';
             }
             var self = this;
             return new _promise2.default(function (resolve, reject) {
                 _this.functions.receiveToken(connection, content).then(function (result) {
-                    self.token = result;
-                    _this.interceptor.setToken(result.access_token);
-                    resolve();
+                    if (result && result.access_token) {
+                        self.token = result;
+                        _this.interceptor.setToken(result.access_token);
+                        resolve(result.access_token);
+                    } else {
+                        reject('No access token found');
+                    }
                 }).catch(function (error) {
                     return reject(error);
                 });
@@ -9663,7 +9678,7 @@ var KeycloakConnection = function () {
 
             var httpRequest = new XMLHttpRequest();
             httpRequest.open(_constants.HTTP.METHOD.POST, authEndpoint, true);
-            httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.CONTENT_TYPE, 'application/txt;charset=utf-8');
+            httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.CONTENT_TYPE, 'application/txt');
             httpRequest.responseType = _constants.RESPONSE_TYPE.JSON;
 
             if (realmName) {
@@ -9714,19 +9729,19 @@ var KeycloakFunctions = function () {
         key: 'receiveToken',
         value: function receiveToken(httpRequest, body) {
             return new _promise2.default(function (resolve, reject) {
-                httpRequest.ontimeout = function () {
-                    reject();
+                httpRequest.ontimeout = function (error) {
+                    reject(error);
                 };
 
-                httpRequest.onerror = function () {
-                    reject();
+                httpRequest.onerror = function (error) {
+                    reject(error);
                 };
 
                 httpRequest.onreadystatechange = function () {
                     if (this.readyState === 4 && this.status === _constants.HTTP.STATUS.OK) {
                         resolve(this.response);
                     } else if (this.readyState === 4 && this.status !== _constants.HTTP.STATUS.OK) {
-                        reject();
+                        reject(this.status);
                     }
                 };
 
