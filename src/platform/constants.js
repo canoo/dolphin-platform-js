@@ -100,5 +100,16 @@ export const HTTP = {
         X_CLIENT_ID: 'X-Client-Id',
         X_PLATFORM_SECURITY_REALM: 'X-platform-security-realm',
         X_PLATFORM_SECURITY_BEARER_ONLY: 'X-platform-security-bearer-only'
+    },
+    CONTENT_TYPE: {
+        APPLICATION_JSON: 'application/json',
+        APPLICATION_X_WWW_FORM_URLENCODED: 'application/x-www-form-urlencoded',
+        TEXT_HTML: 'text/html',
+        TEXT_PLAIN: 'text/plain'
     }
+}
+
+// Security
+export const SECURITY = {
+    AUTH_ENDPOINT: '/openid-connect'
 }

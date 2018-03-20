@@ -13,7 +13,7 @@ class KeycloakConnection {
 
         const httpRequest = new XMLHttpRequest();
         httpRequest.open(HTTP.METHOD.POST, authEndpoint + '/auth/realms/' + realmName + '/protocol/openid-connect/token', true);
-        httpRequest.setRequestHeader(HTTP.HEADER_NAME.CONTENT_TYPE,  'application/x-www-form-urlencoded');
+        httpRequest.setRequestHeader(HTTP.HEADER_NAME.CONTENT_TYPE,  HTTP.CONTENT_TYPE.APPLICATION_X_WWW_FORM_URLENCODED);
         httpRequest.responseType = RESPONSE_TYPE.JSON;
 
         return httpRequest;
@@ -25,7 +25,7 @@ class KeycloakConnection {
 
         const httpRequest = new XMLHttpRequest();
         httpRequest.open(HTTP.METHOD.POST, authEndpoint, true);
-        httpRequest.setRequestHeader(HTTP.HEADER_NAME.CONTENT_TYPE,  'application/txt');
+        httpRequest.setRequestHeader(HTTP.HEADER_NAME.CONTENT_TYPE,  HTTP.CONTENT_TYPE.TEXT_PLAIN);
         httpRequest.responseType = RESPONSE_TYPE.JSON;
 
         if (realmName) {

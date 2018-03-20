@@ -2,6 +2,7 @@ import { exists, checkMethod, checkParam } from '../utils';
 import { KeycloakConnection } from './keycloakConnection';
 import { KeycloakFunctions } from './keycloakFunctions';
 import { SecurityHttpClientInterceptor } from './securityHttpClientInterceptor';
+import { SECURITY } from '../platform/constants'
 
 class KeycloakSecurity {
 
@@ -10,7 +11,7 @@ class KeycloakSecurity {
         this.functions = new KeycloakFunctions();
         this.interceptor = new SecurityHttpClientInterceptor();
         this.directConnection = false;
-        this.authEndpoint = '/openid-connect';
+        this.authEndpoint = SECURITY.AUTH_ENDPOINT;
         this.appName = null;
         this.realmName = null;
     }

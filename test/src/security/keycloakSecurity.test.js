@@ -63,7 +63,7 @@ describe('KeycloakSecurity', function() {
         expect(server.requests.length).to.be.equal(1);
         expect(server.requests[0].requestBody).to.be.equal('username=user&password=password&grant_type=password');
         expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM]).to.not.exist;
-        expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.CONTENT_TYPE]).to.be.equal('application/txt;charset=utf-8');
+        expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.CONTENT_TYPE]).to.be.equal('text/plain;charset=utf-8');
     });
 
     it('invaild token response', function(done) {
