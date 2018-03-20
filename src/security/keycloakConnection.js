@@ -25,7 +25,7 @@ class KeycloakConnection {
 
         const httpRequest = new XMLHttpRequest();
         httpRequest.open(HTTP.METHOD.POST, authEndpoint, true);
-        httpRequest.setRequestHeader(HTTP.HEADER_NAME.CONTENT_TYPE,  'application/txt;charset=utf-8');
+        httpRequest.setRequestHeader(HTTP.HEADER_NAME.CONTENT_TYPE,  'application/txt');
         httpRequest.responseType = RESPONSE_TYPE.JSON;
 
         if (realmName) {
