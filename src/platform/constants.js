@@ -97,6 +97,8 @@ export const HTTP = {
         REFERER: 'Referer',
         TE: 'TE',
         USER_AGENT: 'User-Agent',
-        X_CLIENT_ID: 'X-Client-Id'
+        X_CLIENT_ID: 'X-Client-Id',
+        X_PLATFORM_SECURITY_REALM: 'X-platform-security-realm',
+        X_PLATFORM_SECURITY_BEARER_ONLY: 'X-platform-security-bearer-only'
     }
 }

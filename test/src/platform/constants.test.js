@@ -4,7 +4,7 @@
 
 import { expect } from 'chai';
 
-import { HTTP } from '../../../src/http/constants';
+import { HTTP } from '../../../src/platform/constants';
 
 describe('HTTP Method Names', function() {
 

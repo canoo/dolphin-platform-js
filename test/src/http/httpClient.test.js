@@ -5,7 +5,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { HTTP } from '../../../src/http/constants';
+import { HTTP } from '../../../src/platform/constants';
 import { HttpClient } from '../../../src/http/httpClient';
 import { HttpException } from '../../../src/http/httpException';
 import { HttpResponse } from '../../../src/http/httpResponse';
