@@ -13,9 +13,9 @@ class KeycloakFunctions {
             }
 
             httpRequest.onreadystatechange = function () {
-                if (this.readyState === 4 && this.status === HTTP.STATUS.OK) {
+                if (this.readyState === HTTP.XMLHTTPREQUEST_READYSTATE.DONE && this.status === HTTP.STATUS.OK) {
                     resolve(this.response);
-                } else if (this.readyState === 4 && this.status !== HTTP.STATUS.OK) {
+                } else if (this.readyState === HTTP.XMLHTTPREQUEST_READYSTATE.DONE && this.status !== HTTP.STATUS.OK) {
                     reject(this.status);
                 }
             }

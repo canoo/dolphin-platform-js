@@ -7,7 +7,7 @@ import sinon from 'sinon';
 import sinonTest from 'sinon-test'
 sinon.test = sinonTest(sinon);
 
-import { HTTP } from '../../../src/platform/constants';
+import { HTTP, SECURITY } from '../../../src/platform/constants';
 import { PlatformClient } from '../../../src/platform/platformClient';
 import { register as registerHttp } from '../../../src/http';
 import { register as registerSecurity } from '../../../src/security';
@@ -16,6 +16,11 @@ import { KeycloakSecurity } from '../../../src/security/keycloakSecurity'
 describe('Security', function() {
 
     let server;
+    const responseHeaders = {};
+    responseHeaders[HTTP.HEADER_NAME.CONTENT_TYPE] = HTTP.CONTENT_TYPE.APPLICATION_JSON;
+
+    const validToken = '{"access_token": "test"}';
+    const invalidToken = '{"foo": "bar"}';
 
     before(function() {
         registerHttp(PlatformClient);
@@ -49,7 +54,7 @@ describe('Security', function() {
     });
 
     it('correct login', function(done) {
-        server.respondWith(HTTP.METHOD.POST, '/openid-connect', [200, { "Content-Type": "application/json" }, '{"access_token": "test"}']);
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
         keycloakSecurity.login('user', 'password')
@@ -63,11 +68,11 @@ describe('Security', function() {
         expect(server.requests.length).to.be.equal(1);
         expect(server.requests[0].requestBody).to.be.equal('username=user&password=password&grant_type=password');
         expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM]).to.not.exist;
-        expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.CONTENT_TYPE]).to.be.equal('text/plain;charset=utf-8');
+        expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.CONTENT_TYPE]).to.be.equal(HTTP.CONTENT_TYPE.TEXT_PLAIN +';charset=utf-8');
     });
 
     it('invaild token response', function(done) {
-        server.respondWith(HTTP.METHOD.POST, '/openid-connect', [200, { "Content-Type": "application/json" }, 'Huh?']);
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, 'Huh?']);
 
         const keycloakSecurity = new KeycloakSecurity();
         keycloakSecurity.login('user', 'password')
@@ -83,7 +88,7 @@ describe('Security', function() {
     });
 
     it('invaild token object response', function(done) {
-        server.respondWith(HTTP.METHOD.POST, '/openid-connect', [200, { "Content-Type": "application/json" }, '{"foo": "bar"}']);
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, invalidToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
         keycloakSecurity.login('user', 'password')
@@ -99,13 +104,13 @@ describe('Security', function() {
     });
 
     it('HTTP status not 200', function(done) {
-        server.respondWith(HTTP.METHOD.POST, '/openid-connect', [401, { "Content-Type": "application/json" }, '{"foo": "bar"}']);
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.UNAUTHORIZED, responseHeaders, invalidToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
         keycloakSecurity.login('user', 'password')
         .catch((error) => {
             expect(error).to.be.exist;
-            expect(error).to.be.be.equal(401);
+            expect(error).to.be.be.equal(HTTP.STATUS.UNAUTHORIZED);
             expect(keycloakSecurity.isAuthorized()).to.be.false;
             done();
         });
@@ -115,7 +120,7 @@ describe('Security', function() {
     });
 
     it('correct login and logut', function(done) {
-        server.respondWith(HTTP.METHOD.POST, '/openid-connect', [200, { "Content-Type": "application/json" }, '{"access_token": "test"}']);
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
         keycloakSecurity.login('user', 'password')
@@ -133,7 +138,7 @@ describe('Security', function() {
     });
 
     it('correct login with realm', function(done) {
-        server.respondWith(HTTP.METHOD.POST, '/openid-connect', [200, { "Content-Type": "application/json" }, '{"access_token": "test"}']);
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
         keycloakSecurity.withRealm('dolphin-platform').login('user', 'password')
@@ -149,7 +154,7 @@ describe('Security', function() {
     });
 
     it('correct login with different endpoint', function(done) {
-        server.respondWith(HTTP.METHOD.POST, 'http://www.example.com:9001/openid-connect', [200, { "Content-Type": "application/json" }, '{"access_token": "test"}']);
+        server.respondWith(HTTP.METHOD.POST, 'http://www.example.com:9001/openid-connect', [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
         keycloakSecurity.withAuthEndpoint('http://www.example.com:9001/openid-connect').login('user', 'password')
@@ -164,7 +169,7 @@ describe('Security', function() {
     });
 
     it('correct login with direct connection', function(done) {
-        server.respondWith(HTTP.METHOD.POST, '/openid-connect/auth/realms/dolphin-platform/protocol/openid-connect/token', [200, { "Content-Type": "application/json" }, '{"access_token": "test"}']);
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT + '/auth/realms/dolphin-platform/protocol/openid-connect/token', [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
         keycloakSecurity.withDirectConnection().withRealm('dolphin-platform').withAppName('dolphin-client').login('user', 'password')
@@ -177,12 +182,12 @@ describe('Security', function() {
         server.respond();
         expect(server.requests.length).to.be.equal(1);
         expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM]).to.not.exist;
-        expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.CONTENT_TYPE]).to.be.equal('application/x-www-form-urlencoded;charset=utf-8');
+        expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.CONTENT_TYPE]).to.be.equal(HTTP.CONTENT_TYPE.APPLICATION_X_WWW_FORM_URLENCODED + ';charset=utf-8');
         expect(server.requests[0].requestBody).to.be.equal('client_id=dolphin-client&username=user&password=password&grant_type=password');
     });
 
     it('error without app name', function(done) {
-        server.respondWith(HTTP.METHOD.POST, '/openid-connect/auth/realms/dolphin-platform/protocol/openid-connect/token', [200, { "Content-Type": "application/json" }, '{"access_token": "test"}']);
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT + '/auth/realms/dolphin-platform/protocol/openid-connect/token', [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
         try {
@@ -195,7 +200,7 @@ describe('Security', function() {
     });
 
     it('error without app name', function(done) {
-        server.respondWith(HTTP.METHOD.POST, '/openid-connect/auth/realms/dolphin-platform/protocol/openid-connect/token', [200, { "Content-Type": "application/json" }, '{"access_token": "test"}']);
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT + '/auth/realms/dolphin-platform/protocol/openid-connect/token', [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
         try {
@@ -213,7 +218,7 @@ describe('Security', function() {
         if (global.window) {
             const jdomWindow = global.window;
             global.window = {platformClient: PlatformClient};
-            server.respondWith(HTTP.METHOD.POST, '/openid-connect', [200, { "Content-Type": "application/json" }, '{"access_token": "test"}']);
+            server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
             server.respondWith(HTTP.METHOD.GET, 'https://test-mock-server.com', 'Hallo Google!');
 
             const keycloakSecurity = PlatformClient.getService('Security');

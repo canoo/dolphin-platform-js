@@ -106,6 +106,13 @@ export const HTTP = {
         APPLICATION_X_WWW_FORM_URLENCODED: 'application/x-www-form-urlencoded',
         TEXT_HTML: 'text/html',
         TEXT_PLAIN: 'text/plain'
+    },
+    XMLHTTPREQUEST_READYSTATE: {
+        UNSENT: 0,
+        OPENED: 1,
+        HEADERS_RECEIVED: 2,
+        LOADING: 3,
+        DONE:4
     }
 }
 
