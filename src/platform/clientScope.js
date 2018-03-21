@@ -1,7 +1,6 @@
-import { checkMethod, checkParam } from '../utils'
+import { checkMethod, checkParam, parseUrl, exists } from '../utils';
 import { ServiceProvider  } from './serviceProvider';
-import { parseUrl, exists } from '../utils'
-import { LoggerFactory } from '../logging'
+import { LoggerFactory } from '../logging';
 
 const DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
 const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';

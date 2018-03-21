@@ -1,5 +1,5 @@
 import { RequestBuilder } from './requestBuilder';
-import { HTTP } from './constants';
+import { HTTP } from '../platform/constants';
 class HttpClient {
 
     request(url, method) {

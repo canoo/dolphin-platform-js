@@ -1,14 +1,16 @@
 import { LoggerFactory, LogLevel } from './logging';
 import { PlatformClient } from './platform/platformClient';
 import { ServiceProvider } from './platform/serviceProvider';
-import { HTTP } from './http/constants';
+import { HTTP } from './platform/constants';
 import { register as registerHttp } from './http';
 import { register as registerClientScope } from './platform/clientScope';
 import { register as registerRemotingScope } from './remoting'
+import { register as registerSecurity } from './security'
 
 registerHttp(PlatformClient);
 registerClientScope(PlatformClient);
 registerRemotingScope(PlatformClient);
+registerSecurity(PlatformClient);
 PlatformClient.init();
 
 const getService = PlatformClient.getService;

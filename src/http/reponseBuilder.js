@@ -1,5 +1,5 @@
 import { Executor } from './executor';
-import { RESPONSE_TYPE } from './constants';
+import { RESPONSE_TYPE } from '../platform/constants';
 class ResponseBuilder {
 
     constructor(configuration) {

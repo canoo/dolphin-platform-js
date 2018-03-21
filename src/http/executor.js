@@ -1,6 +1,7 @@
 import { LoggerFactory } from '../logging';
 import { HttpResponse } from './httpResponse';
 import { HttpException } from './httpException';
+import { HTTP } from '../platform/constants';
 class Executor {
 
     constructor(configuration) {
@@ -76,10 +77,10 @@ class Executor {
             }
 
             httpRequest.onreadystatechange = function () {
-                if (this.readyState === 4) {
+                if (this.readyState === HTTP.XMLHTTPREQUEST_READYSTATE.DONE) {
                     Executor.LOGGER.trace('Request to ', self.configuration.url, 'finished with', this.status);
                 }
-                if (this.readyState === 4 && this.status >= 200 && this.status < 300) {
+                if (this.readyState === HTTP.XMLHTTPREQUEST_READYSTATE.DONE && this.status >= 200 && this.status < 300) {
                     // https://www.w3.org/TR/cors/#simple-response-header
                     const httpResponse = new HttpResponse(this.url, this.status, this.response, this.getAllResponseHeaders());
                     
@@ -89,7 +90,7 @@ class Executor {
                     }
 
                     resolve(httpResponse);
-                } else if (this.readyState === 4 && this.status >= 300) {
+                } else if (this.readyState === HTTP.XMLHTTPREQUEST_READYSTATE.DONE && this.status >= 300) {
                     const httpException = new HttpException(this.statusText, this.status);
                     Executor.LOGGER.error(httpException);
                     reject(httpException);

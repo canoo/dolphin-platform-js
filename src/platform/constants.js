@@ -97,6 +97,26 @@ export const HTTP = {
         REFERER: 'Referer',
         TE: 'TE',
         USER_AGENT: 'User-Agent',
-        X_CLIENT_ID: 'X-Client-Id'
+        X_CLIENT_ID: 'X-Client-Id',
+        X_PLATFORM_SECURITY_REALM: 'X-platform-security-realm',
+        X_PLATFORM_SECURITY_BEARER_ONLY: 'X-platform-security-bearer-only'
+    },
+    CONTENT_TYPE: {
+        APPLICATION_JSON: 'application/json',
+        APPLICATION_X_WWW_FORM_URLENCODED: 'application/x-www-form-urlencoded',
+        TEXT_HTML: 'text/html',
+        TEXT_PLAIN: 'text/plain'
+    },
+    XMLHTTPREQUEST_READYSTATE: {
+        UNSENT: 0,
+        OPENED: 1,
+        HEADERS_RECEIVED: 2,
+        LOADING: 3,
+        DONE:4
     }
+}
+
+// Security
+export const SECURITY = {
+    AUTH_ENDPOINT: '/openid-connect'
 }
