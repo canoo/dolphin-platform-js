@@ -1,6 +1,50 @@
 import { HTTP } from '../platform/constants'
+import { exists } from '../utils';
+import { KeycloakConnection } from './keycloakConnection';
 
 class KeycloakFunctions {
+
+    constructor() {
+        this.connection = new KeycloakConnection();
+    }
+
+    createLoginConnection(directConnection, authEndpoint, realmName, appName, user, password) {
+        let connection;
+        let content;
+
+        if (directConnection) {
+            if (exists(appName)) {
+                connection = this.connection.createDirectConnection(authEndpoint,realmName);
+                content = 'client_id=' + appName + '&username=' + user + '&password=' + password + '&grant_type=password';
+            } else {
+                throw Error('No app name set!');
+            }
+        } else {
+            connection = this.connection.createServerProxyConnection(authEndpoint, realmName);
+            content = 'username=' + user + '&password=' + password + '&grant_type=password';
+        }
+
+        return { connection, content };
+    }
+
+    createRefreshConnection(directConnection, authEndpoint, realmName, appName, refreshToken) {
+        let connection;
+        let content;
+
+        if (directConnection) {
+            if (exists(appName)) {
+                connection = this.connection.createDirectConnection(authEndpoint, realmName);
+                content = 'grant_type=refresh_token&refresh_token=' + refreshToken + '&client_id=' + appName;
+            } else {
+                throw Error('No app name set!');
+            }
+        } else {
+            connection = this.connection.createServerProxyConnection(authEndpoint, realmName);
+            content = 'grant_type=refresh_token&refresh_token=' + refreshToken;
+        }
+
+        return { connection, content };
+    }
 
     receiveToken(httpRequest, body) {
         return new Promise((resolve, reject) => {
@@ -22,6 +66,11 @@ class KeycloakFunctions {
             
             httpRequest.send(body);
         });
+    }
+
+    refreshToken(directConnection, authEndpoint, realmName, appName, refreshToken) {
+        const { connection, content } = this.createRefreshConnection(directConnection, authEndpoint, realmName, appName, refreshToken);
+        return this.receiveToken(connection, content);
     }
     
 }

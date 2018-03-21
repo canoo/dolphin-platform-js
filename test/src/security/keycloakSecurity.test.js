@@ -61,6 +61,7 @@ describe('Security', function() {
         .then((token) => {
             expect(token).to.be.equal('test');
             expect(keycloakSecurity.isAuthorized()).to.be.true;
+            keycloakSecurity.stopRefresh();
             done();
         });
 
@@ -145,6 +146,7 @@ describe('Security', function() {
         .then((token) => {
             expect(token).to.be.equal('test');
             expect(keycloakSecurity.isAuthorized()).to.be.true;
+            keycloakSecurity.stopRefresh();
             done();
         });
 
@@ -161,6 +163,7 @@ describe('Security', function() {
         .then((token) => {
             expect(token).to.be.equal('test');
             expect(keycloakSecurity.isAuthorized()).to.be.true;
+            keycloakSecurity.stopRefresh();
             done();
         });
 
@@ -176,6 +179,7 @@ describe('Security', function() {
         .then((token) => {
             expect(token).to.be.equal('test');
             expect(keycloakSecurity.isAuthorized()).to.be.true;
+            keycloakSecurity.stopRefresh();
             done();
         });
 
@@ -223,6 +227,7 @@ describe('Security', function() {
 
             const keycloakSecurity = PlatformClient.getService('Security');
             keycloakSecurity.login('user', 'password').then(() => {
+                keycloakSecurity.stopRefresh();
                 const httpClient = PlatformClient.getService('HttpClient');
                 httpClient.get('https://test-mock-server.com').withoutContent().withoutResult().execute().then(() => { 
                     expect(server.requests.length).to.be.equal(2);
