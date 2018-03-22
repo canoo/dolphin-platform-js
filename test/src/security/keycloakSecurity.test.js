@@ -16,10 +16,12 @@ import { KeycloakSecurity } from '../../../src/security/keycloakSecurity'
 describe('Security', function() {
 
     let server;
+    let clock;
+
     const responseHeaders = {};
     responseHeaders[HTTP.HEADER_NAME.CONTENT_TYPE] = HTTP.CONTENT_TYPE.APPLICATION_JSON;
 
-    const validToken = '{"access_token": "test"}';
+    const validToken = '{"access_token": "test", "refresh_token": "refreshme", "expires_in": "30000"}';
     const invalidToken = '{"foo": "bar"}';
 
     before(function() {
@@ -37,10 +39,12 @@ describe('Security', function() {
 
     beforeEach(function() {
         server = sinon.createFakeServer();
+        clock = sinon.useFakeTimers();
     });
 
     afterEach(function() {
         server.restore();
+        clock.restore();
     });
 
     it('create new instance', function() {
@@ -141,7 +145,7 @@ describe('Security', function() {
         server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
-        keycloakSecurity.withRealm('dolphin-platform').login('user', 'password')
+        keycloakSecurity.login('user', 'password', { realmName: 'dolphin-platform' })
         .then((token) => {
             expect(token).to.be.equal('test');
             expect(keycloakSecurity.isAuthorized()).to.be.true;
@@ -157,7 +161,7 @@ describe('Security', function() {
         server.respondWith(HTTP.METHOD.POST, 'http://www.example.com:9001/openid-connect', [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
-        keycloakSecurity.withAuthEndpoint('http://www.example.com:9001/openid-connect').login('user', 'password')
+        keycloakSecurity.login('user', 'password', { authEndpoint: 'http://www.example.com:9001/openid-connect' })
         .then((token) => {
             expect(token).to.be.equal('test');
             expect(keycloakSecurity.isAuthorized()).to.be.true;
@@ -168,11 +172,11 @@ describe('Security', function() {
         expect(server.requests.length).to.be.equal(1);
     });
 
-    it('correct login with direct connection', function(done) {
+    it('correct login with direct connection, realm and app name', function(done) {
         server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT + '/auth/realms/dolphin-platform/protocol/openid-connect/token', [HTTP.STATUS.OK, responseHeaders, validToken]);
 
         const keycloakSecurity = new KeycloakSecurity();
-        keycloakSecurity.withDirectConnection().withRealm('dolphin-platform').withAppName('dolphin-client').login('user', 'password')
+        keycloakSecurity.login('user', 'password', { directConnection: true, realmName: 'dolphin-platform', appName: 'dolphin-client' })
         .then((token) => {
             expect(token).to.be.equal('test');
             expect(keycloakSecurity.isAuthorized()).to.be.true;
@@ -191,7 +195,7 @@ describe('Security', function() {
 
         const keycloakSecurity = new KeycloakSecurity();
         try {
-            keycloakSecurity.withDirectConnection().login('user', 'password');
+            keycloakSecurity.login('user', 'password', { directConnection: true });
         } catch (error) {
             expect(error).to.exist;
             expect(error.message).to.be.equal('No app name set!');
@@ -204,14 +208,13 @@ describe('Security', function() {
 
         const keycloakSecurity = new KeycloakSecurity();
         try {
-            keycloakSecurity.withDirectConnection().withAppName('dolphin-client').login('user', 'password');
+            keycloakSecurity.login('user', 'password', { directConnection: true, appName: 'dolphin-client' }); 
         } catch (error) {
             expect(error).to.exist;
             expect(error.message).to.be.equal('The parameter realmName is mandatory in createDirectConnection');
             done();
         }
     });
-
 
     it('HTTP client sends access token', function(done) {
         // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
@@ -239,6 +242,38 @@ describe('Security', function() {
 
             server.respond();        
         }
+    });
+
+    it('refresh token', function(done) {
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
+
+        const keycloakSecurity = new KeycloakSecurity();
+        keycloakSecurity.login('user', 'password').then(() => {
+            clock.tick(60000);
+            expect(server.requests.length).to.be.equal(3);
+            expect(server.requests[0].requestBody).to.be.equal('username=user&password=password&grant_type=password');
+            expect(server.requests[1].requestBody).to.be.equal('grant_type=refresh_token&refresh_token=refreshme');
+            expect(server.requests[2].requestBody).to.be.equal('grant_type=refresh_token&refresh_token=refreshme');
+            done();
+        });
+        server.respond();
+    });
+
+    it('try to login twice', function(done) {
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
+
+        const keycloakSecurity = new KeycloakSecurity();
+        keycloakSecurity.login('user', 'password')
+        .then(() => {
+            try {
+                keycloakSecurity.login('user', 'password');
+            } catch (error) {
+                expect(error.message).to.be.equal('Already logged in!');
+                done();
+            }
+        });
+
+        server.respond();
     });
     
 });
