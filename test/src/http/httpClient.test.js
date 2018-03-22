@@ -283,7 +283,10 @@ describe('HttpClient', function() {
             const jdomWindow = global.window;
             global.window = {platformClient: PlatformClient};
 
-            server.respondWith([HTTP.STATUS.OK, { 'dolphin_platform_intern_dolphinClientId': 'abcd-efgh-ijkl-mopq'}, 'Hallo Google!']);
+            const headers = {};
+            headers[HTTP.HEADER_NAME.X_CLIENT_SESSION_ID] = 'abcd-efgh-ijkl-mopq';
+
+            server.respondWith([HTTP.STATUS.OK, headers, 'Hallo Google!']);
 
             const httpClient = PlatformClient.getService('HttpClient');
             httpClient.get('https://test-mock-server.com').withoutContent().withoutResult().execute();
@@ -305,7 +308,10 @@ describe('HttpClient', function() {
             const jdomWindow = global.window;
             global.window = {platformClient: PlatformClient};
 
-            server.respondWith([HTTP.STATUS.OK, { 'dolphin_platform_intern_dolphinClientId': 'abcd-efgh-ijkl-mopq'}, 'Hallo Google!']);
+            const headers = {};
+            headers[HTTP.HEADER_NAME.X_CLIENT_SESSION_ID] = 'abcd-efgh-ijkl-mopq';
+
+            server.respondWith([HTTP.STATUS.OK, headers, 'Hallo Google!']);
 
             const httpClient = PlatformClient.getService('HttpClient');
             httpClient.get('https://test-mock-server.com').withoutContent().withoutResult().execute();
@@ -315,8 +321,8 @@ describe('HttpClient', function() {
             server.respond();
 
             expect(server.requests.length).to.be.equal(2);
-            expect(server.requests[0].requestHeaders['dolphin_platform_intern_dolphinClientId']).to.not.exist;
-            expect(server.requests[1].requestHeaders['dolphin_platform_intern_dolphinClientId']).to.be.equal('abcd-efgh-ijkl-mopq');
+            expect(server.requests[0].requestHeaders['X-Client-Session-Id']).to.not.exist;
+            expect(server.requests[1].requestHeaders['X-Client-Session-Id']).to.be.equal('abcd-efgh-ijkl-mopq');
 
             // Clean up
             PlatformClient.getService('ClientScope').clientIds = new Map();

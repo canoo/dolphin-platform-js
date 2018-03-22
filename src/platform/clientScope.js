@@ -1,9 +1,7 @@
 import { checkMethod, checkParam, parseUrl, exists } from '../utils';
 import { ServiceProvider  } from './serviceProvider';
 import { LoggerFactory } from '../logging';
-
-const DOLPHIN_PLATFORM_PREFIX = 'dolphin_platform_intern_';
-const CLIENT_ID_HTTP_HEADER_NAME = DOLPHIN_PLATFORM_PREFIX + 'dolphinClientId';
+import { HTTP } from './constants';
 
 class ClientScope {
 
@@ -17,7 +15,7 @@ class ClientScope {
         const clientId = this.getClientId(httpRequest.url);
         if (exists(clientId)) {
             ClientScope.LOGGER.trace('Using ClientId', clientId);
-            httpRequest.setRequestHeader(CLIENT_ID_HTTP_HEADER_NAME, clientId);
+            httpRequest.setRequestHeader(HTTP.HEADER_NAME.X_CLIENT_SESSION_ID, clientId);
         }
     }
 
@@ -25,7 +23,7 @@ class ClientScope {
         checkMethod('handleResponse');
         checkParam(httpResponse, 'httpResponse');
         const clientId = this.getClientId(httpResponse.url);
-        const newClientId = httpResponse.getHeaderByName(CLIENT_ID_HTTP_HEADER_NAME);
+        const newClientId = httpResponse.getHeaderByName(HTTP.HEADER_NAME.X_CLIENT_SESSION_ID);
         if (exists(clientId) && exists(newClientId) && clientId !== newClientId) {
             throw new Error('Client Id does not match!');
         }
