@@ -1,5 +1,6 @@
 import { HTTP } from '../platform/constants'
 import { exists } from '../utils';
+import { LoggerFactory } from '../logging';
 import { KeycloakConnection } from './keycloakConnection';
 
 class KeycloakFunctions {
@@ -64,6 +65,7 @@ class KeycloakFunctions {
                 }
             }
             
+            KeycloakFunctions.LOGGER.trace('Receiving token');
             httpRequest.send(body);
         });
     }
@@ -74,5 +76,7 @@ class KeycloakFunctions {
     }
     
 }
+
+KeycloakFunctions.LOGGER = LoggerFactory.getLogger('KeycloakFunctions');
 
 export { KeycloakFunctions }

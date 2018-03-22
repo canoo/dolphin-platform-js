@@ -9,45 +9,46 @@ class KeycloakSecurity {
     constructor() {
         this.functions = new KeycloakFunctions();
         this.interceptor = new SecurityHttpClientInterceptor();
-        this.directConnection = false;
-        this.authEndpoint = SECURITY.AUTH_ENDPOINT;
-        this.appName = null;
-        this.realmName = null;
         this.intervall = null;
+
+        this.configuration = {
+            directConnection: false,
+            authEndpoint: SECURITY.AUTH_ENDPOINT,
+            appName: null,
+            realmName: null
+        }
+        
+        
     }
 
-    withDirectConnection() {
-        this.directConnection = true;
-        return this;
-    }
+    login(user, password, configuration) {
+        if (this.isAuthorized()) {
+            throw new Error('Already logged in!');
+        }
 
-    withAppName(appName) {
-        this.appName = appName;
-        return this;
-    }
+        if (configuration) {
+            this.configuration.directConnection = configuration.directConnection || this.configuration.directConnection;
+            this.configuration.authEndpoint = configuration.authEndpoint || this.configuration.authEndpoint;
+            this.configuration.appName = configuration.appName || this.configuration.appName;
+            this.configuration.realmName = configuration.realmName || this.configuration.realmName;
+        }
 
-    withAuthEndpoint(authEndpoint) {
-        this.authEndpoint = authEndpoint;
-        return this;
-    }
+        const { directConnection, authEndpoint, appName, realmName } = this.configuration;
 
-    withRealm(realmName) {
-        this.realmName = realmName;
-        return this;
-    }
-
-    login(user, password) {
-        const { connection, content } = this.functions.createLoginConnection(this.directConnection, this.authEndpoint, this.realmName, this.appName, user, password);
+        const { connection, content } = this.functions.createLoginConnection(directConnection, authEndpoint, realmName, appName, user, password);
         const self = this;
         return new Promise((resolve, reject) => {
+            KeycloakSecurity.LOGGER.debug('Receiving access token');
             this.functions.receiveToken(connection, content)
             .then((result) => {
                 if (result && result.access_token) {
                     self.token = result;
                     this.interceptor.setToken(result.access_token);
-                    const sleepTime = Math.max(KeycloakSecurity.MIN_TOKEN_EXPIRES_RUN, result.expires_in - KeycloakSecurity.TOKEN_EXPIRES_DELTA);
+                    const expires =  result.expires_in || KeycloakSecurity.MIN_TOKEN_EXPIRES_RUN;
+                    const sleepTime = Math.max(KeycloakSecurity.MIN_TOKEN_EXPIRES_RUN, expires - KeycloakSecurity.TOKEN_EXPIRES_DELTA);
                     self.intervall = setInterval(() => {
-                        self.functions.refreshToken(self.directConnection, self.authEndpoint, self.realmName, self.appName, result.refresh_token).then((result) => {
+                        KeycloakSecurity.LOGGER.debug('Refreshing access token');
+                        self.functions.refreshToken(directConnection, authEndpoint, realmName, appName, result.refresh_token).then((result) => {
                             self.token = result;
                             self.interceptor.setToken(result.access_token);
                         });
@@ -63,6 +64,7 @@ class KeycloakSecurity {
 
     logout() {
         const self = this;
+        KeycloakSecurity.LOGGER.debug('Logout');
         return new Promise((resolve) => {
             delete self.token;
             self.interceptor.setToken(null);
