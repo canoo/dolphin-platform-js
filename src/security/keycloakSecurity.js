@@ -68,16 +68,12 @@ class KeycloakSecurity {
         return new Promise((resolve) => {
             delete self.token;
             self.interceptor.setToken(null);
-            self.stopRefresh();
+            if (exists(this.intervall)) {
+                clearInterval(this.intervall);
+                this.intervall = null;
+            }
             resolve();
         });
-    }
-
-    stopRefresh() {
-        if (exists(this.intervall)) {
-            clearInterval(this.intervall);
-            this.intervall = null;
-        }
     }
 
     isAuthorized() {
