@@ -98,6 +98,7 @@ export const HTTP = {
         TE: 'TE',
         USER_AGENT: 'User-Agent',
         X_CLIENT_ID: 'X-Client-Id',
+        X_CLIENT_SESSION_ID: 'X-Client-Session-Id',
         X_PLATFORM_SECURITY_REALM: 'X-platform-security-realm',
         X_PLATFORM_SECURITY_BEARER_ONLY: 'X-platform-security-bearer-only'
     },

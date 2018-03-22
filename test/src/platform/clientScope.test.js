@@ -10,10 +10,11 @@ sinon.test = sinonTest(sinon);
 import { PlatformClient } from '../../../src/platform/platformClient';
 import { register as registerHttp } from '../../../src/http';
 import { register as registerClientScope } from '../../../src/platform/clientScope';
+import { HTTP } from '../../../src/platform/constants';
 
 describe('ClientScope', function() {
 
-    const headerName = 'dolphin_platform_intern_dolphinClientId';
+    const headerName = HTTP.HEADER_NAME.X_CLIENT_SESSION_ID;
 
     before(function() {
         registerHttp(PlatformClient);
