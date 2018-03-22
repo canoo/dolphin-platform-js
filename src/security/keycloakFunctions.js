@@ -13,16 +13,20 @@ class KeycloakFunctions {
         let connection;
         let content;
 
+        const encodedUser = encodeURIComponent(user);
+        const encodedPassword = encodeURIComponent(password);
+        const encodedAppName = encodeURIComponent(appName);
+
         if (directConnection) {
             if (exists(appName)) {
                 connection = this.connection.createDirectConnection(authEndpoint,realmName);
-                content = 'client_id=' + appName + '&username=' + user + '&password=' + password + '&grant_type=password';
+                content = 'client_id=' + encodedAppName + '&username=' + encodedUser + '&password=' + encodedPassword + '&grant_type=password';
             } else {
                 throw Error('No app name set!');
             }
         } else {
             connection = this.connection.createServerProxyConnection(authEndpoint, realmName);
-            content = 'username=' + user + '&password=' + password + '&grant_type=password';
+            content = 'username=' + encodedUser + '&password=' + encodedPassword + '&grant_type=password';
         }
 
         return { connection, content };
@@ -32,10 +36,12 @@ class KeycloakFunctions {
         let connection;
         let content;
 
+        const encodedAppName = encodeURIComponent(appName);
+
         if (directConnection) {
             if (exists(appName)) {
                 connection = this.connection.createDirectConnection(authEndpoint, realmName);
-                content = 'grant_type=refresh_token&refresh_token=' + refreshToken + '&client_id=' + appName;
+                content = 'grant_type=refresh_token&refresh_token=' + refreshToken + '&client_id=' + encodedAppName;
             } else {
                 throw Error('No app name set!');
             }
