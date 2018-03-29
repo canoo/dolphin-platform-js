@@ -17,8 +17,7 @@ class KeycloakSecurity {
             appName: null,
             realmName: null
         }
-        
-        
+       
     }
 
     login(user, password, configuration) {
@@ -44,6 +43,8 @@ class KeycloakSecurity {
                 if (result && result.access_token) {
                     self.token = result;
                     this.interceptor.setToken(result.access_token);
+                    this.interceptor.setRealm(realmName);
+                    this.interceptor.setAppName(appName);
                     const expires =  result.expires_in || KeycloakSecurity.MIN_TOKEN_EXPIRES_RUN;
                     const sleepTime = Math.max(KeycloakSecurity.MIN_TOKEN_EXPIRES_RUN, expires - KeycloakSecurity.TOKEN_EXPIRES_DELTA);
                     self.intervall = setInterval(() => {
