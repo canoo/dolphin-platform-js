@@ -141,22 +141,6 @@ describe('Security', function() {
         expect(server.requests.length).to.be.equal(1);
     });
 
-    it('correct login with realm', function(done) {
-        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
-
-        const keycloakSecurity = new KeycloakSecurity();
-        keycloakSecurity.login('user', 'password', { realmName: 'dolphin-platform' })
-        .then((token) => {
-            expect(token).to.be.equal('test');
-            expect(keycloakSecurity.isAuthorized()).to.be.true;
-            done();
-        });
-
-        server.respond();
-        expect(server.requests.length).to.be.equal(1);
-        expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM]).to.be.equal('dolphin-platform');
-    });
-
     it('correct login with different endpoint', function(done) {
         server.respondWith(HTTP.METHOD.POST, 'http://www.example.com:9001/openid-connect', [HTTP.STATUS.OK, responseHeaders, validToken]);
 
@@ -232,6 +216,7 @@ describe('Security', function() {
                     expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.AUTHORIZATION]).to.be.equal('Bearer test');
                     expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_BEARER_ONLY]).to.be.equal('true');
 
+                    keycloakSecurity.logout();
                     done();
                 });
                 server.respond();
@@ -242,6 +227,68 @@ describe('Security', function() {
 
             server.respond();        
         }
+    });
+
+    it('HTTP client sends realm', function(done) {
+        // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+        if (global.window) {
+            const jdomWindow = global.window;
+            global.window = {platformClient: PlatformClient};
+            server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
+            server.respondWith(HTTP.METHOD.GET, 'https://test-mock-server.com', 'Hallo Google!');
+
+            const keycloakSecurity = PlatformClient.getService('Security');
+            keycloakSecurity.login('user', 'password', { realmName: 'dolphin-platform' }).then(() => {
+                const httpClient = PlatformClient.getService('HttpClient');
+                httpClient.get('https://test-mock-server.com').withoutContent().withoutResult().execute().then(() => { 
+                    expect(server.requests.length).to.be.equal(2);
+                    expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.AUTHORIZATION]).to.be.equal('Bearer test');
+                    expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_BEARER_ONLY]).to.be.equal('true');
+                    expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM]).to.be.equal('dolphin-platform');
+
+                    keycloakSecurity.logout();
+                    done();
+                });
+                server.respond();
+
+                global.window = jdomWindow;
+
+            });
+
+            server.respond();        
+        }
+        
+    });
+
+    it('HTTP client sends appName', function(done) {
+        // this test expects to be executed in a Node.JS, Mocha+JSDOM environment
+        if (global.window) {
+            const jdomWindow = global.window;
+            global.window = {platformClient: PlatformClient};
+            server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
+            server.respondWith(HTTP.METHOD.GET, 'https://test-mock-server.com', 'Hallo Google!');
+
+            const keycloakSecurity = PlatformClient.getService('Security');
+            keycloakSecurity.login('user', 'password', { appName: 'default-dolphin-client' }).then(() => {
+                const httpClient = PlatformClient.getService('HttpClient');
+                httpClient.get('https://test-mock-server.com').withoutContent().withoutResult().execute().then(() => { 
+                    expect(server.requests.length).to.be.equal(2);
+                    expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.AUTHORIZATION]).to.be.equal('Bearer test');
+                    expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_BEARER_ONLY]).to.be.equal('true');
+                    expect(server.requests[1].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_APPLICATION]).to.be.equal('default-dolphin-client');
+
+                    keycloakSecurity.logout();
+                    done();
+                });
+                server.respond();
+
+                global.window = jdomWindow;
+
+            });
+
+            server.respond();        
+        }
+        
     });
 
     it('refresh token', function(done) {

@@ -19,7 +19,7 @@ class KeycloakConnection {
         return httpRequest;
     }
 
-    createServerProxyConnection(authEndpoint, realmName) {
+    createServerProxyConnection(authEndpoint) {
         checkMethod('createServerProxyConnection');
         checkParam(authEndpoint, 'authEndpoint');
 
@@ -28,9 +28,6 @@ class KeycloakConnection {
         httpRequest.setRequestHeader(HTTP.HEADER_NAME.CONTENT_TYPE,  HTTP.CONTENT_TYPE.TEXT_PLAIN);
         httpRequest.responseType = RESPONSE_TYPE.JSON;
 
-        if (realmName) {
-            httpRequest.setRequestHeader(HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM, realmName);
-        }
         return httpRequest;
     }
 
