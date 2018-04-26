@@ -597,7 +597,8 @@ var HTTP = exports.HTTP = {
         X_CLIENT_ID: 'X-Client-Id',
         X_CLIENT_SESSION_ID: 'X-Client-Session-Id',
         X_PLATFORM_SECURITY_REALM: 'X-platform-security-realm',
-        X_PLATFORM_SECURITY_BEARER_ONLY: 'X-platform-security-bearer-only'
+        X_PLATFORM_SECURITY_BEARER_ONLY: 'X-platform-security-bearer-only',
+        X_PLATFORM_SECURITY_APPLICATION: 'X-platform-security-application'
     },
     CONTENT_TYPE: {
         APPLICATION_JSON: 'application/json',
@@ -4055,7 +4056,7 @@ var getService = _platformClient.PlatformClient.getService;
 var hasService = _platformClient.PlatformClient.hasService;
 var registerServiceProvider = _platformClient.PlatformClient.registerServiceProvider;
 
-_platformClient.PlatformClient.LOGGER.info('Dolphin Platform Version:', "1.0.0-CR.4");
+_platformClient.PlatformClient.LOGGER.info('Dolphin Platform Version:', "1.0.0-CR.5");
 exports.LoggerFactory = _logging.LoggerFactory;
 exports.LogLevel = _logging.LogLevel;
 exports.getService = getService;
@@ -9596,6 +9597,8 @@ var KeycloakSecurity = function () {
                     if (result && result.access_token) {
                         self.token = result;
                         _this.interceptor.setToken(result.access_token);
+                        _this.interceptor.setRealm(realmName);
+                        _this.interceptor.setAppName(appName);
                         var expires = result.expires_in || KeycloakSecurity.MIN_TOKEN_EXPIRES_RUN;
                         var sleepTime = Math.max(KeycloakSecurity.MIN_TOKEN_EXPIRES_RUN, expires - KeycloakSecurity.TOKEN_EXPIRES_DELTA);
                         self.intervall = setInterval(function () {
@@ -9735,7 +9738,7 @@ var KeycloakFunctions = function () {
                     throw Error('No app name set!');
                 }
             } else {
-                connection = this.connection.createServerProxyConnection(authEndpoint, realmName);
+                connection = this.connection.createServerProxyConnection(authEndpoint);
                 content = 'grant_type=refresh_token&refresh_token=' + refreshToken;
             }
 
@@ -9829,7 +9832,7 @@ var KeycloakConnection = function () {
         }
     }, {
         key: 'createServerProxyConnection',
-        value: function createServerProxyConnection(authEndpoint, realmName) {
+        value: function createServerProxyConnection(authEndpoint) {
             (0, _utils.checkMethod)('createServerProxyConnection');
             (0, _utils.checkParam)(authEndpoint, 'authEndpoint');
 
@@ -9838,9 +9841,6 @@ var KeycloakConnection = function () {
             httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.CONTENT_TYPE, _constants.HTTP.CONTENT_TYPE.TEXT_PLAIN);
             httpRequest.responseType = _constants.RESPONSE_TYPE.JSON;
 
-            if (realmName) {
-                httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM, realmName);
-            }
             return httpRequest;
         }
     }]);
@@ -9882,12 +9882,24 @@ var SecurityHttpClientInterceptor = function () {
         (0, _classCallCheck3.default)(this, SecurityHttpClientInterceptor);
 
         this.token = null;
+        this.appName = null;
+        this.realm = null;
     }
 
     (0, _createClass3.default)(SecurityHttpClientInterceptor, [{
         key: 'setToken',
         value: function setToken(token) {
             this.token = token;
+        }
+    }, {
+        key: 'setAppName',
+        value: function setAppName(appName) {
+            this.appName = appName;
+        }
+    }, {
+        key: 'setRealm',
+        value: function setRealm(realm) {
+            this.realm = realm;
         }
     }, {
         key: 'handleRequest',
@@ -9899,6 +9911,17 @@ var SecurityHttpClientInterceptor = function () {
                 SecurityHttpClientInterceptor.LOGGER.trace('Using token', this.token);
                 httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.AUTHORIZATION, 'Bearer ' + this.token);
             }
+
+            if ((0, _utils.exists)(this.appName)) {
+                SecurityHttpClientInterceptor.LOGGER.trace('Using appName', this.appName);
+                httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.X_PLATFORM_SECURITY_APPLICATION, this.appName);
+            }
+
+            if ((0, _utils.exists)(this.realm)) {
+                SecurityHttpClientInterceptor.LOGGER.trace('Using realm', this.realm);
+                httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM, this.realm);
+            }
+
             httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.X_PLATFORM_SECURITY_BEARER_ONLY, 'true');
         }
     }]);
