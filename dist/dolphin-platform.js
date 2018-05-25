@@ -4056,7 +4056,7 @@ var getService = _platformClient.PlatformClient.getService;
 var hasService = _platformClient.PlatformClient.hasService;
 var registerServiceProvider = _platformClient.PlatformClient.registerServiceProvider;
 
-_platformClient.PlatformClient.LOGGER.info('Dolphin Platform Version:', "1.0.0-CR.5");
+_platformClient.PlatformClient.LOGGER.info('Dolphin Platform Version:', "1.0.0-CR.6");
 exports.LoggerFactory = _logging.LoggerFactory;
 exports.LogLevel = _logging.LogLevel;
 exports.getService = getService;
@@ -9832,13 +9832,16 @@ var KeycloakConnection = function () {
         }
     }, {
         key: 'createServerProxyConnection',
-        value: function createServerProxyConnection(authEndpoint) {
+        value: function createServerProxyConnection(authEndpoint, realmName) {
             (0, _utils.checkMethod)('createServerProxyConnection');
             (0, _utils.checkParam)(authEndpoint, 'authEndpoint');
 
             var httpRequest = new XMLHttpRequest();
             httpRequest.open(_constants.HTTP.METHOD.POST, authEndpoint, true);
             httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.CONTENT_TYPE, _constants.HTTP.CONTENT_TYPE.TEXT_PLAIN);
+            if ((0, _utils.exists)(realmName)) {
+                httpRequest.setRequestHeader(_constants.HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM, realmName);
+            }
             httpRequest.responseType = _constants.RESPONSE_TYPE.JSON;
 
             return httpRequest;
