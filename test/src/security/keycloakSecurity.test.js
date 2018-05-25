@@ -192,6 +192,24 @@ describe('Security', function() {
         expect(server.requests[0].requestBody).to.be.equal('username=user&password=password&grant_type=password');
     });
 
+    it('correct login with proxy connection and app name, without realm name', function(done) {
+        server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT, [HTTP.STATUS.OK, responseHeaders, validToken]);
+
+        const keycloakSecurity = new KeycloakSecurity();
+        keycloakSecurity.login('user', 'password', { directConnection: false, appName: 'dolphin-client' })
+        .then((token) => {
+            expect(token).to.be.equal('test');
+            expect(keycloakSecurity.isAuthorized()).to.be.true;
+            done();
+        });
+
+        server.respond();
+        expect(server.requests.length).to.be.equal(1);
+        expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.X_PLATFORM_SECURITY_REALM]).to.not.exist;
+        expect(server.requests[0].requestHeaders[HTTP.HEADER_NAME.CONTENT_TYPE]).to.be.equal(HTTP.CONTENT_TYPE.TEXT_PLAIN + ';charset=utf-8');
+        expect(server.requests[0].requestBody).to.be.equal('username=user&password=password&grant_type=password');
+    });
+
     it('error without app name', function(done) {
         server.respondWith(HTTP.METHOD.POST, SECURITY.AUTH_ENDPOINT + '/auth/realms/dolphin-platform/protocol/openid-connect/token', [HTTP.STATUS.OK, responseHeaders, validToken]);
 
